@@ -1,8 +1,10 @@
 //! Lexing and tokens.
 
+use std::cell::Cell;
 use std::fmt;
 use std::mem;
 use std::ops::Range;
+use std::ptr;
 
 use crate::pz;
 use crate::report::Report;
@@ -105,8 +107,20 @@ impl Span {
   }
 }
 
+#[cfg(debug_assertions)]
+thread_local! {
+  static CONTEXT: Cell<*const Context<'static>> = Cell::new(ptr::null());
+}
+
 impl fmt::Debug for Span {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    #[cfg(debug_assertions)]
+    unsafe {
+      let ptr = CONTEXT.with(|x| x.get());
+      if !ptr.is_null() {
+        return write!(f, "{:?}#{}", self.text(&*ptr), self.0);
+      }
+    }
     write!(f, "#{}", self.0)
   }
 }
@@ -159,6 +173,23 @@ impl<'file> Context<'file> {
   pub fn text(&self) -> &str {
     self.file.text()
   }
+
+  #[doc(hidden)]
+  #[cfg(debug_assertions)]
+  pub fn enable_printing(&self) -> impl Drop + '_ {
+    struct Swapper<'a>(&'a Context<'a>, *const Context<'static>);
+    impl Drop for Swapper<'_> {
+      fn drop(&mut self) {
+        CONTEXT.with(|x| x.set(self.1));
+      }
+    }
+    
+    Swapper(self, CONTEXT.with(|x| x.replace((self as *const Self).cast())))
+  }
+
+  #[doc(hidden)]
+  #[cfg(not(debug_assertions))]
+  pub fn enable_printing(&self) {}
 
   fn new_span(&mut self, start: u32, end: u32) -> Span {
     let span = Span(self.spans.len() as u32);

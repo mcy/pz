@@ -3,6 +3,8 @@
 mod lex;
 mod parse;
 
+use std::fmt;
+
 pub use lex::Context;
 pub use lex::Span;
 pub use lex::Spanned;
@@ -117,7 +119,7 @@ impl Spanned for Enum {
 ///
 /// Keywords may not be used as identifiers directly; instead, they must be
 /// prefixed with a `#`, e.g. `#package`.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct Ident(Span);
 impl Ident {
   /// Returns the name of this identifier (i.e., the text with an optional
@@ -133,12 +135,24 @@ impl Spanned for Ident {
   }
 }
 
+impl fmt::Debug for Ident {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fmt::Debug::fmt(&self.0, f)
+  }
+}
+
 /// A quoted string literal.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct StrLit(Span);
 
 impl Spanned for StrLit {
   fn span(&self) -> Span {
     self.0
+  }
+}
+
+impl fmt::Debug for StrLit {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fmt::Debug::fmt(&self.0, f)
   }
 }

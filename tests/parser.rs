@@ -79,6 +79,7 @@ fn empty_package() -> Result<()> {
   let mut ctx = syn::Context::new(&f);
   let ast = parse(&mut ctx);
 
+  let _p = ast.ctx.enable_printing();
   verify_that!(
     ast,
     matches_pattern!(syn::PzFile {
@@ -112,6 +113,7 @@ fn smoke() -> Result<()> {
   let mut ctx = syn::Context::new(&f);
   let ast = parse(&mut ctx);
 
+  let _p = ast.ctx.enable_printing();
   verify_that!(
     ast,
     matches_pattern!(syn::PzFile {
