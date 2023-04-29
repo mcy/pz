@@ -7,12 +7,17 @@ pub use lex::Context;
 pub use lex::Span;
 pub use lex::Spanned;
 
+const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}"];
+
+const KEYWORDS: &[&str] = &["edition", "package", "message", "enum"];
+
 /// A single `.pz` file.
 #[derive(Debug)]
 pub struct PzFile<'ctx, 'file> {
   pub ctx: &'ctx mut Context<'file>,
   pub edition: Edition,
   pub package: Package,
+  pub items: Vec<Item>,
 }
 
 impl<'ctx, 'file> PzFile<'ctx, 'file> {
@@ -44,10 +49,65 @@ impl Spanned for Edition {
 #[derive(Debug)]
 pub struct Package {
   pub span: Span,
-  pub components: Vec<Ident>,
+  pub path: Path,
 }
 
 impl Spanned for Package {
+  fn span(&self) -> Span {
+    self.span
+  }
+}
+
+/// A period-delimited path, e.g. `foo.bar.Msg`.
+#[derive(Debug)]
+pub struct Path {
+  pub span: Span,
+  pub components: Vec<Ident>,
+}
+
+impl Spanned for Path {
+  fn span(&self) -> Span {
+    self.span
+  }
+}
+
+/// A top-level declaration (which may be nested within other some declarations).
+#[derive(Debug)]
+pub enum Item {
+  Message(Message),
+  Enum(Enum),
+}
+
+impl Spanned for Item {
+  fn span(&self) -> Span {
+    match self {
+      Self::Message(x) => x.span,
+      Self::Enum(x) => x.span,
+    }
+  }
+}
+
+/// A `message Foo { ... }` declaration.
+#[derive(Debug)]
+pub struct Message {
+  pub span: Span,
+  pub name: Ident,
+}
+
+impl Spanned for Message {
+  fn span(&self) -> Span {
+    self.span
+  }
+}
+
+/// An `enum Foo { ... }` declaration.
+#[derive(Debug)]
+pub struct Enum {
+  pub span: Span,
+  pub name: Ident,
+}
+
+impl Spanned for Enum {
   fn span(&self) -> Span {
     self.span
   }

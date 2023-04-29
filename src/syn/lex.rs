@@ -6,6 +6,7 @@ use std::ops::Range;
 
 use crate::pz;
 use crate::report::Report;
+use crate::syn;
 use crate::syn::Ident;
 
 use super::StrLit;
@@ -198,10 +199,6 @@ impl fmt::Display for Kind<'_> {
   }
 }
 
-const PUNCTUATION: &[&str] = &[";", ".", "="];
-
-const KEYWORDS: &[&str] = &["edition", "package"];
-
 impl Token {
   fn display<'a>(self, ctx: &'a Context<'a>) -> impl fmt::Display + 'a {
     struct Display<'a>(&'a Context<'a>, Token);
@@ -210,12 +207,14 @@ impl Token {
         let Self(ctx, tok) = self;
         match tok {
           Token::Punct(x) => write!(f, "`{}`", x.text(ctx)),
-          Token::Ident(x) if KEYWORDS.contains(&x.text(ctx)) => {
+          Token::Ident(x) if syn::KEYWORDS.contains(&x.text(ctx)) => {
             write!(f, "`{}`", x.text(ctx))
           }
           Token::Ident(..) => write!(f, "identifier"),
           Token::Str(..) => write!(f, "quoted string"),
-          Token::Unknown(x) => write!(f, "unexpected character `{}`", x.text(ctx)),
+          Token::Unknown(x) => {
+            write!(f, "unexpected character `{}`", x.text(ctx))
+          }
           Token::Eof(..) => write!(f, "EOF"),
         }
       }
@@ -313,6 +312,10 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
     &mut self.ctx
   }
 
+  pub fn at_eof(&mut self) -> Result<bool> {
+    Ok(matches!(self.peek()?, Token::Eof(..)))
+  }
+
   pub fn peek(&mut self) -> Result<Token> {
     let next = self.next();
     self.token_cursor -= 1;
@@ -344,7 +347,7 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
       Some('"') => Token::Str(self.lex_quoted()?),
       Some(c) => {
         let start = self.cursor();
-        match PUNCTUATION.iter().find(|p| self.starts_with(p)) {
+        match syn::PUNCTUATION.iter().find(|p| self.starts_with(p)) {
           Some(punct) => {
             self.advance(punct.len() as u32);
             Token::Punct(self.span(start))
@@ -413,7 +416,7 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
     });
   }
 
-  fn zero_width_span(&mut self) -> Span {
+  pub fn zero_width_span(&mut self) -> Span {
     self.span(self.cursor())
   }
 

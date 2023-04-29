@@ -86,7 +86,9 @@ fn empty_package() -> Result<()> {
         value: Text(&ast.ctx, eq("\"2023\"")),
       }),
       package: matches_pattern!(syn::Package {
-        components: empty(),
+        path: matches_pattern!(syn::Path {
+          components: empty(),
+        }),
       }),
     })
   )?;
@@ -100,6 +102,11 @@ fn smoke() -> Result<()> {
     r#"
       edition = "2023";
       package foo.bar;
+
+      message Foo {
+        // TODO
+      }
+      enum Bar {}
     "#,
   );
   let mut ctx = syn::Context::new(&f);
@@ -112,11 +119,21 @@ fn smoke() -> Result<()> {
         value: Text(&ast.ctx, eq("\"2023\"")),
       }),
       package: matches_pattern!(syn::Package {
-        components: elements_are![
-          Text(&ast.ctx, eq("foo")),
-          Text(&ast.ctx, eq("bar"))
-        ],
+        path: matches_pattern!(syn::Path {
+          components: elements_are![
+            Text(&ast.ctx, eq("foo")),
+            Text(&ast.ctx, eq("bar"))
+          ],
+        }),
       }),
+      items: elements_are![
+        matches_pattern!(syn::Item::Message(matches_pattern!(syn::Message {
+          name: Text(&ast.ctx, eq("Foo"))
+        }))),
+        matches_pattern!(syn::Item::Enum(matches_pattern!(syn::Enum {
+          name: Text(&ast.ctx, eq("Bar"))
+        }))),
+      ],
     })
   )?;
 
