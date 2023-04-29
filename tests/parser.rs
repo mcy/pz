@@ -120,6 +120,16 @@ fn smoke() -> Result<()> {
         baz: Baz = 1000,
 
         bonk: repeated foreign.Type = -1,
+
+        struct Uuid {
+          lo: u64,
+          hi: u64,
+        }
+      }
+
+      choice OneOf {
+        int: i32 = 1,
+        str: string = 2,
       }
 
       enum Bar {
@@ -211,6 +221,54 @@ fn smoke() -> Result<()> {
                     Text(&ast.ctx, eq("Type")),
                   ],
                 }))),
+              })),
+            }))),
+            pat!(syn::Item::Decl(pat!(syn::Decl {
+              name: Text(&ast.ctx, eq("Uuid")),
+              kind: eq(syn::DeclKind::Struct),
+              items: elements_are![
+                pat!(syn::Item::Field(pat!(syn::Field {
+                  name: Text(&ast.ctx, eq("lo")),
+                  number: none(),
+                  ty: some(pat!(syn::Type {
+                    repeated: none(),
+                    kind: predicate(|x| matches!(x, syn::TypeKind::U64)),
+                  })),
+                }))),
+                pat!(syn::Item::Field(pat!(syn::Field {
+                  name: Text(&ast.ctx, eq("hi")),
+                  number: none(),
+                  ty: some(pat!(syn::Type {
+                    repeated: none(),
+                    kind: predicate(|x| matches!(x, syn::TypeKind::U64)),
+                  })),
+                }))),
+              ],
+            }))),
+          ],
+        }))),
+        pat!(syn::Item::Decl(pat!(syn::Decl {
+          name: Text(&ast.ctx, eq("OneOf")),
+          kind: eq(syn::DeclKind::Choice),
+          items: elements_are![
+            pat!(syn::Item::Field(pat!(syn::Field {
+              name: Text(&ast.ctx, eq("int")),
+              number: some(pat!(syn::IntLit {
+                value(): eq(1),
+              })),
+              ty: some(pat!(syn::Type {
+                repeated: none(),
+                kind: predicate(|x| matches!(x, syn::TypeKind::I32)),
+              })),
+            }))),
+            pat!(syn::Item::Field(pat!(syn::Field {
+              name: Text(&ast.ctx, eq("str")),
+              number: some(pat!(syn::IntLit {
+                value(): eq(2),
+              })),
+              ty: some(pat!(syn::Type {
+                repeated: none(),
+                kind: predicate(|x| matches!(x, syn::TypeKind::String)),
               })),
             }))),
           ],

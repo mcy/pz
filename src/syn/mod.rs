@@ -15,7 +15,7 @@ const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ","];
 
 const KEYWORDS: &[&str] = &[
   "edition", "package", "message", "enum", "i32", "i64", "u32", "u64", "str",
-  "buf", "bool",
+  "buf", "bool", "struct",
 ];
 
 /// A single `.pz` file.
@@ -114,6 +114,8 @@ impl Spanned for Decl {
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum DeclKind {
   Message,
+  Struct,
+  Choice,
   Enum,
 }
 

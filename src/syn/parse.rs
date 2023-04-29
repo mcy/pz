@@ -129,6 +129,8 @@ enum Container {
   File,
   Message,
   Enum,
+  Struct,
+  Choice,
 }
 
 impl fmt::Display for Container {
@@ -137,6 +139,8 @@ impl fmt::Display for Container {
       Self::File => write!(f, "file"),
       Self::Message => write!(f, "message"),
       Self::Enum => write!(f, "enum"),
+      Self::Struct => write!(f, "struct"),
+      Self::Choice => write!(f, "choice"),
     }
   }
 }
@@ -150,13 +154,17 @@ fn parse_item(
     Kind::Ident,
     Kind::Exact("message"),
     Kind::Exact("enum"),
+    Kind::Exact("struct"),
+    Kind::Exact("choice"),
   ])?;
 
   match kw.text(lexer.ctx()) {
-    kind @ ("message" | "enum") => {
+    kind @ ("message" | "enum" | "struct" | "choice") => {
       let (kind, container) = match kind {
         "message" => (syn::DeclKind::Message, Container::Message),
         "enum" => (syn::DeclKind::Enum, Container::Enum),
+        "struct" => (syn::DeclKind::Struct, Container::Struct),
+        "choice" => (syn::DeclKind::Choice, Container::Choice),
         _ => unreachable!(),
       };
 
@@ -220,9 +228,16 @@ fn parse_item(
       let mut number = None;
       if let Some(_) = lexer.take_exact("=")? {
         if let Token::Int(n) = lexer.expect(&[Kind::Int])? {
+          if inside == Container::Struct {
+            lexer
+              .error(format_args!("`{inside}` fields cannot have numbers"))
+              .saying(&n, "remove this number")
+              .saying(outer_name, format_args!("inside this {inside}"));
+          }
+
           number = Some(n)
         }
-      } else {
+      } else if inside != Container::Struct {
         lexer
           .error(format_args!("`{inside}` fields must have numbers"))
           .saying(name, "expected number")
