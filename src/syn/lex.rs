@@ -10,8 +10,8 @@ use crate::pz;
 use crate::report::Report;
 use crate::syn;
 use crate::syn::Ident;
-
-use super::StrLit;
+use crate::syn::IntLit;
+use crate::syn::StrLit;
 
 /// A source code span.
 ///
@@ -183,8 +183,11 @@ impl<'file> Context<'file> {
         CONTEXT.with(|x| x.set(self.1));
       }
     }
-    
-    Swapper(self, CONTEXT.with(|x| x.replace((self as *const Self).cast())))
+
+    Swapper(
+      self,
+      CONTEXT.with(|x| x.replace((self as *const Self).cast())),
+    )
   }
 
   #[doc(hidden)]
@@ -206,6 +209,7 @@ impl<'file> Context<'file> {
 pub enum Token {
   Ident(Ident),
   Str(StrLit),
+  Int(IntLit),
   Punct(Span),
   Unknown(Span),
   Eof(Span),
@@ -216,6 +220,7 @@ pub enum Kind<'a> {
   Exact(&'a str),
   Ident,
   Str,
+  Int,
   Eof,
 }
 
@@ -224,6 +229,7 @@ impl fmt::Display for Kind<'_> {
     match self {
       Kind::Exact(str) => write!(f, "`{str}`"),
       Kind::Ident => write!(f, "identifier"),
+      Kind::Int => write!(f, "integer"),
       Kind::Str => write!(f, "quoted string"),
       Kind::Eof => write!(f, "EOF"),
     }
@@ -242,6 +248,7 @@ impl Token {
             write!(f, "`{}`", x.text(ctx))
           }
           Token::Ident(..) => write!(f, "identifier"),
+          Token::Int(..) => write!(f, "integer"),
           Token::Str(..) => write!(f, "quoted string"),
           Token::Unknown(x) => {
             write!(f, "unexpected character `{}`", x.text(ctx))
@@ -266,6 +273,7 @@ impl Token {
           ) if span.text(ctx) == *expected => break 'check true,
           (Self::Ident(..), Kind::Ident) => break 'check true,
           (Self::Str(..), Kind::Str) => break 'check true,
+          (Self::Int(..), Kind::Int) => break 'check true,
           (Self::Eof(..), Kind::Eof) => break 'check true,
           _ => continue,
         }
@@ -305,6 +313,7 @@ impl Spanned for Token {
       Self::Punct(x) => x.span(),
       Self::Ident(x) => x.span(),
       Self::Str(x) => x.span(),
+      Self::Int(x) => x.span(),
       Self::Unknown(x) => x.span(),
       Self::Eof(x) => x.span(),
     }
@@ -363,6 +372,10 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
     Ok(None)
   }
 
+  pub fn unlex(&mut self, count: usize) {
+    self.token_cursor -= count;
+  }
+
   pub fn next(&mut self) -> Result<Token> {
     if let Some(next) = self.tokens.get(self.token_cursor) {
       self.token_cursor += 1;
@@ -375,6 +388,7 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
       Some('#' | '_' | 'a'..='z' | 'A'..='Z') => {
         Token::Ident(self.lex_ident()?)
       }
+      Some('-' | '0'..='9') => Token::Int(self.lex_int()?),
       Some('"') => Token::Str(self.lex_quoted()?),
       Some(c) => {
         let start = self.cursor();
@@ -609,5 +623,63 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
       .error("unclosed string literal")
       .saying(open, "opened here");
     Err(Fatal)
+  }
+
+  fn lex_int(&mut self) -> Result<IntLit> {
+    let start = self.cursor();
+    let is_negative = self.take_str("-").is_some();
+    let base = if self.take_str("0x").is_some() {
+      16
+    } else if self.take_str("0b").is_some() {
+      2
+    } else {
+      10
+    };
+
+    let digits_start = self.cursor();
+    while let Some(next @ ('0'..='9' | 'a'..='f' | 'A'..='F' | '_')) =
+      self.next_char()
+    {
+      self.advance(next.len_utf8() as u32);
+    }
+    let span = self.span(start);
+    let digits =
+      &self.ctx.text()[digits_start as usize..self.cursor() as usize];
+
+    use std::num::IntErrorKind;
+    let mut value = match i128::from_str_radix(digits, base) {
+      Ok(v) => v,
+      Err(e) => match e.kind() {
+        IntErrorKind::PosOverflow | IntErrorKind::NegOverflow => {
+          let span = span.to_pz(self.ctx());
+          self
+            .ctx
+            .report()
+            .error("integer literal overflowed")
+            .at(span);
+          0
+        }
+        IntErrorKind::Empty
+        | IntErrorKind::Zero
+        | IntErrorKind::InvalidDigit => {
+          unreachable!("these are already verified above")
+        }
+        _ => {
+          let span = span.to_pz(self.ctx());
+          self
+            .ctx
+            .report()
+            .error(format_args!("int parse error: {e}"))
+            .at(span);
+          0
+        }
+      },
+    };
+
+    if is_negative {
+      value = -value;
+    }
+
+    Ok(syn::IntLit { span, value })
   }
 }

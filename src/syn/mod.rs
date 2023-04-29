@@ -9,9 +9,12 @@ pub use lex::Context;
 pub use lex::Span;
 pub use lex::Spanned;
 
-const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}"];
+const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ","];
 
-const KEYWORDS: &[&str] = &["edition", "package", "message", "enum"];
+const KEYWORDS: &[&str] = &[
+  "edition", "package", "message", "enum", "i32", "i64", "u32", "u64", "str",
+  "buf", "bool",
+];
 
 /// A single `.pz` file.
 #[derive(Debug)]
@@ -94,12 +97,72 @@ impl Spanned for Item {
 pub struct Message {
   pub span: Span,
   pub name: Ident,
+  pub items: Vec<MessageItem>,
 }
 
 impl Spanned for Message {
   fn span(&self) -> Span {
     self.span
   }
+}
+
+/// A sub-declaration of a message, which includes ordinary items and
+/// message fields.
+#[derive(Debug)]
+pub enum MessageItem {
+  Item(Item),
+  Field(Field),
+}
+
+impl Spanned for MessageItem {
+  fn span(&self) -> Span {
+    match self {
+      Self::Item(x) => x.span(),
+      Self::Field(f) => f.span(),
+    }
+  }
+}
+
+/// A `my_field/1: type` declaration.
+#[derive(Debug)]
+pub struct Field {
+  pub span: Span,
+  pub name: Ident,
+  pub number: Option<IntLit>,
+  pub ty: Type,
+}
+
+impl Spanned for Field {
+  fn span(&self) -> Span {
+    self.span
+  }
+}
+
+/// A type, such as on a field declaration.
+#[derive(Debug)]
+pub struct Type {
+  pub span: Span,
+  pub repeated: Option<Span>,
+  pub kind: TypeKind,
+}
+
+impl Spanned for Type {
+  fn span(&self) -> Span {
+    self.span
+  }
+}
+
+/// A type kind. See [`Type`].
+#[derive(Debug)]
+pub enum TypeKind {
+  Path(Path),
+  I32,
+  I64,
+  U32,
+  U64,
+  String,
+  Bytes,
+  Bool,
 }
 
 /// An `enum Foo { ... }` declaration.
@@ -154,5 +217,24 @@ impl Spanned for StrLit {
 impl fmt::Debug for StrLit {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     fmt::Debug::fmt(&self.0, f)
+  }
+}
+
+/// An integer literal.
+#[derive(Copy, Clone, Debug)]
+pub struct IntLit {
+  span: Span,
+  value: i128,
+}
+
+impl IntLit {
+  pub fn value(self) -> i128 {
+    self.value
+  }
+}
+
+impl Spanned for IntLit {
+  fn span(&self) -> Span {
+    self.span
   }
 }

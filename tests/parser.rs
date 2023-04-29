@@ -1,10 +1,15 @@
 use std::fmt;
 
 use googletest::elements_are;
+use googletest::field;
 use googletest::matcher;
+use googletest::matchers::anything;
 use googletest::matchers::empty;
 use googletest::matchers::eq;
-use googletest::matches_pattern;
+use googletest::matchers::none;
+use googletest::matchers::predicate;
+use googletest::matchers::some;
+use googletest::pat;
 use googletest::verify_that;
 use googletest::Result;
 
@@ -82,12 +87,12 @@ fn empty_package() -> Result<()> {
   let _p = ast.ctx.enable_printing();
   verify_that!(
     ast,
-    matches_pattern!(syn::PzFile {
-      edition: matches_pattern!(syn::Edition {
+    pat!(syn::PzFile {
+      edition: pat!(syn::Edition {
         value: Text(&ast.ctx, eq("\"2023\"")),
       }),
-      package: matches_pattern!(syn::Package {
-        path: matches_pattern!(syn::Path {
+      package: pat!(syn::Package {
+        path: pat!(syn::Path {
           components: empty(),
         }),
       }),
@@ -105,7 +110,13 @@ fn smoke() -> Result<()> {
       package foo.bar;
 
       message Foo {
-        // TODO
+        message Baz { value/1: bytes }
+
+        foo/1: i32,
+        bar/2: repeated string,
+        baz/1000: Baz,
+
+        bonk/-1: repeated foreign.Type,
       }
       enum Bar {}
     "#,
@@ -116,12 +127,12 @@ fn smoke() -> Result<()> {
   let _p = ast.ctx.enable_printing();
   verify_that!(
     ast,
-    matches_pattern!(syn::PzFile {
-      edition: matches_pattern!(syn::Edition {
+    pat!(syn::PzFile {
+      edition: pat!(syn::Edition {
         value: Text(&ast.ctx, eq("\"2023\"")),
       }),
-      package: matches_pattern!(syn::Package {
-        path: matches_pattern!(syn::Path {
+      package: pat!(syn::Package {
+        path: pat!(syn::Path {
           components: elements_are![
             Text(&ast.ctx, eq("foo")),
             Text(&ast.ctx, eq("bar"))
@@ -129,10 +140,76 @@ fn smoke() -> Result<()> {
         }),
       }),
       items: elements_are![
-        matches_pattern!(syn::Item::Message(matches_pattern!(syn::Message {
-          name: Text(&ast.ctx, eq("Foo"))
+        pat!(syn::Item::Message(pat!(syn::Message {
+          name: Text(&ast.ctx, eq("Foo")),
+          items: elements_are![
+            pat!(syn::MessageItem::Item(pat!(syn::Item::Message(pat!(
+              syn::Message {
+                name: Text(&ast.ctx, eq("Baz")),
+                items: elements_are![pat!(syn::MessageItem::Field(pat!(
+                  syn::Field {
+                    name: Text(&ast.ctx, eq("value")),
+                    number: some(pat!(syn::IntLit {
+                      value(): eq(1),
+                    })),
+                    ty: pat!(syn::Type {
+                      repeated: none(),
+                      kind: predicate(|x| matches!(x, syn::TypeKind::Bytes)),
+                    }),
+                  }
+                ))),],
+              }
+            ))))),
+            pat!(syn::MessageItem::Field(pat!(syn::Field {
+              name: Text(&ast.ctx, eq("foo")),
+              number: some(pat!(syn::IntLit {
+                value(): eq(1),
+              })),
+              ty: pat!(syn::Type {
+                repeated: none(),
+                kind: predicate(|x| matches!(x, syn::TypeKind::I32)),
+              }),
+            }))),
+            pat!(syn::MessageItem::Field(pat!(syn::Field {
+              name: Text(&ast.ctx, eq("bar")),
+              number: some(pat!(syn::IntLit {
+                value(): eq(2),
+              })),
+              ty: pat!(syn::Type {
+                repeated: some(anything()),
+                kind: predicate(|x| matches!(x, syn::TypeKind::String)),
+              }),
+            }))),
+            pat!(syn::MessageItem::Field(pat!(syn::Field {
+              name: Text(&ast.ctx, eq("baz")),
+              number: some(pat!(syn::IntLit {
+                value(): eq(1000),
+              })),
+              ty: pat!(syn::Type {
+                repeated: none(),
+                kind: pat!(syn::TypeKind::Path(pat!(syn::Path {
+                  components: elements_are![Text(&ast.ctx, eq("Baz")),],
+                }))),
+              }),
+            }))),
+            pat!(syn::MessageItem::Field(pat!(syn::Field {
+              name: Text(&ast.ctx, eq("bonk")),
+              number: some(pat!(syn::IntLit {
+                value(): eq(-1),
+              })),
+              ty: pat!(syn::Type {
+                repeated: some(anything()),
+                kind: pat!(syn::TypeKind::Path(pat!(syn::Path {
+                  components: elements_are![
+                    Text(&ast.ctx, eq("foreign")),
+                    Text(&ast.ctx, eq("Type")),
+                  ],
+                }))),
+              }),
+            }))),
+          ],
         }))),
-        matches_pattern!(syn::Item::Enum(matches_pattern!(syn::Enum {
+        pat!(syn::Item::Enum(pat!(syn::Enum {
           name: Text(&ast.ctx, eq("Bar"))
         }))),
       ],

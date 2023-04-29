@@ -86,17 +86,104 @@ fn parse_package(lexer: &mut Lexer) -> Result<syn::Package> {
   })
 }
 
+fn parse_type(lexer: &mut Lexer) -> Result<syn::Type> {
+  let repeated = lexer.take_exact("repeated")?.map(|s| s.span());
+  let name = lexer.expect(&[
+    Kind::Exact("i32"),
+    Kind::Exact("u32"),
+    Kind::Exact("i64"),
+    Kind::Exact("u64"),
+    Kind::Exact("bool"),
+    Kind::Exact("string"),
+    Kind::Exact("bytes"),
+    Kind::Ident,
+  ])?;
+
+  let kind = match name.text(lexer.ctx()) {
+    "i32" => syn::TypeKind::I32,
+    "i64" => syn::TypeKind::I64,
+    "u32" => syn::TypeKind::U32,
+    "u64" => syn::TypeKind::U64,
+    "bool" => syn::TypeKind::Bool,
+    "string" => syn::TypeKind::String,
+    "bytes" => syn::TypeKind::Bytes,
+    _ => {
+      // Unlex the identifier token so that the path function finds it.
+      lexer.unlex(1);
+      syn::TypeKind::Path(parse_path(lexer)?)
+    }
+  };
+
+  let span = repeated
+    .unwrap_or(name.span())
+    .with_end(name.span(), lexer.ctx_mut());
+  Ok(syn::Type {
+    span,
+    repeated,
+    kind,
+  })
+}
+
+fn parse_field(lexer: &mut Lexer) -> Result<syn::Field> {
+  let name = parse_ident(lexer)?;
+  let mut number = None;
+
+  if let Some(_) = lexer.take_exact("/")? {
+    match lexer.expect(&[Kind::Int])? {
+      Token::Int(n) => number = Some(n),
+      _ => {}
+    }
+  }
+
+  lexer.keyword(":")?;
+  let ty = parse_type(lexer)?;
+
+  let span = name.span().with_end(ty.span(), lexer.ctx_mut());
+  Ok(syn::Field {
+    span,
+    name,
+    number,
+    ty,
+  })
+}
+
 fn parse_item(lexer: &mut Lexer) -> Result<syn::Item> {
-  let kw = lexer.expect(&[Kind::Exact("message"), Kind::Exact("enum")])?;
+  let item_expects = [Kind::Ident, Kind::Exact("message"), Kind::Exact("enum")];
+
+  let kw = lexer.expect(&item_expects[1..])?;
   match kw.text(lexer.ctx()) {
     "message" => {
       let name = parse_ident(lexer)?;
       lexer.keyword("{")?;
-      // TODO
+      let mut items = Vec::new();
+      while !lexer.at_eof()? {
+        if lexer.peek()?.text(lexer.ctx()) == "}" {
+          break;
+        }
+
+        if let Some(syn::MessageItem::Field(..)) = items.last() {
+          lexer.keyword(",")?;
+          if lexer.peek()?.text(lexer.ctx()) == "}" {
+            break;
+          }
+        }
+
+        let kw = lexer.expect(&item_expects)?;
+        lexer.unlex(1);
+
+        if item_expects[1..].iter().any(|k| match k {
+          Kind::Exact(name) => name == &kw.text(lexer.ctx()),
+          _ => false,
+        }) {
+          items.push(syn::MessageItem::Item(parse_item(lexer)?))
+        } else {
+          items.push(syn::MessageItem::Field(parse_field(lexer)?))
+        }
+      }
       let end = lexer.keyword("}")?;
 
       let span = kw.span().with_end(end, lexer.ctx_mut());
-      Ok(syn::Item::Message(syn::Message { span, name }))
+      Ok(syn::Item::Message(syn::Message { span, name, items }))
     }
     "enum" => {
       let name = parse_ident(lexer)?;
