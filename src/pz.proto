@@ -1,0 +1,6 @@
+// 
+
+syntax = "proto2";
+package pz;
+
+message Bundle {}
