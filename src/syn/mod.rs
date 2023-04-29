@@ -9,6 +9,8 @@ pub use lex::Context;
 pub use lex::Span;
 pub use lex::Spanned;
 
+use crate::report::Report;
+
 const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ","];
 
 const KEYWORDS: &[&str] = &[
@@ -26,10 +28,11 @@ pub struct PzFile<'ctx, 'file> {
 }
 
 impl<'ctx, 'file> PzFile<'ctx, 'file> {
-  pub fn parse(
+  pub fn parse<'rtx>(
     ctx: &'ctx mut Context<'file>,
+    report: &'rtx mut Report,
   ) -> Result<Self, &'ctx mut Context<'file>> {
-    parse::parse(ctx)
+    parse::parse(ctx, report)
   }
 }
 
@@ -76,60 +79,54 @@ impl Spanned for Path {
   }
 }
 
-/// A top-level declaration (which may be nested within other some declarations).
+/// Any kind of delcaration.
 #[derive(Debug)]
 pub enum Item {
-  Message(Message),
-  Enum(Enum),
+  Decl(Decl),
+  Field(Field),
 }
 
 impl Spanned for Item {
   fn span(&self) -> Span {
     match self {
-      Self::Message(x) => x.span,
-      Self::Enum(x) => x.span,
+      Self::Decl(x) => x.span,
+      Self::Field(x) => x.span,
     }
   }
 }
 
-/// A `message Foo { ... }` declaration.
+/// A declaration. This is anything of the form `keyword Name { items }`.
 #[derive(Debug)]
-pub struct Message {
+pub struct Decl {
   pub span: Span,
+  pub kind: DeclKind,
   pub name: Ident,
-  pub items: Vec<MessageItem>,
+  pub items: Vec<Item>,
 }
 
-impl Spanned for Message {
+impl Spanned for Decl {
   fn span(&self) -> Span {
     self.span
   }
 }
 
-/// A sub-declaration of a message, which includes ordinary items and
-/// message fields.
-#[derive(Debug)]
-pub enum MessageItem {
-  Item(Item),
-  Field(Field),
+/// A kind of [`Decl`].
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum DeclKind {
+  Message,
+  Enum,
 }
 
-impl Spanned for MessageItem {
-  fn span(&self) -> Span {
-    match self {
-      Self::Item(x) => x.span(),
-      Self::Field(f) => f.span(),
-    }
-  }
-}
-
-/// A `my_field/1: type` declaration.
+/// A `my_field: type = 5,` declaration.
+///
+/// All declarations use the same field production, except that some might
+/// not use a number and some might not use a type.
 #[derive(Debug)]
 pub struct Field {
   pub span: Span,
   pub name: Ident,
+  pub ty: Option<Type>,
   pub number: Option<IntLit>,
-  pub ty: Type,
 }
 
 impl Spanned for Field {
@@ -163,19 +160,6 @@ pub enum TypeKind {
   String,
   Bytes,
   Bool,
-}
-
-/// An `enum Foo { ... }` declaration.
-#[derive(Debug)]
-pub struct Enum {
-  pub span: Span,
-  pub name: Ident,
-}
-
-impl Spanned for Enum {
-  fn span(&self) -> Span {
-    self.span
-  }
 }
 
 /// An identifier.

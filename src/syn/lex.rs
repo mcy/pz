@@ -7,6 +7,7 @@ use std::ops::Range;
 use std::ptr;
 
 use crate::pz;
+use crate::report;
 use crate::report::Report;
 use crate::syn;
 use crate::syn::Ident;
@@ -45,6 +46,12 @@ pub trait Spanned {
 impl Spanned for Span {
   fn span(&self) -> Span {
     *self
+  }
+}
+
+impl<S: Spanned> Spanned for &S {
+  fn span(&self) -> Span {
+    S::span(self)
   }
 }
 
@@ -130,7 +137,6 @@ impl fmt::Debug for Span {
 /// The actual data of [`Span`]s is stored in this struct.
 pub struct Context<'file> {
   file: &'file pz::File,
-  report: Report<'file>,
   spans: Vec<SpanOffsets>,
   span_info: Vec<SpanInfo>,
 }
@@ -154,7 +160,6 @@ impl<'file> Context<'file> {
   pub fn new(file: &'file pz::File) -> Self {
     Self {
       file,
-      report: Report::new(file),
       spans: Vec::new(),
       span_info: Vec::new(),
     }
@@ -163,10 +168,6 @@ impl<'file> Context<'file> {
   /// Gets this context's file.
   pub fn file(&self) -> &'file pz::File {
     &self.file
-  }
-
-  pub fn report(&mut self) -> &mut Report<'file> {
-    &mut self.report
   }
 
   /// Gets the text of this context's file.
@@ -261,7 +262,8 @@ impl Token {
     Display(ctx, self)
   }
 
-  fn expect(self, ctx: &mut Context, kinds: &[Kind]) -> Token {
+  #[track_caller]
+  fn expect(self, ctx: &mut Context, report: &mut Report, kinds: &[Kind]) -> Token {
     assert!(!kinds.is_empty());
 
     let ok = 'check: {
@@ -299,8 +301,7 @@ impl Token {
       }
 
       let _ = write!(msg, ", got {}", self.display(ctx));
-      let span = self.span().to_pz(ctx);
-      ctx.report().error(msg).at(span);
+      report.error(msg).at(self);
     }
 
     self
@@ -320,8 +321,9 @@ impl Spanned for Token {
   }
 }
 
-pub struct Lexer<'ctx, 'file> {
+pub struct Lexer<'ctx, 'rtx, 'file> {
   ctx: &'ctx mut Context<'file>,
+  report: &'rtx mut Report,
   cursor: Option<u32>,
   unprocessed_comments: Vec<Span>,
 
@@ -333,10 +335,11 @@ pub struct Lexer<'ctx, 'file> {
 pub struct Fatal;
 pub type Result<T> = std::result::Result<T, Fatal>;
 
-impl<'ctx, 'file> Lexer<'ctx, 'file> {
-  pub fn new(ctx: &'ctx mut Context<'file>) -> Self {
+impl<'ctx, 'rtx, 'file> Lexer<'ctx, 'rtx, 'file> {
+  pub fn new(ctx: &'ctx mut Context<'file>, report: &'rtx mut Report) -> Self {
     Self {
       ctx,
+      report,
       cursor: Some(0),
       unprocessed_comments: Vec::new(),
       tokens: Vec::new(),
@@ -350,6 +353,10 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
 
   pub fn ctx_mut(&mut self) -> &mut Context<'file> {
     &mut self.ctx
+  }
+
+  pub fn error(&mut self, msg: impl fmt::Display) -> &mut report::Diagnostic {
+    self.report.error(msg)
   }
 
   pub fn at_eof(&mut self) -> Result<bool> {
@@ -400,12 +407,9 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
           None => {
             self.advance(c.len_utf8() as u32);
             let span = self.span(start);
-            let pz_span = span.to_pz(&self.ctx);
             self
-              .ctx
-              .report()
               .error(format_args!("unexpected chracter: `{c}`"))
-              .at(pz_span);
+              .at(span);
 
             Token::Unknown(span)
           }
@@ -425,16 +429,17 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
     Ok(tok)
   }
 
+  #[track_caller]
   pub fn expect(&mut self, kinds: &[Kind]) -> Result<Token> {
-    Ok(self.next()?.expect(&mut self.ctx, kinds))
+    Ok(self.next()?.expect(&mut self.ctx, self.report, kinds))
   }
 
+  #[track_caller]
   pub fn keyword(&mut self, text: &str) -> Result<Span> {
     let next = self.next()?;
     if next.text(self.ctx()) != text {
       let msg = format!("expected `{text}`, got {}", next.display(self.ctx()));
-      let span = next.span().to_pz(&mut self.ctx);
-      self.ctx.report().error(msg).at(span);
+      self.error(msg).at(next);
       self.token_cursor -= 1;
       return Ok(self.zero_width_span());
     }
@@ -527,11 +532,9 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
           }
           continue;
         }
-        self
-          .ctx
-          .report()
-          .error("unexpected closing block comment")
-          .at(end);
+
+        let span = self.ctx.new_span(end.0, end.1);
+        self.error("unexpected closing block comment").at(span);
         return Err(Fatal);
       }
 
@@ -554,11 +557,8 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
     }
 
     if let Some(unclosed) = block_comment_starts.pop() {
-      self
-        .ctx
-        .report()
-        .error("unclosed block comment")
-        .at(unclosed);
+      let span = self.ctx.new_span(unclosed.0, unclosed.1);
+      self.error("unclosed block comment").at(span);
     }
 
     Ok(self.next_char())
@@ -584,12 +584,7 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
     let span = self.span(start);
     if ident_start == self.cursor() {
       // This is a single `#` pretending to be an identifier.
-      let span = span.to_pz(&self.ctx);
-      self
-        .ctx
-        .report()
-        .error("`#` must be followed by an identifier")
-        .at(span);
+      self.error("`#` must be followed by an identifier").at(span);
     }
 
     /*let text = &self.text[span.start as usize..span.end as usize];
@@ -617,11 +612,10 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
       }
     }
 
+    let span = self.ctx.new_span(open.0, open.1);
     self
-      .ctx
-      .report()
       .error("unclosed string literal")
-      .saying(open, "opened here");
+      .saying(span, "opened here");
     Err(Fatal)
   }
 
@@ -651,12 +645,7 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
       Ok(v) => v,
       Err(e) => match e.kind() {
         IntErrorKind::PosOverflow | IntErrorKind::NegOverflow => {
-          let span = span.to_pz(self.ctx());
-          self
-            .ctx
-            .report()
-            .error("integer literal overflowed")
-            .at(span);
+          self.error("integer literal overflowed").at(span);
           0
         }
         IntErrorKind::Empty
@@ -665,12 +654,7 @@ impl<'ctx, 'file> Lexer<'ctx, 'file> {
           unreachable!("these are already verified above")
         }
         _ => {
-          let span = span.to_pz(self.ctx());
-          self
-            .ctx
-            .report()
-            .error(format_args!("int parse error: {e}"))
-            .at(span);
+          self.error(format_args!("int parse error: {e}")).at(span);
           0
         }
       },

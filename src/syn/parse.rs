@@ -1,12 +1,15 @@
 //! The parser.
 
+use std::fmt;
+
+use crate::report::Report;
 use crate::syn;
-use crate::syn::lex::Fatal;
 use crate::syn::lex::Kind;
 use crate::syn::lex::Lexer;
 use crate::syn::lex::Result;
 use crate::syn::lex::Token;
 use crate::syn::Context;
+use crate::syn::Span;
 use crate::syn::Spanned;
 
 fn parse_edition(lexer: &mut Lexer) -> Result<syn::Edition> {
@@ -57,12 +60,9 @@ fn parse_ident(lexer: &mut Lexer) -> Result<syn::Ident> {
   }
 
   if idents.components.len() > 1 {
-    let span = idents.span().to_pz(lexer.ctx());
     lexer
-      .ctx_mut()
-      .report()
       .error("expected identifier, got path")
-      .saying(span, "only a single identifier is allowed");
+      .saying(&idents, "only a single identifier is allowed");
   }
 
   Ok(idents.components[0])
@@ -124,36 +124,50 @@ fn parse_type(lexer: &mut Lexer) -> Result<syn::Type> {
   })
 }
 
-fn parse_field(lexer: &mut Lexer) -> Result<syn::Field> {
-  let name = parse_ident(lexer)?;
-  let mut number = None;
-
-  if let Some(_) = lexer.take_exact("/")? {
-    match lexer.expect(&[Kind::Int])? {
-      Token::Int(n) => number = Some(n),
-      _ => {}
-    }
-  }
-
-  lexer.keyword(":")?;
-  let ty = parse_type(lexer)?;
-
-  let span = name.span().with_end(ty.span(), lexer.ctx_mut());
-  Ok(syn::Field {
-    span,
-    name,
-    number,
-    ty,
-  })
+#[derive(Copy, Clone, PartialEq, Eq)]
+enum Container {
+  File,
+  Message,
+  Enum,
 }
 
-fn parse_item(lexer: &mut Lexer) -> Result<syn::Item> {
-  let item_expects = [Kind::Ident, Kind::Exact("message"), Kind::Exact("enum")];
+impl fmt::Display for Container {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    match self {
+      Self::File => write!(f, "file"),
+      Self::Message => write!(f, "message"),
+      Self::Enum => write!(f, "enum"),
+    }
+  }
+}
 
-  let kw = lexer.expect(&item_expects[1..])?;
+fn parse_item(
+  lexer: &mut Lexer,
+  inside: Container,
+  outer_name: Span,
+) -> Result<syn::Item> {
+  let kw = lexer.expect(&[
+    Kind::Ident,
+    Kind::Exact("message"),
+    Kind::Exact("enum"),
+  ])?;
+
   match kw.text(lexer.ctx()) {
-    "message" => {
+    kind @ ("message" | "enum") => {
+      let (kind, container) = match kind {
+        "message" => (syn::DeclKind::Message, Container::Message),
+        "enum" => (syn::DeclKind::Enum, Container::Enum),
+        _ => unreachable!(),
+      };
+
       let name = parse_ident(lexer)?;
+      if inside == Container::Enum {
+        lexer
+          .error("declarations not permitted inside an `enum`")
+          .saying(name, "this declaration is not allowed here")
+          .saying(outer_name, "inside this enum");
+      }
+
       lexer.keyword("{")?;
       let mut items = Vec::new();
       while !lexer.at_eof()? {
@@ -161,42 +175,78 @@ fn parse_item(lexer: &mut Lexer) -> Result<syn::Item> {
           break;
         }
 
-        if let Some(syn::MessageItem::Field(..)) = items.last() {
+        if let Some(syn::Item::Field(..)) = items.last() {
           lexer.keyword(",")?;
           if lexer.peek()?.text(lexer.ctx()) == "}" {
             break;
           }
         }
 
-        let kw = lexer.expect(&item_expects)?;
-        lexer.unlex(1);
-
-        if item_expects[1..].iter().any(|k| match k {
-          Kind::Exact(name) => name == &kw.text(lexer.ctx()),
-          _ => false,
-        }) {
-          items.push(syn::MessageItem::Item(parse_item(lexer)?))
-        } else {
-          items.push(syn::MessageItem::Field(parse_field(lexer)?))
-        }
+        items.push(parse_item(lexer, container, name.span())?);
       }
       let end = lexer.keyword("}")?;
 
       let span = kw.span().with_end(end, lexer.ctx_mut());
-      Ok(syn::Item::Message(syn::Message { span, name, items }))
+      Ok(syn::Item::Decl(syn::Decl {
+        span,
+        kind,
+        name,
+        items,
+      }))
     }
-    "enum" => {
+
+    _ => {
+      lexer.unlex(1);
       let name = parse_ident(lexer)?;
-      lexer.keyword("{")?;
-      // TODO
-      let end = lexer.keyword("}")?;
 
-      let span = kw.span().with_end(end, lexer.ctx_mut());
-      Ok(syn::Item::Enum(syn::Enum { span, name }))
+      let mut ty = None;
+      if let Some(_) = lexer.take_exact(":")? {
+        let typ = parse_type(lexer)?;
+        if inside == Container::Enum {
+          lexer
+            .error(format_args!("`{inside}` fields cannot have types"))
+            .saying(&typ, "remove this type")
+            .saying(outer_name, format_args!("inside this {inside}"));
+        }
+
+        ty = Some(typ);
+      } else if inside != Container::Enum {
+        lexer
+          .error(format_args!("`{inside}` fields must have types"))
+          .saying(name, "expected type")
+          .saying(outer_name, format_args!("inside this {inside}"));
+      }
+
+      let mut number = None;
+      if let Some(_) = lexer.take_exact("=")? {
+        if let Token::Int(n) = lexer.expect(&[Kind::Int])? {
+          number = Some(n)
+        }
+      } else {
+        lexer
+          .error(format_args!("`{inside}` fields must have numbers"))
+          .saying(name, "expected number")
+          .saying(outer_name, format_args!("inside this {inside}"));
+      }
+
+      let last = [
+        number.as_ref().map(|x| x.span()),
+        ty.as_ref().map(|x| x.span()),
+        Some(name.span()),
+      ]
+      .iter()
+      .find(|x| x.is_some())
+      .unwrap()
+      .unwrap();
+
+      let span = name.span().with_end(last, lexer.ctx_mut());
+      Ok(syn::Item::Field(syn::Field {
+        span,
+        name,
+        number,
+        ty,
+      }))
     }
-
-    // No idea what this is, so we should probably give up.
-    _ => Err(Fatal),
   }
 }
 
@@ -208,16 +258,17 @@ fn parse_file<'ctx, 'file>(
 
   let mut items = Vec::new();
   while !lexer.at_eof()? {
-    items.push(parse_item(lexer)?);
+    items.push(parse_item(lexer, Container::File, edition.span())?);
   }
 
   Ok((edition, package, items))
 }
 
-pub fn parse<'ctx, 'file>(
+pub fn parse<'ctx, 'rtx, 'file>(
   ctx: &'ctx mut Context<'file>,
+  report: &'rtx mut Report,
 ) -> std::result::Result<syn::PzFile<'ctx, 'file>, &'ctx mut Context<'file>> {
-  let mut lexer = Lexer::new(ctx);
+  let mut lexer = Lexer::new(ctx, report);
   let Ok((edition, package, items)) = parse_file(&mut lexer) else {
     return Err(ctx);
   };

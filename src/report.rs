@@ -7,6 +7,7 @@
 use core::fmt;
 use std::io;
 use std::mem;
+use std::ops::Range;
 use std::panic;
 
 use annotate_snippets::display_list::DisplayList;
@@ -14,35 +15,33 @@ use annotate_snippets::display_list::FormatOptions;
 use annotate_snippets::snippet;
 
 use crate::pz;
+use crate::syn;
 
 /// A diagnostic that is being built up.
 ///
 /// See [`Report::diagnose()`].
 pub struct Diagnostic {
-  error: Box<pz::Diagnostic>,
+  message: String,
+  snippets: Vec<(syn::Span, String)>,
+  kind: pz::diagnostic::Kind,
   reported_at: Option<&'static panic::Location<'static>>,
 }
 
 impl Diagnostic {
   /// Adds a new relevant snippet at the given location.
-  pub fn at(&mut self, span: impl Into<pz::Span>) {
-    self.error.snippets.push(pz::diagnostic::Snippet {
-      span: Some(span.into()),
-      message: None,
-    });
+  pub fn at(&mut self, span: impl syn::Spanned) -> &mut Self {
+    self.saying(span, "")
   }
 
   /// Adds a new relevant snippet at the given location, with the given message
   /// attached to it.
   pub fn saying(
     &mut self,
-    span: impl Into<pz::Span>,
+    span: impl syn::Spanned,
     message: impl fmt::Display,
-  ) {
-    self.error.snippets.push(pz::diagnostic::Snippet {
-      span: Some(span.into()),
-      message: Some(message.to_string()),
-    });
+  ) -> &mut Self {
+    self.snippets.push((span.span(), message.to_string()));
+    self
   }
 }
 
@@ -67,17 +66,15 @@ pub struct RenderOptions {
 }
 
 /// A collection of errors that may built up over the course of an action.
-pub struct Report<'file> {
-  file: &'file pz::File,
+pub struct Report {
   errors: Vec<Diagnostic>,
   errors_since_last_check: usize,
 }
 
-impl<'file> Report<'file> {
+impl Report {
   /// Creates a new, empty report.
-  pub fn new(file: &'file pz::File) -> Self {
+  pub fn new() -> Self {
     Self {
-      file,
       errors: Vec::new(),
       errors_since_last_check: 0,
     }
@@ -89,7 +86,7 @@ impl<'file> Report<'file> {
     let error_count = self
       .errors
       .iter()
-      .filter(|e| matches!(e.error.kind, None | Some(0)))
+      .filter(|e| matches!(e.kind, pz::diagnostic::Kind::Error))
       .count();
     let old = mem::replace(&mut self.errors_since_last_check, error_count);
     old != self.errors.len()
@@ -99,11 +96,9 @@ impl<'file> Report<'file> {
   #[track_caller]
   pub fn error(&mut self, message: impl fmt::Display) -> &mut Diagnostic {
     self.errors.push(Diagnostic {
-      error: Box::new(pz::Diagnostic {
-        message: Some(message.to_string()),
-        kind: Some(pz::diagnostic::Kind::Error.into()),
-        ..Default::default()
-      }),
+      message: message.to_string(),
+      kind: pz::diagnostic::Kind::Error.into(),
+      snippets: Vec::new(),
       reported_at: Some(panic::Location::caller()),
     });
 
@@ -112,10 +107,15 @@ impl<'file> Report<'file> {
 
   /// Calls `dump_to()` on `stderr`, exiting the process with the given
   /// `exit_code` if any errors are present.
-  pub fn dump_and_die(self, opts: &RenderOptions, code: i32) {
+  pub fn dump_and_die(
+    self,
+    ctx: &syn::Context,
+    opts: &RenderOptions,
+    code: i32,
+  ) {
     // Writing to stderr is fairly unlikely to fail, so panicking is a fine
     // response here.
-    if self.render(opts, &mut io::stderr()).unwrap() {
+    if self.render(ctx, opts, &mut io::stderr()).unwrap() {
       std::process::exit(code)
     }
   }
@@ -125,6 +125,7 @@ impl<'file> Report<'file> {
   /// Returns `Ok(true)` if any errors were fatal.
   pub fn render(
     &self,
+    ctx: &syn::Context,
     opts: &RenderOptions,
     sink: &mut dyn io::Write,
   ) -> io::Result<bool> {
@@ -133,17 +134,15 @@ impl<'file> Report<'file> {
     }
 
     for (i, e) in self.errors.iter().enumerate() {
-      let kind = match e.error.kind.and_then(pz::diagnostic::Kind::from_i32) {
-        Some(pz::diagnostic::Kind::Warning) => snippet::AnnotationType::Warning,
-        Some(pz::diagnostic::Kind::Error) | None => {
-          snippet::AnnotationType::Error
-        }
+      let kind = match e.kind {
+        pz::diagnostic::Kind::Warning => snippet::AnnotationType::Warning,
+        pz::diagnostic::Kind::Error => snippet::AnnotationType::Error,
       };
 
       let mut snippet = snippet::Snippet {
         title: Some(snippet::Annotation {
           id: None,
-          label: Some(&e.error.message.as_deref().unwrap_or("")),
+          label: Some(&e.message),
           annotation_type: kind,
         }),
         opt: FormatOptions {
@@ -155,17 +154,15 @@ impl<'file> Report<'file> {
       };
 
       let mut slice = snippet::Slice {
-        source: &self.file.text.as_deref().unwrap_or(""),
+        source: ctx.text(),
         line_start: 1,
-        origin: self.file.path.as_deref(),
+        origin: ctx.file().path.as_deref(),
         annotations: Vec::new(),
         fold: true,
       };
 
-      for snip in &e.error.snippets {
-        let mut start = snip.span.as_ref().and_then(|s| s.start).unwrap_or(0);
-        let mut end = snip.span.as_ref().and_then(|s| s.end).unwrap_or(0);
-
+      for (span, text) in &e.snippets {
+        let Range { mut start, mut end } = span.range(ctx);
         if start == end && !slice.source.is_empty() {
           // Normalize the range so that it is never just one space long.
           // If this would cause range.1 to go past the end of the input length,
@@ -179,7 +176,7 @@ impl<'file> Report<'file> {
 
         slice.annotations.push(snippet::SourceAnnotation {
           range: (start as usize, end as usize),
-          label: snip.message.as_deref().unwrap_or(""),
+          label: text,
           annotation_type: kind,
         });
       }
