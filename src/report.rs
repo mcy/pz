@@ -46,6 +46,16 @@ impl Diagnostic {
   }
 }
 
+impl From<(u32, u32)> for pz::Span {
+  fn from((start, end): (u32, u32)) -> Self {
+    pz::Span {
+      start: Some(start),
+      end: Some(end),
+      ..Default::default()
+    }
+  }
+}
+
 /// Options for [`Report::render()`].
 #[derive(Default)]
 pub struct RenderOptions {

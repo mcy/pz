@@ -8,7 +8,6 @@ use googletest::matches_pattern;
 use googletest::verify_that;
 use googletest::Result;
 
-use pz::report::Report;
 use pz::syn;
 
 fn file(text: &str) -> pz::pz::File {
@@ -18,25 +17,34 @@ fn file(text: &str) -> pz::pz::File {
   }
 }
 
-fn parse(file: &pz::pz::File) -> syn::PzFile {
-  let mut report = Report::new(file);
-  let file = syn::PzFile::parse(file, &mut report);
-  let had_errors = report
+fn print_errors(ctx: &mut syn::Context) -> bool {
+  ctx
+    .report()
     .render(
       &pz::report::RenderOptions {
         show_report_locations: true,
-        color: true,
+        color: false,
       },
       &mut std::io::stderr(),
     )
-    .unwrap();
-
-  assert!(!had_errors);
-  file.unwrap()
+    .unwrap()
 }
 
-struct Text<'f, M>(&'f pz::pz::File, M);
-impl<M, S> matcher::Matcher<S> for Text<'_, M>
+fn parse<'c, 'f>(ctx: &'c mut syn::Context<'f>) -> syn::PzFile<'c, 'f> {
+  match syn::PzFile::parse(ctx) {
+    Ok(mut file) => {
+      assert!(!print_errors(&mut file.ctx));
+      file
+    }
+    Err(ctx) => {
+      assert!(!print_errors(ctx));
+      unreachable!()
+    }
+  }
+}
+
+struct Text<'f, 'c, M>(&'f syn::Context<'c>, M);
+impl<M, S> matcher::Matcher<S> for Text<'_, '_, M>
 where
   M: for<'a> matcher::Matcher<&'a str>,
   S: syn::Spanned + fmt::Debug,
@@ -68,12 +76,14 @@ fn empty_package() -> Result<()> {
       package;
     "#,
   );
+  let mut ctx = syn::Context::new(&f);
+  let ast = parse(&mut ctx);
 
   verify_that!(
-    parse(&f),
+    ast,
     matches_pattern!(syn::PzFile {
       edition: matches_pattern!(syn::Edition {
-        value: Text(&f, eq("\"2023\"")),
+        value: Text(&ast.ctx, eq("\"2023\"")),
       }),
       package: matches_pattern!(syn::Package {
         components: empty(),
@@ -92,15 +102,20 @@ fn smoke() -> Result<()> {
       package foo.bar;
     "#,
   );
+  let mut ctx = syn::Context::new(&f);
+  let ast = parse(&mut ctx);
 
   verify_that!(
-    parse(&f),
+    ast,
     matches_pattern!(syn::PzFile {
       edition: matches_pattern!(syn::Edition {
-        value: Text(&f, eq("\"2023\"")),
+        value: Text(&ast.ctx, eq("\"2023\"")),
       }),
       package: matches_pattern!(syn::Package {
-        components: elements_are![Text(&f, eq("foo")), Text(&f, eq("bar"))],
+        components: elements_are![
+          Text(&ast.ctx, eq("foo")),
+          Text(&ast.ctx, eq("bar"))
+        ],
       }),
     })
   )?;

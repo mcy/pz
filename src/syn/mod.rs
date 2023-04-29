@@ -1,25 +1,31 @@
-//!
+//! Syntax trees for pz.
 
-use std::fmt;
-
-use crate::pz;
-use crate::report::Report;
-
+mod lex;
 mod parse;
 
+pub use lex::Context;
+pub use lex::Span;
+pub use lex::Spanned;
+
+/// A single `.pz` file.
 #[derive(Debug)]
-pub struct PzFile<'file> {
-  pub file: &'file pz::File,
+pub struct PzFile<'ctx, 'file> {
+  pub ctx: &'ctx mut Context<'file>,
   pub edition: Edition,
   pub package: Package,
 }
 
-impl<'file> PzFile<'file> {
-  pub fn parse(file: &'file pz::File, report: &mut Report) -> Option<Self> {
-    parse::parse(file, report)
+impl<'ctx, 'file> PzFile<'ctx, 'file> {
+  pub fn parse(
+    ctx: &'ctx mut Context<'file>,
+  ) -> Result<Self, &'ctx mut Context<'file>> {
+    parse::parse(ctx)
   }
 }
 
+/// An `edition = "...";` declaration.
+///
+/// This is the first thing in the file.
 #[derive(Debug)]
 pub struct Edition {
   pub span: Span,
@@ -32,6 +38,9 @@ impl Spanned for Edition {
   }
 }
 
+/// A `package = foo.bar.baz;` declaration.
+///
+/// This is the second thing in the file, after the [`Edition`].
 #[derive(Debug)]
 pub struct Package {
   pub span: Span,
@@ -44,56 +53,17 @@ impl Spanned for Package {
   }
 }
 
-#[derive(Copy, Clone)]
-pub struct Span {
-  start: u32,
-  end: u32,
-}
-
-pub trait Spanned {
-  fn span(&self) -> Span;
-
-  fn text<'file>(&self, file: &'file pz::File) -> &'file str {
-    self.span().text(file)
-  }
-}
-
-impl Spanned for Span {
-  fn span(&self) -> Span {
-    *self
-  }
-}
-
-impl Span {
-  pub fn text<'file>(&self, file: &'file pz::File) -> &'file str {
-    file
-      .text
-      .as_ref()
-      .and_then(|text| text.get(self.start as usize..self.end as usize))
-      .unwrap()
-  }
-}
-
-impl fmt::Debug for Span {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}..{}", self.start, self.end)
-  }
-}
-
-impl From<Span> for pz::Span {
-  fn from(Span { start, end }: Span) -> Self {
-    pz::Span {
-      start: Some(start),
-      end: Some(end),
-    }
-  }
-}
-
-#[derive(Debug)]
+/// An identifier.
+///
+/// Keywords may not be used as identifiers directly; instead, they must be
+/// prefixed with a `#`, e.g. `#package`.
+#[derive(Copy, Clone, Debug)]
 pub struct Ident(Span);
 impl Ident {
-  pub fn name<'file>(&self, file: &'file pz::File) -> &'file str {
-    self.text(file).trim_start_matches("#")
+  /// Returns the name of this identifier (i.e., the text with an optional
+  /// leading `#` stripped).
+  pub fn name<'ctx>(&self, ctx: &'ctx Context) -> &'ctx str {
+    self.text(ctx).trim_start_matches("#")
   }
 }
 
@@ -103,7 +73,8 @@ impl Spanned for Ident {
   }
 }
 
-#[derive(Debug)]
+/// A quoted string literal.
+#[derive(Copy, Clone, Debug)]
 pub struct StrLit(Span);
 
 impl Spanned for StrLit {
@@ -111,5 +82,3 @@ impl Spanned for StrLit {
     self.0
   }
 }
-
-pub const KEYWORDS: &[&str] = &["edition", "package"];
