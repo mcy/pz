@@ -13,6 +13,7 @@ use prost::Message;
 use crate::proto;
 use crate::proto::plugin;
 
+#[macro_use]
 mod emit;
 mod rust;
 
@@ -35,6 +36,7 @@ impl CodegenCtx {
     &'ccx self,
   ) -> impl Iterator<Item = Type<'ccx>> + 'ccx {
     self.req.requested_indices.iter().map(|&idx| Type {
+      ctx: self,
       bundle: self.bundle(),
       proto: &self.bundle().types[idx as usize],
     })
@@ -129,11 +131,16 @@ pub struct Span(u32);
 
 #[derive(Copy, Clone)]
 pub struct Type<'ccx> {
+  ctx: &'ccx CodegenCtx,
   bundle: &'ccx proto::Bundle,
   proto: &'ccx proto::Type,
 }
 
 impl<'ccx> Type<'ccx> {
+  pub fn ccx(&self) -> &'ccx CodegenCtx {
+    self.ctx
+  }
+
   pub fn package(&self) -> &str {
     &self.bundle.packages[self.proto.package() as usize]
   }
@@ -148,6 +155,7 @@ impl<'ccx> Type<'ccx> {
 
   pub fn parent(&self) -> Option<Type<'ccx>> {
     self.proto.declared_in.map(|idx| Type {
+      ctx: self.ctx,
       bundle: self.bundle,
       proto: &self.bundle.types[idx as usize],
     })
@@ -155,15 +163,18 @@ impl<'ccx> Type<'ccx> {
 
   pub fn nesteds(&self) -> impl Iterator<Item = Type<'ccx>> + '_ {
     self.proto.nesteds.iter().map(|&idx| Type {
+      ctx: self.ctx,
       bundle: self.bundle,
       proto: &self.bundle.types[idx as usize],
     })
   }
 
   pub fn fields(&self) -> impl Iterator<Item = Field<'ccx>> + '_ {
-    self.proto.fields.iter().map(|f| Field {
+    self.proto.fields.iter().enumerate().map(|(i, f)| Field {
+      ctx: self.ctx,
       bundle: self.bundle,
       proto: f,
+      index: i as u32,
     })
   }
 
@@ -174,17 +185,27 @@ impl<'ccx> Type<'ccx> {
 
 #[derive(Copy, Clone)]
 pub struct Field<'ccx> {
+  ctx: &'ccx CodegenCtx,
   bundle: &'ccx proto::Bundle,
   proto: &'ccx proto::Field,
+  index: u32,
 }
 
 impl<'ccx> Field<'ccx> {
+  pub fn ccx(&self) -> &'ccx CodegenCtx {
+    self.ctx
+  }
+
   pub fn name(&self) -> &str {
     self.proto.name()
   }
 
   pub fn number(&self) -> Option<i32> {
     self.proto.number
+  }
+
+  pub fn index(&self) -> u32 {
+    self.index
   }
 
   pub fn is_repeated(&self) -> bool {
@@ -197,6 +218,7 @@ impl<'ccx> Field<'ccx> {
       return (
         kind,
         Some(Type {
+          ctx: self.ctx,
           bundle: self.bundle,
           proto: &self.bundle.types[self.proto.type_index() as usize],
         }),

@@ -7,7 +7,6 @@
 use core::fmt;
 use std::cell::Cell;
 use std::io;
-use std::mem;
 use std::ops::Range;
 use std::panic;
 

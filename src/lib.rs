@@ -9,3 +9,7 @@ pub mod proto {
     include!(concat!(env!("OUT_DIR"), "/pz.plugin.rs"));
   }
 }
+
+pub mod protoz {
+  //include!("lib.pz.rs");
+}

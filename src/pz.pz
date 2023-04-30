@@ -24,6 +24,8 @@ message Type {
 
   fields: repeated Field = 10,
   nesteds: repeated u32 = 11,
+
+  span: u32 = 20,
 }
 
 message Field {
@@ -49,4 +51,6 @@ message Field {
   is_repeated: bool = 3,
   type: Type = 4,
   type_index: u32 = 5,
+  
+  span: u32 = 20,
 }
