@@ -1,33 +1,42 @@
 //
 
 syntax = "proto2";
-package pz;
+package pz.plugin;
 
 import "pz.proto";
 
-message File {
-  optional string path = 1;
-  optional string text = 2;
+message Request {
+  optional pz.Bundle bundle = 1;
+  repeated uint32 requested_indices = 2;
+
+  map<string, string> options = 3;
+  optional bool debug = 4;
+}
+
+message Response {
+  message File {
+    optional string path = 1;
+    optional bytes content = 2;
+  }
+
+  repeated File files = 1;
+  repeated Diagnostic report = 2;
 }
 
 message Diagnostic {
-  optional string message = 1;
-
   enum Kind {
     ERROR = 0;
     WARNING = 1;
   }
-  optional Kind kind = 2;
 
   message Snippet {
-    optional Span span = 1;
+    optional uint32 span = 1;
     optional string message = 2;
+    optional bool is_remark = 3;
   }
 
+  optional Kind kind = 1;
+  optional string message = 2;
   repeated Snippet snippets = 3;
-}
-
-message Span {
-  optional uint32 start = 1;
-  optional uint32 end = 2;
+  repeated string notes = 4;
 }

@@ -2,12 +2,12 @@
 
 use std::borrow::Cow;
 use std::cell::Cell;
+use std::fmt;
+use std::fs;
 use std::ops::Range;
 use std::path::Path;
 use std::ptr;
-use std::{fmt, fs};
 
-use crate::pz;
 use crate::report::Report;
 
 /// A source code file.
@@ -71,19 +71,15 @@ impl<S: Spanned> Spanned for &S {
 }
 
 impl Span {
+  /// Returns this span's opaque ID, for encoding into codegen protos.
+  pub fn id(self) -> u32 {
+    self.0
+  }
+
   /// Returns the byte range for this span.
   pub fn range(self, scx: &SourceCtx) -> Range<usize> {
     let SpanOffsets { start, end, .. } = scx.spans[self.0 as usize];
     start as usize..end as usize
-  }
-
-  /// Converts this span into a [`pz::Span`].
-  pub fn to_pz(self, scx: &SourceCtx) -> pz::Span {
-    let SpanOffsets { start, end, .. } = scx.spans[self.0 as usize];
-    pz::Span {
-      start: Some(start),
-      end: Some(end),
-    }
   }
 
   /// Returns the file this span points into.

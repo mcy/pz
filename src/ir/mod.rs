@@ -5,11 +5,11 @@ use std::cell::RefCell;
 
 use bumpalo::collections::Vec as AVec;
 
-use crate::pz;
+use crate::proto;
 use crate::syn;
 
 mod resolve;
-mod to_pz;
+mod to_proto;
 
 pub use resolve::ResolveCtx;
 
@@ -18,8 +18,8 @@ pub struct Bundle<'syn, 'rcx> {
 }
 
 impl Bundle<'_, '_> {
-  pub fn to_pz(&self) -> pz::Bundle {
-    to_pz::to_pz(self)
+  pub fn to_proto(&self) -> proto::Bundle {
+    to_proto::to_proto(self)
   }
 }
 

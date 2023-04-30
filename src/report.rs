@@ -14,14 +14,15 @@ use annotate_snippets::display_list::DisplayList;
 use annotate_snippets::display_list::FormatOptions;
 use annotate_snippets::snippet;
 
-use crate::pz;
+use crate::proto::plugin::diagnostic::Kind;
 use crate::syn;
+use crate::syn::SourceCtx;
 
 /// A diagnostic that is being built up.
 ///
 /// See [`Report::diagnose()`].
 pub struct Diagnostic {
-  kind: pz::diagnostic::Kind,
+  kind: Kind,
   message: String,
   snippets: Vec<Vec<(syn::Span, String, bool)>>,
   notes: Vec<String>,
@@ -70,19 +71,10 @@ impl Diagnostic {
     self
   }
 
+  /// Appends a note to the bottom of the diagnostic.
   pub fn note(&mut self, message: impl fmt::Display) -> &mut Self {
     self.notes.push(message.to_string());
     self
-  }
-}
-
-impl From<(u32, u32)> for pz::Span {
-  fn from((start, end): (u32, u32)) -> Self {
-    pz::Span {
-      start: Some(start),
-      end: Some(end),
-      ..Default::default()
-    }
   }
 }
 
@@ -132,10 +124,24 @@ impl Report {
     let error_count = self
       .errors
       .iter()
-      .filter(|e| matches!(e.kind, pz::diagnostic::Kind::Error))
+      .filter(|e| matches!(e.kind, Kind::Error))
       .count();
     let old = mem::replace(&mut self.errors_since_last_check, error_count);
     old != self.errors.len()
+  }
+
+  /// Adds a new fatal error to this report, and then kills the program with
+  /// the given exit code.
+  #[track_caller]
+  pub fn fatal(
+    &mut self,
+    scx: &SourceCtx,
+    exit_code: i32,
+    message: impl fmt::Display,
+  ) -> ! {
+    self.error(message);
+    self.dump_and_die(scx, exit_code);
+    unreachable!();
   }
 
   /// Adds a new error to this report.
@@ -143,7 +149,7 @@ impl Report {
   pub fn error(&mut self, message: impl fmt::Display) -> &mut Diagnostic {
     self.errors.push(Diagnostic {
       message: message.to_string(),
-      kind: pz::diagnostic::Kind::Error,
+      kind: Kind::Error,
       snippets: Vec::new(),
       notes: Vec::new(),
       reported_at: Some(panic::Location::caller()),
@@ -157,7 +163,7 @@ impl Report {
   pub fn warn(&mut self, message: impl fmt::Display) -> &mut Diagnostic {
     self.errors.push(Diagnostic {
       message: message.to_string(),
-      kind: pz::diagnostic::Kind::Warning,
+      kind: Kind::Warning,
       snippets: Vec::new(),
       notes: Vec::new(),
       reported_at: Some(panic::Location::caller()),
@@ -190,8 +196,8 @@ impl Report {
 
     for (i, e) in self.errors.iter().enumerate() {
       let kind = match e.kind {
-        pz::diagnostic::Kind::Warning => snippet::AnnotationType::Warning,
-        pz::diagnostic::Kind::Error => snippet::AnnotationType::Error,
+        Kind::Warning => snippet::AnnotationType::Warning,
+        Kind::Error => snippet::AnnotationType::Error,
       };
 
       let mut snippet = snippet::Snippet {

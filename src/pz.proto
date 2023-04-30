@@ -20,10 +20,12 @@ message Type {
   optional string name = 1;
   optional uint32 package = 2;
   optional Kind kind = 3;
-  optional uint32 declated_in = 4;
+  optional uint32 declared_in = 4;
 
   repeated Field fields = 10;
   repeated uint32 nesteds = 11;
+
+  optional uint32 span = 20;
 }
 
 message Field {
@@ -49,4 +51,6 @@ message Field {
   optional bool is_repeated = 3;
   optional Type type = 4;
   optional uint32 type_index = 5;
+
+  optional uint32 span = 20;
 }
