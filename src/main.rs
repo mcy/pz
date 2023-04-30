@@ -107,6 +107,7 @@ fn run_plugin(
 fn main() {
   match env::var("_PZ_SELF_EXEC").as_deref() {
     Ok("bundle") => pz::plugin::bundle_plugin(),
+    Ok("rust") => pz::plugin::rust_plugin(),
     _ => {}
   }
 
@@ -130,8 +131,8 @@ fn main() {
   }
 
   let plugin = match plugin_name.as_deref() {
-    None | Some("bundle") => {
-      env::set_var("_PZ_SELF_EXEC", "bundle");
+    plugin @ (None | Some("bundle") | Some("rust")) => {
+      env::set_var("_PZ_SELF_EXEC", plugin.unwrap_or("bundle"));
       env::current_exe().unwrap()
     }
     Some(plugin) => plugin.into(),

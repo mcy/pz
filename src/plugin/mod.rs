@@ -14,6 +14,9 @@ use crate::proto;
 use crate::proto::plugin;
 
 mod emit;
+mod rust;
+
+pub use rust::rust_plugin;
 
 /// The context for the current codegen operation.
 pub struct CodegenCtx {
@@ -212,7 +215,7 @@ impl<'ccx> Field<'ccx> {
 ///
 /// This function should be called in the `main` function of a program that
 /// implements a codegen backend.
-pub fn exec(
+pub fn exec_plugin(
   about: impl FnOnce(&plugin::AboutRequest) -> plugin::AboutResponse,
   codegen: impl FnOnce(&CodegenCtx),
 ) -> ! {
@@ -251,7 +254,7 @@ pub fn exec(
 
 /// Runs the "trivial" bundle plugin that simply echoes the request bundle.
 pub fn bundle_plugin() -> ! {
-  exec(
+  exec_plugin(
     |_| plugin::AboutResponse {
       name: Some("bundle".into()),
       version: Some(env!("CARGO_PKG_VERSION").into()),

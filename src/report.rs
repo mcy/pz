@@ -5,6 +5,7 @@
 //! converted into a simple diagonstic.
 
 use core::fmt;
+use std::cell::Cell;
 use std::io;
 use std::mem;
 use std::ops::Range;
@@ -101,7 +102,7 @@ impl Default for RenderOptions {
 pub struct Report {
   opts: RenderOptions,
   errors: Vec<Diagnostic>,
-  errors_since_last_check: usize,
+  rendered: Cell<usize>,
 }
 
 impl Report {
@@ -115,20 +116,8 @@ impl Report {
     Self {
       opts,
       errors: Vec::new(),
-      errors_since_last_check: 0,
+      rendered: Cell::new(0),
     }
-  }
-
-  /// Returns whether there have been any new errors since this function was
-  /// last called.
-  pub fn has_new_errors(&mut self) -> bool {
-    let error_count = self
-      .errors
-      .iter()
-      .filter(|e| matches!(e.kind, Kind::Error))
-      .count();
-    let old = mem::replace(&mut self.errors_since_last_check, error_count);
-    old != self.errors.len()
   }
 
   /// Adds a new fatal error to this report, and then kills the program with
@@ -211,14 +200,14 @@ impl Report {
     scx: &syn::SourceCtx,
     sink: &mut dyn io::Write,
   ) -> io::Result<bool> {
-    if self.errors.is_empty() {
-      return Ok(false);
-    }
-
-    for (i, e) in self.errors.iter().enumerate() {
+    let mut errors = 0;
+    for (i, e) in self.errors[self.rendered.get()..].iter().enumerate() {
       let kind = match e.kind {
         Kind::Warning => snippet::AnnotationType::Warning,
-        Kind::Error => snippet::AnnotationType::Error,
+        Kind::Error => {
+          errors += 1;
+          snippet::AnnotationType::Error
+        }
       };
 
       let mut snippet = snippet::Snippet {
@@ -335,8 +324,13 @@ impl Report {
       writeln!(sink, "{}", DisplayList::from(snippet))?;
     }
 
+    self.rendered.set(self.errors.len());
+    if errors == 0 {
+      return Ok(false);
+    }
+
     writeln!(sink, "")?;
-    let message = match self.errors.len() {
+    let message = match errors {
       1 => "aborted due to previous error".into(),
       n => format!("aborted due to {n} errors"),
     };
