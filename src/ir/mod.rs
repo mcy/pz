@@ -31,6 +31,7 @@ pub struct Type<'syn, 'rcx> {
   fields: RefCell<AVec<'rcx, Field<'syn, 'rcx>>>,
   nesteds: RefCell<AVec<'rcx, &'rcx Type<'syn, 'rcx>>>,
   parent: Option<&'rcx Type<'syn, 'rcx>>,
+  attrs: proto::r#type::Attrs,
 }
 
 impl<'syn, 'rcx> Type<'syn, 'rcx> {
@@ -89,6 +90,7 @@ pub struct Field<'syn, 'rcx> {
   decl: Option<&'syn syn::Field>,
   ty: Cell<Option<FieldType<'syn, 'rcx>>>,
   number: Cell<Option<i32>>,
+  attrs: proto::field::Attrs,
 }
 
 impl<'syn, 'rcx> Field<'syn, 'rcx> {

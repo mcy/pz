@@ -181,6 +181,10 @@ impl<'ccx> Type<'ccx> {
   pub fn span(&self) -> Option<Span> {
     self.proto.span.map(Span)
   }
+
+  pub fn proto(&self) -> &'ccx proto::Type {
+    self.proto
+  }
 }
 
 #[derive(Copy, Clone)]
@@ -230,6 +234,10 @@ impl<'ccx> Field<'ccx> {
 
   pub fn span(&self) -> Option<Span> {
     self.proto.span.map(Span)
+  }
+
+  pub fn proto(&self) -> &'ccx proto::Field {
+    self.proto
   }
 }
 

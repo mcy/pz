@@ -146,127 +146,184 @@ impl fmt::Display for Container {
   }
 }
 
+fn parse_attr_kv(start: Span, lexer: &mut Lexer) -> Result<syn::Attr> {
+  let name = parse_path(lexer)?;
+  let mut end = name.span();
+  let value = if lexer.peek()?.text(lexer.scx()) == "=" {
+    lexer.keyword("=")?;
+    let tok = lexer.expect(&[Kind::Ident, Kind::Int, Kind::Str])?;
+    end = tok.span();
+    match tok {
+      Token::Ident(x) => syn::AttrValue::Ident(x),
+      Token::Int(x) => syn::AttrValue::Int(x),
+      Token::Str(x) => syn::AttrValue::Str(x),
+      _ => unreachable!(),
+    }
+  } else {
+    syn::AttrValue::None
+  };
+
+  let span = start.span().with_end(end, lexer.scx_mut());
+  Ok(syn::Attr {
+    span,
+    kind: syn::AttrKind::At(name),
+    value,
+  })
+}
+
 fn parse_item(
   lexer: &mut Lexer,
   inside: Container,
   outer_name: Span,
+  outer_attrs: &mut Vec<syn::Attr>,
 ) -> Result<syn::Item> {
-  let kw = lexer.expect(&[
-    Kind::Ident,
-    Kind::Exact("message"),
-    Kind::Exact("enum"),
-    Kind::Exact("struct"),
-    Kind::Exact("choice"),
-  ])?;
+  let mut attrs = Vec::new();
+  loop {
+    let kw = lexer.expect(&[
+      Kind::Ident,
+      Kind::Doc,
+      Kind::Exact("@"),
+      Kind::Exact("message"),
+      Kind::Exact("enum"),
+      Kind::Exact("struct"),
+      Kind::Exact("choice"),
+    ])?;
 
-  match kw.text(lexer.scx()) {
-    kind @ ("message" | "enum" | "struct" | "choice") => {
-      let (kind, container) = match kind {
-        "message" => (syn::DeclKind::Message, Container::Message),
-        "enum" => (syn::DeclKind::Enum, Container::Enum),
-        "struct" => (syn::DeclKind::Struct, Container::Struct),
-        "choice" => (syn::DeclKind::Choice, Container::Choice),
-        _ => unreachable!(),
-      };
-
-      let name = parse_ident(lexer)?;
-      let span = kw.span().with_end(name.span(), lexer.scx_mut());
-
-      if inside == Container::Enum {
-        lexer
-          .error("declarations not permitted inside an `enum`")
-          .at(span)
-          .remark(outer_name, "declared within this  enum");
+    break match kw.text(lexer.scx()) {
+      "@" => {
+        attrs.push(parse_attr_kv(kw.span(), lexer)?);
+        continue;
       }
+      "where" => {
+        outer_attrs.push(parse_attr_kv(kw.span(), lexer)?);
+        continue;
+      }
+      comment if comment.starts_with("///") => {
+        attrs.push(syn::Attr {
+          span: kw.span(),
+          kind: syn::AttrKind::Doc,
+          value: syn::AttrValue::None,
+        });
+        continue;
+      }
+      kind @ ("message" | "enum" | "struct" | "choice") => {
+        let (kind, container) = match kind {
+          "message" => (syn::DeclKind::Message, Container::Message),
+          "enum" => (syn::DeclKind::Enum, Container::Enum),
+          "struct" => (syn::DeclKind::Struct, Container::Struct),
+          "choice" => (syn::DeclKind::Choice, Container::Choice),
+          _ => unreachable!(),
+        };
 
-      lexer.keyword("{")?;
-      let mut items = Vec::new();
-      while !lexer.at_eof()? {
-        if lexer.peek()?.text(lexer.scx()) == "}" {
-          break;
+        let name = parse_ident(lexer)?;
+        let span = kw.span().with_end(name.span(), lexer.scx_mut());
+
+        if inside == Container::Enum {
+          lexer
+            .error("declarations not permitted inside an `enum`")
+            .at(span)
+            .remark(outer_name, "declared within this  enum");
         }
 
-        if let Some(syn::Item::Field(..)) = items.last() {
-          lexer.keyword(",")?;
+        lexer.keyword("{")?;
+        let mut items = Vec::new();
+        while !lexer.at_eof()? {
           if lexer.peek()?.text(lexer.scx()) == "}" {
             break;
           }
+
+          if let Some(syn::Item::Field(..)) = items.last() {
+            lexer.keyword(",")?;
+            if lexer.peek()?.text(lexer.scx()) == "}" {
+              break;
+            }
+          }
+
+          items.push(parse_item(lexer, container, span, &mut attrs)?);
         }
+        lexer.keyword("}")?;
 
-        items.push(parse_item(lexer, container, span)?);
-      }
-      lexer.keyword("}")?;
-
-      Ok(syn::Item::Decl(syn::Decl {
-        span,
-        kind,
-        name,
-        items,
-      }))
-    }
-
-    _ => {
-      lexer.unlex(1);
-      let name = parse_ident(lexer)?;
-
-      let mut ty = None;
-      if let Some(_) = lexer.take_exact(":")? {
-        let typ = parse_type(lexer)?;
-        if inside == Container::Enum {
-          lexer
-            .error(format_args!("{inside} fields cannot have types"))
-            .saying(&typ, "remove this type")
-            .remark(outer_name, format_args!("declared within this {inside}"));
-        }
-
-        ty = Some(typ);
-      } else if inside != Container::Enum {
-        lexer
-          .error(format_args!("{inside} fields must have types"))
-          .saying(name, "expected type")
-          .remark(outer_name, format_args!("declared within this {inside}"));
+        Ok(syn::Item::Decl(syn::Decl {
+          span,
+          kind,
+          name,
+          items,
+          attrs,
+        }))
       }
 
-      let mut number = None;
-      if let Some(_) = lexer.take_exact("=")? {
-        if let Token::Int(n) = lexer.expect(&[Kind::Int])? {
-          if inside == Container::Struct {
+      _ => {
+        lexer.unlex(1);
+        let name = parse_ident(lexer)?;
+
+        let mut ty = None;
+        if let Some(_) = lexer.take_exact(":")? {
+          let typ = parse_type(lexer)?;
+          if inside == Container::Enum {
             lexer
-              .error(format_args!("{inside} fields cannot have numbers"))
-              .saying(&n, "remove this number")
+              .error(format_args!("{inside} fields cannot have types"))
+              .saying(&typ, "remove this type")
               .remark(
                 outer_name,
                 format_args!("declared within this {inside}"),
               );
           }
 
-          number = Some(n)
+          ty = Some(typ);
+        } else if inside != Container::Enum {
+          lexer
+            .error(format_args!("{inside} fields must have types"))
+            .saying(name, "expected type")
+            .remark(outer_name, format_args!("declared within this {inside}"));
         }
-      } else if inside != Container::Struct {
-        lexer
-          .error(format_args!("{inside} fields must have numbers"))
-          .saying(name, "expected number")
-          .remark(outer_name, format_args!("declared within this {inside}"));
+
+        let mut number = None;
+        if let Some(_) = lexer.take_exact("=")? {
+          if let Token::Int(n) = lexer.expect(&[Kind::Int])? {
+            if inside == Container::Struct {
+              lexer
+                .error(format_args!("{inside} fields cannot have numbers"))
+                .saying(&n, "remove this number")
+                .remark(
+                  outer_name,
+                  format_args!("declared within this {inside}"),
+                );
+            }
+
+            number = Some(n)
+          }
+        } else if inside != Container::Struct {
+          lexer
+            .error(format_args!("{inside} fields must have numbers"))
+            .saying(name, "expected number")
+            .remark(outer_name, format_args!("declared within this {inside}"));
+        }
+
+        while lexer.peek()?.text(lexer.scx()) == "where" {
+          let kw = lexer.keyword("where")?;
+          attrs.push(parse_attr_kv(kw.span(), lexer)?);
+        }
+
+        let last = [
+          number.as_ref().map(|x| x.span()),
+          ty.as_ref().map(|x| x.span()),
+          Some(name.span()),
+        ]
+        .iter()
+        .find(|x| x.is_some())
+        .unwrap()
+        .unwrap();
+
+        let span = name.span().with_end(last, lexer.scx_mut());
+        Ok(syn::Item::Field(syn::Field {
+          span,
+          name,
+          number,
+          ty,
+          attrs,
+        }))
       }
-
-      let last = [
-        number.as_ref().map(|x| x.span()),
-        ty.as_ref().map(|x| x.span()),
-        Some(name.span()),
-      ]
-      .iter()
-      .find(|x| x.is_some())
-      .unwrap()
-      .unwrap();
-
-      let span = name.span().with_end(last, lexer.scx_mut());
-      Ok(syn::Item::Field(syn::Field {
-        span,
-        name,
-        number,
-        ty,
-      }))
-    }
+    };
   }
 }
 
@@ -277,8 +334,20 @@ fn parse_file<'scx, 'file>(
   let package = parse_package(lexer)?;
 
   let mut items = Vec::new();
+  let mut attrs = Vec::new();
   while !lexer.at_eof()? {
-    items.push(parse_item(lexer, Container::File, edition.span())?);
+    items.push(parse_item(
+      lexer,
+      Container::File,
+      edition.span(),
+      &mut attrs,
+    )?);
+  }
+
+  for attr in attrs {
+    lexer
+      .error("sorry: attributes not supported at file scope yet")
+      .at(attr);
   }
 
   Ok((edition, package, items))

@@ -32,6 +32,7 @@ pub fn to_proto(bundle: &ir::Bundle) -> proto::Bundle {
         syn::DeclKind::Enum => Some(proto::r#type::Kind::Enum as i32),
       },
       span: ty.decl().map(|t| t.span.id()),
+      attrs: Some(ty.attrs.clone()),
 
       ..Default::default()
     });
@@ -88,6 +89,7 @@ pub fn to_proto(bundle: &ir::Bundle) -> proto::Bundle {
           r#type: kind,
           type_index,
           span: field.decl().map(|f| f.span.id()),
+          attrs: Some(field.attrs.clone()),
         })
       }
     });

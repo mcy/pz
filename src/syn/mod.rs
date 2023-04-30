@@ -13,11 +13,11 @@ pub use src::Spanned;
 
 use crate::report::Report;
 
-const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ","];
+const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ",", "@"];
 
 const KEYWORDS: &[&str] = &[
   "edition", "package", "message", "enum", "struct", "choice", "i32", "u32",
-  "f32", "i64", "u64", "f64", "str", "bool",
+  "f32", "i64", "u64", "f64", "str", "bool", "where",
 ];
 
 /// A single `.pz` file.
@@ -87,6 +87,19 @@ impl Path {
 
     name
   }
+
+  pub fn is_exactly(&self, scx: &SourceCtx, path: &[&str]) -> bool {
+    if self.components.len() != path.len() {
+      return false;
+    }
+
+    self
+      .components
+      .iter()
+      .zip(path)
+      .map(|(a, b)| &a.name(scx) == b)
+      .all(|x| x)
+  }
 }
 
 impl Spanned for Path {
@@ -111,6 +124,41 @@ impl Spanned for Item {
   }
 }
 
+/// An attribute on something, e.g. `@deprecated`.
+#[derive(Debug)]
+pub struct Attr {
+  pub span: Span,
+  pub kind: AttrKind,
+  pub value: AttrValue,
+}
+
+impl Spanned for Attr {
+  fn span(&self) -> Span {
+    self.span
+  }
+}
+
+/// A kind of attribute.
+#[derive(Debug)]
+pub enum AttrKind {
+  At(Path),
+  Doc,
+}
+/// An attribute value.
+#[derive(Debug)]
+pub enum AttrValue {
+  None,
+  Ident(Ident),
+  Int(IntLit),
+  Str(StrLit),
+}
+
+impl AttrValue {
+  pub fn is_none(&self) -> bool {
+    matches!(self, Self::None)
+  }
+}
+
 /// A declaration. This is anything of the form `keyword Name { items }`.
 #[derive(Debug)]
 pub struct Decl {
@@ -118,6 +166,7 @@ pub struct Decl {
   pub kind: DeclKind,
   pub name: Ident,
   pub items: Vec<Item>,
+  pub attrs: Vec<Attr>,
 }
 
 impl Spanned for Decl {
@@ -145,6 +194,7 @@ pub struct Field {
   pub name: Ident,
   pub ty: Option<Type>,
   pub number: Option<IntLit>,
+  pub attrs: Vec<Attr>,
 }
 
 impl Spanned for Field {
@@ -210,6 +260,25 @@ impl fmt::Debug for Ident {
 /// A quoted string literal.
 #[derive(Copy, Clone)]
 pub struct StrLit(Span);
+
+impl StrLit {
+  pub fn unescape(&self, scx: &SourceCtx) -> Vec<u8> {
+    let mut vec = Vec::new();
+    let _ = lex::unquote(self.text(scx), &mut vec, |_, _, _| unreachable!());
+    vec
+  }
+
+  pub fn unescape_utf8(self, scx: &SourceCtx, report: &mut Report) -> String {
+    match String::from_utf8(self.unescape(scx)) {
+      Ok(s) => s,
+      Err(_) => {
+        // TODO(mcyoung): attempt to produce a more detailed error?
+        report.error("expected Unicode string").at(self);
+        String::new()
+      }
+    }
+  }
+}
 
 impl Spanned for StrLit {
   fn span(&self) -> Span {

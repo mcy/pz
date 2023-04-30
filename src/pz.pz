@@ -1,15 +1,18 @@
-// 
-
 edition = "2023";
 package pz;
 
+/// A bundle, i.e., a collection of types and associated metadata.
+///
+/// This type is a sort of Protobuf object code.
 message Bundle {
   types: repeated Type = 1,
+  
   packages: repeated str = 2,
   foreign_types: repeated str = 3,
 }
 
-message Type {  
+/// A Protobuf type.
+message Type {
   enum Kind {
     MESSAGE = 0,
     STRUCT = 1,
@@ -28,6 +31,7 @@ message Type {
   span: u32 = 20,
 }
 
+/// A Protobuf type's field.
 message Field {
   enum Type {
     NONE = 0,
@@ -51,6 +55,6 @@ message Field {
   is_repeated: bool = 3,
   type: Type = 4,
   type_index: u32 = 5,
-  
+
   span: u32 = 20,
 }

@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use std::marker::PhantomData;
 
 use crate::ir;
+use crate::proto;
 use crate::report::Report;
 use crate::syn;
 use crate::syn::Spanned;
@@ -199,6 +200,7 @@ impl<'ast, 'scx: 'ast> ResolveCtx<'ast, 'scx> {
           decl: Some(field),
           ty: field_ty.into(),
           number: field_number.into(),
+          attrs: self.field_attrs(field, report),
         });
       }
     }
@@ -247,6 +249,7 @@ impl<'ast, 'scx: 'ast> ResolveCtx<'ast, 'scx> {
       fields: AVec::with_capacity_in(fields_count, &self.arena).into(),
       nesteds: AVec::with_capacity_in(decls_count, &self.arena).into(),
       parent,
+      attrs: self.type_attrs(decl, report),
     });
     bundle.types.borrow_mut().push(ty);
     types_out.push(ty);
@@ -328,5 +331,101 @@ impl<'ast, 'scx: 'ast> ResolveCtx<'ast, 'scx> {
     }
 
     None
+  }
+
+  fn type_attrs<'rcx>(
+    &'rcx self,
+    decl: &syn::Decl,
+    report: &mut Report,
+  ) -> proto::r#type::Attrs {
+    let mut attrs = proto::r#type::Attrs::default();
+    for attr in &decl.attrs {
+      match &attr.kind {
+        syn::AttrKind::Doc => {
+          let text = attr.span().text(&self.scx);
+          let doc = text.trim_start_matches("///").trim();
+          attrs.docs.push(doc.to_string());
+        }
+        syn::AttrKind::At(path) => {
+          if path.is_exactly(&self.scx, &["deprecated"]) {
+            if attrs.deprecated.is_some() {
+              report
+                .error("cannot specify `@deprecated` multiple times")
+                .at(attr);
+            }
+
+            attrs.deprecated = match &attr.value {
+              syn::AttrValue::None => Some(String::new()),
+              syn::AttrValue::Str(str) => {
+                Some(str.unescape_utf8(&self.scx, report))
+              }
+              _ => {
+                report
+                  .error("`@deprecated` expects a string value")
+                  .at(attr);
+                None
+              }
+            };
+          } else {
+            report
+              .error(format_args!(
+                "unknown attribute `{}`",
+                path.join(&self.scx)
+              ))
+              .at(attr);
+          }
+        }
+      }
+    }
+
+    attrs
+  }
+
+  fn field_attrs<'rcx>(
+    &'rcx self,
+    field: &syn::Field,
+    report: &mut Report,
+  ) -> proto::field::Attrs {
+    let mut attrs = proto::field::Attrs::default();
+    for attr in &field.attrs {
+      match &attr.kind {
+        syn::AttrKind::Doc => {
+          let text = attr.span().text(&self.scx);
+          let doc = text.trim_start_matches("///").trim();
+          attrs.docs.push(doc.to_string());
+        }
+        syn::AttrKind::At(path) => {
+          if path.is_exactly(&self.scx, &["deprecated"]) {
+            if attrs.deprecated.is_some() {
+              report
+                .error("cannot specify `@deprecated` multiple times")
+                .at(attr);
+            }
+
+            attrs.deprecated = match &attr.value {
+              syn::AttrValue::None => Some(String::new()),
+              syn::AttrValue::Str(str) => {
+                Some(str.unescape_utf8(&self.scx, report))
+              }
+              _ => {
+                report
+                  .error("`@deprecated` expects a string value")
+                  .at(attr);
+                None
+              }
+            };
+          } else {
+            report
+              .error(format_args!(
+                "unknown attribute `{}`",
+                path.join(&self.scx)
+              ))
+              .at(attr);
+          }
+        }
+      }
+    }
+
+    attrs
   }
 }

@@ -17,6 +17,12 @@ message Type {
     ENUM = 3;
   }
 
+  message Attrs {
+    optional string deprecated = 1;
+
+    repeated string docs = 100;
+  }
+
   optional string name = 1;
   optional uint32 package = 2;
   optional Kind kind = 3;
@@ -24,6 +30,7 @@ message Type {
 
   repeated Field fields = 10;
   repeated uint32 nesteds = 11;
+  optional Attrs attrs = 12;
 
   optional uint32 span = 20;
 }
@@ -46,11 +53,19 @@ message Field {
     FOREIGN = 10;
   }
 
+  message Attrs {
+    optional string deprecated = 1;
+
+    repeated string docs = 100;
+  }
+
   optional string name = 1;
   optional int32 number = 2;
   optional bool is_repeated = 3;
   optional Type type = 4;
   optional uint32 type_index = 5;
+
+  optional Attrs attrs = 10;
 
   optional uint32 span = 20;
 }

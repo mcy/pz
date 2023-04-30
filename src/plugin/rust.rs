@@ -74,6 +74,13 @@ fn storage_for<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
   })
 }
 
+fn deprecated<'a>(reason: Option<&'a str>) -> impl fmt::Display + 'a {
+  emit::display(move |f| match reason {
+    Some(value) => write!(f, "#[deprecated = {value:?}]"),
+    _ => Ok(()),
+  })
+}
+
 pub fn rust_plugin() -> ! {
   exec_plugin(
     |_| plugin::AboutResponse {
@@ -115,20 +122,26 @@ pub fn rust_plugin() -> ! {
       w.new_line();
 
       for ty in ctx.types_to_generate() {
-        match ty.kind() {
-          crate::proto::r#type::Kind::Message => emit_message(ty, &mut w),
-          crate::proto::r#type::Kind::Struct => {
-            ctx
-              .warn("sorry: can't emit this kind of type yet")
-              .at(ty.span().unwrap());
-          }
-          crate::proto::r#type::Kind::Choice => {
-            ctx
-              .warn("sorry: can't emit this kind of type yet")
-              .at(ty.span().unwrap());
-          }
-          crate::proto::r#type::Kind::Enum => emit_enum(ty, &mut w),
-        }
+        w.with_vars(
+          vars! {
+            deprecated: deprecated(
+              ty.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
+          },
+          |w| match ty.kind() {
+            crate::proto::r#type::Kind::Message => emit_message(ty, w),
+            crate::proto::r#type::Kind::Struct => {
+              ctx
+                .warn("sorry: can't emit this kind of type yet")
+                .at(ty.span().unwrap());
+            }
+            crate::proto::r#type::Kind::Choice => {
+              ctx
+                .warn("sorry: can't emit this kind of type yet")
+                .at(ty.span().unwrap());
+            }
+            crate::proto::r#type::Kind::Enum => emit_enum(ty, w),
+          },
+        )
       }
 
       ctx.add_file(plugin::codegen_response::File {
@@ -189,6 +202,7 @@ fn emit_message(ty: Type, w: &mut SourceWriter) {
     },
     r#"
       /// message `$package.$Name`
+      $deprecated
       pub struct $Msg {
         ${Msg::fields}
       }
@@ -212,89 +226,104 @@ fn emit_message_accessors(
   hasbit_index: u32,
   w: &mut SourceWriter,
 ) {
-  let hasbit_word = hasbit_index / 32;
-  let hasbit_bit = 1 << (hasbit_index % 32);
+  w.with_vars(
+    vars! {
+      deprecated: deprecated(
+        field.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
+    },
+    |w| {
+      let hasbit_word = hasbit_index / 32;
+      let hasbit_bit = 1 << (hasbit_index % 32);
 
-  let is_scalar = match field.ty() {
-    (
-      TypeEnum::I32
-      | TypeEnum::U32
-      | TypeEnum::F32
-      | TypeEnum::I64
-      | TypeEnum::U64
-      | TypeEnum::F64
-      | TypeEnum::Bool,
-      _,
-    ) => true,
-    (TypeEnum::Type, Some(ty)) => ty.kind() == Kind::Enum,
-    _ => false,
-  };
+      let is_scalar = match field.ty() {
+        (
+          TypeEnum::I32
+          | TypeEnum::U32
+          | TypeEnum::F32
+          | TypeEnum::I64
+          | TypeEnum::U64
+          | TypeEnum::F64
+          | TypeEnum::Bool,
+          _,
+        ) => true,
+        (TypeEnum::Type, Some(ty)) => ty.kind() == Kind::Enum,
+        _ => false,
+      };
 
-  if is_scalar {
-    if !field.is_repeated() {
-      w.emit(
-        vars! {
-          hasbit_word,
-          hasbit_bit,
-          name: ident(field.name()),
-          Type: field_type_name(field),
-        },
-        r"
-        fn $name(&self) -> $Type {
-          self.${name}_opt().unwrap_or_default()
-        }
-        fn ${name}_opt(&self) -> Option<$Type> {
-          if self.__hasbits[$hasbit_word] & $hasbit_bit != 0 {
-            Some(self.$name)
-          } else {
-            None
-          }
-        }
-        fn ${name}_set(&mut self, value: impl Into<Option<$Type>>) {
-          match value.into() {
-            Some(value) => {
-              self.__hasbits[$hasbit_word] |= $hasbit_bit;
-              self.$name = value;
+      if is_scalar {
+        if !field.is_repeated() {
+          w.emit(
+            vars! {
+              hasbit_word,
+              hasbit_bit,
+              name: ident(field.name()),
+              Type: field_type_name(field),
+            },
+            r"
+            $deprecated
+            fn $name(&self) -> $Type {
+              self.${name}_opt().unwrap_or_default()
             }
-            None => {
-              self.__hasbits[$hasbit_word] &= !$hasbit_bit;
+            $deprecated
+            fn ${name}_opt(&self) -> Option<$Type> {
+              if self.__hasbits[$hasbit_word] & $hasbit_bit != 0 {
+                Some(self.$name)
+              } else {
+                None
+              }
             }
-          }
+            $deprecated
+            fn ${name}_set(&mut self, value: impl Into<Option<$Type>>) {
+              match value.into() {
+                Some(value) => {
+                  self.__hasbits[$hasbit_word] |= $hasbit_bit;
+                  self.$name = value;
+                }
+                None => {
+                  self.__hasbits[$hasbit_word] &= !$hasbit_bit;
+                }
+              }
+            }
+          ",
+          );
+        } else {
+          w.emit(
+            vars! {
+              name: ident(field.name()),
+              Type: field_type_name(field),
+            },
+            r"
+            $deprecated
+            fn $name(&self) -> &[$Type] {
+              &self.$name
+            }
+            $deprecated
+            fn ${name}_mut(&mut self) -> &mut [$Type] {
+              &mut self.$name
+            }
+            $deprecated
+            fn ${name}_set(&mut self, that: &[$Type]) {
+              self.$name.clear();
+              self.${name}_extend(that)
+            }
+            $deprecated
+            fn ${name}_extend(&mut self, that: &[$Type]) {
+              self.$name.extend_from_slice(that)
+            }
+          ",
+          );
         }
-      ",
-      );
-    } else {
-      w.emit(
-        vars! {
-          name: ident(field.name()),
-          Type: field_type_name(field),
-        },
-        r"
-        fn $name(&self) -> &[$Type] {
-          &self.$name
-        }
-        fn ${name}_mut(&mut self) -> &mut [$Type] {
-          &mut self.$name
-        }
-        fn ${name}_set(&mut self, that: &[$Type]) {
-          self.$name.clear();
-          self.${name}_extend(that)
-        }
-        fn ${name}_extend(&mut self, that: &[$Type]) {
-          self.$name.extend_from_slice(that)
-        }
-      ",
-      );
-    }
-  //} else if let (TypeEnum::String, _) = field.ty() {
-  } else {
-    field
-      .ccx()
-      .warn("no support for this field type yet")
-      .at(field.span().unwrap());
-  }
+      //} else if let (TypeEnum::String, _) = field.ty() {
+      } else {
+        field
+          .ccx()
+          .warn("no support for this field type yet")
+          .at(field.span().unwrap());
+      }
 
-  w.new_line()
+      w.new_line()
+    },
+  )
 }
 
 fn emit_enum(ty: Type, w: &mut SourceWriter) {
@@ -308,8 +337,11 @@ fn emit_enum(ty: Type, w: &mut SourceWriter) {
           vars! {
             NAME: ident(field.name()),
             NUMBER: field.number().unwrap(),
+            deprecated: deprecated(
+              field.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
           },
           r"
+            $deprecated
             pub const $NAME: Self = Self($NUMBER);
           "
         );
@@ -321,6 +353,7 @@ fn emit_enum(ty: Type, w: &mut SourceWriter) {
     },
     r#"
       /// enum `$package.$Name`
+      $deprecated
       pub struct $Enum(pub i32);
 
       impl $Enum {

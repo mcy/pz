@@ -1,6 +1,7 @@
 //! Lexing and tokens.
 
 use std::fmt;
+use std::io;
 use std::mem;
 
 use crate::report;
@@ -21,6 +22,7 @@ pub enum Token {
   Str(StrLit),
   Int(IntLit),
   Punct(Span),
+  Doc(Span),
   Unknown(Span),
   Eof(Span),
 }
@@ -29,6 +31,7 @@ pub enum Token {
 #[allow(unused)]
 pub enum Kind<'a> {
   Exact(&'a str),
+  Doc,
   Ident,
   Str,
   Int,
@@ -39,6 +42,7 @@ impl fmt::Display for Kind<'_> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     match self {
       Kind::Exact(str) => write!(f, "`{str}`"),
+      Kind::Doc => write!(f, "doc comment"),
       Kind::Ident => write!(f, "identifier"),
       Kind::Int => write!(f, "integer"),
       Kind::Str => write!(f, "quoted string"),
@@ -58,6 +62,7 @@ impl Token {
           Token::Ident(x) if syn::KEYWORDS.contains(&x.text(scx)) => {
             write!(f, "`{}`", x.text(scx))
           }
+          Token::Doc(..) => write!(f, "doc comment"),
           Token::Ident(..) => write!(f, "identifier"),
           Token::Int(..) => write!(f, "integer"),
           Token::Str(..) => write!(f, "quoted string"),
@@ -91,6 +96,7 @@ impl Token {
           (Self::Ident(..), Kind::Ident) => break 'check true,
           (Self::Str(..), Kind::Str) => break 'check true,
           (Self::Int(..), Kind::Int) => break 'check true,
+          (Self::Doc(..), Kind::Doc) => break 'check true,
           (Self::Eof(..), Kind::Eof) => break 'check true,
           _ => continue,
         }
@@ -130,6 +136,7 @@ impl Spanned for Token {
       Self::Ident(x) => x.span(),
       Self::Str(x) => x.span(),
       Self::Int(x) => x.span(),
+      Self::Doc(x) => x.span(),
       Self::Unknown(x) => x.span(),
       Self::Eof(x) => x.span(),
     }
@@ -218,6 +225,13 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
       }
       Some('-' | '0'..='9') => Token::Int(self.lex_int()?),
       Some('"') => Token::Str(self.lex_quoted()?),
+      Some('/') => {
+        // Doc comment. Simply take everything until the next newline.
+        let start = self.cursor();
+        let len = self.rest().find("\n").unwrap_or(self.rest().len());
+        self.advance(len as u32);
+        Token::Doc(self.span(start))
+      }
       Some(c) => {
         let start = self.cursor();
         match syn::PUNCTUATION.iter().find(|p| self.starts_with(p)) {
@@ -330,6 +344,11 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
     let mut saw_newline = false;
     let mut block_comment_starts = Vec::new();
     while !self.exhausted() {
+      if block_comment_starts.is_empty() && self.starts_with("///") {
+        // Doc comments do *not* count as whitespace.
+        return Ok(self.next_char());
+      }
+
       if let Some((start, _)) = self.take_str("//") {
         saw_newline = false;
         self.cursor = self.find("\n").map(|(_, end)| end);
@@ -435,7 +454,15 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
 
       self.advance(next.len_utf8() as u32);
       if next == '"' {
-        return Ok(StrLit(self.span(start)));
+        let lit = StrLit(self.span(start));
+        // Work around `new_span` requiring an &mut self.
+        let text = unsafe { mem::transmute::<&str, &str>(lit.text(&self.scx)) };
+        let _ = unquote(text, &mut io::sink(), |start, end, msg| {
+          let span = self.scx.new_span(self.file, start, end);
+          self.report.error(msg).at(span);
+        });
+
+        return Ok(lit);
       }
     }
 
@@ -476,4 +503,64 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
 
     Ok(syn::IntLit { span, value })
   }
+}
+
+pub fn unquote(
+  quoted: &str,
+  out: &mut impl io::Write,
+  mut error: impl FnMut(u32, u32, &dyn fmt::Display),
+) -> io::Result<()> {
+  let mut iter = quoted[1..quoted.len() - 1].chars();
+  let mut offset = 1;
+  while let Some(c) = iter.next() {
+    offset += c.len_utf16() as u32;
+    if c != '\\' {
+      write!(out, "{c}")?;
+      continue;
+    }
+
+    let Some(c) = iter.next() else {
+      error(offset - 1, offset, &"unterminated escape sequence");
+      break;
+    };
+    offset += c.len_utf16() as u32;
+
+    let byte = match c {
+      '0' => b'\0',
+      'n' => b'\n',
+      '\\' => b'\\',
+      '"' => b'"',
+      'x' => {
+        let Some(digits) = quoted.get(offset as usize..offset as usize + 2) else {
+          error(offset - 2, offset, &"unterminated escape sequence");
+          break;
+        };
+        offset += 2;
+
+        match u8::from_str_radix(digits, 16) {
+          Ok(b) => b,
+          Err(e) => {
+            error(
+              offset - 4,
+              offset,
+              &format_args!("invalid hex in \\x escape: {e}"),
+            );
+            break;
+          }
+        }
+      }
+      c => {
+        error(
+          offset - 2,
+          offset,
+          &format_args!("unknown escape sequence \\{c}"),
+        );
+        break;
+      }
+    };
+
+    out.write_all(&[byte])?;
+  }
+
+  Ok(())
 }

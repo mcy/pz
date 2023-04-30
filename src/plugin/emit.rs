@@ -113,7 +113,7 @@ impl SourceWriter {
   pub fn with_vars<const N: usize>(
     &mut self,
     vars: [(&str, Sub); N],
-    cb: impl FnOnce(&mut Self) + panic::UnwindSafe,
+    cb: impl FnOnce(&mut Self),
   ) {
     let map: HashMap<&str, Sub> = vars.into();
     unsafe {

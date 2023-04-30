@@ -1,6 +1,7 @@
 pub mod ir;
 pub mod plugin;
 pub mod report;
+pub mod rt;
 pub mod syn;
 
 pub mod proto {
