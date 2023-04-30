@@ -4,6 +4,9 @@ pub mod report;
 pub mod rt;
 pub mod syn;
 
+pub use rt::str::Str;
+pub use rt::str::StrBuf;
+
 pub mod proto {
   include!(concat!(env!("OUT_DIR"), "/pz.rs"));
   pub mod plugin {
@@ -11,6 +14,5 @@ pub mod proto {
   }
 }
 
-pub mod protoz {
-  //include!("lib.pz.rs");
-}
+#[path = "lib.pz.rs"]
+pub mod protoz;
