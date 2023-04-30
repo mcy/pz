@@ -91,22 +91,24 @@ fn parse_type(lexer: &mut Lexer) -> Result<syn::Type> {
   let name = lexer.expect(&[
     Kind::Exact("i32"),
     Kind::Exact("u32"),
+    Kind::Exact("f32"),
     Kind::Exact("i64"),
     Kind::Exact("u64"),
+    Kind::Exact("f64"),
     Kind::Exact("bool"),
-    Kind::Exact("string"),
-    Kind::Exact("bytes"),
+    Kind::Exact("str"),
     Kind::Ident,
   ])?;
 
   let kind = match name.text(lexer.ctx()) {
     "i32" => syn::TypeKind::I32,
-    "i64" => syn::TypeKind::I64,
     "u32" => syn::TypeKind::U32,
+    "f32" => syn::TypeKind::F32,
+    "i64" => syn::TypeKind::I64,
     "u64" => syn::TypeKind::U64,
+    "f64" => syn::TypeKind::F64,
     "bool" => syn::TypeKind::Bool,
-    "string" => syn::TypeKind::String,
-    "bytes" => syn::TypeKind::Bytes,
+    "str" => syn::TypeKind::String,
     _ => {
       // Unlex the identifier token so that the path function finds it.
       lexer.unlex(1);
@@ -279,17 +281,11 @@ fn parse_file<'ctx, 'file>(
   Ok((edition, package, items))
 }
 
-pub fn parse<'ctx, 'rtx, 'file>(
-  ctx: &'ctx mut Context<'file>,
-  report: &'rtx mut Report,
-) -> std::result::Result<syn::PzFile<'ctx, 'file>, &'ctx mut Context<'file>> {
+pub fn parse(ctx: &mut Context, report: &mut Report) -> Option<syn::PzFile> {
   let mut lexer = Lexer::new(ctx, report);
-  let Ok((edition, package, items)) = parse_file(&mut lexer) else {
-    return Err(ctx);
-  };
+  let (edition, package, items) = parse_file(&mut lexer).ok()?;
 
-  Ok(syn::PzFile {
-    ctx,
+  Some(syn::PzFile {
     edition,
     package,
     items,

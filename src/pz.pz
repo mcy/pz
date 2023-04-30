@@ -1,0 +1,52 @@
+// 
+
+edition = "2023";
+package pz;
+
+message Bundle {
+  types: repeated Type = 1,
+  packages: repeated str = 2,
+  foreign_types: repeated str = 3,
+}
+
+message Type {  
+  enum Kind {
+    MESSAGE = 0,
+    STRUCT = 1,
+    CHOICE = 2,
+    ENUM = 3,
+  }
+
+  name: str = 1,
+  package: u32 = 2,
+  kind: Kind = 3,
+  declared_in: u32 = 4,
+
+  fields: repeated Field = 10,
+  nesteds: repeated u32 = 11,
+}
+
+message Field {
+  enum Type {
+    NONE = 0,
+
+    I32 = 1,
+    U32 = 2,
+    F32 = 3,
+    I64 = 4,
+    U64 = 5,
+    F64 = 6,
+
+    BOOL = 7,
+    STRING = 8,
+
+    TYPE = 9,
+    FOREIGN = 10,
+  }
+
+  name: str = 1,
+  number: i32 = 2,
+  is_repeated: bool = 3,
+  type: Type = 4,
+  type_index: u32 = 5,
+}

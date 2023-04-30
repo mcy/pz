@@ -6,13 +6,21 @@ edition = "2021"
 [dependencies]
 prost = "0.11.9"
 
+[dependencies.bumpalo]
+version = "3.12.1"
+features = ["collections"]
+
+[dependencies.clap]
+version = "4.2.4"
+features = ["derive"]
+
+[dependencies.annotate-snippets]
+version = "0.9.1"
+features = ["color"]
+
 [dev-dependencies]
 googletest = "0.5.0"
 unindent = "0.2.1"
 
 [build-dependencies]
 prost-build = "0.11.9"
-
-[dependencies.annotate-snippets]
-version = "0.9.1"
-features = ["color"]

@@ -217,6 +217,7 @@ pub enum Token {
 }
 
 /// A kind of token, for use with [`Token::expect()`].
+#[allow(unused)]
 pub enum Kind<'a> {
   Exact(&'a str),
   Ident,
@@ -263,7 +264,12 @@ impl Token {
   }
 
   #[track_caller]
-  fn expect(self, ctx: &mut Context, report: &mut Report, kinds: &[Kind]) -> Token {
+  fn expect(
+    self,
+    ctx: &mut Context,
+    report: &mut Report,
+    kinds: &[Kind],
+  ) -> Token {
     assert!(!kinds.is_empty());
 
     let ok = 'check: {

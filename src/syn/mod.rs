@@ -14,24 +14,20 @@ use crate::report::Report;
 const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ","];
 
 const KEYWORDS: &[&str] = &[
-  "edition", "package", "message", "enum", "i32", "i64", "u32", "u64", "str",
-  "buf", "bool", "struct",
+  "edition", "package", "message", "enum", "struct", "choice", "i32", "u32",
+  "f32", "i64", "u64", "f64", "str", "bool",
 ];
 
 /// A single `.pz` file.
 #[derive(Debug)]
-pub struct PzFile<'ctx, 'file> {
-  pub ctx: &'ctx mut Context<'file>,
+pub struct PzFile {
   pub edition: Edition,
   pub package: Package,
   pub items: Vec<Item>,
 }
 
-impl<'ctx, 'file> PzFile<'ctx, 'file> {
-  pub fn parse<'rtx>(
-    ctx: &'ctx mut Context<'file>,
-    report: &'rtx mut Report,
-  ) -> Result<Self, &'ctx mut Context<'file>> {
+impl PzFile {
+  pub fn parse(ctx: &mut Context, report: &mut Report) -> Option<Self> {
     parse::parse(ctx, report)
   }
 }
@@ -71,6 +67,20 @@ impl Spanned for Package {
 pub struct Path {
   pub span: Span,
   pub components: Vec<Ident>,
+}
+
+impl Path {
+  pub fn join(&self, ctx: &Context) -> String {
+    let mut name = String::new();
+    for (i, id) in self.components.iter().enumerate() {
+      if i != 0 {
+        name.push('.');
+      }
+      name.push_str(id.name(ctx));
+    }
+
+    name
+  }
 }
 
 impl Spanned for Path {
@@ -156,11 +166,12 @@ impl Spanned for Type {
 pub enum TypeKind {
   Path(Path),
   I32,
-  I64,
   U32,
+  F32,
+  I64,
   U64,
+  F64,
   String,
-  Bytes,
   Bool,
 }
 

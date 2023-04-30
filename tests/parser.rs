@@ -1,4 +1,3 @@
-
 use std::fmt;
 
 use googletest::elements_are;
@@ -23,9 +22,10 @@ fn file(text: &str) -> pz::pz::File {
     text: Some(unindent::unindent(text).to_string()),
   }
 }
-
-fn print_errors(report: &mut Report, ctx: &syn::Context) -> bool {
-  report
+fn parse(ctx: &mut syn::Context) -> syn::PzFile {
+  let mut report = Report::new();
+  let file = syn::PzFile::parse(ctx, &mut report);
+  let failed = report
     .render(
       ctx,
       &pz::report::RenderOptions {
@@ -34,21 +34,10 @@ fn print_errors(report: &mut Report, ctx: &syn::Context) -> bool {
       },
       &mut std::io::stderr(),
     )
-    .unwrap()
-}
+    .unwrap();
+  assert!(!failed);
 
-fn parse<'c, 'f>(ctx: &'c mut syn::Context<'f>) -> syn::PzFile<'c, 'f> {
-  let mut report = Report::new();
-  match syn::PzFile::parse(ctx, &mut report) {
-    Ok(mut file) => {
-      assert!(!print_errors(&mut report, &mut file.ctx));
-      file
-    }
-    Err(ctx) => {
-      assert!(!print_errors(&mut report, ctx));
-      unreachable!()
-    }
-  }
+  file.unwrap()
 }
 
 struct Text<'f, 'c, M>(&'f syn::Context<'c>, M);
@@ -87,12 +76,12 @@ fn empty_package() -> Result<()> {
   let mut ctx = syn::Context::new(&f);
   let ast = parse(&mut ctx);
 
-  let _p = ast.ctx.enable_printing();
+  let _p = ctx.enable_printing();
   verify_that!(
     ast,
     pat!(syn::PzFile {
       edition: pat!(syn::Edition {
-        value: Text(&ast.ctx, eq("\"2023\"")),
+        value: Text(&ctx, eq("\"2023\"")),
       }),
       package: pat!(syn::Package {
         path: pat!(syn::Path {
@@ -113,10 +102,10 @@ fn smoke() -> Result<()> {
       package foo.bar;
 
       message Foo {
-        message Baz { value: bytes = 1 }
+        message Baz { value: f32 = 1 }
 
         foo: i32 = 1,
-        bar: repeated string = 2,
+        bar: repeated str = 2,
         baz: Baz = 1000,
 
         bonk: repeated foreign.Type = -1,
@@ -129,7 +118,7 @@ fn smoke() -> Result<()> {
 
       choice OneOf {
         int: i32 = 1,
-        str: string = 2,
+        #str: str = 2,
       }
 
       enum Bar {
@@ -142,42 +131,42 @@ fn smoke() -> Result<()> {
   let mut ctx = syn::Context::new(&f);
   let ast = parse(&mut ctx);
 
-  let _p = ast.ctx.enable_printing();
+  let _p = ctx.enable_printing();
   verify_that!(
     ast,
     pat!(syn::PzFile {
       edition: pat!(syn::Edition {
-        value: Text(&ast.ctx, eq("\"2023\"")),
+        value: Text(&ctx, eq("\"2023\"")),
       }),
       package: pat!(syn::Package {
         path: pat!(syn::Path {
           components: elements_are![
-            Text(&ast.ctx, eq("foo")),
-            Text(&ast.ctx, eq("bar"))
+            Text(&ctx, eq("foo")),
+            Text(&ctx, eq("bar"))
           ],
         }),
       }),
       items: elements_are![
         pat!(syn::Item::Decl(pat!(syn::Decl {
-          name: Text(&ast.ctx, eq("Foo")),
+          name: Text(&ctx, eq("Foo")),
           kind: eq(syn::DeclKind::Message),
           items: elements_are![
             pat!(syn::Item::Decl(pat!(syn::Decl {
-              name: Text(&ast.ctx, eq("Baz")),
+              name: Text(&ctx, eq("Baz")),
               kind: eq(syn::DeclKind::Message),
               items: elements_are![pat!(syn::Item::Field(pat!(syn::Field {
-                name: Text(&ast.ctx, eq("value")),
+                name: Text(&ctx, eq("value")),
                 number: some(pat!(syn::IntLit {
                   value(): eq(1),
                 })),
                 ty: some(pat!(syn::Type {
                   repeated: none(),
-                  kind: predicate(|x| matches!(x, syn::TypeKind::Bytes)),
+                  kind: predicate(|x| matches!(x, syn::TypeKind::F32)),
                 })),
               }))),],
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("foo")),
+              name: Text(&ctx, eq("foo")),
               number: some(pat!(syn::IntLit {
                 value(): eq(1),
               })),
@@ -187,7 +176,7 @@ fn smoke() -> Result<()> {
               })),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("bar")),
+              name: Text(&ctx, eq("bar")),
               number: some(pat!(syn::IntLit {
                 value(): eq(2),
               })),
@@ -197,19 +186,19 @@ fn smoke() -> Result<()> {
               })),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("baz")),
+              name: Text(&ctx, eq("baz")),
               number: some(pat!(syn::IntLit {
                 value(): eq(1000),
               })),
               ty: some(pat!(syn::Type {
                 repeated: none(),
                 kind: pat!(syn::TypeKind::Path(pat!(syn::Path {
-                  components: elements_are![Text(&ast.ctx, eq("Baz")),],
+                  components: elements_are![Text(&ctx, eq("Baz")),],
                 }))),
               })),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("bonk")),
+              name: Text(&ctx, eq("bonk")),
               number: some(pat!(syn::IntLit {
                 value(): eq(-1),
               })),
@@ -217,18 +206,18 @@ fn smoke() -> Result<()> {
                 repeated: some(anything()),
                 kind: pat!(syn::TypeKind::Path(pat!(syn::Path {
                   components: elements_are![
-                    Text(&ast.ctx, eq("foreign")),
-                    Text(&ast.ctx, eq("Type")),
+                    Text(&ctx, eq("foreign")),
+                    Text(&ctx, eq("Type")),
                   ],
                 }))),
               })),
             }))),
             pat!(syn::Item::Decl(pat!(syn::Decl {
-              name: Text(&ast.ctx, eq("Uuid")),
+              name: Text(&ctx, eq("Uuid")),
               kind: eq(syn::DeclKind::Struct),
               items: elements_are![
                 pat!(syn::Item::Field(pat!(syn::Field {
-                  name: Text(&ast.ctx, eq("lo")),
+                  name: Text(&ctx, eq("lo")),
                   number: none(),
                   ty: some(pat!(syn::Type {
                     repeated: none(),
@@ -236,7 +225,7 @@ fn smoke() -> Result<()> {
                   })),
                 }))),
                 pat!(syn::Item::Field(pat!(syn::Field {
-                  name: Text(&ast.ctx, eq("hi")),
+                  name: Text(&ctx, eq("hi")),
                   number: none(),
                   ty: some(pat!(syn::Type {
                     repeated: none(),
@@ -248,11 +237,11 @@ fn smoke() -> Result<()> {
           ],
         }))),
         pat!(syn::Item::Decl(pat!(syn::Decl {
-          name: Text(&ast.ctx, eq("OneOf")),
+          name: Text(&ctx, eq("OneOf")),
           kind: eq(syn::DeclKind::Choice),
           items: elements_are![
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("int")),
+              name: Text(&ctx, eq("int")),
               number: some(pat!(syn::IntLit {
                 value(): eq(1),
               })),
@@ -262,7 +251,7 @@ fn smoke() -> Result<()> {
               })),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("str")),
+              name: Text(&ctx, eq("#str")),
               number: some(pat!(syn::IntLit {
                 value(): eq(2),
               })),
@@ -274,25 +263,25 @@ fn smoke() -> Result<()> {
           ],
         }))),
         pat!(syn::Item::Decl(pat!(syn::Decl {
-          name: Text(&ast.ctx, eq("Bar")),
+          name: Text(&ctx, eq("Bar")),
           kind: eq(syn::DeclKind::Enum),
           items: elements_are![
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("FIRST")),
+              name: Text(&ctx, eq("FIRST")),
               number: some(pat!(syn::IntLit {
                 value(): eq(1),
               })),
               ty: none(),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("SECOND")),
+              name: Text(&ctx, eq("SECOND")),
               number: some(pat!(syn::IntLit {
                 value(): eq(2),
               })),
               ty: none(),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
-              name: Text(&ast.ctx, eq("NEGATIVE")),
+              name: Text(&ctx, eq("NEGATIVE")),
               number: some(pat!(syn::IntLit {
                 value(): eq(-9999),
               })),

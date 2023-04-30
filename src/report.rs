@@ -108,7 +108,7 @@ impl Report {
   /// Calls `dump_to()` on `stderr`, exiting the process with the given
   /// `exit_code` if any errors are present.
   pub fn dump_and_die(
-    self,
+    &self,
     ctx: &syn::Context,
     opts: &RenderOptions,
     code: i32,
