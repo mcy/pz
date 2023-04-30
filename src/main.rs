@@ -1,13 +1,13 @@
 //! Compiler driver binary.
 
 use std::fs;
+use std::path::Path;
+use std::path::PathBuf;
 
 use clap::Parser;
-
 use prost::Message;
-use pz::ir::resolve::ResolveCtx;
-use pz::pz as proto;
-use pz::report;
+
+use pz::ir;
 use pz::report::Report;
 use pz::syn;
 
@@ -17,36 +17,37 @@ use pz::syn;
 struct Pz {
   /// Where to output the generated bundle to; defaults to `bundle.pb`.
   #[arg(short, long)]
-  output: Option<String>,
+  output: Option<PathBuf>,
 
-  input: String,
+  input: PathBuf,
 }
 
 fn main() {
   let opts = Pz::parse();
 
-  let text = fs::read_to_string(&opts.input).unwrap();
-  let file = proto::File {
-    path: Some(opts.input),
-    text: Some(text),
-  };
-
   let mut report = Report::new();
-  let report_opts = report::RenderOptions {
-    color: true,
-    show_report_locations: std::env::var_os("PZ_DEBUG").is_some(),
-  };
 
-  let mut ctx = syn::Context::new(&file);
-  let file = syn::PzFile::parse(&mut ctx, &mut report);
-  report.dump_and_die(&ctx, &report_opts, 2);
+  let mut scx = syn::SourceCtx::new();
+  let file = scx.open_file(&opts.input, &mut report);
+  report.dump_and_die(&scx, 2);
+
+  let file = syn::PzFile::parse(file.unwrap(), &mut scx, &mut report);
+  report.dump_and_die(&scx, 2);
   let file = file.unwrap();
 
-  let rcx = ResolveCtx::new(&ctx);
+  let rcx = ir::ResolveCtx::new(&scx);
   let bundle = rcx.resolve(&file, &mut report);
-  report.dump_and_die(&ctx, &report_opts, 2);
+  report.dump_and_die(&scx, 2);
 
   let pz_bundle = bundle.to_pz();
   let binary = pz_bundle.encode_to_vec();
-  fs::write(opts.output.as_deref().unwrap_or("bundle.pb"), binary).unwrap();
+
+  let out = opts.output.as_deref().unwrap_or(Path::new("bundle.pb"));
+  if let Err(e) = fs::write(out, binary) {
+    report.error(format_args!(
+      "could not write output {}: {e}",
+      out.display()
+    ));
+  }
+  report.dump_and_die(&scx, 2);
 }

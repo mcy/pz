@@ -2,12 +2,14 @@
 
 mod lex;
 mod parse;
+mod src;
 
 use std::fmt;
 
-pub use lex::Context;
-pub use lex::Span;
-pub use lex::Spanned;
+pub use src::File;
+pub use src::SourceCtx;
+pub use src::Span;
+pub use src::Spanned;
 
 use crate::report::Report;
 
@@ -27,8 +29,12 @@ pub struct PzFile {
 }
 
 impl PzFile {
-  pub fn parse(ctx: &mut Context, report: &mut Report) -> Option<Self> {
-    parse::parse(ctx, report)
+  pub fn parse(
+    file: File,
+    scx: &mut SourceCtx,
+    report: &mut Report,
+  ) -> Option<Self> {
+    parse::parse(file, scx, report)
   }
 }
 
@@ -70,13 +76,13 @@ pub struct Path {
 }
 
 impl Path {
-  pub fn join(&self, ctx: &Context) -> String {
+  pub fn join(&self, scx: &SourceCtx) -> String {
     let mut name = String::new();
     for (i, id) in self.components.iter().enumerate() {
       if i != 0 {
         name.push('.');
       }
-      name.push_str(id.name(ctx));
+      name.push_str(id.name(scx));
     }
 
     name
@@ -184,8 +190,8 @@ pub struct Ident(Span);
 impl Ident {
   /// Returns the name of this identifier (i.e., the text with an optional
   /// leading `#` stripped).
-  pub fn name<'ctx>(&self, ctx: &'ctx Context) -> &'ctx str {
-    self.text(ctx).trim_start_matches("#")
+  pub fn name<'scx>(&self, scx: &'scx SourceCtx) -> &'scx str {
+    self.text(scx).trim_start_matches("#")
   }
 }
 
@@ -221,11 +227,12 @@ impl fmt::Debug for StrLit {
 #[derive(Copy, Clone, Debug)]
 pub struct IntLit {
   span: Span,
-  value: i128,
+  // A missing value indicates out-of-range-ness.
+  value: Option<i128>,
 }
 
 impl IntLit {
-  pub fn value(self) -> i128 {
+  pub fn value(self) -> Option<i128> {
     self.value
   }
 }

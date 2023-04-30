@@ -8,8 +8,10 @@ use bumpalo::collections::Vec as AVec;
 use crate::pz;
 use crate::syn;
 
-pub mod resolve;
+mod resolve;
 mod to_pz;
+
+pub use resolve::ResolveCtx;
 
 pub struct Bundle<'syn, 'rcx> {
   types: RefCell<Vec<&'rcx Type<'syn, 'rcx>>>,

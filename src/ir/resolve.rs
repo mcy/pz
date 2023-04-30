@@ -13,50 +13,50 @@ use crate::syn::Spanned;
 use bumpalo::collections::String as AString;
 use bumpalo::collections::Vec as AVec;
 
-pub struct ResolveCtx<'syn, 'ctx, 'file> {
+pub struct ResolveCtx<'ast, 'scx> {
   arena: bumpalo::Bump,
-  ctx: &'ctx syn::Context<'file>,
-  _ph: PhantomData<&'syn syn::PzFile>,
+  scx: &'scx syn::SourceCtx,
+  _ph: PhantomData<&'ast syn::PzFile>,
 
   types: RefCell<
     // Let 'rcx represent the lifetime of `arena`. Then, the "real" type of this
-    // map is `HashMap<String, &'rcx Type<'syn, 'rcx>>`. We're forced to erase
-    // both lifetimes, because ir::Type requires 'syn: 'rcx, because there are
-    // 'rcx references that point to 'syn references.
-    HashMap<String, *const ir::Type<'static, 'static>>,
+    // map is `HashMap<String, &'rcx Type<'ast, 'rcx>>`. We're forced to erase
+    // both lifetimes, because ir::Type requires 'ast: 'rcx, because there are
+    // 'rcx references that point to 'ast references.
+    HashMap<String, (*const ir::Type<'static, 'static>, Option<syn::Span>)>,
   >,
 }
 
-impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
-  pub fn new(ctx: &'ctx syn::Context<'file>) -> Self {
+impl<'ast, 'scx: 'ast> ResolveCtx<'ast, 'scx> {
+  pub fn new(scx: &'scx syn::SourceCtx) -> Self {
     Self {
       arena: bumpalo::Bump::new(),
-      ctx,
+      scx,
       types: Default::default(),
       _ph: PhantomData,
     }
   }
 
-  pub fn type_by_name(&self, name: &str) -> Option<&ir::Type<'syn, '_>> {
-    let ptr = self.types.borrow().get(name).copied()?;
+  pub fn type_by_name(&self, name: &str) -> Option<&ir::Type<'ast, '_>> {
+    let (ptr, _) = self.types.borrow().get(name).copied()?;
     unsafe {
       // SAFETY: this pointer is allocated on `self.arena`.
-      Some(&*ptr.cast::<ir::Type<'syn, '_>>())
+      Some(&*ptr.cast::<ir::Type<'ast, '_>>())
     }
   }
 
   pub fn resolve<'rcx>(
     &'rcx self,
-    file: &'syn syn::PzFile,
+    file: &'ast syn::PzFile,
     report: &mut Report,
-  ) -> ir::Bundle<'syn, 'rcx> {
-    let mut bundle = ir::Bundle::<'syn, 'rcx> {
+  ) -> ir::Bundle<'ast, 'rcx> {
+    let mut bundle = ir::Bundle::<'ast, 'rcx> {
       types: Vec::new().into(),
     };
 
     let mut package = AString::new_in(&self.arena);
     for (i, name) in file.package.path.components.iter().enumerate() {
-      let text = name.name(self.ctx);
+      let text = name.name(self.scx);
       if i != 0 {
         package.push('.');
       }
@@ -120,7 +120,7 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
               // - A multi-element, fully-qualified path that we can't resolve
               //   yet.
               if let [name] = path.components.as_slice() {
-                let name = name.name(self.ctx);
+                let name = name.name(self.scx);
                 let ty = self.resolve_relative_type(name, &roots, ty);
                 if ty.is_none() {
                   report
@@ -130,7 +130,7 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
 
                 ty.map(ir::FieldTypeKind::Type)?
               } else {
-                let name = path.join(self.ctx);
+                let name = path.join(self.scx);
                 match self.type_by_name(&name) {
                   Some(ty) => ir::FieldTypeKind::Type(ty),
                   None => {
@@ -148,13 +148,17 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
         });
 
         let field_number = field.number.and_then(|lit| {
-          let number: Option<i32> = lit.value().try_into().ok();
+          let number: Option<i32> = lit.value().and_then(|v| v.try_into().ok());
 
           if decl.kind == syn::DeclKind::Enum {
             if number.is_none() {
-              report
-                .error("enum numbers must be in the valid range for i32")
-                .saying(lit, "this value is out of range");
+              report.error("enum value out of range").at(lit).note(
+                format_args!(
+                  "enum values signed, 32-bit integers ({} to {}, inclusive)",
+                  i32::MIN,
+                  i32::MAX
+                ),
+              );
             }
 
             return number;
@@ -165,9 +169,10 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
               match numbers.entry(n) {
                 Entry::Occupied(e) => {
                   report
-                    .error(format_args!("field number `{n}` declared twice"))
-                    .saying(e.get(), "first declared here")
-                    .saying(lit, "re-declared here");
+                    .error(format_args!("field number `{n}` used twice"))
+                    .saying(lit, "re-used here")
+                    .remark(e.get(), "previously used here")
+                    .note("all field numbers must be unique");
                 }
                 Entry::Vacant(e) => {
                   e.insert(lit.span());
@@ -177,16 +182,19 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
               Some(n)
             }
             _ => {
-              report
-                .error("field numbers must be in the range 0..2^29")
-                .saying(lit, "this value is out of range");
+              report.error("field number out of range").at(lit).note(
+                format_args!(
+                  "field numbers are positive, 29-bit integers (1 to {}, inclusive)",
+                  (1 << 29) - 1,
+                ),
+              );
               None
             }
           }
         });
 
         fields.push(ir::Field {
-          name: field.name.name(self.ctx).into(),
+          name: field.name.name(self.scx).into(),
           parent: ty,
           decl: Some(field),
           ty: field_ty.into(),
@@ -200,14 +208,14 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
 
   fn extract_types<'rcx>(
     &'rcx self,
-    bundle: &mut ir::Bundle<'syn, 'rcx>,
+    bundle: &mut ir::Bundle<'ast, 'rcx>,
     package: &'rcx str,
-    parent: Option<&'rcx ir::Type<'syn, 'rcx>>,
-    decl: &'syn syn::Decl,
-    types_out: &mut AVec<&'rcx ir::Type<'syn, 'rcx>>,
+    parent: Option<&'rcx ir::Type<'ast, 'rcx>>,
+    decl: &'ast syn::Decl,
+    types_out: &mut AVec<&'rcx ir::Type<'ast, 'rcx>>,
     report: &mut Report,
   ) {
-    let declared_name = decl.name.name(self.ctx);
+    let declared_name = decl.name.name(self.scx);
     let name = match parent {
       Some(parent) => {
         let mut name = AString::with_capacity_in(
@@ -255,13 +263,17 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
       let value = (ty as *const ir::Type).cast::<ir::Type>();
       let mut types = self.types.borrow_mut();
       match types.entry(key) {
-        Entry::Occupied(..) => {
-          report
-            .error(format_args!("type named {package}.{name} already exists"))
+        Entry::Occupied(e) => {
+          let diagnostic = report
+            .error(format_args!("type named `{package}.{name}` already exists"))
             .saying(decl.name, "type already exists with this name");
+
+          if let (_, Some(span)) = e.get() {
+            diagnostic.remark(span, "previous definition is here");
+          }
         }
         Entry::Vacant(e) => {
-          e.insert(value);
+          e.insert((value, Some(decl.span())));
         }
       }
     }
@@ -282,9 +294,9 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
   fn resolve_relative_type<'rcx>(
     &'rcx self,
     name: &str,
-    root_types: &[&'rcx ir::Type<'syn, 'rcx>],
-    referenced_in: &'rcx ir::Type<'syn, 'rcx>,
-  ) -> Option<&'rcx ir::Type<'syn, 'rcx>> {
+    root_types: &[&'rcx ir::Type<'ast, 'rcx>],
+    referenced_in: &'rcx ir::Type<'ast, 'rcx>,
+  ) -> Option<&'rcx ir::Type<'ast, 'rcx>> {
     let mut search_in = referenced_in;
     loop {
       let resolved = search_in.nesteds(|tys| {
@@ -292,7 +304,7 @@ impl<'syn, 'ctx: 'syn, 'file: 'syn> ResolveCtx<'syn, 'ctx, 'file> {
           let suffix = ty.name().split(".").last().unwrap();
           if suffix == name {
             // Rust tries to infer an over-short lifetime here?
-            let ty: &'rcx ir::Type<'syn, 'rcx> = ty;
+            let ty: &'rcx ir::Type<'ast, 'rcx> = ty;
             return Some(ty);
           }
         }

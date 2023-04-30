@@ -16,32 +16,24 @@ use googletest::Result;
 use pz::report::Report;
 use pz::syn;
 
-fn file(text: &str) -> pz::pz::File {
-  pz::pz::File {
-    path: Some("test.pz".to_string()),
-    text: Some(unindent::unindent(text).to_string()),
-  }
-}
-fn parse(ctx: &mut syn::Context) -> syn::PzFile {
-  let mut report = Report::new();
-  let file = syn::PzFile::parse(ctx, &mut report);
-  let failed = report
-    .render(
-      ctx,
-      &pz::report::RenderOptions {
-        show_report_locations: true,
-        color: false,
-      },
-      &mut std::io::stderr(),
-    )
-    .unwrap();
+fn parse(ctx: &mut syn::SourceCtx, text: &str) -> syn::PzFile {
+  let file =
+    ctx.add_file("test.pz".to_string(), unindent::unindent(text).to_string());
+
+  let mut report = Report::with_options(pz::report::RenderOptions {
+    show_report_locations: true,
+    color: false,
+  });
+
+  let file = syn::PzFile::parse(file, ctx, &mut report);
+  let failed = report.render(ctx, &mut std::io::stderr()).unwrap();
   assert!(!failed);
 
   file.unwrap()
 }
 
-struct Text<'f, 'c, M>(&'f syn::Context<'c>, M);
-impl<M, S> matcher::Matcher<S> for Text<'_, '_, M>
+struct Text<'f, M>(&'f syn::SourceCtx, M);
+impl<M, S> matcher::Matcher<S> for Text<'_, M>
 where
   M: for<'a> matcher::Matcher<&'a str>,
   S: syn::Spanned + fmt::Debug,
@@ -67,14 +59,14 @@ where
 
 #[test]
 fn empty_package() -> Result<()> {
-  let f = file(
+  let mut ctx = syn::SourceCtx::new();
+  let ast = parse(
+    &mut ctx,
     r#"
-      edition = "2023";
-      package;
-    "#,
+    edition = "2023";
+    package;
+  "#,
   );
-  let mut ctx = syn::Context::new(&f);
-  let ast = parse(&mut ctx);
 
   let _p = ctx.enable_printing();
   verify_that!(
@@ -96,7 +88,9 @@ fn empty_package() -> Result<()> {
 
 #[test]
 fn smoke() -> Result<()> {
-  let f = file(
+  let mut ctx = syn::SourceCtx::new();
+  let ast = parse(
+    &mut ctx,
     r#"
       edition = "2023";
       package foo.bar;
@@ -128,8 +122,6 @@ fn smoke() -> Result<()> {
       }
     "#,
   );
-  let mut ctx = syn::Context::new(&f);
-  let ast = parse(&mut ctx);
 
   let _p = ctx.enable_printing();
   verify_that!(
@@ -157,7 +149,7 @@ fn smoke() -> Result<()> {
               items: elements_are![pat!(syn::Item::Field(pat!(syn::Field {
                 name: Text(&ctx, eq("value")),
                 number: some(pat!(syn::IntLit {
-                  value(): eq(1),
+                  value(): some(eq(1)),
                 })),
                 ty: some(pat!(syn::Type {
                   repeated: none(),
@@ -168,7 +160,7 @@ fn smoke() -> Result<()> {
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("foo")),
               number: some(pat!(syn::IntLit {
-                value(): eq(1),
+                value(): some(eq(1)),
               })),
               ty: some(pat!(syn::Type {
                 repeated: none(),
@@ -178,7 +170,7 @@ fn smoke() -> Result<()> {
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("bar")),
               number: some(pat!(syn::IntLit {
-                value(): eq(2),
+                value(): some(eq(2)),
               })),
               ty: some(pat!(syn::Type {
                 repeated: some(anything()),
@@ -188,7 +180,7 @@ fn smoke() -> Result<()> {
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("baz")),
               number: some(pat!(syn::IntLit {
-                value(): eq(1000),
+                value(): some(eq(1000)),
               })),
               ty: some(pat!(syn::Type {
                 repeated: none(),
@@ -200,7 +192,7 @@ fn smoke() -> Result<()> {
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("bonk")),
               number: some(pat!(syn::IntLit {
-                value(): eq(-1),
+                value(): some(eq(-1)),
               })),
               ty: some(pat!(syn::Type {
                 repeated: some(anything()),
@@ -243,7 +235,7 @@ fn smoke() -> Result<()> {
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("int")),
               number: some(pat!(syn::IntLit {
-                value(): eq(1),
+                value(): some(eq(1)),
               })),
               ty: some(pat!(syn::Type {
                 repeated: none(),
@@ -253,7 +245,7 @@ fn smoke() -> Result<()> {
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("#str")),
               number: some(pat!(syn::IntLit {
-                value(): eq(2),
+                value(): some(eq(2)),
               })),
               ty: some(pat!(syn::Type {
                 repeated: none(),
@@ -269,21 +261,21 @@ fn smoke() -> Result<()> {
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("FIRST")),
               number: some(pat!(syn::IntLit {
-                value(): eq(1),
+                value(): some(eq(1)),
               })),
               ty: none(),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("SECOND")),
               number: some(pat!(syn::IntLit {
-                value(): eq(2),
+                value(): some(eq(2)),
               })),
               ty: none(),
             }))),
             pat!(syn::Item::Field(pat!(syn::Field {
               name: Text(&ctx, eq("NEGATIVE")),
               number: some(pat!(syn::IntLit {
-                value(): eq(-9999),
+                value(): some(eq(-9999)),
               })),
               ty: none(),
             }))),

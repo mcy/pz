@@ -21,9 +21,10 @@ use crate::syn;
 ///
 /// See [`Report::diagnose()`].
 pub struct Diagnostic {
-  message: String,
-  snippets: Vec<(syn::Span, String)>,
   kind: pz::diagnostic::Kind,
+  message: String,
+  snippets: Vec<Vec<(syn::Span, String, bool)>>,
+  notes: Vec<String>,
   reported_at: Option<&'static panic::Location<'static>>,
 }
 
@@ -40,7 +41,37 @@ impl Diagnostic {
     span: impl syn::Spanned,
     message: impl fmt::Display,
   ) -> &mut Self {
-    self.snippets.push((span.span(), message.to_string()));
+    let snips = match self.snippets.last_mut() {
+      Some(s) => s,
+      None => {
+        self.snippets.push(Vec::new());
+        &mut self.snippets[0]
+      }
+    };
+    snips.push((span.span(), message.to_string(), false));
+    self
+  }
+
+  /// Like `saying`, but the underline is as for a "note" rather than the
+  /// overall diagnostic.
+  pub fn remark(
+    &mut self,
+    span: impl syn::Spanned,
+    message: impl fmt::Display,
+  ) -> &mut Self {
+    self.saying(span, message);
+    self.snippets.last_mut().unwrap().last_mut().unwrap().2 = true;
+    self
+  }
+
+  /// Starts a new snippet, even if the next span is in a different file.
+  pub fn new_snippet(&mut self) -> &mut Self {
+    self.snippets.push(Vec::new());
+    self
+  }
+
+  pub fn note(&mut self, message: impl fmt::Display) -> &mut Self {
+    self.notes.push(message.to_string());
     self
   }
 }
@@ -56,7 +87,6 @@ impl From<(u32, u32)> for pz::Span {
 }
 
 /// Options for [`Report::render()`].
-#[derive(Default)]
 pub struct RenderOptions {
   /// Whether to color the output.
   pub color: bool,
@@ -65,16 +95,32 @@ pub struct RenderOptions {
   pub show_report_locations: bool,
 }
 
+impl Default for RenderOptions {
+  fn default() -> Self {
+    Self {
+      color: true,
+      show_report_locations: std::env::var_os("PZ_DEBUG").is_some(),
+    }
+  }
+}
+
 /// A collection of errors that may built up over the course of an action.
 pub struct Report {
+  opts: RenderOptions,
   errors: Vec<Diagnostic>,
   errors_since_last_check: usize,
 }
 
 impl Report {
-  /// Creates a new, empty report.
+  /// Creates a new report.
   pub fn new() -> Self {
+    Self::with_options(RenderOptions::default())
+  }
+
+  /// Creates a report with the given options for rendering.
+  pub fn with_options(opts: RenderOptions) -> Self {
     Self {
+      opts,
       errors: Vec::new(),
       errors_since_last_check: 0,
     }
@@ -97,8 +143,23 @@ impl Report {
   pub fn error(&mut self, message: impl fmt::Display) -> &mut Diagnostic {
     self.errors.push(Diagnostic {
       message: message.to_string(),
-      kind: pz::diagnostic::Kind::Error.into(),
+      kind: pz::diagnostic::Kind::Error,
       snippets: Vec::new(),
+      notes: Vec::new(),
+      reported_at: Some(panic::Location::caller()),
+    });
+
+    self.errors.last_mut().unwrap()
+  }
+
+  /// Adds a new warning to this report.
+  #[track_caller]
+  pub fn warn(&mut self, message: impl fmt::Display) -> &mut Diagnostic {
+    self.errors.push(Diagnostic {
+      message: message.to_string(),
+      kind: pz::diagnostic::Kind::Warning,
+      snippets: Vec::new(),
+      notes: Vec::new(),
       reported_at: Some(panic::Location::caller()),
     });
 
@@ -107,15 +168,10 @@ impl Report {
 
   /// Calls `dump_to()` on `stderr`, exiting the process with the given
   /// `exit_code` if any errors are present.
-  pub fn dump_and_die(
-    &self,
-    ctx: &syn::Context,
-    opts: &RenderOptions,
-    code: i32,
-  ) {
+  pub fn dump_and_die(&self, scx: &syn::SourceCtx, code: i32) {
     // Writing to stderr is fairly unlikely to fail, so panicking is a fine
     // response here.
-    if self.render(ctx, opts, &mut io::stderr()).unwrap() {
+    if self.render(scx, &mut io::stderr()).unwrap() {
       std::process::exit(code)
     }
   }
@@ -125,8 +181,7 @@ impl Report {
   /// Returns `Ok(true)` if any errors were fatal.
   pub fn render(
     &self,
-    ctx: &syn::Context,
-    opts: &RenderOptions,
+    scx: &syn::SourceCtx,
     sink: &mut dyn io::Write,
   ) -> io::Result<bool> {
     if self.errors.is_empty() {
@@ -146,69 +201,97 @@ impl Report {
           annotation_type: kind,
         }),
         opt: FormatOptions {
-          color: opts.color,
+          color: self.opts.color,
           anonymized_line_numbers: false,
           margin: None,
         },
         ..Default::default()
       };
 
-      let mut slice = snippet::Slice {
-        source: ctx.text(),
-        line_start: 1,
-        origin: ctx.file().path.as_deref(),
-        annotations: Vec::new(),
-        fold: true,
-      };
+      for snips in &e.snippets {
+        let mut cur_file = None;
+        let mut cur_slice = None;
+        for (span, text, is_remark) in snips {
+          let file = span.file(scx);
+          if cur_file != Some(file) {
+            cur_file = Some(file);
+            if let Some(slice) = cur_slice.take() {
+              snippet.slices.push(slice);
+            }
 
-      for (span, text) in &e.snippets {
-        let Range { mut start, mut end } = span.range(ctx);
-        if start == end && !slice.source.is_empty() {
-          // Normalize the range so that it is never just one space long.
-          // If this would cause range.1 to go past the end of the input length,
-          // we swap them around instead.
-          if end as usize == slice.source.len() {
-            start = end - 1;
-          } else {
-            end = start + 1;
+            cur_slice = Some(snippet::Slice {
+              source: file.text(scx),
+              line_start: 1,
+              origin: Some(file.path(scx)),
+              annotations: Vec::new(),
+              fold: true,
+            });
           }
+
+          let slice = cur_slice.as_mut().unwrap();
+          let Range { mut start, mut end } = span.range(scx);
+          if start == end && !slice.source.is_empty() {
+            // Normalize the range so that it is never just one space long.
+            // If this would cause range.1 to go past the end of the input length,
+            // we swap them around instead.
+            if end as usize == slice.source.len() {
+              start = end - 1;
+            } else {
+              end = start + 1;
+            }
+          }
+
+          slice.annotations.push(snippet::SourceAnnotation {
+            range: (start as usize, end as usize),
+            label: text,
+            annotation_type: if *is_remark {
+              snippet::AnnotationType::Info
+            } else {
+              kind
+            },
+          });
         }
 
-        slice.annotations.push(snippet::SourceAnnotation {
-          range: (start as usize, end as usize),
-          label: text,
-          annotation_type: kind,
-        });
+        if let Some(slice) = cur_slice.take() {
+          snippet.slices.push(slice);
+        }
       }
 
       // Crop the starts of each slice to only incorporate the annotations.
-      let earliest_start = slice
-        .annotations
-        .iter()
-        .map(|a| a.range.0)
-        .min()
-        .unwrap_or(0);
+      for slice in &mut snippet.slices {
+        let earliest_start = slice
+          .annotations
+          .iter()
+          .map(|a| a.range.0)
+          .min()
+          .unwrap_or(0);
+        let (count, start_idx) = slice.source[..earliest_start]
+          .bytes()
+          .enumerate()
+          .filter_map(|(i, c)| (c == b'\n').then_some(i + 1))
+          .enumerate()
+          .map(|(i, j)| (i + 1, j))
+          .last()
+          .unwrap_or_default();
 
-      let (count, idx) = slice.source[..earliest_start]
-        .bytes()
-        .enumerate()
-        .filter_map(|(i, c)| (c == b'\n').then_some(i + 1))
-        .enumerate()
-        .map(|(i, j)| (i + 1, j))
-        .last()
-        .unwrap_or_default();
-
-      slice.line_start = count + 1;
-      slice.source = &slice.source[idx..];
-      for a in &mut slice.annotations {
-        a.range.0 -= idx;
-        a.range.1 -= idx;
+        slice.line_start = count + 1;
+        slice.source = &slice.source[start_idx..];
+        for a in &mut slice.annotations {
+          a.range.0 -= start_idx;
+          a.range.1 -= start_idx;
+        }
       }
 
-      snippet.slices.push(slice);
+      for note in &e.notes {
+        snippet.footer.push(snippet::Annotation {
+          id: None,
+          label: Some(note),
+          annotation_type: snippet::AnnotationType::Note,
+        });
+      }
 
       let footer;
-      if opts.show_report_locations {
+      if self.opts.show_report_locations {
         if let Some(at) = e.reported_at {
           footer = format!("reported at: {}", at);
           snippet.footer.push(snippet::Annotation {
@@ -226,7 +309,10 @@ impl Report {
     }
 
     writeln!(sink, "")?;
-    let message = format!("there were {} errors", self.errors.len());
+    let message = match self.errors.len() {
+      1 => "aborted due to previous error".into(),
+      n => format!("aborted due to {n} errors"),
+    };
     let snippet = snippet::Snippet {
       title: Some(snippet::Annotation {
         id: None,
@@ -234,7 +320,7 @@ impl Report {
         annotation_type: snippet::AnnotationType::Error,
       }),
       opt: FormatOptions {
-        color: opts.color,
+        color: self.opts.color,
         ..Default::default()
       },
       ..Default::default()
