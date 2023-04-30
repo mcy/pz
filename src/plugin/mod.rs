@@ -15,10 +15,6 @@ use crate::proto::plugin;
 
 mod emit;
 
-pub const MODE_ENV_VAR: &str = "PZ_MODE";
-pub const MODE_NEGOTIATE: &str = "negotiate";
-pub const MODE_CODEGEN: &str = "codegen";
-
 /// The context for the current codegen operation.
 pub struct CodegenCtx {
   req: plugin::CodegenRequest,
@@ -217,45 +213,38 @@ impl<'ccx> Field<'ccx> {
 /// This function should be called in the `main` function of a program that
 /// implements a codegen backend.
 pub fn exec(
-  negotiate: impl FnOnce(&plugin::NegotiationRequest) -> plugin::NegotiationResponse,
+  about: impl FnOnce(&plugin::AboutRequest) -> plugin::AboutResponse,
   codegen: impl FnOnce(&CodegenCtx),
 ) -> ! {
-  match env::var(MODE_ENV_VAR).as_deref() {
-    Ok(MODE_NEGOTIATE) => {
-      let mut input = Vec::new();
-      io::stdin()
-        .read_to_end(&mut input)
-        .expect("failed to read request proto");
+  let mut input = Vec::new();
+  io::stdin()
+    .read_to_end(&mut input)
+    .expect("failed to read request proto");
 
-      let req = plugin::NegotiationRequest::decode(input.as_slice())
-        .expect("failed to parse request proto");
-      let output = negotiate(&req).encode_to_vec();
-      io::stdout()
-        .write(&output)
-        .expect("failed to write response proto");
+  let mut req = plugin::Request::decode(input.as_slice())
+    .expect("failed to parse request proto");
+  let mut resp = plugin::Response::default();
+
+  match req.value.take() {
+    Some(plugin::request::Value::About(req)) => {
+      resp.value = Some(plugin::response::Value::About(about(&req)));
     }
-    Ok(MODE_ENV_VAR) => {
-      let mut input = Vec::new();
-      io::stdin()
-        .read_to_end(&mut input)
-        .expect("failed to read request proto");
-
-      let req = plugin::CodegenRequest::decode(input.as_slice())
-        .expect("failed to parse request proto");
-
+    Some(plugin::request::Value::Codegen(req)) => {
       let ctx = CodegenCtx {
         req,
         resp: Default::default(),
       };
       codegen(&ctx);
-      let output = ctx.resp.borrow().encode_to_vec();
-
-      io::stdout()
-        .write(&output)
-        .expect("failed to write response proto");
+      resp.value = Some(plugin::response::Value::Codegen(RefCell::into_inner(
+        ctx.resp,
+      )));
     }
-    _ => panic!("unknown {MODE_ENV_VAR} environment variable"),
+    None => panic!("unknown request proto"),
   }
+
+  io::stdout()
+    .write(&resp.encode_to_vec())
+    .expect("failed to write response proto");
 
   std::process::exit(0);
 }
@@ -263,10 +252,10 @@ pub fn exec(
 /// Runs the "trivial" bundle plugin that simply echoes the request bundle.
 pub fn bundle_plugin() -> ! {
   exec(
-    |_| plugin::NegotiationResponse {
+    |_| plugin::AboutResponse {
       name: Some("bundle".into()),
       version: Some(env!("CARGO_PKG_VERSION").into()),
-      options: vec![plugin::negotiation_response::Option {
+      options: vec![plugin::about_response::Option {
         name: Some("out".into()),
         help: Some(
           "The file to write the bundle proto to; defaults to \"bundle.pb\""

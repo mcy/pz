@@ -57,14 +57,12 @@ fn expect<T, E: fmt::Display>(
   }
 }
 
-fn run_plugin<Req: Message, Rsp: Default + Message>(
-  mode: &str,
+fn run_plugin(
   plugin: &Path,
-  req: &Req,
+  req: &plugin::Request,
   scx: &syn::SourceCtx,
   report: &mut Report,
-) -> Rsp {
-  env::set_var(pz::plugin::MODE_ENV_VAR, mode);
+) -> plugin::Response {
   let mut child = expect(
     scx,
     report,
@@ -102,7 +100,7 @@ fn run_plugin<Req: Message, Rsp: Default + Message>(
     scx,
     report,
     "plugin returned malformed response",
-    Rsp::decode(exit.stdout.as_slice()),
+    plugin::Response::decode(exit.stdout.as_slice()),
   )
 }
 
@@ -139,9 +137,21 @@ fn main() {
     Some(plugin) => plugin.into(),
   };
 
-  let req = plugin::NegotiationRequest {};
-  let resp: plugin::NegotiationResponse =
-    run_plugin(pz::plugin::MODE_NEGOTIATE, &plugin, &req, &scx, &mut report);
+  let req = plugin::Request {
+    value: Some(plugin::request::Value::About(plugin::AboutRequest {})),
+  };
+  let resp = run_plugin(&plugin, &req, &scx, &mut report)
+    .value
+    .and_then(|v| match v {
+      plugin::response::Value::About(a) => Some(a),
+      _ => None,
+    });
+  let resp = expect(
+    &scx,
+    &mut report,
+    "plugin returned malformed response",
+    resp.ok_or("expected AboutResponse"),
+  );
 
   let mut plugin_command = Pz::command().help_template(format!(
     "\
@@ -228,15 +238,27 @@ Options:
   report.dump_and_die(&scx, 2);
 
   let bundle_proto = bundle.to_proto();
-  let req = plugin::CodegenRequest {
-    requested_indices: (0..bundle_proto.types.len() as u32).collect(),
-    bundle: Some(bundle_proto),
-    options,
-    debug: Some(env::var_os("PZ_DEBUG").is_some()),
+  let req = plugin::Request {
+    value: Some(plugin::request::Value::Codegen(plugin::CodegenRequest {
+      requested_indices: (0..bundle_proto.types.len() as u32).collect(),
+      bundle: Some(bundle_proto),
+      options,
+      debug: Some(env::var_os("PZ_DEBUG").is_some()),
+    })),
   };
 
-  let resp: plugin::CodegenResponse =
-    run_plugin(pz::plugin::MODE_CODEGEN, &plugin, &req, &scx, &mut report);
+  let resp = run_plugin(&plugin, &req, &scx, &mut report)
+    .value
+    .and_then(|v| match v {
+      plugin::response::Value::Codegen(a) => Some(a),
+      _ => None,
+    });
+  let resp = expect(
+    &scx,
+    &mut report,
+    "plugin returned malformed response",
+    resp.ok_or("expected CodegenResponse"),
+  );
 
   for diagnostic in &resp.report {
     report.from_proto(diagnostic);

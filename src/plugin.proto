@@ -5,9 +5,23 @@ package pz.plugin;
 
 import "pz.proto";
 
-message NegotiationRequest {}
+message Request {
+  oneof value {
+    AboutRequest about = 1;
+    CodegenRequest codegen = 2;
+  }
+}
 
-message NegotiationResponse {
+message Response {
+  oneof value {
+    AboutResponse about = 1;
+    CodegenResponse codegen = 2;
+  }
+}
+
+message AboutRequest {}
+
+message AboutResponse {
   message Option {
     optional string name = 1;
     optional string help = 2;
