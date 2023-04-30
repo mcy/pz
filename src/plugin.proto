@@ -5,7 +5,20 @@ package pz.plugin;
 
 import "pz.proto";
 
-message Request {
+message NegotiationRequest {}
+
+message NegotiationResponse {
+  message Option {
+    optional string name = 1;
+    optional string help = 2;
+  }
+
+  optional string name = 1;
+  optional string version = 2;
+  repeated Option options = 10;
+}
+
+message CodegenRequest {
   optional pz.Bundle bundle = 1;
   repeated uint32 requested_indices = 2;
 
@@ -13,7 +26,7 @@ message Request {
   optional bool debug = 4;
 }
 
-message Response {
+message CodegenResponse {
   message File {
     optional string path = 1;
     optional bytes content = 2;

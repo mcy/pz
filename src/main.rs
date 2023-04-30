@@ -2,13 +2,18 @@
 
 use std::collections::HashMap;
 use std::env;
+use std::fmt;
 use std::fs;
 use std::io::Write;
+use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
 use std::process::Stdio;
 
-use clap::Parser;
+use clap::Arg;
+use clap::ArgAction;
+use clap::CommandFactory;
+use clap::FromArgMatches;
 use prost::Message;
 
 use pz::ir;
@@ -16,34 +21,202 @@ use pz::proto::plugin;
 use pz::report::Report;
 use pz::syn;
 
-/// Protobuf but with pizzazz
 #[derive(clap::Parser, Debug)]
-#[command(version, about)]
+#[command(about, disable_help_flag(true), arg_required_else_help(true))]
 struct Pz {
-  /// Where to output the generated files to; defaults to the current director.
-  #[arg(short, long)]
-  output_dir: Option<PathBuf>,
+  /// Prints this help.
+  #[arg(long, short)]
+  help: bool,
 
-  /// What plugin to execute. This can either be the name of a built-in plugin,
+  /// Prints the version.
+  #[arg(long, short = 'V')]
+  version: bool,
+
+  /// What plugin to execute; this can either be the name of a built-in plugin,
   /// or the path to a plugin binary.
   #[arg(long)]
   plugin: Option<String>,
 
-  input: PathBuf,
+  /// Where to output the generated files to; defaults to the current directory.
+  #[arg(long)]
+  output_dir: Option<PathBuf>,
+
+  /// The `.pz` file to pass to the plugin.
+  file: Option<PathBuf>,
+}
+
+fn expect<T, E: fmt::Display>(
+  scx: &syn::SourceCtx,
+  report: &mut Report,
+  msg: impl fmt::Display,
+  res: Result<T, E>,
+) -> T {
+  match res {
+    Ok(x) => x,
+    Err(e) => report.fatal(scx, 2, format_args!("{msg}: {e}")),
+  }
+}
+
+fn run_plugin<Req: Message, Rsp: Default + Message>(
+  mode: &str,
+  plugin: &Path,
+  req: &Req,
+  scx: &syn::SourceCtx,
+  report: &mut Report,
+) -> Rsp {
+  env::set_var(pz::plugin::MODE_ENV_VAR, mode);
+  let mut child = expect(
+    scx,
+    report,
+    format_args!("could not spawn plugin {}", plugin.display()),
+    Command::new(plugin)
+      .stdin(Stdio::piped())
+      .stdout(Stdio::piped())
+      .stderr(Stdio::inherit())
+      .spawn(),
+  );
+
+  expect(
+    scx,
+    report,
+    "could not send request to plugin",
+    child.stdin.take().unwrap().write_all(&req.encode_to_vec()),
+  );
+
+  let exit = expect(
+    scx,
+    report,
+    "plugin did not exit successfully",
+    child.wait_with_output(),
+  );
+
+  if exit.status.code() != Some(0) {
+    report.fatal(
+      scx,
+      2,
+      format_args!("plugin returned abnormally: $? = {:?}", exit.status),
+    );
+  }
+
+  expect(
+    scx,
+    report,
+    "plugin returned malformed response",
+    Rsp::decode(exit.stdout.as_slice()),
+  )
 }
 
 fn main() {
-  match env::var("_PZ_SELF_EXEC").as_ref().map(|x| x.as_str()) {
+  match env::var("_PZ_SELF_EXEC").as_deref() {
     Ok("bundle") => pz::plugin::bundle_plugin(),
     _ => {}
   }
 
-  let opts = Pz::parse();
-
   let mut report = Report::new();
-
   let mut scx = syn::SourceCtx::new();
-  let file = scx.open_file(&opts.input, &mut report);
+
+  let args = env::args_os().collect::<Vec<_>>();
+  let mut plugin_name = None;
+  for (i, arg) in args.iter().enumerate() {
+    plugin_name = if arg == "--plugin" {
+      args.get(i + 1).and_then(|s| s.to_str())
+    } else if let Some(arg) =
+      arg.to_str().filter(|s| s.starts_with("--plugin="))
+    {
+      arg.strip_prefix("--plugin=")
+    } else {
+      continue;
+    };
+
+    break;
+  }
+
+  let plugin = match plugin_name.as_deref() {
+    None | Some("bundle") => {
+      env::set_var("_PZ_SELF_EXEC", "bundle");
+      env::current_exe().unwrap()
+    }
+    Some(plugin) => plugin.into(),
+  };
+
+  let req = plugin::NegotiationRequest {};
+  let resp: plugin::NegotiationResponse =
+    run_plugin(pz::plugin::MODE_NEGOTIATE, &plugin, &req, &scx, &mut report);
+
+  let mut plugin_command = Pz::command().help_template(format!(
+    "\
+Usage: {{name}} {plugin}[OPTIONS] <FILES>
+
+Options:
+{{options}}
+",
+    plugin = plugin_name
+      .map(|p| format!("--plugin {p:?} "))
+      .unwrap_or_default()
+  ));
+  for opt in &resp.options {
+    let name = format!("{}.{}", resp.name(), opt.name());
+    plugin_command = plugin_command.arg(
+      Arg::new(name.clone())
+        .long(name)
+        .action(ArgAction::Set)
+        .value_parser(clap::value_parser!(String))
+        .value_name("ARG")
+        .help(opt.help().to_string()),
+    );
+  }
+
+  let opts = plugin_command
+    .clone()
+    .try_get_matches()
+    .and_then(|opts| Ok((Pz::from_arg_matches(&opts)?, opts)));
+  let (opts, plugin_opts) = match opts {
+    Ok(opts) => opts,
+    Err(e) => {
+      use clap::error::ErrorKind::*;
+      if matches!(
+        e.kind(),
+        DisplayHelp | DisplayVersion | DisplayHelpOnMissingArgumentOrSubcommand
+      ) {
+        e.exit();
+      }
+
+      let text = e.to_string();
+      let message = text.trim_start_matches("error: ");
+      let message =
+        message[..message.find("Usage: pz").unwrap_or(message.len())].trim();
+
+      report.fatal(&scx, 2, message);
+    }
+  };
+
+  if opts.help {
+    plugin_command.print_help().unwrap();
+    return;
+  }
+
+  if opts.version {
+    eprintln!(
+      "pz v{} / {} v{}",
+      env!("CARGO_PKG_VERSION"),
+      resp.name(),
+      resp.version()
+    );
+    return;
+  }
+
+  let mut options = HashMap::new();
+  for opt in &resp.options {
+    let name = format!("{}.{}", resp.name(), opt.name());
+    if let Some(val) = plugin_opts.get_one::<String>(&name) {
+      options.insert(opt.name().to_string(), val.to_string());
+    }
+  }
+
+  let Some(path) = opts.file.as_ref() else {
+    report.fatal(&scx, 2, "missing input filename");
+  };
+  let file = scx.open_file(path, &mut report);
   report.dump_and_die(&scx, 2);
 
   let file = syn::PzFile::parse(file.unwrap(), &mut scx, &mut report);
@@ -55,70 +228,21 @@ fn main() {
   report.dump_and_die(&scx, 2);
 
   let bundle_proto = bundle.to_proto();
-  let req = plugin::Request {
+  let req = plugin::CodegenRequest {
     requested_indices: (0..bundle_proto.types.len() as u32).collect(),
     bundle: Some(bundle_proto),
-    options: HashMap::new(), // TODO
+    options,
     debug: Some(env::var_os("PZ_DEBUG").is_some()),
   };
-  let req_bytes = req.encode_to_vec();
 
-  let plugin = match opts.plugin.as_deref().unwrap_or("bundle") {
-    plugin @ "bundle" => {
-      env::set_var("_PZ_SELF_EXEC", plugin);
-      env::current_exe().unwrap()
-    }
-    plugin => plugin.into(),
-  };
+  let resp: plugin::CodegenResponse =
+    run_plugin(pz::plugin::MODE_CODEGEN, &plugin, &req, &scx, &mut report);
 
-  let spawn_result = Command::new(&plugin)
-    .stdin(Stdio::piped())
-    .stdout(Stdio::piped())
-    .stderr(Stdio::inherit())
-    .spawn();
-
-  let mut child = match spawn_result {
-    Ok(c) => c,
-    Err(e) => report.fatal(
-      &scx,
-      2,
-      format_args!("could not spawn plugin {}: {e}", plugin.display()),
-    ),
-  };
-
-  if let Err(e) = child.stdin.take().unwrap().write_all(&req_bytes) {
-    report.fatal(
-      &scx,
-      2,
-      format_args!("could not send request to plugin: {e}"),
-    );
+  for diagnostic in &resp.report {
+    report.from_proto(diagnostic);
   }
 
-  let exit = match child.wait_with_output() {
-    Ok(x) => x,
-    Err(e) => report.fatal(
-      &scx,
-      2,
-      format_args!("plugin did not exit successfully: {e}"),
-    ),
-  };
-
-  if exit.status.code() != Some(0) {
-    report.fatal(
-      &scx,
-      2,
-      format_args!("plugin returned abnormally: $? = {exit:?}"),
-    );
-  }
-
-  let resp = match plugin::Response::decode(exit.stdout.as_slice()) {
-    Ok(resp) => resp,
-    Err(e) => report.fatal(
-      &scx,
-      2,
-      format_args!("plugin returned malformed response: {e}"),
-    ),
-  };
+  report.dump_and_die(&scx, 2);
 
   for file in &resp.files {
     let mut path = opts.output_dir.clone().unwrap_or(PathBuf::new());

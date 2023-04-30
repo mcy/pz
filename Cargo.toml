@@ -12,7 +12,7 @@ features = ["collections"]
 
 [dependencies.clap]
 version = "4.2.4"
-features = ["derive"]
+features = ["derive", "string"]
 
 [dependencies.annotate-snippets]
 version = "0.9.1"

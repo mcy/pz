@@ -14,6 +14,7 @@ use annotate_snippets::display_list::DisplayList;
 use annotate_snippets::display_list::FormatOptions;
 use annotate_snippets::snippet;
 
+use crate::proto::plugin;
 use crate::proto::plugin::diagnostic::Kind;
 use crate::syn;
 use crate::syn::SourceCtx;
@@ -170,6 +171,26 @@ impl Report {
     });
 
     self.errors.last_mut().unwrap()
+  }
+
+  pub fn from_proto(&mut self, diagnostic: &plugin::Diagnostic) {
+    self.errors.push(Diagnostic {
+      message: diagnostic.message().to_string(),
+      kind: diagnostic.kind(),
+      snippets: vec![diagnostic
+        .snippets
+        .iter()
+        .map(|s| {
+          (
+            syn::Span::from_id(s.span()),
+            s.message().to_string(),
+            s.is_remark(),
+          )
+        })
+        .collect()],
+      notes: diagnostic.notes.iter().map(|s| s.to_string()).collect(),
+      reported_at: None,
+    });
   }
 
   /// Calls `dump_to()` on `stderr`, exiting the process with the given

@@ -2,6 +2,7 @@
 
 use std::cell;
 use std::cell::RefCell;
+use std::env;
 use std::fmt;
 use std::io;
 use std::io::Read;
@@ -14,10 +15,14 @@ use crate::proto::plugin;
 
 mod emit;
 
+pub const MODE_ENV_VAR: &str = "PZ_MODE";
+pub const MODE_NEGOTIATE: &str = "negotiate";
+pub const MODE_CODEGEN: &str = "codegen";
+
 /// The context for the current codegen operation.
 pub struct CodegenCtx {
-  req: plugin::Request,
-  resp: RefCell<plugin::Response>,
+  req: plugin::CodegenRequest,
+  resp: RefCell<plugin::CodegenResponse>,
 }
 
 impl CodegenCtx {
@@ -48,7 +53,7 @@ impl CodegenCtx {
 
   /// Adds a file to the response. The file paths are relative to the output
   /// directory of the driver process.
-  pub fn add_file(&self, file: plugin::response::File) {
+  pub fn add_file(&self, file: plugin::codegen_response::File) {
     self.resp.borrow_mut().files.push(file);
   }
 
@@ -59,6 +64,19 @@ impl CodegenCtx {
         resp.report.push(plugin::Diagnostic {
           message: Some(msg.to_string()),
           kind: Some(plugin::diagnostic::Kind::Error.into()),
+          ..Default::default()
+        });
+        resp.report.last_mut().unwrap()
+      }),
+    }
+  }
+
+  pub fn warn(&self, msg: impl fmt::Display) -> Diagnostic<'_> {
+    Diagnostic {
+      proto: cell::RefMut::map(self.resp.borrow_mut(), |resp| {
+        resp.report.push(plugin::Diagnostic {
+          message: Some(msg.to_string()),
+          kind: Some(plugin::diagnostic::Kind::Warning.into()),
           ..Default::default()
         });
         resp.report.last_mut().unwrap()
@@ -198,35 +216,69 @@ impl<'ccx> Field<'ccx> {
 ///
 /// This function should be called in the `main` function of a program that
 /// implements a codegen backend.
-pub fn exec(main: impl FnOnce(&CodegenCtx)) -> ! {
-  let mut input = Vec::new();
-  io::stdin()
-    .read_to_end(&mut input)
-    .expect("failed to read request proto");
+pub fn exec(
+  negotiate: impl FnOnce(&plugin::NegotiationRequest) -> plugin::NegotiationResponse,
+  codegen: impl FnOnce(&CodegenCtx),
+) -> ! {
+  match env::var(MODE_ENV_VAR).as_deref() {
+    Ok(MODE_NEGOTIATE) => {
+      let mut input = Vec::new();
+      io::stdin()
+        .read_to_end(&mut input)
+        .expect("failed to read request proto");
 
-  let req = plugin::Request::decode(input.as_slice())
-    .expect("failed to parse request proto");
+      let req = plugin::NegotiationRequest::decode(input.as_slice())
+        .expect("failed to parse request proto");
+      let output = negotiate(&req).encode_to_vec();
+      io::stdout()
+        .write(&output)
+        .expect("failed to write response proto");
+    }
+    Ok(MODE_ENV_VAR) => {
+      let mut input = Vec::new();
+      io::stdin()
+        .read_to_end(&mut input)
+        .expect("failed to read request proto");
 
-  let ctx = CodegenCtx {
-    req,
-    resp: Default::default(),
-  };
-  main(&ctx);
-  let output = ctx.resp.borrow().encode_to_vec();
+      let req = plugin::CodegenRequest::decode(input.as_slice())
+        .expect("failed to parse request proto");
 
-  io::stdout()
-    .write(&output)
-    .expect("failed to write response proto");
+      let ctx = CodegenCtx {
+        req,
+        resp: Default::default(),
+      };
+      codegen(&ctx);
+      let output = ctx.resp.borrow().encode_to_vec();
+
+      io::stdout()
+        .write(&output)
+        .expect("failed to write response proto");
+    }
+    _ => panic!("unknown {MODE_ENV_VAR} environment variable"),
+  }
 
   std::process::exit(0);
 }
 
 /// Runs the "trivial" bundle plugin that simply echoes the request bundle.
 pub fn bundle_plugin() -> ! {
-  exec(|ctx| {
-    ctx.add_file(plugin::response::File {
-      path: Some(ctx.option("out").unwrap_or("bundle.pb").into()),
-      content: Some(ctx.bundle().encode_to_vec()),
-    });
-  })
+  exec(
+    |_| plugin::NegotiationResponse {
+      name: Some("bundle".into()),
+      version: Some(env!("CARGO_PKG_VERSION").into()),
+      options: vec![plugin::negotiation_response::Option {
+        name: Some("out".into()),
+        help: Some(
+          "The file to write the bundle proto to; defaults to \"bundle.pb\""
+            .into(),
+        ),
+      }],
+    },
+    |ctx| {
+      ctx.add_file(plugin::codegen_response::File {
+        path: Some(ctx.option("out").unwrap_or("bundle.pb").into()),
+        content: Some(ctx.bundle().encode_to_vec()),
+      });
+    },
+  )
 }

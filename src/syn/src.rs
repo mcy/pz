@@ -71,9 +71,11 @@ impl<S: Spanned> Spanned for &S {
 }
 
 impl Span {
-  /// Returns this span's opaque ID, for encoding into codegen protos.
-  pub fn id(self) -> u32 {
+  pub(crate) fn id(self) -> u32 {
     self.0
+  }
+  pub(crate) fn from_id(id: u32) -> Self {
+    Self(id)
   }
 
   /// Returns the byte range for this span.
