@@ -437,6 +437,7 @@ dependencies = [
  "bumpalo",
  "clap",
  "googletest",
+ "heck",
  "prost",
  "prost-build",
  "unindent",

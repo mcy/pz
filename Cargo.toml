@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+heck = "0.4.1"
 prost = "0.11.9"
 
 [dependencies.bumpalo]

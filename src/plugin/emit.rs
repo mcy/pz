@@ -67,6 +67,7 @@ pub struct Options {
   pub comment_start: &'static str,
 }
 
+#[allow(dead_code)]
 pub enum Sub<'a> {
   Text(&'a str),
   Fmt(&'a dyn fmt::Display),

@@ -190,7 +190,6 @@ fn parse_item(
   lexer: &mut Lexer,
   inside: Container,
   outer_name: Span,
-  outer_attrs: &mut Vec<syn::Attr>,
 ) -> Result<syn::Item> {
   let mut attrs = Vec::new();
   loop {
@@ -247,7 +246,7 @@ fn parse_item(
             break;
           }
 
-          items.push(parse_item(lexer, container, span, &mut attrs)?);
+          items.push(parse_item(lexer, container, span)?);
         }
         lexer.keyword("}")?;
 
@@ -341,20 +340,8 @@ fn parse_file<'scx, 'file>(
   let package = parse_package(lexer)?;
 
   let mut items = Vec::new();
-  let mut attrs = Vec::new();
   while !lexer.at_eof()? {
-    items.push(parse_item(
-      lexer,
-      Container::File,
-      edition.span(),
-      &mut attrs,
-    )?);
-  }
-
-  for attr in attrs {
-    lexer
-      .error("sorry: attributes not supported at file scope yet")
-      .at(attr);
+    items.push(parse_item(lexer, Container::File, edition.span())?);
   }
 
   Ok((edition, package, items))

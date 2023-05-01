@@ -56,7 +56,7 @@ fn field_type_name<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
       (TypeEnum::F64, _) => "f64",
       (TypeEnum::Bool, _) => "bool",
       (TypeEnum::String, _) => "Vec<u8>",
-      _ => todo!(),
+      _ => unreachable!(),
     };
 
     write!(f, "{name}")
@@ -70,6 +70,25 @@ fn storage_for<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
       write!(f, "Vec<{name}>")
     } else {
       write!(f, "{name}")
+    }
+  })
+}
+
+fn default_for<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
+  emit::display(move |f| {
+    if field.is_repeated() {
+      return write!(f, "Vec::new()");
+    }
+
+    match field.ty() {
+      (TypeEnum::I32 | TypeEnum::U32 | TypeEnum::I64 | TypeEnum::U64, _) => {
+        write!(f, "0")
+      }
+      (TypeEnum::F32 | TypeEnum::F64, _) => write!(f, "0.0"),
+      (TypeEnum::Bool, _) => write!(f, "false"),
+      (TypeEnum::String, _) => write!(f, "Vec::new()"),
+      (TypeEnum::Type, Some(ty)) => write!(f, "{}::new()", type_name(ty)),
+      _ => unreachable!(),
     }
   })
 }
@@ -100,6 +119,8 @@ pub fn rust_plugin() -> ! {
         r"
         // ! ! ! GENERATED CODE, DO NOT EDIT ! ! !
         #![cfg_attr(rustfmt, rustfmt_skip)]
+        #![allow(non_camel_case_types)]
+        #![allow(non_upper_case_globals)]
       ",
       );
 
@@ -183,9 +204,12 @@ fn emit_message(ty: Type, w: &mut SourceWriter) {
         ");
         for field in ty.fields() {
           w.emit(
-            vars! { name: ident(field.name()) },
+            vars! {
+              name: ident(field.name()),
+              default: default_for(field),
+            },
             r"
-              $name: todo!(),
+              $name: $default,
             "
           );
         }
@@ -498,17 +522,17 @@ fn emit_enum(ty: Type, w: &mut SourceWriter) {
       package: ident(ty.package()),
       Name: ident(ty.name()),
       Enum: type_name(ty),
-      "Enum::VARIANTS": |w| for field in ty.fields() {
+      "Enum::Variants": |w| for field in ty.fields() {
         w.emit(
           vars! {
-            NAME: ident(field.name()),
+            Name: ident(&heck::AsPascalCase(field.name()).to_string()),
             NUMBER: field.number().unwrap(),
             deprecated: deprecated(
               field.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
           },
           r"
             $deprecated
-            pub const $NAME: Self = Self($NUMBER);
+            pub const $Name: Self = Self($NUMBER);
           "
         );
       },
@@ -524,7 +548,11 @@ fn emit_enum(ty: Type, w: &mut SourceWriter) {
       pub struct $Enum(pub i32);
 
       impl $Enum {
-        ${Enum::VARIANTS}
+        ${Enum::Variants}
+
+        pub const fn new() -> Self {
+          Self($DEFAULT)
+        }
       }
 
       impl Default for $Enum {

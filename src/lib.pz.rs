@@ -1,5 +1,7 @@
 // ! ! ! GENERATED CODE, DO NOT EDIT ! ! !
 #![cfg_attr(rustfmt, rustfmt_skip)]
+#![allow(non_camel_case_types)]
+#![allow(non_upper_case_globals)]
 use crate as __rt;
 
 /// message `pz.Bundle`
@@ -15,9 +17,9 @@ impl Bundle {
   pub const fn new() -> Self {
     Self {
       __hasbits: [0; 0],
-      types: todo!(),
-      packages: todo!(),
-      foreign_types: todo!(),
+      types: Vec::new(),
+      packages: Vec::new(),
+      foreign_types: Vec::new(),
     }
   }
 
@@ -106,13 +108,13 @@ impl Type {
   pub const fn new() -> Self {
     Self {
       __hasbits: [0; 1],
-      name: todo!(),
-      package: todo!(),
-      kind: todo!(),
-      declared_in: todo!(),
-      fields: todo!(),
-      nesteds: todo!(),
-      span: todo!(),
+      name: Vec::new(),
+      package: 0,
+      kind: Type_Kind::new(),
+      declared_in: 0,
+      fields: Vec::new(),
+      nesteds: Vec::new(),
+      span: 0,
     }
   }
 
@@ -286,10 +288,14 @@ impl Default for Type {
 pub struct Type_Kind(pub i32);
 
 impl Type_Kind {
-  pub const MESSAGE: Self = Self(0);
-  pub const STRUCT: Self = Self(1);
-  pub const CHOICE: Self = Self(2);
-  pub const ENUM: Self = Self(3);
+  pub const Message: Self = Self(0);
+  pub const Struct: Self = Self(1);
+  pub const Choice: Self = Self(2);
+  pub const Enum: Self = Self(3);
+
+  pub const fn new() -> Self {
+    Self(0)
+  }
 }
 
 impl Default for Type_Kind {
@@ -314,12 +320,12 @@ impl Field {
   pub const fn new() -> Self {
     Self {
       __hasbits: [0; 1],
-      name: todo!(),
-      number: todo!(),
-      is_repeated: todo!(),
-      r#type: todo!(),
-      type_index: todo!(),
-      span: todo!(),
+      name: Vec::new(),
+      number: 0,
+      is_repeated: false,
+      r#type: Field_Type::new(),
+      type_index: 0,
+      span: 0,
     }
   }
 
@@ -481,17 +487,21 @@ impl Default for Field {
 pub struct Field_Type(pub i32);
 
 impl Field_Type {
-  pub const NONE: Self = Self(0);
+  pub const None: Self = Self(0);
   pub const I32: Self = Self(1);
   pub const U32: Self = Self(2);
   pub const F32: Self = Self(3);
   pub const I64: Self = Self(4);
   pub const U64: Self = Self(5);
   pub const F64: Self = Self(6);
-  pub const BOOL: Self = Self(7);
-  pub const STRING: Self = Self(8);
-  pub const TYPE: Self = Self(9);
-  pub const FOREIGN: Self = Self(10);
+  pub const Bool: Self = Self(7);
+  pub const String: Self = Self(8);
+  pub const Type: Self = Self(9);
+  pub const Foreign: Self = Self(10);
+
+  pub const fn new() -> Self {
+    Self(0)
+  }
 }
 
 impl Default for Field_Type {
