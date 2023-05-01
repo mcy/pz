@@ -1,4 +1,5 @@
 // ! ! ! GENERATED CODE, DO NOT EDIT ! ! !
+#![cfg_attr(rustfmt, rustfmt_skip)]
 use crate as __rt;
 
 /// message `pz.Bundle`

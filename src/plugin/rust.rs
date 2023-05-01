@@ -99,6 +99,7 @@ pub fn rust_plugin() -> ! {
         [],
         r"
         // ! ! ! GENERATED CODE, DO NOT EDIT ! ! !
+        #![cfg_attr(rustfmt, rustfmt_skip)]
       ",
       );
 
