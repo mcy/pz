@@ -1,179 +1,19 @@
-//! Rust codegen backend.
+//! Message codegen.
 
-use std::fmt;
-
-use crate::plugin::emit;
 use crate::plugin::emit::SourceWriter;
-use crate::plugin::exec_plugin;
 use crate::plugin::Field;
 use crate::plugin::Type;
 use crate::proto::field::Type as TypeEnum;
-use crate::proto::plugin;
 use crate::proto::r#type::Kind;
 
-const INESCAPABLE_KWS: &[&str] = &["crate", "self", "super", "Self"];
+use crate::plugin::rust::names::default_for;
+use crate::plugin::rust::names::deprecated;
+use crate::plugin::rust::names::field_type_name;
+use crate::plugin::rust::names::ident;
+use crate::plugin::rust::names::storage_for;
+use crate::plugin::rust::names::type_name;
 
-const KWS: &[&str] = &[
-  "as", "break", "const", "continue", "crate", "else", "enum", "extern",
-  "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod",
-  "move", "mut", "pub", "ref", "return", "self", "Self", "static", "struct",
-  "super", "trait", "true", "type", "unsafe", "use", "where", "while", "async",
-  "await", "dyn", "abstract", "become", "box", "do", "final", "macro",
-  "override", "priv", "typeof", "unsized", "virtual", "yield", "try",
-];
-
-pub fn ident(name: &str) -> impl fmt::Display + '_ {
-  emit::display(move |f| {
-    if INESCAPABLE_KWS.contains(&name) {
-      write!(f, "{name}_")
-    } else if KWS.contains(&name) {
-      write!(f, "r#{name}")
-    } else {
-      f.write_str(name)
-    }
-  })
-}
-
-fn type_name<'ccx>(ty: Type<'ccx>) -> impl fmt::Display + 'ccx {
-  emit::display(move |f| {
-    fmt::Display::fmt(&ident(&ty.name().replace(".", "_")), f)
-  })
-}
-
-fn field_type_name<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
-  emit::display(move |f| {
-    if let (TypeEnum::Type, Some(ty)) = field.ty() {
-      write!(f, "{}", type_name(ty))?;
-      return Ok(());
-    }
-
-    let name = match field.ty() {
-      (TypeEnum::I32, _) => "i32",
-      (TypeEnum::U32, _) => "u32",
-      (TypeEnum::F32, _) => "f32",
-      (TypeEnum::I64, _) => "i64",
-      (TypeEnum::U64, _) => "u64",
-      (TypeEnum::F64, _) => "f64",
-      (TypeEnum::Bool, _) => "bool",
-      (TypeEnum::String, _) => "Vec<u8>",
-      _ => unreachable!(),
-    };
-
-    write!(f, "{name}")
-  })
-}
-
-fn storage_for<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
-  emit::display(move |f| {
-    let name = field_type_name(field);
-    if field.is_repeated() {
-      write!(f, "Vec<{name}>")
-    } else {
-      write!(f, "{name}")
-    }
-  })
-}
-
-fn default_for<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
-  emit::display(move |f| {
-    if field.is_repeated() {
-      return write!(f, "Vec::new()");
-    }
-
-    match field.ty() {
-      (TypeEnum::I32 | TypeEnum::U32 | TypeEnum::I64 | TypeEnum::U64, _) => {
-        write!(f, "0")
-      }
-      (TypeEnum::F32 | TypeEnum::F64, _) => write!(f, "0.0"),
-      (TypeEnum::Bool, _) => write!(f, "false"),
-      (TypeEnum::String, _) => write!(f, "Vec::new()"),
-      (TypeEnum::Type, Some(ty)) => write!(f, "{}::new()", type_name(ty)),
-      _ => unreachable!(),
-    }
-  })
-}
-
-fn deprecated<'a>(reason: Option<&'a str>) -> impl fmt::Display + 'a {
-  emit::display(move |f| match reason {
-    Some(value) => write!(f, "#[deprecated = {value:?}]"),
-    _ => Ok(()),
-  })
-}
-
-pub fn rust_plugin() -> ! {
-  exec_plugin(
-    |_| plugin::AboutResponse {
-      name: Some("rust".into()),
-      version: Some(env!("CARGO_PKG_VERSION").into()),
-      options: vec![plugin::about_response::Option {
-        name: Some("rt-crate".into()),
-        help: Some(
-          "Rust crate name to use for importing the pz runtime".into(),
-        ),
-      }],
-    },
-    |ctx| {
-      let mut w = emit::SourceWriter::new(emit::Options::default());
-      w.emit(
-        [],
-        r"
-        // ! ! ! GENERATED CODE, DO NOT EDIT ! ! !
-        #![cfg_attr(rustfmt, rustfmt_skip)]
-        #![allow(non_camel_case_types)]
-        #![allow(non_upper_case_globals)]
-      ",
-      );
-
-      let rt = ctx.option("rt-crate").unwrap_or("pz");
-      if rt == "crate" {
-        w.emit(
-          vars! {},
-          r"
-          use crate as __rt;
-        ",
-        );
-      } else {
-        w.emit(
-          vars! { rt },
-          r"
-          extern $rt as __rt;
-        ",
-        );
-      }
-      w.new_line();
-
-      for ty in ctx.types_to_generate() {
-        w.with_vars(
-          vars! {
-            deprecated: deprecated(
-              ty.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
-          },
-          |w| match ty.kind() {
-            crate::proto::r#type::Kind::Message => emit_message(ty, w),
-            crate::proto::r#type::Kind::Struct => {
-              ctx
-                .warn("sorry: can't emit this kind of type yet")
-                .at(ty.span().unwrap());
-            }
-            crate::proto::r#type::Kind::Choice => {
-              ctx
-                .warn("sorry: can't emit this kind of type yet")
-                .at(ty.span().unwrap());
-            }
-            crate::proto::r#type::Kind::Enum => emit_enum(ty, w),
-          },
-        )
-      }
-
-      ctx.add_file(plugin::codegen_response::File {
-        path: Some("lib.pz.rs".into()),
-        content: Some(w.to_string().into_bytes()),
-      })
-    },
-  )
-}
-
-fn emit_message(ty: Type, w: &mut SourceWriter) {
+pub fn emit(ty: Type, w: &mut SourceWriter) {
   let singular_count = ty.fields().filter(|f| !f.is_repeated()).count();
   let hasbit_words = singular_count / 32 + (singular_count % 32 != 0) as usize;
 
@@ -514,53 +354,4 @@ fn emit_message_accessors(
       w.new_line()
     },
   )
-}
-
-fn emit_enum(ty: Type, w: &mut SourceWriter) {
-  w.emit(
-    vars! {
-      package: ident(ty.package()),
-      Name: ident(ty.name()),
-      Enum: type_name(ty),
-      "Enum::Variants": |w| for field in ty.fields() {
-        w.emit(
-          vars! {
-            Name: ident(&heck::AsPascalCase(field.name()).to_string()),
-            NUMBER: field.number().unwrap(),
-            deprecated: deprecated(
-              field.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
-          },
-          r"
-            $deprecated
-            pub const $Name: Self = Self($NUMBER);
-          "
-        );
-      },
-      "DEFAULT": match ty.fields().next() {
-        Some(f) => f.number().unwrap(),
-        _ => 0,
-      },
-    },
-    r#"
-      /// enum `$package.$Name`
-      $deprecated
-      #[derive(Copy, Clone, PartialEq, Eq, Hash)]
-      pub struct $Enum(pub i32);
-
-      impl $Enum {
-        ${Enum::Variants}
-
-        pub const fn new() -> Self {
-          Self($DEFAULT)
-        }
-      }
-
-      impl Default for $Enum {
-        fn default() -> Self {
-          Self($DEFAULT)
-        }
-      }
-    "#,
-  );
-  w.new_line();
 }
