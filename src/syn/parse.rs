@@ -146,7 +146,7 @@ impl fmt::Display for Container {
   }
 }
 
-fn parse_attr_kv(start: Span, lexer: &mut Lexer) -> Result<syn::Attr> {
+fn parse_attr_kv(start: Option<Span>, lexer: &mut Lexer) -> Result<syn::Attr> {
   let name = parse_path(lexer)?;
   let mut end = name.span();
   let value = if lexer.peek()?.text(lexer.scx()) == "=" {
@@ -163,12 +163,27 @@ fn parse_attr_kv(start: Span, lexer: &mut Lexer) -> Result<syn::Attr> {
     syn::AttrValue::None
   };
 
-  let span = start.span().with_end(end, lexer.scx_mut());
+  let span = start
+    .unwrap_or(name.span())
+    .span()
+    .with_end(end, lexer.scx_mut());
   Ok(syn::Attr {
     span,
     kind: syn::AttrKind::At(name),
     value,
   })
+}
+
+fn parse_wheres(lexer: &mut Lexer, attrs: &mut Vec<syn::Attr>) -> Result<()> {
+  while lexer.take_exact("where")?.is_some() {
+    if lexer.take_exact("{")?.is_some() {
+      while lexer.take_exact("}")?.is_none() {}
+      lexer.keyword("}")?;
+    } else {
+      attrs.push(parse_attr_kv(None, lexer)?);
+    }
+  }
+  Ok(())
 }
 
 fn parse_item(
@@ -181,6 +196,7 @@ fn parse_item(
   loop {
     let kw = lexer.expect(&[
       Kind::Ident,
+      Kind::Int,
       Kind::Doc,
       Kind::Exact("@"),
       Kind::Exact("message"),
@@ -191,11 +207,7 @@ fn parse_item(
 
     break match kw.text(lexer.scx()) {
       "@" => {
-        attrs.push(parse_attr_kv(kw.span(), lexer)?);
-        continue;
-      }
-      "where" => {
-        outer_attrs.push(parse_attr_kv(kw.span(), lexer)?);
+        attrs.push(parse_attr_kv(Some(kw.span()), lexer)?);
         continue;
       }
       comment if comment.starts_with("///") => {
@@ -226,17 +238,13 @@ fn parse_item(
         }
 
         lexer.keyword("{")?;
+
+        parse_wheres(lexer, &mut attrs)?;
+
         let mut items = Vec::new();
         while !lexer.at_eof()? {
           if lexer.peek()?.text(lexer.scx()) == "}" {
             break;
-          }
-
-          if let Some(syn::Item::Field(..)) = items.last() {
-            lexer.keyword(",")?;
-            if lexer.peek()?.text(lexer.scx()) == "}" {
-              break;
-            }
           }
 
           items.push(parse_item(lexer, container, span, &mut attrs)?);
@@ -254,11 +262,45 @@ fn parse_item(
 
       _ => {
         lexer.unlex(1);
+        let mut first = None;
+        let mut last;
+
+        let mut number = None;
+        if let Token::Int(n) = kw {
+          lexer.next()?;
+          if inside == Container::Struct {
+            lexer
+              .error(format_args!("{inside} fields cannot have numbers"))
+              .saying(&n, "remove this number")
+              .remark(
+                outer_name,
+                format_args!("declared within this {inside}"),
+              );
+          }
+
+          first = Some(n.span());
+          number = Some(n);
+          lexer.keyword(".")?;
+        }
+
         let name = parse_ident(lexer)?;
+        first.get_or_insert(name.span());
+        last = Some(name.span());
+
+        // This needs to be here so we can moor the diagnostic onto the `name`.
+        // (This may be a sign I should move where these diagnostics are
+        // generated...)
+        if number.is_none() && inside != Container::Struct {
+          lexer
+            .error(format_args!("{inside} fields must have numbers"))
+            .saying(name, "expected number")
+            .remark(outer_name, format_args!("declared within this {inside}"));
+        }
 
         let mut ty = None;
         if let Some(_) = lexer.take_exact(":")? {
           let typ = parse_type(lexer)?;
+          last = Some(typ.span());
           if inside == Container::Enum {
             lexer
               .error(format_args!("{inside} fields cannot have types"))
@@ -277,44 +319,9 @@ fn parse_item(
             .remark(outer_name, format_args!("declared within this {inside}"));
         }
 
-        let mut number = None;
-        if let Some(_) = lexer.take_exact("=")? {
-          if let Token::Int(n) = lexer.expect(&[Kind::Int])? {
-            if inside == Container::Struct {
-              lexer
-                .error(format_args!("{inside} fields cannot have numbers"))
-                .saying(&n, "remove this number")
-                .remark(
-                  outer_name,
-                  format_args!("declared within this {inside}"),
-                );
-            }
+        parse_wheres(lexer, &mut attrs)?;
 
-            number = Some(n)
-          }
-        } else if inside != Container::Struct {
-          lexer
-            .error(format_args!("{inside} fields must have numbers"))
-            .saying(name, "expected number")
-            .remark(outer_name, format_args!("declared within this {inside}"));
-        }
-
-        while lexer.peek()?.text(lexer.scx()) == "where" {
-          let kw = lexer.keyword("where")?;
-          attrs.push(parse_attr_kv(kw.span(), lexer)?);
-        }
-
-        let last = [
-          number.as_ref().map(|x| x.span()),
-          ty.as_ref().map(|x| x.span()),
-          Some(name.span()),
-        ]
-        .iter()
-        .find(|x| x.is_some())
-        .unwrap()
-        .unwrap();
-
-        let span = name.span().with_end(last, lexer.scx_mut());
+        let span = first.unwrap().with_end(last.unwrap(), lexer.scx_mut());
         Ok(syn::Item::Field(syn::Field {
           span,
           name,

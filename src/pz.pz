@@ -5,56 +5,56 @@ package pz;
 ///
 /// This type is a sort of Protobuf object code.
 message Bundle {
-  types: repeated Type = 1,
+  1. types: repeated Type
   
-  packages: repeated str = 2,
-  foreign_types: repeated str = 3,
+  2. packages: repeated str
+  3. foreign_types: repeated str
 }
 
 /// A Protobuf type.
 message Type {
   enum Kind {
-    MESSAGE = 0,
-    STRUCT = 1,
-    CHOICE = 2,
-    ENUM = 3,
+    0. MESSAGE
+    1. STRUCT
+    2. CHOICE
+    3. ENUM
   }
 
-  name: str = 1,
-  package: u32 = 2,
-  kind: Kind = 3,
-  declared_in: u32 = 4,
+  1. name: str
+  2. package: u32
+  3. kind: Kind
+  4. declared_in: u32
 
-  fields: repeated Field = 10,
-  nesteds: repeated u32 = 11,
+  10. fields: repeated Field
+  11. nesteds: repeated u32
 
-  span: u32 = 20,
+  20. span: u32
 }
 
 /// A Protobuf type's field.
 message Field {
   enum Type {
-    NONE = 0,
+    0. NONE
 
-    I32 = 1,
-    U32 = 2,
-    F32 = 3,
-    I64 = 4,
-    U64 = 5,
-    F64 = 6,
+    1. I32
+    2. U32
+    3. F32
+    4. I64
+    5. U64
+    6. F64
 
-    BOOL = 7,
-    STRING = 8,
+    7. BOOL
+    8. STRING
 
-    TYPE = 9,
-    FOREIGN = 10,
+    9. TYPE
+    10. FOREIGN
   }
 
-  name: str = 1,
-  number: i32 = 2,
-  is_repeated: bool = 3,
-  type: Type = 4,
-  type_index: u32 = 5,
+  1. name: str
+  2. number: i32
+  3. is_repeated: bool
+  4. type: Type
+  5. type_index: u32
 
-  span: u32 = 20,
+  20. span: u32
 }

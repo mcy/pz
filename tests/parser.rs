@@ -96,29 +96,29 @@ fn smoke() -> Result<()> {
       package foo.bar;
 
       message Foo {
-        message Baz { value: f32 = 1 }
+        message Baz { 1. value: f32 }
 
-        foo: i32 = 1,
-        bar: repeated str = 2,
-        baz: Baz = 1000,
+        1. foo: i32
+        2. bar: repeated str
+        1000. baz: Baz
 
-        bonk: repeated foreign.Type = -1,
+        -1. bonk: repeated foreign.Type
 
         struct Uuid {
-          lo: u64,
-          hi: u64,
+          lo: u64
+          hi: u64
         }
       }
 
       choice OneOf {
-        int: i32 = 1,
-        #str: str = 2,
+        1. int: i32
+        2. #str: str
       }
 
       enum Bar {
-        FIRST = 1,
-        SECOND = 2,
-        NEGATIVE = -9999,
+        1. FIRST
+        2. SECOND
+        -9999. NEGATIVE
       }
     "#,
   );
