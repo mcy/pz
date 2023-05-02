@@ -1,67 +1,48 @@
 //! Message codegen.
 
 use crate::plugin::emit::SourceWriter;
-use crate::plugin::Field;
 use crate::plugin::Type;
-use crate::proto::field::Type as TypeEnum;
-use crate::proto::r#type::Kind;
 
-use crate::plugin::rust::names::default_for;
-use crate::plugin::rust::names::deprecated;
-use crate::plugin::rust::names::field_type_name;
+use crate::plugin::rust::fields::FieldGenerators;
+use crate::plugin::rust::fields::Where;
 use crate::plugin::rust::names::ident;
-use crate::plugin::rust::names::storage_for;
 use crate::plugin::rust::names::type_name;
 
 pub fn emit(ty: Type, w: &mut SourceWriter) {
-  let singular_count = ty.fields().filter(|f| !f.is_repeated()).count();
-  let hasbit_words = singular_count / 32 + (singular_count % 32 != 0) as usize;
+  let gen = FieldGenerators::build(ty.fields());
+  let hasbit_words = gen.num_hasbits / 32 + (gen.num_hasbits % 32 != 0) as u32;
 
   w.emit(
     vars! {
+      hasbit_words,
       package: ident(ty.package()),
       Name: ident(ty.name()),
       Msg: type_name(ty),
-      "Msg::fields": |w| {
-        w.emit(vars! { hasbit_words }, r"
-          __hasbits: [u32; $hasbit_words],
-        ");
-        for field in ty.fields() {
-          w.emit(
-            vars! {
-              name: ident(field.name()),
-              ty: storage_for(field),
-            },
-            r"
-              $name: $ty,
-            "
-          );
-        }
+      "Msg::fields": |w| for field in &gen.fields {
+        field.in_storage(w);
       },
-      "Msg::field_init": |w| {
-        w.emit(vars! { hasbit_words }, r"
-          __hasbits: [0; $hasbit_words],
-        ");
-        for field in ty.fields() {
-          w.emit(
-            vars! {
-              name: ident(field.name()),
-              default: default_for(field),
-            },
-            r"
-              $name: $default,
-            "
-          );
-        }
+      "Msg::field_init": |w| for field in &gen.fields {
+        field.in_storage_init(w);
       },
-      "Msg::accessors": |w| {
-        let mut hasbit_index = 0;
-        for field in ty.fields() {
-          emit_message_accessors(field, hasbit_index, w);
-          if !field.is_repeated() {
-            hasbit_index += 1;
-          }
-        }
+      "Msg::clear": |w| for field in &gen.fields {
+        field.in_clear(w);
+      },
+      "Msg::drop": |w| for field in &gen.fields {
+        field.in_drop(w);
+      },
+      "Msg::access": |w| for field in &gen.fields {
+        field.in_ref_methods(Where::MsgImpl, w);
+        field.in_mut_methods(Where::MsgImpl, w);
+        w.new_line();
+      },
+      "View::access": |w| for field in &gen.fields {
+        field.in_ref_methods(Where::ViewImpl, w);
+        w.new_line();
+      },
+      "Mut::access": |w| for field in &gen.fields {
+        field.in_ref_methods(Where::MutImpl, w);
+        field.in_mut_methods(Where::MutImpl, w);
+        w.new_line();
       },
     },
     r#"
@@ -69,17 +50,40 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       $deprecated
       #[derive(Clone)]
       pub struct $Msg {
-        ${Msg::fields}
+        ptr: Box<__priv_$Msg::Storage>,
       }
 
       impl $Msg {
-        pub const fn new() -> Self {
-          Self {
+        pub const DEFAULT: $rt::View<'static, Self> = {
+          const VALUE: __priv_$Msg::Storage = __priv_$Msg::Storage {
+            __hasbits: [0; $hasbit_words],
             ${Msg::field_init}
+          };
+          $rt::View::<Self> { ptr: &VALUE }
+        };
+        
+        pub fn new() -> Self {
+          Self {
+            ptr: Box::new(__priv_$Msg::Storage {
+              __hasbits: [0; $hasbit_words],
+              ${Msg::field_init}
+            }),
           }
         }
 
-        ${Msg::accessors}
+        pub fn as_view(&self) -> $rt::View<Self> {
+          __priv_$Msg::View { ptr: &self.ptr }
+        }
+
+        pub fn as_mut(&mut self) -> $rt::Mut<Self> {
+          __priv_$Msg::Mut { ptr: &mut self.ptr }
+        }
+
+        pub fn clear(&mut self) {
+          self.as_mut().clear();
+        }
+
+        ${Msg::access}
       }
 
       impl Default for $Msg {
@@ -87,271 +91,72 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           Self::new()
         }
       }
+
+      impl $rt::rt::ptr::Proxied for $Msg {
+        type View<'msg> = __priv_$Msg::View<'msg>;
+        type Mut<'msg> = __priv_$Msg::Mut<'msg>;
+      }
+
+      impl<'msg> __priv_$Msg::View<'msg> {
+        ${View::access}
+      }
+
+      impl<'msg> __priv_$Msg::Mut<'msg>  {
+        pub fn clear(&mut self) {
+          self.ptr.__hasbits = [0; $hasbit_words];
+          ${Msg::clear}
+        }
+
+        ${Mut::access}
+      }
+
+      impl Drop for $Msg {
+        fn drop(&mut self) {
+          ${Msg::drop}
+        }
+      }
+
+      mod __priv_$Msg {
+        pub use super::*;
+
+        #[derive(Clone)]
+        pub struct Storage {
+          pub(crate) __hasbits: [u32; $hasbit_words],
+          ${Msg::fields}    
+        }
+       
+        #[derive(Copy, Clone)]
+        pub struct View<'msg> {
+          pub(crate) ptr: &'msg Storage,
+        }
+       
+        impl<'msg> $rt::rt::ptr::ViewFor<'msg, super::$Msg> for View<'msg> {
+          fn as_view(&self) -> View {
+            View { ptr: self.ptr }
+          }
+        }
+
+        pub struct Mut<'msg> {
+          pub(crate) ptr: &'msg mut Storage,
+        }
+       
+        impl<'msg> $rt::rt::ptr::ViewFor<'msg, super::$Msg> for Mut<'msg> {
+          fn as_view(&self) -> View {
+            View { ptr: &self.ptr }
+          }
+        }
+
+        impl<'msg> $rt::rt::ptr::MutFor<'msg, super::$Msg> for Mut<'msg> {
+          fn into_view(self) -> View<'msg> {
+            View { ptr: self.ptr }
+          }
+
+          fn as_mut(&mut self) -> Mut {
+            Mut { ptr: self.ptr }
+          }
+        }
+      }
     "#,
   );
   w.new_line();
-}
-
-fn emit_message_accessors(
-  field: Field,
-  hasbit_index: u32,
-  w: &mut SourceWriter,
-) {
-  w.with_vars(
-    vars! {
-      deprecated: deprecated(
-        field.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
-    },
-    |w| {
-      let hasbit_word = hasbit_index / 32;
-      let hasbit_bit = 1 << (hasbit_index % 32);
-
-      let is_scalar = match field.ty() {
-        (
-          TypeEnum::I32
-          | TypeEnum::U32
-          | TypeEnum::F32
-          | TypeEnum::I64
-          | TypeEnum::U64
-          | TypeEnum::F64
-          | TypeEnum::Bool,
-          _,
-        ) => true,
-        (TypeEnum::Type, Some(ty)) => ty.kind() == Kind::Enum,
-        _ => false,
-      };
-
-      if is_scalar {
-        if !field.is_repeated() {
-          w.emit(
-            vars! {
-              hasbit_word,
-              hasbit_bit,
-              name: ident(field.name()),
-              Type: field_type_name(field),
-            },
-            r"
-              $deprecated
-              pub fn $name(&self) -> $Type {
-                self.${name}_opt().unwrap_or_default()
-              }
-              $deprecated
-              pub fn ${name}_opt(&self) -> Option<$Type> {
-                if self.__hasbits[$hasbit_word] & $hasbit_bit != 0 {
-                  Some(self.$name)
-                } else {
-                  None
-                }
-              }
-              $deprecated
-              pub fn ${name}_set(&mut self, value: impl Into<Option<$Type>>) {
-                match value.into() {
-                  Some(value) => {
-                    self.__hasbits[$hasbit_word] |= $hasbit_bit;
-                    self.$name = value;
-                  }
-                  None => {
-                    self.__hasbits[$hasbit_word] &= !$hasbit_bit;
-                  }
-                }
-              }
-            ",
-          );
-        } else {
-          w.emit(
-            vars! {
-              name: ident(field.name()),
-              Type: field_type_name(field),
-            },
-            r"
-              $deprecated
-              pub fn $name(&self) -> &[$Type] {
-                &self.$name
-              }
-              $deprecated
-              pub fn ${name}_mut(&mut self) -> &mut [$Type] {
-                &mut self.$name
-              }
-              $deprecated
-              pub fn ${name}_set(&mut self, that: &[$Type]) {
-                self.$name.clear();
-                self.${name}_extend(that)
-              }
-              $deprecated
-              pub fn ${name}_extend(&mut self, that: &[$Type]) {
-                self.$name.extend_from_slice(that)
-              }
-            ",
-          );
-        }
-      } else if let (TypeEnum::String, _) = field.ty() {
-        if !field.is_repeated() {
-          w.emit(
-            vars! {
-              hasbit_word,
-              hasbit_bit,
-              name: ident(field.name()),
-              Type: field_type_name(field),
-            },
-            r"
-              $deprecated
-              pub fn $name(&self) -> &__rt::Str {
-                self.${name}_opt().unwrap_or_default()
-              }
-              $deprecated
-              pub fn ${name}_opt(&self) -> Option<&__rt::Str> {
-                if self.__hasbits[$hasbit_word] & $hasbit_bit != 0 {
-                  Some(__rt::Str::new(&*self.$name))
-                } else {
-                  None
-                }
-              }
-              $deprecated
-              pub fn ${name}_mut(&mut self) -> __rt::StrBuf {
-                self.__hasbits[$hasbit_word] |= $hasbit_bit;
-                __rt::StrBuf::__wrap(&mut self.$name)
-              }
-              $deprecated
-              pub fn ${name}_opt_mut(&mut self) -> Option<__rt::StrBuf> {
-                if self.__hasbits[$hasbit_word] & $hasbit_bit != 0 {
-                  Some(__rt::StrBuf::__wrap(&mut self.$name))
-                } else {
-                  None
-                }
-              }
-              $deprecated
-              pub fn ${name}_set<'a>(&mut self, value: impl __rt::rt::str::IntoStrOpt<'a>) {
-                match value.into_str_opt() {
-                  Some(value) => {
-                    self.__hasbits[$hasbit_word] |= $hasbit_bit;
-                    self.$name.clear();
-                    self.$name.extend_from_slice(value.as_bytes())
-                  }
-                  None => {
-                    self.__hasbits[$hasbit_word] &= !$hasbit_bit;
-                    self.$name.clear();
-                  }
-                }
-              }
-            ",
-          );
-        } else {
-          w.emit(
-            vars! { name: ident(field.name()), },
-            r"
-              $deprecated
-              pub fn ${name}_len(&self) -> usize {
-                self.${name}.len()
-              }
-              $deprecated
-              pub fn $name(&self, n: usize) -> Option<&__rt::Str> {
-                self.${name}.get(n).map(__rt::Str::new)
-              }
-              $deprecated
-              pub fn ${name}_mut(&mut self, n: usize) -> Option<__rt::StrBuf> {
-                self.${name}.get_mut(n).map(__rt::StrBuf::__wrap)
-              }
-              $deprecated
-              pub fn ${name}_add(&mut self) -> __rt::StrBuf {
-                self.${name}.push(Default::default());
-                self.${name}.last_mut().map(__rt::StrBuf::__wrap).unwrap()
-              }
-              $deprecated
-              pub fn ${name}_iter(&self) -> impl Iterator<Item = &__rt::Str> + '_ {
-                self.${name}.iter().map(__rt::Str::new)
-              }
-              $deprecated
-              pub fn ${name}_resize(&mut self, n: usize) {
-                self.${name}.resize(n, Default::default())
-              }
-            ",
-          );
-        }
-      } else if let (TypeEnum::Type, Some(ty)) = field.ty() {
-        if !field.is_repeated() {
-          w.emit(
-            vars! {
-              hasbit_word,
-              hasbit_bit,
-              name: ident(field.name()),
-              Submsg: type_name(ty),
-            },
-            r#"
-              $deprecated
-              pub fn $name(&self) -> &$Submsg {
-                self.${name}_opt().expect("no message defaults yet...")
-              }
-              $deprecated
-              pub fn ${name}_opt(&self) -> Option<&$Submsg> {
-                if self.__hasbits[$hasbit_word] & $hasbit_bit != 0 {
-                  Some(&self.$name)
-                } else {
-                  None
-                }
-              }
-              $deprecated
-              pub fn ${name}_mut(&mut self) -> &mut $Submsg {
-                self.__hasbits[$hasbit_word] |= $hasbit_bit;
-                &mut self.$name
-              }
-              $deprecated
-              pub fn ${name}_opt_mut(&mut self) -> Option<$Submsg> {
-                if self.__hasbits[$hasbit_word] & $hasbit_bit != 0 {
-                  Some(&mut self.$name)
-                } else {
-                  None
-                }
-              }
-              $deprecated
-              pub fn ${name}_clear(&mut self) {
-                self.__hasbits[$hasbit_word] &= !$hasbit_bit;
-                self.$name = Default::default();
-              }
-            "#,
-          );
-        } else {
-          w.emit(
-            vars! {
-              name: ident(field.name()),
-              Submsg: type_name(ty),
-            },
-            r"
-                $deprecated
-                pub fn ${name}_len(&self) -> usize {
-                  self.${name}.len()
-                }
-                $deprecated
-                pub fn $name(&self, n: usize) -> Option<&$Submsg> {
-                  self.${name}.get(n)
-                }
-                $deprecated
-                pub fn ${name}_mut(&mut self, n: usize) -> Option<&mut $Submsg> {
-                  self.${name}.get_mut(n)
-                }
-                $deprecated
-                pub fn ${name}_add(&mut self) -> &mut $Submsg {
-                  self.${name}.push(Default::default());
-                  self.${name}.last_mut().unwrap()
-                }
-                $deprecated
-                pub fn ${name}_iter(&self) -> impl Iterator<Item = &$Submsg> + '_ {
-                  self.${name}.iter()
-                }
-                $deprecated
-                pub fn ${name}_resize(&mut self, n: usize) {
-                  self.${name}.resize(n, Default::default())
-                }
-              ",
-          );
-        }
-      } else {
-        field
-          .ccx()
-          .warn("no support for this field type yet")
-          .at(field.span().unwrap());
-      }
-
-      w.new_line()
-    },
-  )
 }

@@ -13,19 +13,22 @@ macro_rules! vars_inner {
   };
   (($($args:tt)*) $name:tt: |$x:tt| $expr:literal $(, $($rest:tt)*)?) => {
     vars_inner!(
-      ($($args)* (vars_inner!(@stringify $name), $crate::plugin::emit::Sub::Text($expr)))
+      ($($args)* (vars_inner!(@stringify $name),
+        $crate::plugin::emit::Sub::Text($expr)))
       $($($rest)*)?
     )
   };
   (($($args:tt)*) $name:tt: |$x:tt| $expr:expr $(, $($rest:tt)*)?) => {
     vars_inner!(
-      ($($args)* (vars_inner!(@stringify $name), $crate::plugin::emit::Sub::Cb(&|$x| $expr)))
+      ($($args)* (vars_inner!(@stringify $name),
+        $crate::plugin::emit::Sub::Cb(&|$x| $expr)))
       $($($rest)*)?
     )
   };
   (($($args:tt)*) $name:tt: $expr:expr $(, $($rest:tt)*)?) => {
     vars_inner!(
-      ($($args)* (vars_inner!(@stringify $name), $crate::plugin::emit::Sub::Fmt(&$expr)))
+      ($($args)* (vars_inner!(@stringify $name),
+        $crate::plugin::emit::Sub::Fmt(&$expr as &dyn std::fmt::Display)))
       $($($rest)*)?
     )
   };
@@ -67,7 +70,7 @@ pub struct Options {
   pub comment_start: &'static str,
 }
 
-#[allow(dead_code)]
+#[allow(unused)]
 pub enum Sub<'a> {
   Text(&'a str),
   Fmt(&'a dyn fmt::Display),

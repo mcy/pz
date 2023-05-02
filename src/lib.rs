@@ -4,6 +4,8 @@ pub mod report;
 pub mod rt;
 pub mod syn;
 
+pub use rt::ptr::Mut;
+pub use rt::ptr::View;
 pub use rt::str::Str;
 pub use rt::str::StrBuf;
 

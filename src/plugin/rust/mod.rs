@@ -6,6 +6,7 @@ use crate::plugin::rust::names::deprecated;
 use crate::proto::plugin;
 
 mod r#enum;
+mod fields;
 mod message;
 mod names;
 
@@ -30,23 +31,17 @@ pub fn rust_plugin() -> ! {
         #![cfg_attr(rustfmt, rustfmt_skip)]
         #![allow(non_camel_case_types)]
         #![allow(non_upper_case_globals)]
+        #![allow(non_snake_case)]
       ",
       );
 
       let rt = ctx.option("rt-crate").unwrap_or("pz");
-      if rt == "crate" {
-        w.emit(
-          vars! {},
-          r"
-          use crate as __rt;
-        ",
-        );
-      } else {
+      if rt != "crate" {
         w.emit(
           vars! { rt },
           r"
-          extern $rt as __rt;
-        ",
+            extern $rt as __rt;
+          ",
         );
       }
       w.new_line();
@@ -56,6 +51,7 @@ pub fn rust_plugin() -> ! {
           vars! {
             deprecated: deprecated(
               ty.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
+            rt: if rt == "crate" { "crate" } else { "__rt" },
           },
           |w| match ty.kind() {
             crate::proto::r#type::Kind::Message => message::emit(ty, w),

@@ -71,6 +71,7 @@ fn run_plugin(
       .stdin(Stdio::piped())
       .stdout(Stdio::piped())
       .stderr(Stdio::inherit())
+      .env("RUST_BACKTRACE", "1")
       .spawn(),
   );
 
