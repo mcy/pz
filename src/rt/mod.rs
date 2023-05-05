@@ -1,4 +1,15 @@
 //! Runtime support for Rust gencode.
 
+mod arena;
 pub mod ptr;
 pub mod str;
+
+pub use self::ptr::Mut;
+pub use self::ptr::View;
+pub use self::str::Str;
+pub use self::str::StrBuf;
+
+#[doc(hidden)]
+pub mod __z {
+  pub use super::arena::*;
+}

@@ -25,8 +25,6 @@ pub trait GenField {
   fn in_storage_init(&self, w: &mut SourceWriter) {}
   fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {}
   fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {}
-  fn in_clear(&self, w: &mut SourceWriter) {}
-  fn in_drop(&self, w: &mut SourceWriter) {}
 }
 
 pub struct FieldGenerators<'ccx> {
@@ -100,6 +98,20 @@ struct SingularScalar<'ccx> {
   hasbit_index: u32,
 }
 
+fn scalar_storage_type<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
+  emit::display(move |f| match field.ty() {
+    (TypeEnum::I32, _) => f.write_str("u32"),
+    (TypeEnum::U32, _) => f.write_str("u32"),
+    (TypeEnum::F32, _) => f.write_str("u32"),
+    (TypeEnum::I64, _) => f.write_str("u64"),
+    (TypeEnum::U64, _) => f.write_str("u64"),
+    (TypeEnum::F64, _) => f.write_str("u64"),
+    (TypeEnum::Bool, _) => f.write_str("bool"),
+    (TypeEnum::Type, _) => f.write_str("u32"),
+    (t, _) => panic!("non-scalar type: {t:?}"),
+  })
+}
+
 fn scalar_type<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
   emit::display(move |f| match field.ty() {
     (TypeEnum::I32, _) => f.write_str("i32"),
@@ -123,7 +135,7 @@ fn scalar_default<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
     (TypeEnum::U64, _) => f.write_str("0"),
     (TypeEnum::F64, _) => f.write_str("0.0"),
     (TypeEnum::Bool, _) => f.write_str("false"),
-    (TypeEnum::Type, Some(e)) => write!(f, "{}::new()", type_name(e)),
+    (TypeEnum::Type, Some(e)) => write!(f, "{}::new().0 as u32", type_name(e)),
     (t, _) => panic!("non-scalar type: {t:?}"),
   })
 }
@@ -133,10 +145,10 @@ impl GenField for SingularScalar<'_> {
     w.emit(
       vars! {
         name: ident(self.field.name()),
-        Type: scalar_type(self.field),
+        Storage: scalar_storage_type(self.field),
       },
       "
-        pub(crate) $name: $Type,
+        pub(in super) $name: $Storage,
       ",
     );
   }
@@ -162,6 +174,7 @@ impl GenField for SingularScalar<'_> {
         hasbit_bit,
         name: ident(self.field.name()),
         Type: scalar_type(self.field),
+        Storage: scalar_storage_type(self.field),
         self: if at == Where::MsgImpl { "&self" } else { "self" }
       },
       r"
@@ -171,8 +184,8 @@ impl GenField for SingularScalar<'_> {
         }
         $deprecated
         pub fn ${name}_opt($self) -> Option<$Type> {
-          if self.ptr.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
-          Some(self.ptr.$name)
+          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+          Some(unsafe { $transmute::<$Storage, $Type>(self.ptr.as_ref().$name) })
         }
       ",
     );
@@ -187,18 +200,19 @@ impl GenField for SingularScalar<'_> {
         hasbit_bit,
         name: ident(self.field.name()),
         Type: scalar_type(self.field),
+        Storage: scalar_storage_type(self.field),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" }
       },
       r"
         $deprecated
         pub fn ${name}_set($self, value: impl Into<Option<$Type>>) {
           match value.into() {
-            Some(value) => {
-              self.ptr.__hasbits[$hasbit_word] |= $hasbit_bit;
-              self.ptr.$name = value;
+            Some(value) => unsafe {
+              self.ptr.as_mut().__hasbits[$hasbit_word] |= $hasbit_bit;
+              self.ptr.as_mut().$name = $transmute::<$Type, $Storage>(value);
             }
             None => {
-              self.ptr.__hasbits[$hasbit_word] &= !$hasbit_bit;
+              unsafe { self.ptr.as_mut() }.__hasbits[$hasbit_word] &= !$hasbit_bit;
             }
           }
         }
@@ -216,10 +230,10 @@ impl GenField for RepeatedScalar<'_> {
     w.emit(
       vars! {
         name: ident(self.field.name()),
-        Type: scalar_type(self.field),
+        Storage: scalar_storage_type(self.field),
       },
       "
-        pub(crate) $name: Vec<$Type>,
+        pub (in super) $name: $z::AVec<$Storage>,
       ",
     );
   }
@@ -230,7 +244,7 @@ impl GenField for RepeatedScalar<'_> {
         name: ident(self.field.name()),
       },
       "
-        $name: Vec::new(),
+        $name: $z::AVec::new(),
       ",
     );
   }
@@ -240,13 +254,17 @@ impl GenField for RepeatedScalar<'_> {
       vars! {
         name: ident(self.field.name()),
         Type: scalar_type(self.field),
+        Storage: scalar_storage_type(self.field),
         self: if at == Where::MsgImpl { "&self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
       r"
         $deprecated
         pub fn $name($self) -> &'$lt [$Type] {
-          &self.ptr.$name
+          unsafe {
+            let slice = self.ptr.as_ref().$name.as_slice();
+            $transmute::<&'$lt [$Storage], &'$lt [$Type]>(slice)
+          }
         }
       ",
     );
@@ -257,22 +275,37 @@ impl GenField for RepeatedScalar<'_> {
       vars! {
         name: ident(self.field.name()),
         Type: scalar_type(self.field),
+        Storage: scalar_storage_type(self.field),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
       r"
         $deprecated
         pub fn ${name}_mut($self) -> &'$lt mut [$Type] {
-          &mut self.ptr.$name
+          unsafe {
+            let slice = self.ptr.as_mut().$name.as_mut_slice();
+            $transmute::<&'$lt mut [$Storage], &'$lt mut [$Type]>(slice)
+          }
         }
         $deprecated
         pub fn ${name}_set($self, that: &[$Type]) {
-          self.ptr.$name.clear();
-          self.${name}_extend(that)
+          unsafe {
+            let vec = &mut self.ptr.as_mut().$name;
+            vec.resize(that.len(), self.arena);
+            let ptr = vec.as_mut_slice().as_mut_ptr();
+            ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+          }
         }
         $deprecated
         pub fn ${name}_extend($self, that: &[$Type]) {
-          self.ptr.$name.extend_from_slice(that)
+          unsafe {
+            let vec = &mut self.ptr.as_mut().$name;
+            let old_len = vec.len();
+            let new_len = old_len + that.len();
+            vec.resize(new_len, self.arena);
+            let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
+            ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+          }
         }
       ",
     );
@@ -292,7 +325,7 @@ impl GenField for SingularString<'_> {
         Type: scalar_type(self.field),
       },
       "
-        pub(crate) $name: Vec<u8>,
+        pub(in super) $name: (*mut u8, usize),
       ",
     );
   }
@@ -301,7 +334,7 @@ impl GenField for SingularString<'_> {
     w.emit(
       vars! { name: ident(self.field.name()), },
       "
-        $name: Vec::new(),
+        $name: (0 as *mut u8, 0),
       ",
     );
   }
@@ -325,8 +358,11 @@ impl GenField for SingularString<'_> {
         }
         $deprecated
         pub fn ${name}_opt($self) -> Option<&'$lt $rt::Str> {
-          if self.ptr.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
-          Some($rt::Str::new(&*self.ptr.$name))
+          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+          Some(unsafe {
+            let (ptr, len) = self.ptr.as_ref().$name;
+            $rt::Str::from_raw_parts(ptr, len)
+          })
         }
       ",
     );
@@ -347,39 +383,31 @@ impl GenField for SingularString<'_> {
       r"
         $deprecated
         pub fn ${name}_mut($self) -> $rt::StrBuf<'$lt> {
-          self.ptr.__hasbits[$hasbit_word] |= $hasbit_bit;
-          $rt::StrBuf::__wrap(&mut self.ptr.$name)
+          unsafe {
+            let mut buf = $rt::StrBuf::__wrap(&mut self.ptr.as_mut().$name, self.arena);
+            if self.ptr.as_ref().__hasbits[$hasbit_word] & $hasbit_bit == 0 {
+              buf.clear();
+            }
+            self.ptr.as_mut().__hasbits[$hasbit_word] |= $hasbit_bit;
+            buf
+          }
         }
         $deprecated
         pub fn ${name}_opt_mut($self) -> Option<$rt::StrBuf<'$lt>> {
-          if self.ptr.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
-          Some($rt::StrBuf::__wrap(&mut self.ptr.$name))
+          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+          Some(unsafe {
+            $rt::StrBuf::__wrap(&mut self.ptr.as_mut().$name, self.arena)
+          })
         }
         $deprecated
-        pub fn ${name}_set<'a>($self, value: impl $rt::rt::str::IntoStrOpt<'a>) {
+        pub fn ${name}_set<'a>($self, value: impl $rt::str::IntoStrOpt<'a>) {
           match value.into_str_opt() {
-            Some(value) => {
-              self.ptr.__hasbits[$hasbit_word] |= $hasbit_bit;
-              self.ptr.$name.clear();
-              self.ptr.$name.extend_from_slice(value.as_bytes())
-            }
-            None => {
-              self.ptr.__hasbits[$hasbit_word] &= !$hasbit_bit;
-              self.ptr.$name.clear();
+            Some(value) => self.${name}_mut().set(value.as_bytes()),
+            None => unsafe {
+              self.ptr.as_mut().__hasbits[$hasbit_word] &= !$hasbit_bit;
             }
           }
         }
-      ",
-    );
-  }
-
-  fn in_clear(&self, w: &mut SourceWriter) {
-    w.emit(
-      vars! {
-        name: ident(self.field.name()),
-      },
-      "
-        self.ptr.$name.clear();
       ",
     );
   }
@@ -394,7 +422,7 @@ impl GenField for RepeatedString<'_> {
     w.emit(
       vars! { name: ident(self.field.name()) },
       "
-        pub(crate) $name: Vec<Vec<u8>>,
+        pub(crate) $name: $z::AVec<(*mut u8, usize)>,
       ",
     );
   }
@@ -403,7 +431,7 @@ impl GenField for RepeatedString<'_> {
     w.emit(
       vars! { name: ident(self.field.name()) },
       "
-        $name: Vec::new(),
+        $name: $z::AVec::new(),
       ",
     );
   }
@@ -418,15 +446,19 @@ impl GenField for RepeatedString<'_> {
       r"
         $deprecated
         pub fn ${name}_len($self) -> usize {
-          self.ptr.$name.len()
+          unsafe { self.ptr.as_ref() }.$name.len()
         }
         $deprecated
         pub fn $name($self, n: usize) -> Option<&'$lt $rt::Str> {
-          self.ptr.$name.get(n).map($rt::Str::new)
+          unsafe { self.ptr.as_ref().$name.as_slice() }.get(n).map(|&(p, n)| unsafe {
+            $rt::Str::from_raw_parts(p, n)
+          })
         }
         $deprecated
         pub fn ${name}_iter($self) -> impl Iterator<Item = &'$lt $rt::Str> + '$lt {
-          self.ptr.$name.iter().map($rt::Str::new)
+          unsafe { self.ptr.as_ref().$name.as_slice() }.iter().map(|&(p, n)| unsafe {
+            $rt::Str::from_raw_parts(p, n)
+          })
         }
       ",
     );
@@ -442,27 +474,24 @@ impl GenField for RepeatedString<'_> {
       r"
         $deprecated
         pub fn ${name}_mut($self, n: usize) -> Option<$rt::StrBuf<'$lt>> {
-          self.ptr.$name.get_mut(n).map($rt::StrBuf::__wrap)
+          unsafe { self.ptr.as_mut().$name.as_mut_slice() }.get_mut(n)
+            .map(|data| $rt::StrBuf::__wrap(data, self.arena))
         }
         $deprecated
         pub fn ${name}_add($self) -> $rt::StrBuf<'$lt> {
-          self.ptr.$name.push(Vec::new());
-          self.ptr.$name.last_mut().map($rt::StrBuf::__wrap).unwrap()
+          unsafe {
+            let vec = &mut self.ptr.as_mut().$name;
+            let new_len = vec.len() + 1;
+            vec.resize(new_len, self.arena);
+            self.${name}_mut(new_len - 1).unwrap_unchecked()
+          }
         }
         $deprecated
         pub fn ${name}_resize($self, n: usize) {
-          self.ptr.$name.resize(n, Vec::new())
+          unsafe {
+            self.ptr.as_mut().$name.resize(n, self.arena);
+          }
         }
-      ",
-    );
-  }
-  fn in_clear(&self, w: &mut SourceWriter) {
-    w.emit(
-      vars! {
-        name: ident(self.field.name()),
-      },
-      "
-        self.ptr.$name.clear();
       ",
     );
   }
@@ -480,9 +509,10 @@ impl GenField for SingularMessage<'_> {
       vars! {
         name: ident(self.field.name()),
         Submsg: type_name(self.submsg),
+        priv: format!("__priv_{}", type_name(self.submsg)),
       },
       "
-        pub(crate) $name: Option<$Submsg>,
+        pub(in super) $name: *mut u8,
       ",
     );
   }
@@ -491,7 +521,7 @@ impl GenField for SingularMessage<'_> {
     w.emit(
       vars! { name: ident(self.field.name()), },
       "
-        $name: None,
+        $name: 0 as *mut u8,
       ",
     );
   }
@@ -515,12 +545,11 @@ impl GenField for SingularMessage<'_> {
         }
         $deprecated
         pub fn ${name}_opt($self) -> Option<$rt::View<'$lt, $Submsg>> {
-          if self.ptr.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
-          unsafe {
-            Some($rt::View {
-              ptr: self.ptr.$name.as_ref().unwrap_unchecked()
-            })
-          }
+          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+          Some($rt::View {
+            ptr: unsafe { $z::ABox::from_ptr(self.ptr.as_reg().$name) },
+            _ph: $PhantomData,
+          })
         }
       ",
     );
@@ -541,25 +570,30 @@ impl GenField for SingularMessage<'_> {
       r"
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $Submsg> {
-          if self.ptr.$name.is_none() {
-            self.ptr.$name = Some($Submsg::new());
-          } else if self.ptr.__hasbits[$hasbit_word] & $hasbit_bit == 0 {
-            self.ptr.$name.clear();
-          }
-
-          self.ptr.__hasbits[$hasbit_word] |= $hasbit_bit;
           unsafe {
+            if self.ptr.$name.is_null() {
+              self.ptr.as_mut().$name = self.arena.alloc($Submsg::__LAYOUT).as_ptr();
+              self.ptr.as_mut().$name.write_bytes(0, Self::__LAYOUT.size());
+            } else if self.ptr.as_ref().__hasbits[$hasbit_word] & $hasbit_bit == 0 {
+              $Submsg::__raw_clear(self.ptr.as_ref().$name);
+            }
+
+            self.ptr.get_mut().__hasbits[$hasbit_word] |= $hasbit_bit;
             $rt::Mut {
-              ptr: self.ptr.$name.as_mut().unwrap_unchecked()
+              ptr: $z::ABox::from_ptr(self.ptr.as_reg().$name),
+              _ph: $PhantomData,
+              arena: self.arena,
             }
           }
         }
         $deprecated
         pub fn ${name}_opt_mut($self) -> Option<$rt::Mut<'$lt, $Submsg>> {
-          if self.ptr.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
           unsafe {
             Some($rt::Mut {
-              ptr: self.ptr.$name.as_mut().unwrap_unchecked()
+              ptr: $z::ABox::from_ptr(self.ptr.as_reg().$name),
+              _ph: $PhantomData,
+              arena: self.arena,
             })
           }
         }
@@ -567,17 +601,6 @@ impl GenField for SingularMessage<'_> {
         pub fn ${name}_clear($self) {
           self.ptr.__hasbits[$hasbit_word] &= !$hasbit_bit;
         }
-      ",
-    );
-  }
-
-  fn in_clear(&self, w: &mut SourceWriter) {
-    w.emit(
-      vars! {
-        name: ident(self.field.name()),
-      },
-      "
-        self.ptr.$name.clear();
       ",
     );
   }
@@ -596,7 +619,7 @@ impl GenField for RepeatedMessage<'_> {
         Submsg: type_name(self.submsg),
       },
       "
-        pub(crate) $name: Vec<$Submsg>,
+        pub(in super) $name: $z::AVec<*mut u8>,
       ",
     );
   }
@@ -605,7 +628,7 @@ impl GenField for RepeatedMessage<'_> {
     w.emit(
       vars! { name: ident(self.field.name()) },
       "
-        $name: Vec::new(),
+        $name: $z::AVec::new(),
       ",
     );
   }
@@ -621,15 +644,23 @@ impl GenField for RepeatedMessage<'_> {
       r"
         $deprecated
         pub fn ${name}_len($self) -> usize {
-          self.ptr.$name.len()
+          unsafe { self.ptr.as_ref() }.$name.len()
         }
         $deprecated
         pub fn $name($self, n: usize) -> Option<$rt::View<'$lt, $Submsg>> {
-          self.ptr.$name.get(n).map(|ptr| $rt::View::<$Submsg> { ptr: &ptr.ptr })
+          unsafe { self.ptr.as_ref().$name.as_slice() }.get(n)
+            .map(|&ptr| $rt::View::<$Submsg> {
+              ptr: unsafe { $z::ABox::from_ptr(ptr) },
+              _ph: $PhantomData,
+            })
         }
         $deprecated
         pub fn ${name}_iter($self) -> impl Iterator<Item = $rt::View<'$lt, $Submsg>> + '$lt {
-          self.ptr.$name.iter().map(|ptr| $rt::View::<$Submsg> { ptr: &ptr.ptr })
+          unsafe { self.ptr.as_ref().$name.as_slice() }.iter()
+            .map(|&ptr| $rt::View::<$Submsg> {
+              ptr: unsafe { $z::ABox::from_ptr(ptr) },
+              _ph: $PhantomData,
+            })
         }
       ",
     );
@@ -646,27 +677,31 @@ impl GenField for RepeatedMessage<'_> {
       r"
         $deprecated
         pub fn ${name}_mut($self, n: usize) -> Option<$rt::Mut<'$lt, $Submsg>> {
-          self.ptr.$name.get_mut(n).map(|ptr| $rt::Mut::<$Submsg> { ptr: &mut ptr.ptr })
+          unsafe { self.ptr.as_mut().$name.as_mut_slice() }.get_mut(n)
+            .map(|&mut ptr| $rt::Mut::<$Submsg> {
+              ptr: unsafe { $z::ABox::from_ptr(ptr) },
+              _ph: $PhantomData,
+              arena: self.arena,
+            })
         }
         $deprecated
         pub fn ${name}_add($self) -> $rt::Mut<'$lt, $Submsg> {
-          self.ptr.$name.push($Submsg::new());
-          self.ptr.$name.last_mut().map(|ptr| $rt::Mut::<$Submsg> { ptr: &mut ptr.ptr }).unwrap()
+          unsafe {
+            let vec = &mut self.ptr.as_mut().$name;
+            let new_len = vec.len() + 1;
+            vec.resize_msg(new_len, self.arena,
+              $Submsg::__LAYOUT, $Submsg::__raw_clear);
+            self.${name}_mut(new_len - 1).unwrap_unchecked()
+          }
         }
         $deprecated
         pub fn ${name}_resize($self, n: usize) {
-          self.ptr.$name.resize_with(n, $Submsg::new)
+          unsafe {
+            self.ptr.as_mut().$name.resize_msg(
+              n, self.arena,
+              $Submsg::__LAYOUT, $Submsg::__raw_clear);
+          }
         }
-      ",
-    );
-  }
-  fn in_clear(&self, w: &mut SourceWriter) {
-    w.emit(
-      vars! {
-        name: ident(self.field.name()),
-      },
-      "
-        self.ptr.$name.clear();
       ",
     );
   }

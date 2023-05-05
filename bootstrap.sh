@@ -2,6 +2,8 @@
 set -x
 set -e
 
+cp src/lib.pz.rs src/lib.pz.rs.bck
+
 cd $(dirname $0)
 cargo run -- \
   --plugin=rust \
@@ -12,5 +14,7 @@ cargo run -- \
 set +e
 cargo build
 if [[ $? != 0 ]]; then
-  git restore src/lib.pz.rs
+  mv src/lib.pz.rs.bck src/lib.pz.rs 
+else
+  rm src/lib.pz.rs.bck
 fi

@@ -51,7 +51,12 @@ pub fn rust_plugin() -> ! {
           vars! {
             deprecated: deprecated(
               ty.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
-            rt: if rt == "crate" { "crate" } else { "__rt" },
+            rt: if rt == "crate" { "crate::rt" } else { "__rt::rt" },
+            z: if rt == "crate" { "crate::rt::__z" } else { "__rt::rt::__z" },
+            transmute: "std::mem::transmute",
+            NonNull: "std::ptr::NonNull",
+            Layout: "std::alloc::Layout",
+            PhantomData: "std::marker::PhantomData",
           },
           |w| match ty.kind() {
             crate::proto::r#type::Kind::Message => message::emit(ty, w),

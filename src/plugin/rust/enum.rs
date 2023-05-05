@@ -35,6 +35,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       /// enum `$package.$Name`
       $deprecated
       #[derive(Copy, Clone, PartialEq, Eq, Hash)]
+      #[repr(transparent)]
       pub struct $Enum(pub i32);
 
       impl $Enum {

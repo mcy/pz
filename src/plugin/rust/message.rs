@@ -18,17 +18,12 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       package: ident(ty.package()),
       Name: ident(ty.name()),
       Msg: type_name(ty),
+      priv: format!("__priv_{}", type_name(ty)),
       "Msg::fields": |w| for field in &gen.fields {
         field.in_storage(w);
       },
       "Msg::field_init": |w| for field in &gen.fields {
         field.in_storage_init(w);
-      },
-      "Msg::clear": |w| for field in &gen.fields {
-        field.in_clear(w);
-      },
-      "Msg::drop": |w| for field in &gen.fields {
-        field.in_drop(w);
       },
       "Msg::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::MsgImpl, w);
@@ -48,42 +43,59 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
     r#"
       /// message `$package.$Name`
       $deprecated
-      #[derive(Clone)]
       pub struct $Msg {
-        ptr: Box<__priv_$Msg::Storage>,
+        ptr: $z::ABox<$priv::Storage>,
+        arena: $z::RawArena,
       }
 
       impl $Msg {
-        pub const DEFAULT: $rt::View<'static, Self> = {
-          const VALUE: __priv_$Msg::Storage = __priv_$Msg::Storage {
+        #[doc(hidden)]
+        pub const __LAYOUT: $Layout = $Layout::new::<$priv::Storage>();
+        pub const DEFAULT: $rt::View<'static, Self> = unsafe {
+          const VALUE: $priv::Storage = $priv::Storage {
             __hasbits: [0; $hasbit_words],
             ${Msg::field_init}
           };
-          $rt::View::<Self> { ptr: &VALUE }
+          $rt::View::<Self> {
+            ptr: $z::ABox::from_ptr(&VALUE as *const $priv::Storage as *mut $priv::Storage as *mut u8),
+            _ph: $PhantomData,
+          }
         };
         
         pub fn new() -> Self {
-          Self {
-            ptr: Box::new(__priv_$Msg::Storage {
-              __hasbits: [0; $hasbit_words],
-              ${Msg::field_init}
-            }),
+          let arena = $z::RawArena::new();
+          let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+          unsafe {
+            ptr.write_bytes(0, Self::__LAYOUT.size());
+            Self {
+              ptr: $z::ABox::from_ptr(ptr),
+              arena,
+            }
           }
         }
 
         pub fn as_view(&self) -> $rt::View<Self> {
-          __priv_$Msg::View { ptr: &self.ptr }
+          $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
         pub fn as_mut(&mut self) -> $rt::Mut<Self> {
-          __priv_$Msg::Mut { ptr: &mut self.ptr }
+          $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
         }
 
         pub fn clear(&mut self) {
-          self.as_mut().clear();
+          unsafe { $Msg::__raw_clear(self.ptr.as_ptr()) }
+        }
+
+        pub fn into_raw(self) -> *mut u8 {
+          self.ptr.as_ptr()
         }
 
         ${Msg::access}
+
+        #[doc(hidden)]
+        pub unsafe fn __raw_clear(raw: *mut u8) {
+          (&mut *raw.cast::<$priv::Storage>()).__hasbits = [0; $hasbit_words];
+        }
       }
 
       impl Default for $Msg {
@@ -92,19 +104,18 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      impl $rt::rt::ptr::Proxied for $Msg {
-        type View<'msg> = __priv_$Msg::View<'msg>;
-        type Mut<'msg> = __priv_$Msg::Mut<'msg>;
+      impl $rt::ptr::Proxied for $Msg {
+        type View<'msg> = $priv::View<'msg>;
+        type Mut<'msg> = $priv::Mut<'msg>;
       }
 
-      impl<'msg> __priv_$Msg::View<'msg> {
+      impl<'msg> $priv::View<'msg> {
         ${View::access}
       }
 
-      impl<'msg> __priv_$Msg::Mut<'msg>  {
+      impl<'msg> $priv::Mut<'msg>  {
         pub fn clear(&mut self) {
-          self.ptr.__hasbits = [0; $hasbit_words];
-          ${Msg::clear}
+          unsafe { $Msg::__raw_clear(self.ptr.as_ptr()) }
         }
 
         ${Mut::access}
@@ -112,14 +123,13 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
 
       impl Drop for $Msg {
         fn drop(&mut self) {
-          ${Msg::drop}
+          unsafe { self.arena.destroy() }
         }
       }
 
       mod __priv_$Msg {
         pub use super::*;
 
-        #[derive(Clone)]
         pub struct Storage {
           pub(crate) __hasbits: [u32; $hasbit_words],
           ${Msg::fields}    
@@ -127,32 +137,35 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
        
         #[derive(Copy, Clone)]
         pub struct View<'msg> {
-          pub(crate) ptr: &'msg Storage,
+          pub(in super) ptr: $z::ABox<$priv::Storage>,
+          pub(in super) _ph: $PhantomData<&'msg $Msg>,
         }
        
-        impl<'msg> $rt::rt::ptr::ViewFor<'msg, super::$Msg> for View<'msg> {
+        impl<'msg> $rt::ptr::ViewFor<'msg, super::$Msg> for View<'msg> {
           fn as_view(&self) -> View {
-            View { ptr: self.ptr }
+            View { ptr: self.ptr, _ph: $PhantomData }
           }
         }
 
         pub struct Mut<'msg> {
-          pub(crate) ptr: &'msg mut Storage,
+          pub(in super) ptr: $z::ABox<$priv::Storage>,
+          pub(in super) _ph: $PhantomData<&'msg mut $Msg>,
+          pub(in super) arena: $z::RawArena,
         }
        
-        impl<'msg> $rt::rt::ptr::ViewFor<'msg, super::$Msg> for Mut<'msg> {
+        impl<'msg> $rt::ptr::ViewFor<'msg, super::$Msg> for Mut<'msg> {
           fn as_view(&self) -> View {
-            View { ptr: &self.ptr }
+            View { ptr: self.ptr, _ph: $PhantomData }
           }
         }
 
-        impl<'msg> $rt::rt::ptr::MutFor<'msg, super::$Msg> for Mut<'msg> {
+        impl<'msg> $rt::ptr::MutFor<'msg, super::$Msg> for Mut<'msg> {
           fn into_view(self) -> View<'msg> {
-            View { ptr: self.ptr }
+            View { ptr: self.ptr, _ph: $PhantomData }
           }
 
           fn as_mut(&mut self) -> Mut {
-            Mut { ptr: self.ptr }
+            Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
           }
         }
       }

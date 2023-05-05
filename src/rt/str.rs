@@ -1,5 +1,6 @@
 //! String field support.
 
+use std::alloc::Layout;
 use std::fmt;
 use std::fmt::Write;
 use std::hash;
@@ -7,8 +8,11 @@ use std::iter;
 use std::mem;
 use std::ops::Deref;
 use std::ops::DerefMut;
+use std::slice;
 use std::slice::SliceIndex;
 use std::str;
+
+use super::arena::RawArena;
 
 /// A string field.
 ///
@@ -27,6 +31,17 @@ impl Str {
 
   pub fn new_mut(bytes: &mut (impl AsMut<[u8]> + ?Sized)) -> &mut Self {
     unsafe { mem::transmute::<&mut [u8], &mut Self>(bytes.as_mut()) }
+  }
+
+  pub unsafe fn from_raw_parts<'a>(ptr: *const u8, len: usize) -> &'a Self {
+    Self::new(slice::from_raw_parts(ptr, len))
+  }
+
+  pub unsafe fn from_raw_parts_mut<'a>(
+    ptr: *mut u8,
+    len: usize,
+  ) -> &'a mut Self {
+    Self::new_mut(slice::from_raw_parts_mut(ptr, len))
   }
 
   pub fn as_bytes(&self) -> &[u8] {
@@ -115,21 +130,37 @@ impl Str {
 ///
 /// This type provides a few additional methods over `Str`, which it derefs to.
 pub struct StrBuf<'a> {
-  data: &'a mut Vec<u8>,
+  data: &'a mut (*mut u8, usize),
+  arena: RawArena,
 }
 
 impl<'a> StrBuf<'a> {
   #[doc(hidden)]
-  pub fn __wrap(data: &'a mut Vec<u8>) -> Self {
-    Self { data }
+  pub fn __wrap(data: &'a mut (*mut u8, usize), arena: RawArena) -> Self {
+    Self { data, arena }
   }
 
   pub fn clear(&mut self) {
-    self.data.clear()
+    self.truncate(0);
   }
 
-  pub fn extend(&mut self, data: &(impl AsRef<[u8]> + ?Sized)) {
-    self.data.extend_from_slice(data.as_ref())
+  pub fn truncate(&mut self, len: usize) {
+    self.data.1 = self.len().min(len);
+  }
+
+  pub fn set(&mut self, data: &(impl AsRef<[u8]> + ?Sized)) {
+    let data = data.as_ref();
+    if data.len() > self.len() || self.data.0.is_null() {
+      self.data.0 = self.arena.alloc(Layout::for_value(data)).as_ptr();
+    }
+
+    unsafe {
+      self
+        .data
+        .0
+        .copy_from_nonoverlapping(data.as_ptr(), data.len());
+    }
+    self.data.1 = data.len();
   }
 }
 
@@ -137,13 +168,13 @@ impl Deref for StrBuf<'_> {
   type Target = Str;
 
   fn deref(&self) -> &Str {
-    Str::new(self.data.as_slice())
+    unsafe { Str::from_raw_parts(self.data.0, self.data.1) }
   }
 }
 
 impl DerefMut for StrBuf<'_> {
   fn deref_mut(&mut self) -> &mut Str {
-    Str::new_mut(self.data.as_mut_slice())
+    unsafe { Str::from_raw_parts_mut(self.data.0, self.data.1) }
   }
 }
 
