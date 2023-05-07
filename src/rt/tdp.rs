@@ -10,6 +10,8 @@ use std::ops::BitOr;
 use std::ops::Shl;
 use std::ptr;
 
+use crate::Str;
+
 use super::arena::AVec;
 use super::arena::RawArena;
 
@@ -37,7 +39,7 @@ impl From<io::Error> for Error {
 pub struct Message {
   pub size: u32,
   pub tys: *const fn() -> *const Message,
-  pub raw_clear: unsafe fn(*mut u8),
+  pub raw_init: unsafe fn(*mut u8),
 }
 
 #[derive(Debug)]
@@ -224,7 +226,11 @@ impl<'r> WireFormat<'r> {
         Ok(v)
       }
       _ => {
-        self.refresh()?;
+        while self.buf().len() < LEN {
+          if self.is_done()? {
+            break;
+          }
+        }
         let data = unsafe { self.buf().as_ptr().cast::<[u8; LEN]>().read() };
 
         let mut varint = T::default();
@@ -237,10 +243,10 @@ impl<'r> WireFormat<'r> {
         for b in data {
           varint = varint | T::from(b & !mask) << shift;
           shift += 7;
-          count += mask & 1;
+          count += !mask & 1;
           mask |= ((!b as i8) >> 7) as u8;
         }
-        if mask != 0 {
+        if mask != !0 {
           return Err(Error::OverlongVarint);
         }
 
@@ -324,6 +330,7 @@ impl<'r> ParseCtx<'r> {
     'parse: while let Some((raw, msg, field)) = ty_stack.last_mut() {
       if !self.in_group() && self.input.pop_limit() {
         ty_stack.pop();
+        self.group_stack.pop();
         continue;
       }
 
@@ -385,11 +392,20 @@ impl<'r> ParseCtx<'r> {
       // message.
       match unsafe { field.kind() } {
         k @ (Kind::I32 | Kind::I64 | Kind::F32 | Kind::F64 | Kind::Bool) => {
-          let is_float = matches!(k, Kind::F32 | Kind::F64);
+          if matches!(k, Kind::F32) && tag.wire_type != WireFormat::I32 {
+            self.skip(tag)?;
+            continue;
+          }
+
+          if matches!(k, Kind::F64) && tag.wire_type != WireFormat::I64 {
+            self.skip(tag)?;
+            continue;
+          }
+
           let v = match tag.wire_type {
             WireFormat::VARINT => self.input.varint64()?,
-            WireFormat::I32 if !is_float => self.input.fixed32()? as u64,
-            WireFormat::I64 if !is_float => self.input.fixed64()?,
+            WireFormat::I32 => self.input.fixed32()? as u64,
+            WireFormat::I64 => self.input.fixed64()?,
             _ => {
               self.skip(tag)?;
               continue;
@@ -466,17 +482,21 @@ impl<'r> ParseCtx<'r> {
           };
 
           unsafe {
-            if *slice_len < len {
-              *slice_ptr = self
-                .arena
-                .alloc(Layout::from_size_align_unchecked(len, 1))
-                .as_ptr();
-              slice_ptr.write_bytes(0, len);
+            if len == 0 {
+              *slice_len = 0;
+            } else {
+              if *slice_len < len {
+                *slice_ptr = self
+                  .arena
+                  .alloc(Layout::from_size_align_unchecked(len, 1))
+                  .as_ptr();
+                slice_ptr.write_bytes(0, len);
+              }
+              self
+                .input
+                .read(slice::from_raw_parts_mut(*slice_ptr, len))?;
+              *slice_len = len;
             }
-            self
-              .input
-              .read(slice::from_raw_parts_mut(*slice_ptr, len))?;
-            *slice_len = len;
           }
         }
         Kind::Msg => {
@@ -484,6 +504,7 @@ impl<'r> ParseCtx<'r> {
             WireFormat::LEN => {
               let len = self.input.varint32()?;
               self.input.push_limit(len as u64);
+              self.group_stack.push(0);
             }
             WireFormat::SGROUP => {
               self.group_stack.push(tag.number);
@@ -507,7 +528,7 @@ impl<'r> ParseCtx<'r> {
               let mut sub = ptr.read();
               if sub.is_null() {
                 sub = self.arena.alloc(layout).as_ptr();
-                (submsg.raw_clear)(sub);
+                (submsg.raw_init)(sub);
                 ptr.write(sub);
               }
               sub
@@ -522,13 +543,14 @@ impl<'r> ParseCtx<'r> {
                 vec.len() + 1,
                 self.arena,
                 layout,
-                submsg.raw_clear,
+                submsg.raw_init,
               );
               *vec.as_mut_slice().last_mut().unwrap_unchecked()
             }
           };
 
-          ty_stack.push((raw_ptr, submsg, unsafe { submsg_ptr.add(1).cast() }));
+          ty_stack
+            .push((raw_ptr, submsg_ptr, unsafe { submsg_ptr.add(1).cast() }));
         }
       }
     }
@@ -546,8 +568,11 @@ impl<'r> ParseCtx<'r> {
         WireFormat::VARINT => {
           self.input.varint64()?;
         }
-        WireFormat::I64 => {
+        WireFormat::I32 => {
           self.input.fixed32()?;
+        }
+        WireFormat::I64 => {
+          self.input.fixed64()?;
         }
         WireFormat::LEN => {
           let len = self.input.varint32()? as usize;

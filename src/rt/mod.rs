@@ -1,8 +1,8 @@
 //! Runtime support for Rust gencode.
 
 mod arena;
-mod tdp;
 mod debug;
+mod tdp;
 
 pub mod ptr;
 pub mod str;

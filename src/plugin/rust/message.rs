@@ -89,7 +89,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           let mut ty_idx = 0;
           let tdp_kind = match field.ty() {
             (TypeEnum::I32 | TypeEnum::U32, _) => "I32",
-            (TypeEnum::I64 | TypeEnum::U64, _) => "I32",
+            (TypeEnum::I64 | TypeEnum::U64, _) => "I64",
             (TypeEnum::F32, _) => "F32",
             (TypeEnum::F64, _) => "F64",
             (TypeEnum::Bool, _) => "Bool",
@@ -156,7 +156,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           let arena = $z::RawArena::new();
           let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
           unsafe {
-            ptr.write_bytes(0, Self::__LAYOUT.size());
+            Self::__raw_init(ptr);
             Self {
               ptr: $z::ABox::from_ptr(ptr),
               arena,
@@ -164,14 +164,14 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           }
         }
 
-        pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, $rt::Error> {
+        pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, $rt::Error> {
           let mut new = Self::new();
-          new.parse(input)?;
+          new.parse_pb(input)?;
           Ok(new)
         }
 
-        pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
-          self.as_mut().parse(input)
+        pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
+          self.as_mut().parse_pb(input)
         }
 
         pub fn as_view(&self) -> $rt::View<Self> {
@@ -197,6 +197,11 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         #[doc(hidden)]
         pub unsafe fn __raw_clear(raw: *mut u8) {
           (&mut *raw.cast::<$priv::Storage>()).__hasbits = [0; $hasbit_words];
+        }
+        #[doc(hidden)]
+        pub unsafe fn __raw_init(raw: *mut u8) {
+          raw.cast::<$priv::Storage>()
+            .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
         }
         #[doc(hidden)]
         pub fn __tdp_info() -> *const $z::tdp::Message {
@@ -236,7 +241,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           unsafe { $Msg::__raw_clear(self.ptr.as_ptr()) }
         }
 
-        pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
+        pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
           let mut ctx = $z::tdp::ParseCtx::new(input, self.arena);
           ctx.parse(self.ptr.as_ptr() as *mut u8, $Msg::__tdp_info())
         }
@@ -296,7 +301,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
                 ];
                 TYS.as_ptr()
               },
-              raw_clear: $Msg::__raw_clear,
+              raw_init: $Msg::__raw_init,
             },
             fields: [
               $tdp_fields

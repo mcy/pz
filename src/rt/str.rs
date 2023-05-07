@@ -225,7 +225,7 @@ impl fmt::Debug for Str {
     f.write_char('"')?;
     for chunk in self.chunks() {
       match chunk {
-        Ok(str) => fmt::Debug::fmt(&str.escape_debug(), f)?,
+        Ok(str) => fmt::Display::fmt(&str.escape_debug(), f)?,
         Err(bytes) => {
           for b in bytes {
             write!(f, "\\x{b:02x}")?;
@@ -265,6 +265,12 @@ impl PartialEq<str> for Str {
 impl PartialEq<[u8]> for Str {
   fn eq(&self, other: &[u8]) -> bool {
     self.as_bytes() == other
+  }
+}
+
+impl<const N: usize> PartialEq<[u8; N]> for Str {
+  fn eq(&self, other: &[u8; N]) -> bool {
+    self.as_bytes() == other.as_slice()
   }
 }
 

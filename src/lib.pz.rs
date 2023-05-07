@@ -29,7 +29,7 @@ impl Bundle {
     let arena = crate::rt::__z::RawArena::new();
     let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
     unsafe {
-      ptr.write_bytes(0, Self::__LAYOUT.size());
+      Self::__raw_init(ptr);
       Self {
         ptr: crate::rt::__z::ABox::from_ptr(ptr),
         arena,
@@ -37,14 +37,14 @@ impl Bundle {
     }
   }
 
-  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
     let mut new = Self::new();
-    new.parse(input)?;
+    new.parse_pb(input)?;
     Ok(new)
   }
 
-  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
-    self.as_mut().parse(input)
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
   }
 
   pub fn as_view(&self) -> crate::rt::View<Self> {
@@ -93,7 +93,7 @@ impl Bundle {
       let vec = &mut self.ptr.as_mut().types;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        Type::__LAYOUT, Type::__raw_clear);
+        Type::__LAYOUT, Type::__raw_init);
       self.types_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -101,7 +101,7 @@ impl Bundle {
     unsafe {
       self.ptr.as_mut().types.resize_msg(
         n, self.arena,
-        Type::__LAYOUT, Type::__raw_clear);
+        Type::__LAYOUT, Type::__raw_init);
     }
   }
 
@@ -172,6 +172,11 @@ impl Bundle {
   #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_Bundle::Storage>()).__hasbits = [0; 0];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_Bundle::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
   }
   #[doc(hidden)]
   pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
@@ -272,7 +277,7 @@ impl<'msg> __priv_Bundle::Mut<'msg>  {
     unsafe { Bundle::__raw_clear(self.ptr.as_ptr()) }
   }
 
-  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
     let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle::__tdp_info())
   }
@@ -307,7 +312,7 @@ impl<'msg> __priv_Bundle::Mut<'msg>  {
       let vec = &mut self.ptr.as_mut().types;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        Type::__LAYOUT, Type::__raw_clear);
+        Type::__LAYOUT, Type::__raw_init);
       self.types_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -315,7 +320,7 @@ impl<'msg> __priv_Bundle::Mut<'msg>  {
     unsafe {
       self.ptr.as_mut().types.resize_msg(
         n, self.arena,
-        Type::__LAYOUT, Type::__raw_clear);
+        Type::__LAYOUT, Type::__raw_init);
     }
   }
 
@@ -454,7 +459,7 @@ mod __priv_Bundle {
           ];
           TYS.as_ptr()
         },
-        raw_clear: Bundle::__raw_clear,
+        raw_init: Bundle::__raw_init,
       },
       fields: [
         crate::rt::__z::tdp::Field {
@@ -545,7 +550,7 @@ impl Type {
     let arena = crate::rt::__z::RawArena::new();
     let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
     unsafe {
-      ptr.write_bytes(0, Self::__LAYOUT.size());
+      Self::__raw_init(ptr);
       Self {
         ptr: crate::rt::__z::ABox::from_ptr(ptr),
         arena,
@@ -553,14 +558,14 @@ impl Type {
     }
   }
 
-  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
     let mut new = Self::new();
-    new.parse(input)?;
+    new.parse_pb(input)?;
     Ok(new)
   }
 
-  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
-    self.as_mut().parse(input)
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
   }
 
   pub fn as_view(&self) -> crate::rt::View<Self> {
@@ -701,7 +706,7 @@ impl Type {
       let vec = &mut self.ptr.as_mut().fields;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        Field::__LAYOUT, Field::__raw_clear);
+        Field::__LAYOUT, Field::__raw_init);
       self.fields_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -709,7 +714,7 @@ impl Type {
     unsafe {
       self.ptr.as_mut().fields.resize_msg(
         n, self.arena,
-        Field::__LAYOUT, Field::__raw_clear);
+        Field::__LAYOUT, Field::__raw_init);
     }
   }
 
@@ -768,6 +773,11 @@ impl Type {
   #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_Type::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_Type::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
   }
   #[doc(hidden)]
   pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
@@ -915,7 +925,7 @@ impl<'msg> __priv_Type::Mut<'msg>  {
     unsafe { Type::__raw_clear(self.ptr.as_ptr()) }
   }
 
-  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
     let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Type::__tdp_info())
   }
@@ -1042,7 +1052,7 @@ impl<'msg> __priv_Type::Mut<'msg>  {
       let vec = &mut self.ptr.as_mut().fields;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        Field::__LAYOUT, Field::__raw_clear);
+        Field::__LAYOUT, Field::__raw_init);
       self.fields_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -1050,7 +1060,7 @@ impl<'msg> __priv_Type::Mut<'msg>  {
     unsafe {
       self.ptr.as_mut().fields.resize_msg(
         n, self.arena,
-        Field::__LAYOUT, Field::__raw_clear);
+        Field::__LAYOUT, Field::__raw_init);
     }
   }
 
@@ -1205,7 +1215,7 @@ mod __priv_Type {
           ];
           TYS.as_ptr()
         },
-        raw_clear: Type::__raw_clear,
+        raw_init: Type::__raw_init,
       },
       fields: [
         crate::rt::__z::tdp::Field {
@@ -1357,7 +1367,7 @@ impl Field {
     let arena = crate::rt::__z::RawArena::new();
     let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
     unsafe {
-      ptr.write_bytes(0, Self::__LAYOUT.size());
+      Self::__raw_init(ptr);
       Self {
         ptr: crate::rt::__z::ABox::from_ptr(ptr),
         arena,
@@ -1365,14 +1375,14 @@ impl Field {
     }
   }
 
-  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
     let mut new = Self::new();
-    new.parse(input)?;
+    new.parse_pb(input)?;
     Ok(new)
   }
 
-  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
-    self.as_mut().parse(input)
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
   }
 
   pub fn as_view(&self) -> crate::rt::View<Self> {
@@ -1528,6 +1538,11 @@ impl Field {
     (&mut *raw.cast::<__priv_Field::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_Field::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
   pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
     &__priv_Field::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
   }
@@ -1649,7 +1664,7 @@ impl<'msg> __priv_Field::Mut<'msg>  {
     unsafe { Field::__raw_clear(self.ptr.as_ptr()) }
   }
 
-  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
     let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Field::__tdp_info())
   }
@@ -1877,7 +1892,7 @@ mod __priv_Field {
           ];
           TYS.as_ptr()
         },
-        raw_clear: Field::__raw_clear,
+        raw_init: Field::__raw_init,
       },
       fields: [
         crate::rt::__z::tdp::Field {

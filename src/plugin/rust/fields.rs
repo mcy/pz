@@ -643,7 +643,7 @@ impl GenField for SingularMessage<'_> {
           unsafe {
             if self.ptr.as_ref().$name.is_null() {
               self.ptr.as_mut().$name = self.arena.alloc($Submsg::__LAYOUT).as_ptr();
-              self.ptr.as_mut().$name.write_bytes(0, $Msg::__LAYOUT.size());
+              $Submsg::__raw_init(self.ptr.as_mut().$name);
             } else if self.ptr.as_ref().__hasbits[$hasbit_word] & $hasbit_bit == 0 {
               $Submsg::__raw_clear(self.ptr.as_ref().$name);
             }
@@ -777,7 +777,7 @@ impl GenField for RepeatedMessage<'_> {
             let vec = &mut self.ptr.as_mut().$name;
             let new_len = vec.len() + 1;
             vec.resize_msg(new_len, self.arena,
-              $Submsg::__LAYOUT, $Submsg::__raw_clear);
+              $Submsg::__LAYOUT, $Submsg::__raw_init);
             self.${name}_mut(new_len - 1).unwrap_unchecked()
           }
         }
@@ -786,7 +786,7 @@ impl GenField for RepeatedMessage<'_> {
           unsafe {
             self.ptr.as_mut().$name.resize_msg(
               n, self.arena,
-              $Submsg::__LAYOUT, $Submsg::__raw_clear);
+              $Submsg::__LAYOUT, $Submsg::__raw_init);
           }
         }
       ",

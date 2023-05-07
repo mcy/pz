@@ -58,7 +58,7 @@ pub struct AVec<T> {
   len: usize,
 }
 
-impl<T: Copy> AVec<T> {
+impl<T: Copy + std::fmt::Debug> AVec<T> {
   pub const fn new() -> AVec<T> {
     Self {
       ptr: NonNull::dangling(),
@@ -97,26 +97,22 @@ impl<T: Copy> AVec<T> {
   }
 
   fn grow(&mut self, new_cap: Option<usize>, arena: RawArena) {
+    let old_cap = self.cap;
     self.cap = new_cap.unwrap_or(self.cap * 2);
-    if self.cap == 0 {
+    if self.cap < 16 {
       self.cap = 16;
     }
 
     let old_ptr = self.ptr.as_ptr();
-    self.ptr = arena
-      .alloc(Layout::array::<*mut u8>(self.cap).unwrap())
-      .cast();
+    self.ptr = arena.alloc(Layout::array::<T>(self.cap).unwrap()).cast();
 
     unsafe {
+      self.ptr.as_ptr().copy_from_nonoverlapping(old_ptr, old_cap);
       self
         .ptr
         .as_ptr()
-        .copy_from_nonoverlapping(old_ptr, self.cap / 2);
-      self
-        .ptr
-        .as_ptr()
-        .add(self.cap / 2)
-        .write_bytes(0, self.cap / 2);
+        .add(old_cap)
+        .write_bytes(0, self.cap - old_cap);
     }
   }
 }
@@ -141,7 +137,7 @@ impl AVec<*mut u8> {
 
     while self.len < new_len {
       unsafe {
-        let ptr = &mut *self.ptr.as_ptr().add(self.len - 1);
+        let ptr = &mut *self.ptr.as_ptr().add(self.len);
         if ptr.is_null() {
           *ptr = arena.alloc(layout).as_ptr();
           ptr.write_bytes(0, layout.size());

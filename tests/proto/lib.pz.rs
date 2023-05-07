@@ -47,7 +47,7 @@ impl TestAll {
     let arena = __rt::rt::__z::RawArena::new();
     let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
     unsafe {
-      ptr.write_bytes(0, Self::__LAYOUT.size());
+      Self::__raw_init(ptr);
       Self {
         ptr: __rt::rt::__z::ABox::from_ptr(ptr),
         arena,
@@ -55,14 +55,14 @@ impl TestAll {
     }
   }
 
-  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, __rt::rt::Error> {
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, __rt::rt::Error> {
     let mut new = Self::new();
-    new.parse(input)?;
+    new.parse_pb(input)?;
     Ok(new)
   }
 
-  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
-    self.as_mut().parse(input)
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
+    self.as_mut().parse_pb(input)
   }
 
   pub fn as_view(&self) -> __rt::rt::View<Self> {
@@ -263,7 +263,7 @@ impl TestAll {
     unsafe {
       if self.ptr.as_ref().opt_recursive.is_null() {
         self.ptr.as_mut().opt_recursive = self.arena.alloc(TestAll::__LAYOUT).as_ptr();
-        self.ptr.as_mut().opt_recursive.write_bytes(0, TestAll::__LAYOUT.size());
+        TestAll::__raw_init(self.ptr.as_mut().opt_recursive);
       } else if self.ptr.as_ref().__hasbits[0] & 256 == 0 {
         TestAll::__raw_clear(self.ptr.as_ref().opt_recursive);
       }
@@ -304,7 +304,7 @@ impl TestAll {
     unsafe {
       if self.ptr.as_ref().opt_nested.is_null() {
         self.ptr.as_mut().opt_nested = self.arena.alloc(TestAll_Nested::__LAYOUT).as_ptr();
-        self.ptr.as_mut().opt_nested.write_bytes(0, TestAll::__LAYOUT.size());
+        TestAll_Nested::__raw_init(self.ptr.as_mut().opt_nested);
       } else if self.ptr.as_ref().__hasbits[0] & 512 == 0 {
         TestAll_Nested::__raw_clear(self.ptr.as_ref().opt_nested);
       }
@@ -609,7 +609,7 @@ impl TestAll {
       let vec = &mut self.ptr.as_mut().rep_recursive;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_clear);
+        TestAll::__LAYOUT, TestAll::__raw_init);
       self.rep_recursive_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -617,7 +617,7 @@ impl TestAll {
     unsafe {
       self.ptr.as_mut().rep_recursive.resize_msg(
         n, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_clear);
+        TestAll::__LAYOUT, TestAll::__raw_init);
     }
   }
 
@@ -651,7 +651,7 @@ impl TestAll {
       let vec = &mut self.ptr.as_mut().rep_nested;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_clear);
+        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
       self.rep_nested_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -659,7 +659,7 @@ impl TestAll {
     unsafe {
       self.ptr.as_mut().rep_nested.resize_msg(
         n, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_clear);
+        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
     }
   }
 
@@ -668,6 +668,11 @@ impl TestAll {
   #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_TestAll::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_TestAll::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
   }
   #[doc(hidden)]
   pub fn __tdp_info() -> *const __rt::rt::__z::tdp::Message {
@@ -1019,7 +1024,7 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     unsafe { TestAll::__raw_clear(self.ptr.as_ptr()) }
   }
 
-  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
     let mut ctx = __rt::rt::__z::tdp::ParseCtx::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll::__tdp_info())
   }
@@ -1206,7 +1211,7 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     unsafe {
       if self.ptr.as_ref().opt_recursive.is_null() {
         self.ptr.as_mut().opt_recursive = self.arena.alloc(TestAll::__LAYOUT).as_ptr();
-        self.ptr.as_mut().opt_recursive.write_bytes(0, TestAll::__LAYOUT.size());
+        TestAll::__raw_init(self.ptr.as_mut().opt_recursive);
       } else if self.ptr.as_ref().__hasbits[0] & 256 == 0 {
         TestAll::__raw_clear(self.ptr.as_ref().opt_recursive);
       }
@@ -1247,7 +1252,7 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     unsafe {
       if self.ptr.as_ref().opt_nested.is_null() {
         self.ptr.as_mut().opt_nested = self.arena.alloc(TestAll_Nested::__LAYOUT).as_ptr();
-        self.ptr.as_mut().opt_nested.write_bytes(0, TestAll::__LAYOUT.size());
+        TestAll_Nested::__raw_init(self.ptr.as_mut().opt_nested);
       } else if self.ptr.as_ref().__hasbits[0] & 512 == 0 {
         TestAll_Nested::__raw_clear(self.ptr.as_ref().opt_nested);
       }
@@ -1552,7 +1557,7 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
       let vec = &mut self.ptr.as_mut().rep_recursive;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_clear);
+        TestAll::__LAYOUT, TestAll::__raw_init);
       self.rep_recursive_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -1560,7 +1565,7 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     unsafe {
       self.ptr.as_mut().rep_recursive.resize_msg(
         n, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_clear);
+        TestAll::__LAYOUT, TestAll::__raw_init);
     }
   }
 
@@ -1594,7 +1599,7 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
       let vec = &mut self.ptr.as_mut().rep_nested;
       let new_len = vec.len() + 1;
       vec.resize_msg(new_len, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_clear);
+        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
       self.rep_nested_mut(new_len - 1).unwrap_unchecked()
     }
   }
@@ -1602,7 +1607,7 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     unsafe {
       self.ptr.as_mut().rep_nested.resize_msg(
         n, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_clear);
+        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
     }
   }
 
@@ -1799,7 +1804,7 @@ mod __priv_TestAll {
           ];
           TYS.as_ptr()
         },
-        raw_clear: TestAll::__raw_clear,
+        raw_init: TestAll::__raw_init,
       },
       fields: [
         __rt::rt::__z::tdp::Field {
@@ -1811,7 +1816,7 @@ mod __priv_TestAll {
         },
         __rt::rt::__z::tdp::Field {
           number: 2,
-          flags: (__rt::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          flags: (__rt::rt::__z::tdp::Kind::I64 as u8 as u32) | (0 << 4),
           offset: __priv_TestAll::FIELD_OFFSET_opt_i64,
           ty: 0,
           hasbit: 1,
@@ -1825,7 +1830,7 @@ mod __priv_TestAll {
         },
         __rt::rt::__z::tdp::Field {
           number: 4,
-          flags: (__rt::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          flags: (__rt::rt::__z::tdp::Kind::I64 as u8 as u32) | (0 << 4),
           offset: __priv_TestAll::FIELD_OFFSET_opt_u64,
           ty: 0,
           hasbit: 3,
@@ -1881,7 +1886,7 @@ mod __priv_TestAll {
         },
         __rt::rt::__z::tdp::Field {
           number: 22,
-          flags: (__rt::rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
+          flags: (__rt::rt::__z::tdp::Kind::I64 as u8 as u32) | (1 << 4),
           offset: __priv_TestAll::FIELD_OFFSET_rep_i64,
           ty: 0,
           hasbit: 10,
@@ -1895,7 +1900,7 @@ mod __priv_TestAll {
         },
         __rt::rt::__z::tdp::Field {
           number: 24,
-          flags: (__rt::rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
+          flags: (__rt::rt::__z::tdp::Kind::I64 as u8 as u32) | (1 << 4),
           offset: __priv_TestAll::FIELD_OFFSET_rep_u64,
           ty: 0,
           hasbit: 10,
@@ -2004,7 +2009,7 @@ impl TestAll_Nested {
     let arena = __rt::rt::__z::RawArena::new();
     let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
     unsafe {
-      ptr.write_bytes(0, Self::__LAYOUT.size());
+      Self::__raw_init(ptr);
       Self {
         ptr: __rt::rt::__z::ABox::from_ptr(ptr),
         arena,
@@ -2012,14 +2017,14 @@ impl TestAll_Nested {
     }
   }
 
-  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, __rt::rt::Error> {
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, __rt::rt::Error> {
     let mut new = Self::new();
-    new.parse(input)?;
+    new.parse_pb(input)?;
     Ok(new)
   }
 
-  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
-    self.as_mut().parse(input)
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
+    self.as_mut().parse_pb(input)
   }
 
   pub fn as_view(&self) -> __rt::rt::View<Self> {
@@ -2095,6 +2100,11 @@ impl TestAll_Nested {
     (&mut *raw.cast::<__priv_TestAll_Nested::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_TestAll_Nested::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
   pub fn __tdp_info() -> *const __rt::rt::__z::tdp::Message {
     &__priv_TestAll_Nested::TDP_INFO as *const _ as *const __rt::rt::__z::tdp::Message
   }
@@ -2163,7 +2173,7 @@ impl<'msg> __priv_TestAll_Nested::Mut<'msg>  {
     unsafe { TestAll_Nested::__raw_clear(self.ptr.as_ptr()) }
   }
 
-  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
     let mut ctx = __rt::rt::__z::tdp::ParseCtx::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll_Nested::__tdp_info())
   }
@@ -2283,7 +2293,7 @@ mod __priv_TestAll_Nested {
           ];
           TYS.as_ptr()
         },
-        raw_clear: TestAll_Nested::__raw_clear,
+        raw_init: TestAll_Nested::__raw_init,
       },
       fields: [
         __rt::rt::__z::tdp::Field {
