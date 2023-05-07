@@ -2,6 +2,7 @@
 
 mod arena;
 mod tdp;
+mod debug;
 
 pub mod ptr;
 pub mod str;
@@ -17,6 +18,7 @@ pub mod __z {
     pub use super::super::tdp::*;
   }
   pub use super::arena::*;
+  pub use super::debug::Debug;
 }
 
 pub use tdp::Error;

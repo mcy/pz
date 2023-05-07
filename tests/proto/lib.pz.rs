@@ -13,12 +13,6 @@ pub struct TestAll {
 }
 
 impl TestAll {
-  #[doc(hidden)]
-  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_TestAll::Storage>();
-  pub fn tdp_info() -> *const __rt::rt::__z::tdp::Message {
-    &__priv_TestAll::TDP_INFO as *const _ as *const __rt::rt::__z::tdp::Message
-  }
-
   pub const DEFAULT: __rt::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_TestAll::Storage = __priv_TestAll::Storage {
       __hasbits: [0; 1],
@@ -670,8 +664,14 @@ impl TestAll {
   }
 
   #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_TestAll::Storage>();
+  #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_TestAll::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const __rt::rt::__z::tdp::Message {
+    &__priv_TestAll::TDP_INFO as *const _ as *const __rt::rt::__z::tdp::Message
   }
 }
 
@@ -875,6 +875,143 @@ impl<'msg> __priv_TestAll::View<'msg> {
       })
   }
 
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut __rt::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.opt_i32_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_i32")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_i64_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_i64")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_u32_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_u32")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_u64_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_u64")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_f32_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_f32")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_f64_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_f64")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_str_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_str")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_bool_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_bool")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.opt_recursive_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_recursive")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    if let Some(value) = self.opt_nested_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("opt_nested")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    let slice = self.rep_i32();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_i32")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    let slice = self.rep_i64();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_i64")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    let slice = self.rep_u32();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_u32")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    let slice = self.rep_u64();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_u64")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    let slice = self.rep_f32();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_f32")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    let slice = self.rep_f64();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_f64")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    if self.rep_str_len() != 0 {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_str")?;
+      debug.iter(self.rep_str_iter())?;
+      count += 1;
+    }
+    let slice = self.rep_bool();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_bool")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    for value in self.rep_recursive_iter() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_recursive")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    for value in self.rep_nested_iter() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("rep_nested")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
 }
 
 impl<'msg> __priv_TestAll::Mut<'msg>  {
@@ -883,9 +1020,8 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
   }
 
   pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
-    dbg!(&__priv_TestAll::TDP_INFO);
     let mut ctx = __rt::rt::__z::tdp::ParseCtx::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll::tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll::__tdp_info())
   }
 
   pub fn opt_i32(self) -> i32 {
@@ -1478,6 +1614,27 @@ impl Drop for TestAll {
   }
 }
 
+impl std::fmt::Debug for __priv_TestAll::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.TestAll ")?;
+    let mut debug = __rt::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_TestAll::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use __rt::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for TestAll {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
 mod __priv_TestAll {
   pub use super::*;
 
@@ -1637,8 +1794,8 @@ mod __priv_TestAll {
         },
         tys: {
           const TYS: &[fn() -> *const __rt::rt::__z::tdp::Message] = &[
-            TestAll::tdp_info,
-            TestAll_Nested::tdp_info,
+            TestAll::__tdp_info,
+            TestAll_Nested::__tdp_info,
           ];
           TYS.as_ptr()
         },
@@ -1831,12 +1988,6 @@ pub struct TestAll_Nested {
 }
 
 impl TestAll_Nested {
-  #[doc(hidden)]
-  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_TestAll_Nested::Storage>();
-  pub fn tdp_info() -> *const __rt::rt::__z::tdp::Message {
-    &__priv_TestAll_Nested::TDP_INFO as *const _ as *const __rt::rt::__z::tdp::Message
-  }
-
   pub const DEFAULT: __rt::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_TestAll_Nested::Storage = __priv_TestAll_Nested::Storage {
       __hasbits: [0; 1],
@@ -1938,8 +2089,14 @@ impl TestAll_Nested {
   }
 
   #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_TestAll_Nested::Storage>();
+  #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_TestAll_Nested::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const __rt::rt::__z::tdp::Message {
+    &__priv_TestAll_Nested::TDP_INFO as *const _ as *const __rt::rt::__z::tdp::Message
   }
 }
 
@@ -1977,6 +2134,28 @@ impl<'msg> __priv_TestAll_Nested::View<'msg> {
     })
   }
 
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut __rt::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.a_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("a")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if self.b_len() != 0 {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("b")?;
+      debug.iter(self.b_iter())?;
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
 }
 
 impl<'msg> __priv_TestAll_Nested::Mut<'msg>  {
@@ -1985,9 +2164,8 @@ impl<'msg> __priv_TestAll_Nested::Mut<'msg>  {
   }
 
   pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), __rt::rt::Error> {
-    dbg!(&__priv_TestAll_Nested::TDP_INFO);
     let mut ctx = __rt::rt::__z::tdp::ParseCtx::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll_Nested::tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll_Nested::__tdp_info())
   }
 
   pub fn a(self) -> i32 {
@@ -2045,6 +2223,27 @@ impl<'msg> __priv_TestAll_Nested::Mut<'msg>  {
 impl Drop for TestAll_Nested {
   fn drop(&mut self) {
     unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_TestAll_Nested::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.TestAll.Nested ")?;
+    let mut debug = __rt::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_TestAll_Nested::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use __rt::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for TestAll_Nested {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
   }
 }
 

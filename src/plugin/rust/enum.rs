@@ -26,6 +26,16 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           "
         );
       },
+      debug_arms: |w| for field in ty.fields() {
+        w.emit(
+          vars! {
+            Name: ident(&heck::AsPascalCase(field.name()).to_string()),
+          },
+          r#"
+            Self::$Name => std::write!(fmt, "$Name"),
+          "#,
+        );
+      },
       "DEFAULT": match ty.fields().next() {
         Some(f) => f.number().unwrap(),
         _ => 0,
@@ -49,6 +59,15 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       impl Default for $Enum {
         fn default() -> Self {
           Self($DEFAULT)
+        }
+      }
+
+      impl std::fmt::Debug for $Enum {
+        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+          match *self {
+            $debug_arms
+            Self(n) => std::write!(fmt, "$package.$Name({n})"),
+          }
         }
       }
     "#,

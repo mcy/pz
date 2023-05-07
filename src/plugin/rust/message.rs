@@ -43,6 +43,9 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         field.in_mut_methods(Where::MsgImpl, w);
         w.new_line();
       },
+      "Msg::debug": |w| for field in &gen.fields {
+        field.in_debug(w);
+      },
       "View::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::ViewImpl, w);
         w.new_line();
@@ -214,6 +217,18 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
 
       impl<'msg> $priv::View<'msg> {
         ${View::access}
+
+        #[doc(hidden)]
+        pub fn __debug(self, debug: &mut $z::Debug) -> std::fmt::Result {
+          let mut count = 0;
+          debug.start_block()?;
+          ${Msg::debug}
+          if count != 0 {
+            debug.comma(true)?;
+          }
+          debug.end_block()?;
+          Ok(())
+        }
       }
 
       impl<'msg> $priv::Mut<'msg>  {
@@ -222,7 +237,6 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
 
         pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
-          dbg!(&$priv::TDP_INFO);
           let mut ctx = $z::tdp::ParseCtx::new(input, self.arena);
           ctx.parse(self.ptr.as_ptr() as *mut u8, $Msg::__tdp_info())
         }
@@ -233,6 +247,27 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       impl Drop for $Msg {
         fn drop(&mut self) {
           unsafe { self.arena.destroy() }
+        }
+      }
+
+      impl std::fmt::Debug for $priv::View<'_> {
+        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+          fmt.write_str("$package.$Name ")?;
+          let mut debug = $z::Debug::new(fmt);
+          self.__debug(&mut debug)
+        }
+      }
+
+      impl std::fmt::Debug for $priv::Mut<'_> {
+        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+          use $rt::ptr::ViewFor;
+          std::fmt::Debug::fmt(&self.as_view(), fmt)
+        }
+      }
+
+      impl std::fmt::Debug for $Msg {
+        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+          std::fmt::Debug::fmt(&self.as_view(), fmt)
         }
       }
 

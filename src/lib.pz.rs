@@ -12,12 +12,6 @@ pub struct Bundle {
 }
 
 impl Bundle {
-  #[doc(hidden)]
-  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Bundle::Storage>();
-  pub fn tdp_info() -> *const crate::rt::__z::tdp::Message {
-    &__priv_Bundle::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
-  }
-
   pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_Bundle::Storage = __priv_Bundle::Storage {
       __hasbits: [0; 0],
@@ -174,8 +168,14 @@ impl Bundle {
   }
 
   #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Bundle::Storage>();
+  #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_Bundle::Storage>()).__hasbits = [0; 0];
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Bundle::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
   }
 }
 
@@ -237,6 +237,34 @@ impl<'msg> __priv_Bundle::View<'msg> {
     })
   }
 
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    for value in self.types_iter() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("types")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    if self.packages_len() != 0 {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("packages")?;
+      debug.iter(self.packages_iter())?;
+      count += 1;
+    }
+    if self.foreign_types_len() != 0 {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("foreign_types")?;
+      debug.iter(self.foreign_types_iter())?;
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
 }
 
 impl<'msg> __priv_Bundle::Mut<'msg>  {
@@ -245,9 +273,8 @@ impl<'msg> __priv_Bundle::Mut<'msg>  {
   }
 
   pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
-    dbg!(&__priv_Bundle::TDP_INFO);
     let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle::tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle::__tdp_info())
   }
 
   pub fn types_len(self) -> usize {
@@ -362,6 +389,27 @@ impl Drop for Bundle {
   }
 }
 
+impl std::fmt::Debug for __priv_Bundle::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.Bundle ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_Bundle::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for Bundle {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
 mod __priv_Bundle {
   pub use super::*;
 
@@ -402,7 +450,7 @@ mod __priv_Bundle {
         },
         tys: {
           const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
-            Type::tdp_info,
+            Type::__tdp_info,
           ];
           TYS.as_ptr()
         },
@@ -476,12 +524,6 @@ pub struct Type {
 }
 
 impl Type {
-  #[doc(hidden)]
-  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Type::Storage>();
-  pub fn tdp_info() -> *const crate::rt::__z::tdp::Message {
-    &__priv_Type::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
-  }
-
   pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_Type::Storage = __priv_Type::Storage {
       __hasbits: [0; 1],
@@ -722,8 +764,14 @@ impl Type {
   }
 
   #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Type::Storage>();
+  #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_Type::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Type::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
   }
 }
 
@@ -807,6 +855,59 @@ impl<'msg> __priv_Type::View<'msg> {
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
 
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.name_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("name")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.package_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("package")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.kind_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("kind")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.declared_in_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("declared_in")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    for value in self.fields_iter() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("fields")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    let slice = self.nesteds();
+    if !slice.is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("nesteds")?;
+      debug.iter(slice)?;
+      count += 1;
+    }
+    if let Some(value) = self.span_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("span")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
 }
 
 impl<'msg> __priv_Type::Mut<'msg>  {
@@ -815,9 +916,8 @@ impl<'msg> __priv_Type::Mut<'msg>  {
   }
 
   pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
-    dbg!(&__priv_Type::TDP_INFO);
     let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, Type::tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Type::__tdp_info())
   }
 
   pub fn name(self) -> &'msg crate::rt::Str {
@@ -1012,6 +1112,27 @@ impl Drop for Type {
   }
 }
 
+impl std::fmt::Debug for __priv_Type::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.Type ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_Type::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for Type {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
 mod __priv_Type {
   pub use super::*;
 
@@ -1080,7 +1201,7 @@ mod __priv_Type {
         },
         tys: {
           const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
-            Field::tdp_info,
+            Field::__tdp_info,
           ];
           TYS.as_ptr()
         },
@@ -1197,6 +1318,18 @@ impl Default for Type_Kind {
   }
 }
 
+impl std::fmt::Debug for Type_Kind {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    match *self {
+      Self::Message => std::write!(fmt, "Message"),
+      Self::Struct => std::write!(fmt, "Struct"),
+      Self::Choice => std::write!(fmt, "Choice"),
+      Self::Enum => std::write!(fmt, "Enum"),
+      Self(n) => std::write!(fmt, "pz.Type.Kind({n})"),
+    }
+  }
+}
+
 /// message `pz.Field`
 pub struct Field {
   ptr: crate::rt::__z::ABox<__priv_Field::Storage>,
@@ -1204,12 +1337,6 @@ pub struct Field {
 }
 
 impl Field {
-  #[doc(hidden)]
-  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Field::Storage>();
-  pub fn tdp_info() -> *const crate::rt::__z::tdp::Message {
-    &__priv_Field::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
-  }
-
   pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_Field::Storage = __priv_Field::Storage {
       __hasbits: [0; 1],
@@ -1395,8 +1522,14 @@ impl Field {
   }
 
   #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Field::Storage>();
+  #[doc(hidden)]
   pub unsafe fn __raw_clear(raw: *mut u8) {
     (&mut *raw.cast::<__priv_Field::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Field::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
   }
 }
 
@@ -1463,6 +1596,52 @@ impl<'msg> __priv_Field::View<'msg> {
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
 
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.name_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("name")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.number_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("number")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.is_repeated_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("is_repeated")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.r#type_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("type")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.type_index_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("type_index")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.span_opt() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("span")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
 }
 
 impl<'msg> __priv_Field::Mut<'msg>  {
@@ -1471,9 +1650,8 @@ impl<'msg> __priv_Field::Mut<'msg>  {
   }
 
   pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
-    dbg!(&__priv_Field::TDP_INFO);
     let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, Field::tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Field::__tdp_info())
   }
 
   pub fn name(self) -> &'msg crate::rt::Str {
@@ -1611,6 +1789,27 @@ impl<'msg> __priv_Field::Mut<'msg>  {
 impl Drop for Field {
   fn drop(&mut self) {
     unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_Field::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.Field ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_Field::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for Field {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
   }
 }
 
@@ -1788,6 +1987,25 @@ impl Field_Type {
 impl Default for Field_Type {
   fn default() -> Self {
     Self(0)
+  }
+}
+
+impl std::fmt::Debug for Field_Type {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    match *self {
+      Self::None => std::write!(fmt, "None"),
+      Self::I32 => std::write!(fmt, "I32"),
+      Self::U32 => std::write!(fmt, "U32"),
+      Self::F32 => std::write!(fmt, "F32"),
+      Self::I64 => std::write!(fmt, "I64"),
+      Self::U64 => std::write!(fmt, "U64"),
+      Self::F64 => std::write!(fmt, "F64"),
+      Self::Bool => std::write!(fmt, "Bool"),
+      Self::String => std::write!(fmt, "String"),
+      Self::Type => std::write!(fmt, "Type"),
+      Self::Foreign => std::write!(fmt, "Foreign"),
+      Self(n) => std::write!(fmt, "pz.Field.Type({n})"),
+    }
   }
 }
 

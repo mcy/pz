@@ -398,9 +398,8 @@ impl<'r> ParseCtx<'r> {
           match (k, is_repeated) {
             (Kind::I32 | Kind::F32, false) => unsafe {
               // Singular i32.
-              dbg!(*raw, field.offset);
               let ptr = raw.add(field.offset as usize);
-              dbg!(ptr).cast::<u32>().write(v as u32);
+              ptr.cast::<u32>().write(v as u32);
             },
             (Kind::I64 | Kind::F64, false) => unsafe {
               // Singular i64.

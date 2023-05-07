@@ -25,6 +25,7 @@ pub trait GenField {
   fn in_storage_init(&self, w: &mut SourceWriter) {}
   fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {}
   fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {}
+  fn in_debug(&self, w: &mut SourceWriter) {}
 }
 
 pub struct FieldGenerators<'ccx> {
@@ -219,6 +220,23 @@ impl GenField for SingularScalar<'_> {
       ",
     );
   }
+
+  fn in_debug(&self, w: &mut SourceWriter) {
+    w.emit(
+      vars! {
+        name: ident(self.field.name()),
+        raw_name: self.field.name(),
+      },
+      r#"
+        if let Some(value) = self.${name}_opt() {
+          if count != 0 { debug.comma(false)?; }
+          debug.field("$raw_name")?;
+          debug.write_debug(value);
+          count += 1;
+        }
+      "#,
+    );
+  }
 }
 
 struct RepeatedScalar<'ccx> {
@@ -308,6 +326,24 @@ impl GenField for RepeatedScalar<'_> {
           }
         }
       ",
+    );
+  }
+
+  fn in_debug(&self, w: &mut SourceWriter) {
+    w.emit(
+      vars! {
+        name: ident(self.field.name()),
+        raw_name: self.field.name(),
+      },
+      r#"
+        let slice = self.$name();
+        if !slice.is_empty() {
+          if count != 0 { debug.comma(false)?; }
+          debug.field("$raw_name")?;
+          debug.iter(slice)?;
+          count += 1;
+        }
+      "#,
     );
   }
 }
@@ -411,6 +447,23 @@ impl GenField for SingularString<'_> {
       ",
     );
   }
+
+  fn in_debug(&self, w: &mut SourceWriter) {
+    w.emit(
+      vars! {
+        name: ident(self.field.name()),
+        raw_name: self.field.name(),
+      },
+      r#"
+        if let Some(value) = self.${name}_opt() {
+          if count != 0 { debug.comma(false)?; }
+          debug.field("$raw_name")?;
+          debug.write_debug(value);
+          count += 1;
+        }
+      "#,
+    );
+  }
 }
 
 struct RepeatedString<'ccx> {
@@ -493,6 +546,23 @@ impl GenField for RepeatedString<'_> {
           }
         }
       ",
+    );
+  }
+
+  fn in_debug(&self, w: &mut SourceWriter) {
+    w.emit(
+      vars! {
+        name: ident(self.field.name()),
+        raw_name: self.field.name(),
+      },
+      r#"
+        if self.${name}_len() != 0 {
+          if count != 0 { debug.comma(false)?; }
+          debug.field("$raw_name")?;
+          debug.iter(self.${name}_iter())?;
+          count += 1;
+        }
+      "#,
     );
   }
 }
@@ -604,6 +674,23 @@ impl GenField for SingularMessage<'_> {
       ",
     );
   }
+
+  fn in_debug(&self, w: &mut SourceWriter) {
+    w.emit(
+      vars! {
+        name: ident(self.field.name()),
+        raw_name: self.field.name(),
+      },
+      r#"
+        if let Some(value) = self.${name}_opt() {
+          if count != 0 { debug.comma(false)?; }
+          debug.field("$raw_name")?;
+          value.__debug(debug)?;
+          count += 1;
+        }
+      "#,
+    );
+  }
 }
 
 struct RepeatedMessage<'ccx> {
@@ -703,6 +790,23 @@ impl GenField for RepeatedMessage<'_> {
           }
         }
       ",
+    );
+  }
+
+  fn in_debug(&self, w: &mut SourceWriter) {
+    w.emit(
+      vars! {
+        name: ident(self.field.name()),
+        raw_name: self.field.name(),
+      },
+      r#"
+        for value in self.${name}_iter() {
+          if count != 0 { debug.comma(false)?; }
+          debug.field("$raw_name")?;
+          value.__debug(debug)?;
+          count += 1;
+        }
+      "#,
     );
   }
 }
