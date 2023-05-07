@@ -1,6 +1,7 @@
 //! The parser.
 
 use std::fmt;
+use std::mem;
 
 use crate::report::Report;
 use crate::syn;
@@ -13,28 +14,22 @@ use crate::syn::SourceCtx;
 use crate::syn::Span;
 use crate::syn::Spanned;
 
-fn parse_edition(lexer: &mut Lexer) -> Result<syn::Edition> {
-  let kw = lexer.keyword("edition")?;
-  lexer.keyword("=")?;
-  let edition = match lexer.expect(&[Kind::Str])? {
-    Token::Str(s) => s,
-    wrong => syn::StrLit(wrong.span()),
-  };
-  let semi = lexer.keyword(";")?;
-  Ok(syn::Edition {
-    span: kw.with_end(semi.span(), lexer.scx_mut()),
-    value: edition,
-  })
-}
-
 fn parse_path(lexer: &mut Lexer) -> Result<syn::Path> {
   let mut components = Vec::new();
   match lexer.expect(&[Kind::Ident])? {
-    Token::Ident(id) => components.push(id),
+    Token::Ident(id) => {
+      if id.is_hard_keyword(lexer.scx()) {
+        let kw = id.text(lexer.scx()).to_string();
+        lexer
+          .error(format_args!("expected identifier, got `{kw}`"))
+          .at(id);
+      }
+      components.push(id)
+    }
     _ => {
       return Ok(syn::Path {
         span: lexer.zero_width_span(),
-        components,
+        components: Vec::new(),
       })
     }
   }
@@ -67,22 +62,46 @@ fn parse_ident(lexer: &mut Lexer) -> Result<syn::Ident> {
   Ok(idents.components[0])
 }
 
-fn parse_package(lexer: &mut Lexer) -> Result<syn::Package> {
-  let kw = lexer.keyword("package")?;
+fn parse_package(lexer: &mut Lexer) -> Result<(Vec<syn::Attr>, syn::Package)> {
+  let mut attrs = Vec::new();
+  loop {
+    let kw =
+      lexer.expect(&[Kind::Doc, Kind::Exact("@"), Kind::Exact("package")])?;
 
-  let path = match lexer.peek()?.text(lexer.scx()) {
-    ";" => syn::Path {
-      span: lexer.zero_width_span(),
-      components: Vec::new(),
-    },
-    _ => parse_path(lexer)?,
-  };
+    match kw.text(lexer.scx()) {
+      "@" => {
+        attrs.push(parse_attr_kv(Some(kw.span()), lexer)?);
+        continue;
+      }
+      comment if comment.starts_with("///") => {
+        attrs.push(syn::Attr {
+          span: kw.span(),
+          kind: syn::AttrKind::Doc,
+          value: syn::AttrValue::None,
+        });
+        continue;
+      }
+      _ => {
+        let path = match lexer.peek()? {
+          Token::Ident(id) if !id.is_hard_keyword(lexer.scx()) => {
+            parse_path(lexer)?
+          }
+          _ => syn::Path {
+            span: lexer.zero_width_span(),
+            components: Vec::new(),
+          },
+        };
 
-  let semi = lexer.keyword(";")?;
-  Ok(syn::Package {
-    span: kw.with_end(semi.span(), lexer.scx_mut()),
-    path,
-  })
+        return Ok((
+          attrs,
+          syn::Package {
+            span: kw.span().with_end(path.span(), lexer.scx_mut()),
+            path,
+          },
+        ));
+      }
+    }
+  }
 }
 
 fn parse_type(lexer: &mut Lexer) -> Result<syn::Type> {
@@ -188,6 +207,7 @@ fn parse_wheres(lexer: &mut Lexer, attrs: &mut Vec<syn::Attr>) -> Result<()> {
 
 fn parse_item(
   lexer: &mut Lexer,
+  mut imports: Option<&mut Vec<syn::Import>>,
   inside: Container,
   outer_name: Span,
 ) -> Result<syn::Item> {
@@ -198,6 +218,7 @@ fn parse_item(
       Kind::Int,
       Kind::Doc,
       Kind::Exact("@"),
+      Kind::Exact("import"),
       Kind::Exact("message"),
       Kind::Exact("enum"),
       Kind::Exact("struct"),
@@ -215,6 +236,41 @@ fn parse_item(
           kind: syn::AttrKind::Doc,
           value: syn::AttrValue::None,
         });
+        continue;
+      }
+      "import" => {
+        let path = parse_path(lexer)?;
+        lexer.keyword("{")?;
+        parse_wheres(lexer, &mut attrs)?;
+
+        let mut pairs = Vec::new();
+        while !lexer.at_eof()? && lexer.peek()?.text(lexer.scx()) != "}" {
+          let path = parse_path(lexer)?;
+          if lexer.peek()?.text(lexer.scx()) == "as" {
+            lexer.next()?;
+            pairs.push((path, Some(parse_ident(lexer)?)));
+          } else {
+            pairs.push((path, None));
+          }
+
+          lexer.take_exact(",")?;
+        }
+        lexer.keyword("}")?;
+
+        let span = kw.span().with_end(path.span(), lexer.scx_mut());
+        if let Some(ref mut imports) = imports {
+          imports.push(syn::Import {
+            span,
+            attrs: mem::take(&mut attrs),
+            package: path,
+            symbols: pairs,
+          })
+        } else {
+          lexer
+            .error("imports are only permitted at the top of the file")
+            .at(span);
+        }
+
         continue;
       }
       kind @ ("message" | "enum" | "struct" | "choice") => {
@@ -246,7 +302,7 @@ fn parse_item(
             break;
           }
 
-          items.push(parse_item(lexer, container, span)?);
+          items.push(parse_item(lexer, None, container, span)?);
         }
         lexer.keyword("}")?;
 
@@ -321,6 +377,14 @@ fn parse_item(
         parse_wheres(lexer, &mut attrs)?;
 
         let span = first.unwrap().with_end(last.unwrap(), lexer.scx_mut());
+        if inside == Container::File {
+          lexer
+            .error("bare fields are not permitted at the file level")
+            .at(span);
+        }
+
+        lexer.take_exact(",")?;
+
         Ok(syn::Item::Field(syn::Field {
           span,
           name,
@@ -333,31 +397,33 @@ fn parse_item(
   }
 }
 
-fn parse_file<'scx, 'file>(
-  lexer: &mut Lexer,
-) -> Result<(syn::Edition, syn::Package, Vec<syn::Item>)> {
-  let edition = parse_edition(lexer)?;
-  let package = parse_package(lexer)?;
-
-  let mut items = Vec::new();
-  while !lexer.at_eof()? {
-    items.push(parse_item(lexer, Container::File, edition.span())?);
-  }
-
-  Ok((edition, package, items))
-}
-
 pub fn parse(
   file: File,
   scx: &mut SourceCtx,
   report: &mut Report,
 ) -> Option<syn::PzFile> {
   let mut lexer = Lexer::new(file, scx, report);
-  let (edition, package, items) = parse_file(&mut lexer).ok()?;
+  let (attrs, package) = parse_package(&mut lexer).ok()?;
+
+  let mut imports = Vec::new();
+  let mut items = Vec::new();
+  while !lexer.at_eof().ok()? {
+    items.push(
+      parse_item(
+        &mut lexer,
+        // Only parse imports before we parse any other kind of item.
+        items.is_empty().then_some(&mut imports),
+        Container::File,
+        package.span(),
+      )
+      .ok()?,
+    );
+  }
 
   Some(syn::PzFile {
-    edition,
+    attrs,
     package,
+    imports,
     items,
   })
 }

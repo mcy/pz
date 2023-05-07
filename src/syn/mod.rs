@@ -15,16 +15,19 @@ use crate::report::Report;
 
 const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ",", "@"];
 
+const HARD_KEYWORDS: &[&str] = &["message", "enum", "struct", "choice"];
+
 const KEYWORDS: &[&str] = &[
   "edition", "package", "message", "enum", "struct", "choice", "i32", "u32",
-  "f32", "i64", "u64", "f64", "str", "bool", "where",
+  "f32", "i64", "u64", "f64", "str", "bool", "where", "as",
 ];
 
 /// A single `.pz` file.
 #[derive(Debug)]
 pub struct PzFile {
-  pub edition: Edition,
+  pub attrs: Vec<Attr>,
   pub package: Package,
+  pub imports: Vec<Import>,
   pub items: Vec<Item>,
 }
 
@@ -38,24 +41,9 @@ impl PzFile {
   }
 }
 
-/// An `edition = "...";` declaration.
+/// A `package = foo.bar.baz` declaration.
 ///
 /// This is the first thing in the file.
-#[derive(Debug)]
-pub struct Edition {
-  pub span: Span,
-  pub value: StrLit,
-}
-
-impl Spanned for Edition {
-  fn span(&self) -> Span {
-    self.span
-  }
-}
-
-/// A `package = foo.bar.baz;` declaration.
-///
-/// This is the second thing in the file, after the [`Edition`].
 #[derive(Debug)]
 pub struct Package {
   pub span: Span,
@@ -63,6 +51,25 @@ pub struct Package {
 }
 
 impl Spanned for Package {
+  fn span(&self) -> Span {
+    self.span
+  }
+}
+
+/// An `import foo.bar { Type.Sub, Enum as Rename }` declaration.
+///
+/// This is the first thing in the file.
+#[derive(Debug)]
+pub struct Import {
+  pub span: Span,
+  pub attrs: Vec<Attr>,
+  pub package: Path,
+
+  /// Pairs of imported paths, and an optional rename.
+  pub symbols: Vec<(Path, Option<Ident>)>,
+}
+
+impl Spanned for Import {
   fn span(&self) -> Span {
     self.span
   }
@@ -242,6 +249,12 @@ impl Ident {
   /// leading `#` stripped).
   pub fn name<'scx>(&self, scx: &'scx SourceCtx) -> &'scx str {
     self.text(scx).trim_start_matches("#")
+  }
+
+  /// Returns whether this is a "hard" keyword, which is not allowed in some
+  /// contexts for ambiguity reasons.
+  pub fn is_hard_keyword(&self, scx: &SourceCtx) -> bool {
+    HARD_KEYWORDS.contains(&self.text(scx))
   }
 }
 

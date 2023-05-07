@@ -63,18 +63,15 @@ fn empty_package() -> Result<()> {
   let ast = parse(
     &mut ctx,
     r#"
-    edition = "2023";
-    package;
-  "#,
+      @edition = "2023"
+      package
+    "#,
   );
 
   let _p = ctx.enable_printing();
   verify_that!(
     ast,
     pat!(syn::PzFile {
-      edition: pat!(syn::Edition {
-        value: Text(&ctx, eq("\"2023\"")),
-      }),
       package: pat!(syn::Package {
         path: pat!(syn::Path {
           components: empty(),
@@ -92,8 +89,13 @@ fn smoke() -> Result<()> {
   let ast = parse(
     &mut ctx,
     r#"
-      edition = "2023";
-      package foo.bar;
+      @edition = "2023"
+      package foo.bar
+
+      import pz {
+        Bundle
+        Type.Kind as PzType
+      }
 
       message Foo {
         message Baz { 1. value: f32 }
@@ -110,10 +112,7 @@ fn smoke() -> Result<()> {
         }
       }
 
-      choice OneOf {
-        1. int: i32
-        2. #str: str
-      }
+      choice OneOf { 1. int: i32, 2. #str: str }
 
       enum Bar {
         1. FIRST
@@ -127,9 +126,6 @@ fn smoke() -> Result<()> {
   verify_that!(
     ast,
     pat!(syn::PzFile {
-      edition: pat!(syn::Edition {
-        value: Text(&ctx, eq("\"2023\"")),
-      }),
       package: pat!(syn::Package {
         path: pat!(syn::Path {
           components: elements_are![
