@@ -32,6 +32,7 @@ pub fn rust_plugin() -> ! {
         #![allow(non_camel_case_types)]
         #![allow(non_upper_case_globals)]
         #![allow(non_snake_case)]
+        #![allow(unused)]
       ",
       );
 
@@ -40,7 +41,7 @@ pub fn rust_plugin() -> ! {
         w.emit(
           vars! { rt },
           r"
-            extern $rt as __rt;
+            extern crate $rt as __rt;
           ",
         );
       }

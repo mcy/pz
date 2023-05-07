@@ -130,10 +130,10 @@ fn scalar_default<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
   emit::display(move |f| match field.ty() {
     (TypeEnum::I32, _) => f.write_str("0"),
     (TypeEnum::U32, _) => f.write_str("0"),
-    (TypeEnum::F32, _) => f.write_str("0.0"),
+    (TypeEnum::F32, _) => f.write_str("0"),
     (TypeEnum::I64, _) => f.write_str("0"),
     (TypeEnum::U64, _) => f.write_str("0"),
-    (TypeEnum::F64, _) => f.write_str("0.0"),
+    (TypeEnum::F64, _) => f.write_str("0"),
     (TypeEnum::Bool, _) => f.write_str("false"),
     (TypeEnum::Type, Some(e)) => write!(f, "{}::new().0 as u32", type_name(e)),
     (t, _) => panic!("non-scalar type: {t:?}"),
@@ -293,7 +293,7 @@ impl GenField for RepeatedScalar<'_> {
             let vec = &mut self.ptr.as_mut().$name;
             vec.resize(that.len(), self.arena);
             let ptr = vec.as_mut_slice().as_mut_ptr();
-            ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+            ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
           }
         }
         $deprecated
@@ -304,7 +304,7 @@ impl GenField for RepeatedScalar<'_> {
             let new_len = old_len + that.len();
             vec.resize(new_len, self.arena);
             let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-            ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+            ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
           }
         }
       ",
@@ -546,8 +546,8 @@ impl GenField for SingularMessage<'_> {
         $deprecated
         pub fn ${name}_opt($self) -> Option<$rt::View<'$lt, $Submsg>> {
           if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
-          Some($rt::View {
-            ptr: unsafe { $z::ABox::from_ptr(self.ptr.as_reg().$name) },
+          Some($rt::View::<$Submsg> {
+            ptr: unsafe { $z::ABox::from_ptr(self.ptr.as_ref().$name) },
             _ph: $PhantomData,
           })
         }
@@ -571,16 +571,16 @@ impl GenField for SingularMessage<'_> {
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $Submsg> {
           unsafe {
-            if self.ptr.$name.is_null() {
+            if self.ptr.as_ref().$name.is_null() {
               self.ptr.as_mut().$name = self.arena.alloc($Submsg::__LAYOUT).as_ptr();
-              self.ptr.as_mut().$name.write_bytes(0, Self::__LAYOUT.size());
+              self.ptr.as_mut().$name.write_bytes(0, $Msg::__LAYOUT.size());
             } else if self.ptr.as_ref().__hasbits[$hasbit_word] & $hasbit_bit == 0 {
               $Submsg::__raw_clear(self.ptr.as_ref().$name);
             }
 
-            self.ptr.get_mut().__hasbits[$hasbit_word] |= $hasbit_bit;
-            $rt::Mut {
-              ptr: $z::ABox::from_ptr(self.ptr.as_reg().$name),
+            unsafe { self.ptr.as_mut() }.__hasbits[$hasbit_word] |= $hasbit_bit;
+            $rt::Mut::<$Submsg> {
+              ptr: $z::ABox::from_ptr(self.ptr.as_ref().$name),
               _ph: $PhantomData,
               arena: self.arena,
             }
@@ -590,8 +590,8 @@ impl GenField for SingularMessage<'_> {
         pub fn ${name}_opt_mut($self) -> Option<$rt::Mut<'$lt, $Submsg>> {
           if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
           unsafe {
-            Some($rt::Mut {
-              ptr: $z::ABox::from_ptr(self.ptr.as_reg().$name),
+            Some($rt::Mut::<$Submsg> {
+              ptr: $z::ABox::from_ptr(self.ptr.as_ref().$name),
               _ph: $PhantomData,
               arena: self.arena,
             })
@@ -599,7 +599,7 @@ impl GenField for SingularMessage<'_> {
         }
         $deprecated
         pub fn ${name}_clear($self) {
-          self.ptr.__hasbits[$hasbit_word] &= !$hasbit_bit;
+          unsafe { self.ptr.as_mut() }.__hasbits[$hasbit_word] &= !$hasbit_bit;
         }
       ",
     );

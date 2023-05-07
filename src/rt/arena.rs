@@ -31,12 +31,12 @@ impl<T> ABox<T> {
     Self(NonNull::new_unchecked(ptr.cast()))
   }
 
-  pub fn as_ptr(self) -> *mut u8 {
+  pub const fn as_ptr(self) -> *mut u8 {
     self.0.as_ptr().cast()
   }
 
-  pub unsafe fn as_ref<'a>(self) -> &'a T {
-    &*self.0.as_ptr()
+  pub const unsafe fn as_ref<'a>(self) -> &'a T {
+    &*(self.0.as_ptr() as *const _)
   }
 
   pub unsafe fn as_mut<'a>(self) -> &'a mut T {

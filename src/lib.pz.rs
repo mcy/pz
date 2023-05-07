@@ -3,6 +3,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 #![allow(non_snake_case)]
+#![allow(unused)]
 
 /// message `pz.Bundle`
 pub struct Bundle {
@@ -13,6 +14,10 @@ pub struct Bundle {
 impl Bundle {
   #[doc(hidden)]
   pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Bundle::Storage>();
+  pub fn tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Bundle::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
   pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_Bundle::Storage = __priv_Bundle::Storage {
       __hasbits: [0; 0],
@@ -36,6 +41,16 @@ impl Bundle {
         arena,
       }
     }
+  }
+
+  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse(input)?;
+    Ok(new)
+  }
+
+  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse(input)
   }
 
   pub fn as_view(&self) -> crate::rt::View<Self> {
@@ -225,8 +240,14 @@ impl<'msg> __priv_Bundle::View<'msg> {
 }
 
 impl<'msg> __priv_Bundle::Mut<'msg>  {
-  pub fn clear(&mut self) {
+  pub fn clear(self) {
     unsafe { Bundle::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    dbg!(&__priv_Bundle::TDP_INFO);
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle::tdp_info())
   }
 
   pub fn types_len(self) -> usize {
@@ -344,12 +365,74 @@ impl Drop for Bundle {
 mod __priv_Bundle {
   pub use super::*;
 
+  #[repr(C)]
   pub struct Storage {
     pub(crate) __hasbits: [u32; 0],
     pub(in super) types: crate::rt::__z::AVec<*mut u8>,
     pub(crate) packages: crate::rt::__z::AVec<(*mut u8, usize)>,
     pub(crate) foreign_types: crate::rt::__z::AVec<(*mut u8, usize)>,
   }
+
+  pub const FIELD_OFFSET_types: u32 = unsafe {
+    let msg = Bundle::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().types as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_packages: u32 = unsafe {
+    let msg = Bundle::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().packages as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_foreign_types: u32 = unsafe {
+    let msg = Bundle::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().foreign_types as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{3 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{3 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = Bundle::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+            Type::tdp_info,
+          ];
+          TYS.as_ptr()
+        },
+        raw_clear: Bundle::__raw_clear,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
+          offset: __priv_Bundle::FIELD_OFFSET_types,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
+          offset: __priv_Bundle::FIELD_OFFSET_packages,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 3,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
+          offset: __priv_Bundle::FIELD_OFFSET_foreign_types,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
 
   #[derive(Copy, Clone)]
   pub struct View<'msg> {
@@ -395,6 +478,10 @@ pub struct Type {
 impl Type {
   #[doc(hidden)]
   pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Type::Storage>();
+  pub fn tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Type::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
   pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_Type::Storage = __priv_Type::Storage {
       __hasbits: [0; 1],
@@ -422,6 +509,16 @@ impl Type {
         arena,
       }
     }
+  }
+
+  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse(input)?;
+    Ok(new)
+  }
+
+  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse(input)
   }
 
   pub fn as_view(&self) -> crate::rt::View<Self> {
@@ -591,7 +688,7 @@ impl Type {
       let vec = &mut self.ptr.as_mut().nesteds;
       vec.resize(that.len(), self.arena);
       let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
     }
   }
   pub fn nesteds_extend(&mut self, that: &[u32]) {
@@ -601,7 +698,7 @@ impl Type {
       let new_len = old_len + that.len();
       vec.resize(new_len, self.arena);
       let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
     }
   }
 
@@ -713,8 +810,14 @@ impl<'msg> __priv_Type::View<'msg> {
 }
 
 impl<'msg> __priv_Type::Mut<'msg>  {
-  pub fn clear(&mut self) {
+  pub fn clear(self) {
     unsafe { Type::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    dbg!(&__priv_Type::TDP_INFO);
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Type::tdp_info())
   }
 
   pub fn name(self) -> &'msg crate::rt::Str {
@@ -868,7 +971,7 @@ impl<'msg> __priv_Type::Mut<'msg>  {
       let vec = &mut self.ptr.as_mut().nesteds;
       vec.resize(that.len(), self.arena);
       let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
     }
   }
   pub fn nesteds_extend(self, that: &[u32]) {
@@ -878,7 +981,7 @@ impl<'msg> __priv_Type::Mut<'msg>  {
       let new_len = old_len + that.len();
       vec.resize(new_len, self.arena);
       let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr(), that.len());
+      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
     }
   }
 
@@ -912,6 +1015,7 @@ impl Drop for Type {
 mod __priv_Type {
   pub use super::*;
 
+  #[repr(C)]
   pub struct Storage {
     pub(crate) __hasbits: [u32; 1],
     pub(in super) name: (*mut u8, usize),
@@ -922,6 +1026,119 @@ mod __priv_Type {
     pub (in super) nesteds: crate::rt::__z::AVec<u32>,
     pub(in super) span: u32,
   }
+
+  pub const FIELD_OFFSET_name: u32 = unsafe {
+    let msg = Type::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_package: u32 = unsafe {
+    let msg = Type::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().package as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_kind: u32 = unsafe {
+    let msg = Type::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().kind as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_declared_in: u32 = unsafe {
+    let msg = Type::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().declared_in as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_fields: u32 = unsafe {
+    let msg = Type::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().fields as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_nesteds: u32 = unsafe {
+    let msg = Type::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().nesteds as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_span: u32 = unsafe {
+    let msg = Type::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().span as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{7 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{7 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = Type::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+            Field::tdp_info,
+          ];
+          TYS.as_ptr()
+        },
+        raw_clear: Type::__raw_clear,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_Type::FIELD_OFFSET_name,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Type::FIELD_OFFSET_package,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 3,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Type::FIELD_OFFSET_kind,
+          ty: 0,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 4,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Type::FIELD_OFFSET_declared_in,
+          ty: 0,
+          hasbit: 3,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 10,
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
+          offset: __priv_Type::FIELD_OFFSET_fields,
+          ty: 0,
+          hasbit: 4,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 11,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
+          offset: __priv_Type::FIELD_OFFSET_nesteds,
+          ty: 0,
+          hasbit: 4,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 20,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Type::FIELD_OFFSET_span,
+          ty: 0,
+          hasbit: 4,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
 
   #[derive(Copy, Clone)]
   pub struct View<'msg> {
@@ -989,6 +1206,10 @@ pub struct Field {
 impl Field {
   #[doc(hidden)]
   pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Field::Storage>();
+  pub fn tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Field::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
   pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
     const VALUE: __priv_Field::Storage = __priv_Field::Storage {
       __hasbits: [0; 1],
@@ -1015,6 +1236,16 @@ impl Field {
         arena,
       }
     }
+  }
+
+  pub fn parsed(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse(input)?;
+    Ok(new)
+  }
+
+  pub fn parse(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse(input)
   }
 
   pub fn as_view(&self) -> crate::rt::View<Self> {
@@ -1235,8 +1466,14 @@ impl<'msg> __priv_Field::View<'msg> {
 }
 
 impl<'msg> __priv_Field::Mut<'msg>  {
-  pub fn clear(&mut self) {
+  pub fn clear(self) {
     unsafe { Field::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    dbg!(&__priv_Field::TDP_INFO);
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Field::tdp_info())
   }
 
   pub fn name(self) -> &'msg crate::rt::Str {
@@ -1380,6 +1617,7 @@ impl Drop for Field {
 mod __priv_Field {
   pub use super::*;
 
+  #[repr(C)]
   pub struct Storage {
     pub(crate) __hasbits: [u32; 1],
     pub(in super) name: (*mut u8, usize),
@@ -1389,6 +1627,105 @@ mod __priv_Field {
     pub(in super) type_index: u32,
     pub(in super) span: u32,
   }
+
+  pub const FIELD_OFFSET_name: u32 = unsafe {
+    let msg = Field::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_number: u32 = unsafe {
+    let msg = Field::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().number as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_is_repeated: u32 = unsafe {
+    let msg = Field::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().is_repeated as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_type: u32 = unsafe {
+    let msg = Field::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().r#type as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_type_index: u32 = unsafe {
+    let msg = Field::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().type_index as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_span: u32 = unsafe {
+    let msg = Field::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().span as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{6 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{6 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = Field::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+          ];
+          TYS.as_ptr()
+        },
+        raw_clear: Field::__raw_clear,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_Field::FIELD_OFFSET_name,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Field::FIELD_OFFSET_number,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 3,
+          flags: (crate::rt::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
+          offset: __priv_Field::FIELD_OFFSET_is_repeated,
+          ty: 0,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 4,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Field::FIELD_OFFSET_type,
+          ty: 0,
+          hasbit: 3,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 5,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Field::FIELD_OFFSET_type_index,
+          ty: 0,
+          hasbit: 4,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 20,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Field::FIELD_OFFSET_span,
+          ty: 0,
+          hasbit: 5,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
 
   #[derive(Copy, Clone)]
   pub struct View<'msg> {
