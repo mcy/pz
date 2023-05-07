@@ -46,6 +46,47 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       "Msg::debug": |w| for field in &gen.fields {
         field.in_debug(w);
       },
+      "Msg::hazzers": |w| {
+        let mut hasbit_index = 0u32;
+        for (field, gen) in ty.fields().zip(&gen.fields) {
+          if field.is_repeated() { continue }
+
+          let hasbit_word = hasbit_index / 32;
+          let hasbit_bit = 1 << (hasbit_index % 32);
+          w.emit(
+            vars! {
+              hasbit_word,
+              hasbit_bit,
+              raw_name: field.name(),
+              init: |w| gen.in_init(w),
+            },
+            "
+              #[doc(hidden)]
+              pub unsafe fn __hazzer_$raw_name(
+                raw: *mut u8,
+                arena: $z::RawArena,
+                flag: Option<bool>,
+              ) -> bool {
+                let offset = $priv::FIELD_OFFSET_$raw_name as usize;
+                let word = &mut *raw.sub(offset).cast::<u32>().add($hasbit_word);
+                let has = *word & $hasbit_bit != 0;
+                match flag {
+                  None => {},
+                  Some(false) => *word &= !$hasbit_bit,
+                  Some(true) => {
+                    *word |= $hasbit_bit;
+                    $init
+                  }
+                }
+                has
+              }
+            "
+          );
+          if !field.is_repeated() {
+            hasbit_index += 1;
+          }
+        }
+      },
       "View::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::ViewImpl, w);
         w.new_line();
@@ -207,6 +248,8 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         pub fn __tdp_info() -> *const $z::tdp::Message {
           &$priv::TDP_INFO as *const _ as *const $z::tdp::Message
         }
+
+        ${Msg::hazzers}
       }
 
       impl Default for $Msg {
@@ -218,6 +261,22 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       impl $rt::ptr::Proxied for $Msg {
         type View<'msg> = $priv::View<'msg>;
         type Mut<'msg> = $priv::Mut<'msg>;
+      }
+
+      impl $rt::value::Type for $Msg {
+        unsafe fn __make_view<'a>(ptr: *mut u8) -> $rt::View<'a, Self> {
+          $priv::View {
+            ptr: $z::ABox::from_ptr(ptr),
+            _ph: $PhantomData,
+          }
+        }
+        unsafe fn __make_mut<'a>(ptr: *mut u8, arena: $z::RawArena) -> $rt::Mut<'a, Self> {
+          $priv::Mut {
+            ptr: $z::ABox::from_ptr(ptr),
+            arena,
+            _ph: $PhantomData,
+          }
+        }
       }
 
       impl<'msg> $priv::View<'msg> {
@@ -233,6 +292,12 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           }
           debug.end_block()?;
           Ok(())
+        }
+      }
+
+      impl Default for $priv::View<'_> {
+        fn default() -> Self {
+          $Msg::DEFAULT
         }
       }
 

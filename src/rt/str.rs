@@ -21,22 +21,38 @@ use super::arena::RawArena;
 /// bytes, too.
 ///
 /// This type is a wrapper over `[u8]` that makes Unicode-ey operations easier.
+///
+/// When printed as `Debug`, invalid bytes are printed as `\xNN`. When printed
+/// as `Display`, invalid bytes are printed as replacement characters
+/// (`U+FFFD`). See `[Str::chars()]`.
 #[repr(transparent)]
 pub struct Str([u8]);
 
 impl Str {
+  /// Constructs a new `Str` from any byte slice.
   pub fn new(bytes: &(impl AsRef<[u8]> + ?Sized)) -> &Self {
     unsafe { mem::transmute::<&[u8], &Self>(bytes.as_ref()) }
   }
 
+  /// Constructs a new mutable `Str` from any mutable byte slice.
   pub fn new_mut(bytes: &mut (impl AsMut<[u8]> + ?Sized)) -> &mut Self {
     unsafe { mem::transmute::<&mut [u8], &mut Self>(bytes.as_mut()) }
   }
 
+  /// Constructs a new `Str` from a pointer and a length.
+  ///
+  /// # Safety
+  ///
+  /// `ptr` must be valid and point to at least `len` bytes.
   pub unsafe fn from_raw_parts<'a>(ptr: *const u8, len: usize) -> &'a Self {
     Self::new(slice::from_raw_parts(ptr, len))
   }
 
+  /// Constructs a new mutable `Str` from a pointer and a length.
+  ///
+  /// # Safety
+  ///
+  /// `ptr` must be valid (for mutation) and point to at least `len` bytes.
   pub unsafe fn from_raw_parts_mut<'a>(
     ptr: *mut u8,
     len: usize,
@@ -44,45 +60,76 @@ impl Str {
     Self::new_mut(slice::from_raw_parts_mut(ptr, len))
   }
 
+  /// Returns the underlying byte slice.
   pub fn as_bytes(&self) -> &[u8] {
     &self.0
   }
 
+  /// Returns the underlying mutable byte slice.
   pub fn as_mut_bytes(&mut self) -> &mut [u8] {
     &mut self.0
   }
 
+  /// Returns whether this `Str` has a length of zero.
   pub fn is_empty(&self) -> bool {
     self.as_bytes().is_empty()
   }
 
+  /// Returns the length of this `Str`.
   pub fn len(&self) -> usize {
     self.as_bytes().len()
   }
 
-  pub fn get<Idx>(&self, idx: Idx) -> Option<&Self>
+  /// Gets a substring given by an range.
+  ///
+  /// Returns `None` if the range is out of bounds.
+  pub fn get<Range>(&self, idx: Range) -> Option<&Self>
   where
-    Idx: SliceIndex<[u8], Output = [u8]>,
+    Range: SliceIndex<[u8], Output = [u8]>,
   {
     self.as_bytes().get(idx).map(|bytes| Str::new(bytes))
   }
 
-  pub fn get_mut<Idx>(&mut self, idx: Idx) -> Option<&mut Self>
+  /// Gets a mutable substring given by an range.
+  ///
+  /// Returns `None` if the range is out of bounds.
+  pub fn get_mut<Range>(&mut self, idx: Range) -> Option<&mut Self>
   where
-    Idx: SliceIndex<[u8], Output = [u8]>,
+    Range: SliceIndex<[u8], Output = [u8]>,
   {
     self.as_mut_bytes().get_mut(idx).map(Self::new_mut)
   }
 
+  /// Attempts to convert this string to UTF-8.
+  ///
+  /// Note that this operation is not free, since it must traverse the whole
+  /// string.
   pub fn as_utf8(&self) -> Result<&str, str::Utf8Error> {
     str::from_utf8(self.as_bytes())
   }
 
+  /// Converts this string to UTF-8.
+  ///
+  /// Note that this operation is not free, since it must traverse the whole
+  /// string.
+  ///
+  /// # Panics
+  ///
+  /// This function will panic if this string does not contain actual UTF-8.
   pub fn expect_utf8(&self) -> &str {
     str::from_utf8(self.as_bytes()).expect("expected a UTF-8 string")
   }
 
-  pub fn chunks(&self) -> impl Iterator<Item = Result<&str, &[u8]>> + '_ {
+  /// Partitions the string into valid and invalid UTF-8 chunks.
+  ///
+  /// Each valid chunk is returned as an `Ok(str)` variant of the result; any
+  /// bytes that cannot be interpreted as UTF-8 are returned in the `Err([u8])`
+  /// result.
+  ///
+  /// The UTF-8 chunks are guaranteed to be maximal, but how non-UTF-8 chunks
+  /// are partitioned is unspecified. In particular, the iterator will never
+  /// return consecutive `Ok` values, but may return consecutive `Err` values.
+  pub fn utf8_chunks(&self) -> impl Iterator<Item = Result<&str, &[u8]>> + '_ {
     let mut str = self.as_bytes();
     let mut error = None;
     iter::from_fn(move || {
@@ -118,9 +165,14 @@ impl Str {
     })
   }
 
+  /// Returns an iterator over this string's characters (i.e., UTF-8 scalars).
+  ///
+  /// Invalid byte sequences are replaced with a replacement character
+  /// (`U+FFFD`). The number of replacement characters each invalid byte
+  /// sequence becomes is unspecified.
   pub fn chars(&self) -> impl Iterator<Item = char> + '_ {
     self
-      .chunks()
+      .utf8_chunks()
       .map(|chunk| chunk.unwrap_or("\u{fffd}").chars())
       .flatten()
   }
@@ -138,6 +190,13 @@ impl<'a> StrBuf<'a> {
   #[doc(hidden)]
   pub fn __wrap(data: &'a mut (*mut u8, usize), arena: RawArena) -> Self {
     Self { data, arena }
+  }
+
+  pub(crate) fn reborrow(&mut self) -> StrBuf<'_> {
+    StrBuf {
+      data: self.data,
+      arena: self.arena,
+    }
   }
 
   pub fn clear(&mut self) {
@@ -220,10 +279,16 @@ impl<'a> From<&'a String> for &'a Str {
   }
 }
 
+impl<'a> From<StrBuf<'a>> for &'a Str {
+  fn from(value: StrBuf<'a>) -> Self {
+    unsafe { Str::from_raw_parts_mut(value.data.0, value.data.1) }
+  }
+}
+
 impl fmt::Debug for Str {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     f.write_char('"')?;
-    for chunk in self.chunks() {
+    for chunk in self.utf8_chunks() {
       match chunk {
         Ok(str) => fmt::Display::fmt(&str.escape_debug(), f)?,
         Err(bytes) => {
@@ -239,7 +304,7 @@ impl fmt::Debug for Str {
 
 impl fmt::Display for Str {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    for chunk in self.chunks() {
+    for chunk in self.utf8_chunks() {
       match chunk {
         Ok(str) => fmt::Display::fmt(str, f)?,
         Err(..) => f.write_char(char::REPLACEMENT_CHARACTER)?,

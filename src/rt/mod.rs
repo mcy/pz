@@ -6,6 +6,7 @@ mod tdp;
 
 pub mod ptr;
 pub mod str;
+pub mod value;
 
 pub use self::ptr::Mut;
 pub use self::ptr::View;

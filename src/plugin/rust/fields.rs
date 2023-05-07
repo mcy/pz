@@ -26,6 +26,7 @@ pub trait GenField {
   fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {}
   fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {}
   fn in_debug(&self, w: &mut SourceWriter) {}
+  fn in_init(&self, w: &mut SourceWriter) {}
 }
 
 pub struct FieldGenerators<'ccx> {
@@ -176,15 +177,16 @@ impl GenField for SingularScalar<'_> {
         name: ident(self.field.name()),
         Type: scalar_type(self.field),
         Storage: scalar_storage_type(self.field),
-        self: if at == Where::MsgImpl { "&self" } else { "self" }
+        self: if at == Where::MsgImpl { "&self" } else { "self" },
+        lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
       r"
         $deprecated
-        pub fn $name($self) -> $Type {
-          self.${name}_opt().unwrap_or_default()
+        pub fn $name($self) -> $rt::View<'$lt, $Type> {
+          self.${name}_or().unwrap_or_default()
         }
         $deprecated
-        pub fn ${name}_opt($self) -> Option<$Type> {
+        pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Type>> {
           if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
           Some(unsafe { $transmute::<$Storage, $Type>(self.ptr.as_ref().$name) })
         }
@@ -193,29 +195,32 @@ impl GenField for SingularScalar<'_> {
   }
 
   fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
-    let hasbit_word = self.hasbit_index / 32;
-    let hasbit_bit = 1 << (self.hasbit_index % 32);
     w.emit(
       vars! {
-        hasbit_word,
-        hasbit_bit,
         name: ident(self.field.name()),
+        raw_name: self.field.name(),
         Type: scalar_type(self.field),
-        Storage: scalar_storage_type(self.field),
-        self: if at == Where::MsgImpl { "&mut self" } else { "self" }
+        self: if at == Where::MsgImpl { "&mut self" } else { "self" },
+        lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
       r"
         $deprecated
-        pub fn ${name}_set($self, value: impl Into<Option<$Type>>) {
-          match value.into() {
-            Some(value) => unsafe {
-              self.ptr.as_mut().__hasbits[$hasbit_word] |= $hasbit_bit;
-              self.ptr.as_mut().$name = $transmute::<$Type, $Storage>(value);
-            }
-            None => {
-              unsafe { self.ptr.as_mut() }.__hasbits[$hasbit_word] &= !$hasbit_bit;
-            }
+        pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $Type> {
+          self.${name}_mut_or().into_mut()
+        }
+        $deprecated
+        pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $Type> {
+          unsafe {
+            $rt::value::OptMut::__wrap(
+              self.ptr.as_ptr().add($priv::FIELD_OFFSET_$raw_name as usize),
+              self.arena,
+              $Msg::__hazzer_$raw_name,
+            )
           }
+        }
+        $deprecated
+        pub fn ${name}_set($self, value: $Type) {
+          self.${name}_mut().set(value);
         }
       ",
     );
@@ -228,7 +233,7 @@ impl GenField for SingularScalar<'_> {
         raw_name: self.field.name(),
       },
       r#"
-        if let Some(value) = self.${name}_opt() {
+        if let Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           debug.write_debug(value);
@@ -389,11 +394,11 @@ impl GenField for SingularString<'_> {
       },
       r"
         $deprecated
-        pub fn $name($self) -> &'$lt $rt::Str {
-          self.${name}_opt().unwrap_or_default()
+        pub fn $name($self) -> $rt::View<'$lt, $rt::Str> {
+          self.${name}_or().unwrap_or_default()
         }
         $deprecated
-        pub fn ${name}_opt($self) -> Option<&'$lt $rt::Str> {
+        pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $rt::Str>> {
           if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
           Some(unsafe {
             let (ptr, len) = self.ptr.as_ref().$name;
@@ -405,44 +410,32 @@ impl GenField for SingularString<'_> {
   }
 
   fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
-    let hasbit_word = self.hasbit_index / 32;
-    let hasbit_bit = 1 << (self.hasbit_index % 32);
     w.emit(
       vars! {
-        hasbit_word,
-        hasbit_bit,
         name: ident(self.field.name()),
+        raw_name: self.field.name(),
         Type: scalar_type(self.field),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> $rt::StrBuf<'$lt> {
+        pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $rt::Str> {
+          self.${name}_mut_or().into_mut()
+        }
+        $deprecated
+        pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $rt::Str> {
           unsafe {
-            let mut buf = $rt::StrBuf::__wrap(&mut self.ptr.as_mut().$name, self.arena);
-            if self.ptr.as_ref().__hasbits[$hasbit_word] & $hasbit_bit == 0 {
-              buf.clear();
-            }
-            self.ptr.as_mut().__hasbits[$hasbit_word] |= $hasbit_bit;
-            buf
+            $rt::value::OptMut::__wrap(
+              self.ptr.as_ptr().add($priv::FIELD_OFFSET_$raw_name as usize),
+              self.arena,
+              $Msg::__hazzer_$raw_name,
+            )
           }
         }
         $deprecated
-        pub fn ${name}_opt_mut($self) -> Option<$rt::StrBuf<'$lt>> {
-          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
-          Some(unsafe {
-            $rt::StrBuf::__wrap(&mut self.ptr.as_mut().$name, self.arena)
-          })
-        }
-        $deprecated
-        pub fn ${name}_set<'a>($self, value: impl $rt::str::IntoStrOpt<'a>) {
-          match value.into_str_opt() {
-            Some(value) => self.${name}_mut().set(value.as_bytes()),
-            None => unsafe {
-              self.ptr.as_mut().__hasbits[$hasbit_word] &= !$hasbit_bit;
-            }
-          }
+        pub fn ${name}_set($self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+          self.${name}_mut().set(value);
         }
       ",
     );
@@ -455,7 +448,7 @@ impl GenField for SingularString<'_> {
         raw_name: self.field.name(),
       },
       r#"
-        if let Some(value) = self.${name}_opt() {
+        if let Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           debug.write_debug(value);
@@ -611,10 +604,10 @@ impl GenField for SingularMessage<'_> {
       r"
         $deprecated
         pub fn $name($self) -> $rt::View<'$lt, $Submsg> {
-          self.${name}_opt().unwrap_or($Submsg::DEFAULT)
+          self.${name}_or().unwrap_or($Submsg::DEFAULT)
         }
         $deprecated
-        pub fn ${name}_opt($self) -> Option<$rt::View<'$lt, $Submsg>> {
+        pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Submsg>> {
           if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
           Some($rt::View::<$Submsg> {
             ptr: unsafe { $z::ABox::from_ptr(self.ptr.as_ref().$name) },
@@ -626,13 +619,10 @@ impl GenField for SingularMessage<'_> {
   }
 
   fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
-    let hasbit_word = self.hasbit_index / 32;
-    let hasbit_bit = 1 << (self.hasbit_index % 32);
     w.emit(
       vars! {
-        hasbit_word,
-        hasbit_bit,
         name: ident(self.field.name()),
+        raw_name: self.field.name(),
         Submsg: type_name(self.submsg),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
@@ -640,36 +630,17 @@ impl GenField for SingularMessage<'_> {
       r"
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $Submsg> {
-          unsafe {
-            if self.ptr.as_ref().$name.is_null() {
-              self.ptr.as_mut().$name = self.arena.alloc($Submsg::__LAYOUT).as_ptr();
-              $Submsg::__raw_init(self.ptr.as_mut().$name);
-            } else if self.ptr.as_ref().__hasbits[$hasbit_word] & $hasbit_bit == 0 {
-              $Submsg::__raw_clear(self.ptr.as_ref().$name);
-            }
-
-            unsafe { self.ptr.as_mut() }.__hasbits[$hasbit_word] |= $hasbit_bit;
-            $rt::Mut::<$Submsg> {
-              ptr: $z::ABox::from_ptr(self.ptr.as_ref().$name),
-              _ph: $PhantomData,
-              arena: self.arena,
-            }
-          }
+          self.${name}_mut_or().into_mut()
         }
         $deprecated
-        pub fn ${name}_opt_mut($self) -> Option<$rt::Mut<'$lt, $Submsg>> {
-          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+        pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $Submsg> {
           unsafe {
-            Some($rt::Mut::<$Submsg> {
-              ptr: $z::ABox::from_ptr(self.ptr.as_ref().$name),
-              _ph: $PhantomData,
-              arena: self.arena,
-            })
+            $rt::value::OptMut::__wrap(
+              self.ptr.as_ptr().add($priv::FIELD_OFFSET_$raw_name as usize),
+              self.arena,
+              $Msg::__hazzer_$raw_name,
+            )
           }
-        }
-        $deprecated
-        pub fn ${name}_clear($self) {
-          unsafe { self.ptr.as_mut() }.__hasbits[$hasbit_word] &= !$hasbit_bit;
         }
       ",
     );
@@ -682,13 +653,29 @@ impl GenField for SingularMessage<'_> {
         raw_name: self.field.name(),
       },
       r#"
-        if let Some(value) = self.${name}_opt() {
+        if let Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           value.__debug(debug)?;
           count += 1;
         }
       "#,
+    );
+  }
+
+  fn in_init(&self, w: &mut SourceWriter) {
+    w.emit(
+      vars! {
+        name: ident(self.field.name()),
+        Submsg: type_name(self.submsg),
+      },
+      r"
+        let storage = &mut *raw.cast::<$priv::Storage>();
+        if storage.$name.is_null() {
+          storage.$name = self.arena.alloc($Submsg::__LAYOUT).as_ptr();
+          $Submsg::__raw_init(storage.$name);
+        }
+      ",
     );
   }
 }

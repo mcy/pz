@@ -62,6 +62,11 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
+      impl $rt::ptr::Proxied for $Enum {
+        type View<'a> = Self;
+        type Mut<'a> = $rt::ptr::ScalarMut<'a, Self>;
+      }
+
       impl std::fmt::Debug for $Enum {
         fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
           match *self {

@@ -182,6 +182,7 @@ impl Bundle {
   pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
     &__priv_Bundle::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
   }
+
 }
 
 impl Default for Bundle {
@@ -193,6 +194,22 @@ impl Default for Bundle {
 impl crate::rt::ptr::Proxied for Bundle {
   type View<'msg> = __priv_Bundle::View<'msg>;
   type Mut<'msg> = __priv_Bundle::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for Bundle {
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_Bundle::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_Bundle::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
 }
 
 impl<'msg> __priv_Bundle::View<'msg> {
@@ -269,6 +286,12 @@ impl<'msg> __priv_Bundle::View<'msg> {
     }
     debug.end_block()?;
     Ok(())
+  }
+}
+
+impl Default for __priv_Bundle::View<'_> {
+  fn default() -> Self {
+    Bundle::DEFAULT
   }
 }
 
@@ -584,96 +607,99 @@ impl Type {
     self.ptr.as_ptr()
   }
 
-  pub fn name(&self) -> &'_ crate::rt::Str {
-    self.name_opt().unwrap_or_default()
+  pub fn name(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
   }
-  pub fn name_opt(&self) -> Option<&'_ crate::rt::Str> {
+  pub fn name_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().name;
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn name_mut(&mut self) -> crate::rt::StrBuf<'_> {
+  pub fn name_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
     unsafe {
-      let mut buf = crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena);
-      if self.ptr.as_ref().__hasbits[0] & 1 == 0 {
-        buf.clear();
-      }
-      self.ptr.as_mut().__hasbits[0] |= 1;
-      buf
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_name as usize),
+        self.arena,
+        Type::__hazzer_name,
+      )
     }
   }
-  pub fn name_opt_mut(&mut self) -> Option<crate::rt::StrBuf<'_>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
-    Some(unsafe {
-      crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena)
-    })
-  }
-  pub fn name_set<'a>(&mut self, value: impl crate::rt::str::IntoStrOpt<'a>) {
-    match value.into_str_opt() {
-      Some(value) => self.name_mut().set(value.as_bytes()),
-      None => unsafe {
-        self.ptr.as_mut().__hasbits[0] &= !1;
-      }
-    }
+  pub fn name_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
   }
 
-  pub fn package(&self) -> u32 {
-    self.package_opt().unwrap_or_default()
+  pub fn package(&self) -> crate::rt::View<'_, u32> {
+    self.package_or().unwrap_or_default()
   }
-  pub fn package_opt(&self) -> Option<u32> {
+  pub fn package_or(&self) -> Option<crate::rt::View<'_, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().package) })
   }
-  pub fn package_set(&mut self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 2;
-        self.ptr.as_mut().package = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !2;
-      }
+  pub fn package_mut(&mut self) -> crate::rt::Mut<'_, u32> {
+    self.package_mut_or().into_mut()
+  }
+  pub fn package_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_package as usize),
+        self.arena,
+        Type::__hazzer_package,
+      )
     }
   }
-
-  pub fn kind(&self) -> Type_Kind {
-    self.kind_opt().unwrap_or_default()
+  pub fn package_set(&mut self, value: u32) {
+    self.package_mut().set(value);
   }
-  pub fn kind_opt(&self) -> Option<Type_Kind> {
+
+  pub fn kind(&self) -> crate::rt::View<'_, Type_Kind> {
+    self.kind_or().unwrap_or_default()
+  }
+  pub fn kind_or(&self) -> Option<crate::rt::View<'_, Type_Kind>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, Type_Kind>(self.ptr.as_ref().kind) })
   }
-  pub fn kind_set(&mut self, value: impl Into<Option<Type_Kind>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 4;
-        self.ptr.as_mut().kind = std::mem::transmute::<Type_Kind, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !4;
-      }
+  pub fn kind_mut(&mut self) -> crate::rt::Mut<'_, Type_Kind> {
+    self.kind_mut_or().into_mut()
+  }
+  pub fn kind_mut_or(&mut self) -> crate::rt::value::OptMut<'_, Type_Kind> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_kind as usize),
+        self.arena,
+        Type::__hazzer_kind,
+      )
     }
   }
-
-  pub fn declared_in(&self) -> u32 {
-    self.declared_in_opt().unwrap_or_default()
+  pub fn kind_set(&mut self, value: Type_Kind) {
+    self.kind_mut().set(value);
   }
-  pub fn declared_in_opt(&self) -> Option<u32> {
+
+  pub fn declared_in(&self) -> crate::rt::View<'_, u32> {
+    self.declared_in_or().unwrap_or_default()
+  }
+  pub fn declared_in_or(&self) -> Option<crate::rt::View<'_, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().declared_in) })
   }
-  pub fn declared_in_set(&mut self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 8;
-        self.ptr.as_mut().declared_in = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !8;
-      }
+  pub fn declared_in_mut(&mut self) -> crate::rt::Mut<'_, u32> {
+    self.declared_in_mut_or().into_mut()
+  }
+  pub fn declared_in_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_declared_in as usize),
+        self.arena,
+        Type::__hazzer_declared_in,
+      )
     }
+  }
+  pub fn declared_in_set(&mut self, value: u32) {
+    self.declared_in_mut().set(value);
   }
 
   pub fn fields_len(&self) -> usize {
@@ -749,23 +775,27 @@ impl Type {
     }
   }
 
-  pub fn span(&self) -> u32 {
-    self.span_opt().unwrap_or_default()
+  pub fn span(&self) -> crate::rt::View<'_, u32> {
+    self.span_or().unwrap_or_default()
   }
-  pub fn span_opt(&self) -> Option<u32> {
+  pub fn span_or(&self) -> Option<crate::rt::View<'_, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
-  pub fn span_set(&mut self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 16;
-        self.ptr.as_mut().span = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !16;
-      }
+  pub fn span_mut(&mut self) -> crate::rt::Mut<'_, u32> {
+    self.span_mut_or().into_mut()
+  }
+  pub fn span_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_span as usize),
+        self.arena,
+        Type::__hazzer_span,
+      )
     }
+  }
+  pub fn span_set(&mut self, value: u32) {
+    self.span_mut().set(value);
   }
 
   #[doc(hidden)]
@@ -783,6 +813,97 @@ impl Type {
   pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
     &__priv_Type::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
   }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_name(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Type::FIELD_OFFSET_name as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_package(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Type::FIELD_OFFSET_package as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_kind(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Type::FIELD_OFFSET_kind as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 4 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !4,
+      Some(true) => {
+        *word |= 4;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_declared_in(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Type::FIELD_OFFSET_declared_in as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 8 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !8,
+      Some(true) => {
+        *word |= 8;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_span(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Type::FIELD_OFFSET_span as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 16 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !16,
+      Some(true) => {
+        *word |= 16;
+      }
+    }
+    has
+  }
 }
 
 impl Default for Type {
@@ -796,11 +917,27 @@ impl crate::rt::ptr::Proxied for Type {
   type Mut<'msg> = __priv_Type::Mut<'msg>;
 }
 
-impl<'msg> __priv_Type::View<'msg> {
-  pub fn name(self) -> &'msg crate::rt::Str {
-    self.name_opt().unwrap_or_default()
+impl crate::rt::value::Type for Type {
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_Type::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      _ph: std::marker::PhantomData,
+    }
   }
-  pub fn name_opt(self) -> Option<&'msg crate::rt::Str> {
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_Type::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+}
+
+impl<'msg> __priv_Type::View<'msg> {
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().name;
@@ -808,26 +945,26 @@ impl<'msg> __priv_Type::View<'msg> {
     })
   }
 
-  pub fn package(self) -> u32 {
-    self.package_opt().unwrap_or_default()
+  pub fn package(self) -> crate::rt::View<'msg, u32> {
+    self.package_or().unwrap_or_default()
   }
-  pub fn package_opt(self) -> Option<u32> {
+  pub fn package_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().package) })
   }
 
-  pub fn kind(self) -> Type_Kind {
-    self.kind_opt().unwrap_or_default()
+  pub fn kind(self) -> crate::rt::View<'msg, Type_Kind> {
+    self.kind_or().unwrap_or_default()
   }
-  pub fn kind_opt(self) -> Option<Type_Kind> {
+  pub fn kind_or(self) -> Option<crate::rt::View<'msg, Type_Kind>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, Type_Kind>(self.ptr.as_ref().kind) })
   }
 
-  pub fn declared_in(self) -> u32 {
-    self.declared_in_opt().unwrap_or_default()
+  pub fn declared_in(self) -> crate::rt::View<'msg, u32> {
+    self.declared_in_or().unwrap_or_default()
   }
-  pub fn declared_in_opt(self) -> Option<u32> {
+  pub fn declared_in_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().declared_in) })
   }
@@ -857,10 +994,10 @@ impl<'msg> __priv_Type::View<'msg> {
     }
   }
 
-  pub fn span(self) -> u32 {
-    self.span_opt().unwrap_or_default()
+  pub fn span(self) -> crate::rt::View<'msg, u32> {
+    self.span_or().unwrap_or_default()
   }
-  pub fn span_opt(self) -> Option<u32> {
+  pub fn span_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
@@ -869,25 +1006,25 @@ impl<'msg> __priv_Type::View<'msg> {
   pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
     let mut count = 0;
     debug.start_block()?;
-    if let Some(value) = self.name_opt() {
+    if let Some(value) = self.name_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("name")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.package_opt() {
+    if let Some(value) = self.package_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("package")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.kind_opt() {
+    if let Some(value) = self.kind_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("kind")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.declared_in_opt() {
+    if let Some(value) = self.declared_in_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("declared_in")?;
       debug.write_debug(value);
@@ -906,7 +1043,7 @@ impl<'msg> __priv_Type::View<'msg> {
       debug.iter(slice)?;
       count += 1;
     }
-    if let Some(value) = self.span_opt() {
+    if let Some(value) = self.span_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("span")?;
       debug.write_debug(value);
@@ -920,6 +1057,12 @@ impl<'msg> __priv_Type::View<'msg> {
   }
 }
 
+impl Default for __priv_Type::View<'_> {
+  fn default() -> Self {
+    Type::DEFAULT
+  }
+}
+
 impl<'msg> __priv_Type::Mut<'msg>  {
   pub fn clear(self) {
     unsafe { Type::__raw_clear(self.ptr.as_ptr()) }
@@ -930,96 +1073,99 @@ impl<'msg> __priv_Type::Mut<'msg>  {
     ctx.parse(self.ptr.as_ptr() as *mut u8, Type::__tdp_info())
   }
 
-  pub fn name(self) -> &'msg crate::rt::Str {
-    self.name_opt().unwrap_or_default()
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
   }
-  pub fn name_opt(self) -> Option<&'msg crate::rt::Str> {
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().name;
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn name_mut(self) -> crate::rt::StrBuf<'msg> {
+  pub fn name_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
     unsafe {
-      let mut buf = crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena);
-      if self.ptr.as_ref().__hasbits[0] & 1 == 0 {
-        buf.clear();
-      }
-      self.ptr.as_mut().__hasbits[0] |= 1;
-      buf
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_name as usize),
+        self.arena,
+        Type::__hazzer_name,
+      )
     }
   }
-  pub fn name_opt_mut(self) -> Option<crate::rt::StrBuf<'msg>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
-    Some(unsafe {
-      crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena)
-    })
-  }
-  pub fn name_set<'a>(self, value: impl crate::rt::str::IntoStrOpt<'a>) {
-    match value.into_str_opt() {
-      Some(value) => self.name_mut().set(value.as_bytes()),
-      None => unsafe {
-        self.ptr.as_mut().__hasbits[0] &= !1;
-      }
-    }
+  pub fn name_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
   }
 
-  pub fn package(self) -> u32 {
-    self.package_opt().unwrap_or_default()
+  pub fn package(self) -> crate::rt::View<'msg, u32> {
+    self.package_or().unwrap_or_default()
   }
-  pub fn package_opt(self) -> Option<u32> {
+  pub fn package_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().package) })
   }
-  pub fn package_set(self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 2;
-        self.ptr.as_mut().package = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !2;
-      }
+  pub fn package_mut(self) -> crate::rt::Mut<'msg, u32> {
+    self.package_mut_or().into_mut()
+  }
+  pub fn package_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_package as usize),
+        self.arena,
+        Type::__hazzer_package,
+      )
     }
   }
-
-  pub fn kind(self) -> Type_Kind {
-    self.kind_opt().unwrap_or_default()
+  pub fn package_set(self, value: u32) {
+    self.package_mut().set(value);
   }
-  pub fn kind_opt(self) -> Option<Type_Kind> {
+
+  pub fn kind(self) -> crate::rt::View<'msg, Type_Kind> {
+    self.kind_or().unwrap_or_default()
+  }
+  pub fn kind_or(self) -> Option<crate::rt::View<'msg, Type_Kind>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, Type_Kind>(self.ptr.as_ref().kind) })
   }
-  pub fn kind_set(self, value: impl Into<Option<Type_Kind>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 4;
-        self.ptr.as_mut().kind = std::mem::transmute::<Type_Kind, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !4;
-      }
+  pub fn kind_mut(self) -> crate::rt::Mut<'msg, Type_Kind> {
+    self.kind_mut_or().into_mut()
+  }
+  pub fn kind_mut_or(self) -> crate::rt::value::OptMut<'msg, Type_Kind> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_kind as usize),
+        self.arena,
+        Type::__hazzer_kind,
+      )
     }
   }
-
-  pub fn declared_in(self) -> u32 {
-    self.declared_in_opt().unwrap_or_default()
+  pub fn kind_set(self, value: Type_Kind) {
+    self.kind_mut().set(value);
   }
-  pub fn declared_in_opt(self) -> Option<u32> {
+
+  pub fn declared_in(self) -> crate::rt::View<'msg, u32> {
+    self.declared_in_or().unwrap_or_default()
+  }
+  pub fn declared_in_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().declared_in) })
   }
-  pub fn declared_in_set(self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 8;
-        self.ptr.as_mut().declared_in = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !8;
-      }
+  pub fn declared_in_mut(self) -> crate::rt::Mut<'msg, u32> {
+    self.declared_in_mut_or().into_mut()
+  }
+  pub fn declared_in_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_declared_in as usize),
+        self.arena,
+        Type::__hazzer_declared_in,
+      )
     }
+  }
+  pub fn declared_in_set(self, value: u32) {
+    self.declared_in_mut().set(value);
   }
 
   pub fn fields_len(self) -> usize {
@@ -1095,23 +1241,27 @@ impl<'msg> __priv_Type::Mut<'msg>  {
     }
   }
 
-  pub fn span(self) -> u32 {
-    self.span_opt().unwrap_or_default()
+  pub fn span(self) -> crate::rt::View<'msg, u32> {
+    self.span_or().unwrap_or_default()
   }
-  pub fn span_opt(self) -> Option<u32> {
+  pub fn span_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
-  pub fn span_set(self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 16;
-        self.ptr.as_mut().span = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !16;
-      }
+  pub fn span_mut(self) -> crate::rt::Mut<'msg, u32> {
+    self.span_mut_or().into_mut()
+  }
+  pub fn span_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Type::FIELD_OFFSET_span as usize),
+        self.arena,
+        Type::__hazzer_span,
+      )
     }
+  }
+  pub fn span_set(self, value: u32) {
+    self.span_mut().set(value);
   }
 
 }
@@ -1328,6 +1478,11 @@ impl Default for Type_Kind {
   }
 }
 
+impl crate::rt::ptr::Proxied for Type_Kind {
+  type View<'a> = Self;
+  type Mut<'a> = crate::rt::ptr::ScalarMut<'a, Self>;
+}
+
 impl std::fmt::Debug for Type_Kind {
   fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
     match *self {
@@ -1401,134 +1556,145 @@ impl Field {
     self.ptr.as_ptr()
   }
 
-  pub fn name(&self) -> &'_ crate::rt::Str {
-    self.name_opt().unwrap_or_default()
+  pub fn name(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
   }
-  pub fn name_opt(&self) -> Option<&'_ crate::rt::Str> {
+  pub fn name_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().name;
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn name_mut(&mut self) -> crate::rt::StrBuf<'_> {
+  pub fn name_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
     unsafe {
-      let mut buf = crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena);
-      if self.ptr.as_ref().__hasbits[0] & 1 == 0 {
-        buf.clear();
-      }
-      self.ptr.as_mut().__hasbits[0] |= 1;
-      buf
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_name as usize),
+        self.arena,
+        Field::__hazzer_name,
+      )
     }
   }
-  pub fn name_opt_mut(&mut self) -> Option<crate::rt::StrBuf<'_>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
-    Some(unsafe {
-      crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena)
-    })
-  }
-  pub fn name_set<'a>(&mut self, value: impl crate::rt::str::IntoStrOpt<'a>) {
-    match value.into_str_opt() {
-      Some(value) => self.name_mut().set(value.as_bytes()),
-      None => unsafe {
-        self.ptr.as_mut().__hasbits[0] &= !1;
-      }
-    }
+  pub fn name_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
   }
 
-  pub fn number(&self) -> i32 {
-    self.number_opt().unwrap_or_default()
+  pub fn number(&self) -> crate::rt::View<'_, i32> {
+    self.number_or().unwrap_or_default()
   }
-  pub fn number_opt(&self) -> Option<i32> {
+  pub fn number_or(&self) -> Option<crate::rt::View<'_, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().number) })
   }
-  pub fn number_set(&mut self, value: impl Into<Option<i32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 2;
-        self.ptr.as_mut().number = std::mem::transmute::<i32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !2;
-      }
+  pub fn number_mut(&mut self) -> crate::rt::Mut<'_, i32> {
+    self.number_mut_or().into_mut()
+  }
+  pub fn number_mut_or(&mut self) -> crate::rt::value::OptMut<'_, i32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_number as usize),
+        self.arena,
+        Field::__hazzer_number,
+      )
     }
   }
-
-  pub fn is_repeated(&self) -> bool {
-    self.is_repeated_opt().unwrap_or_default()
+  pub fn number_set(&mut self, value: i32) {
+    self.number_mut().set(value);
   }
-  pub fn is_repeated_opt(&self) -> Option<bool> {
+
+  pub fn is_repeated(&self) -> crate::rt::View<'_, bool> {
+    self.is_repeated_or().unwrap_or_default()
+  }
+  pub fn is_repeated_or(&self) -> Option<crate::rt::View<'_, bool>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().is_repeated) })
   }
-  pub fn is_repeated_set(&mut self, value: impl Into<Option<bool>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 4;
-        self.ptr.as_mut().is_repeated = std::mem::transmute::<bool, bool>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !4;
-      }
+  pub fn is_repeated_mut(&mut self) -> crate::rt::Mut<'_, bool> {
+    self.is_repeated_mut_or().into_mut()
+  }
+  pub fn is_repeated_mut_or(&mut self) -> crate::rt::value::OptMut<'_, bool> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_is_repeated as usize),
+        self.arena,
+        Field::__hazzer_is_repeated,
+      )
     }
   }
-
-  pub fn r#type(&self) -> Field_Type {
-    self.r#type_opt().unwrap_or_default()
+  pub fn is_repeated_set(&mut self, value: bool) {
+    self.is_repeated_mut().set(value);
   }
-  pub fn r#type_opt(&self) -> Option<Field_Type> {
+
+  pub fn r#type(&self) -> crate::rt::View<'_, Field_Type> {
+    self.r#type_or().unwrap_or_default()
+  }
+  pub fn r#type_or(&self) -> Option<crate::rt::View<'_, Field_Type>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, Field_Type>(self.ptr.as_ref().r#type) })
   }
-  pub fn r#type_set(&mut self, value: impl Into<Option<Field_Type>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 8;
-        self.ptr.as_mut().r#type = std::mem::transmute::<Field_Type, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !8;
-      }
+  pub fn r#type_mut(&mut self) -> crate::rt::Mut<'_, Field_Type> {
+    self.r#type_mut_or().into_mut()
+  }
+  pub fn r#type_mut_or(&mut self) -> crate::rt::value::OptMut<'_, Field_Type> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_type as usize),
+        self.arena,
+        Field::__hazzer_type,
+      )
     }
   }
-
-  pub fn type_index(&self) -> u32 {
-    self.type_index_opt().unwrap_or_default()
+  pub fn r#type_set(&mut self, value: Field_Type) {
+    self.r#type_mut().set(value);
   }
-  pub fn type_index_opt(&self) -> Option<u32> {
+
+  pub fn type_index(&self) -> crate::rt::View<'_, u32> {
+    self.type_index_or().unwrap_or_default()
+  }
+  pub fn type_index_or(&self) -> Option<crate::rt::View<'_, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().type_index) })
   }
-  pub fn type_index_set(&mut self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 16;
-        self.ptr.as_mut().type_index = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !16;
-      }
+  pub fn type_index_mut(&mut self) -> crate::rt::Mut<'_, u32> {
+    self.type_index_mut_or().into_mut()
+  }
+  pub fn type_index_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_type_index as usize),
+        self.arena,
+        Field::__hazzer_type_index,
+      )
     }
   }
-
-  pub fn span(&self) -> u32 {
-    self.span_opt().unwrap_or_default()
+  pub fn type_index_set(&mut self, value: u32) {
+    self.type_index_mut().set(value);
   }
-  pub fn span_opt(&self) -> Option<u32> {
+
+  pub fn span(&self) -> crate::rt::View<'_, u32> {
+    self.span_or().unwrap_or_default()
+  }
+  pub fn span_or(&self) -> Option<crate::rt::View<'_, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 32 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
-  pub fn span_set(&mut self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 32;
-        self.ptr.as_mut().span = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !32;
-      }
+  pub fn span_mut(&mut self) -> crate::rt::Mut<'_, u32> {
+    self.span_mut_or().into_mut()
+  }
+  pub fn span_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_span as usize),
+        self.arena,
+        Field::__hazzer_span,
+      )
     }
+  }
+  pub fn span_set(&mut self, value: u32) {
+    self.span_mut().set(value);
   }
 
   #[doc(hidden)]
@@ -1546,6 +1712,115 @@ impl Field {
   pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
     &__priv_Field::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
   }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_name(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Field::FIELD_OFFSET_name as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_number(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Field::FIELD_OFFSET_number as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_is_repeated(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Field::FIELD_OFFSET_is_repeated as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 4 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !4,
+      Some(true) => {
+        *word |= 4;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_type(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Field::FIELD_OFFSET_type as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 8 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !8,
+      Some(true) => {
+        *word |= 8;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_type_index(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Field::FIELD_OFFSET_type_index as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 16 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !16,
+      Some(true) => {
+        *word |= 16;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_span(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Field::FIELD_OFFSET_span as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 32 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !32,
+      Some(true) => {
+        *word |= 32;
+      }
+    }
+    has
+  }
 }
 
 impl Default for Field {
@@ -1559,11 +1834,27 @@ impl crate::rt::ptr::Proxied for Field {
   type Mut<'msg> = __priv_Field::Mut<'msg>;
 }
 
-impl<'msg> __priv_Field::View<'msg> {
-  pub fn name(self) -> &'msg crate::rt::Str {
-    self.name_opt().unwrap_or_default()
+impl crate::rt::value::Type for Field {
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_Field::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      _ph: std::marker::PhantomData,
+    }
   }
-  pub fn name_opt(self) -> Option<&'msg crate::rt::Str> {
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_Field::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+}
+
+impl<'msg> __priv_Field::View<'msg> {
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().name;
@@ -1571,42 +1862,42 @@ impl<'msg> __priv_Field::View<'msg> {
     })
   }
 
-  pub fn number(self) -> i32 {
-    self.number_opt().unwrap_or_default()
+  pub fn number(self) -> crate::rt::View<'msg, i32> {
+    self.number_or().unwrap_or_default()
   }
-  pub fn number_opt(self) -> Option<i32> {
+  pub fn number_or(self) -> Option<crate::rt::View<'msg, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().number) })
   }
 
-  pub fn is_repeated(self) -> bool {
-    self.is_repeated_opt().unwrap_or_default()
+  pub fn is_repeated(self) -> crate::rt::View<'msg, bool> {
+    self.is_repeated_or().unwrap_or_default()
   }
-  pub fn is_repeated_opt(self) -> Option<bool> {
+  pub fn is_repeated_or(self) -> Option<crate::rt::View<'msg, bool>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().is_repeated) })
   }
 
-  pub fn r#type(self) -> Field_Type {
-    self.r#type_opt().unwrap_or_default()
+  pub fn r#type(self) -> crate::rt::View<'msg, Field_Type> {
+    self.r#type_or().unwrap_or_default()
   }
-  pub fn r#type_opt(self) -> Option<Field_Type> {
+  pub fn r#type_or(self) -> Option<crate::rt::View<'msg, Field_Type>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, Field_Type>(self.ptr.as_ref().r#type) })
   }
 
-  pub fn type_index(self) -> u32 {
-    self.type_index_opt().unwrap_or_default()
+  pub fn type_index(self) -> crate::rt::View<'msg, u32> {
+    self.type_index_or().unwrap_or_default()
   }
-  pub fn type_index_opt(self) -> Option<u32> {
+  pub fn type_index_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().type_index) })
   }
 
-  pub fn span(self) -> u32 {
-    self.span_opt().unwrap_or_default()
+  pub fn span(self) -> crate::rt::View<'msg, u32> {
+    self.span_or().unwrap_or_default()
   }
-  pub fn span_opt(self) -> Option<u32> {
+  pub fn span_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 32 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
@@ -1615,37 +1906,37 @@ impl<'msg> __priv_Field::View<'msg> {
   pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
     let mut count = 0;
     debug.start_block()?;
-    if let Some(value) = self.name_opt() {
+    if let Some(value) = self.name_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("name")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.number_opt() {
+    if let Some(value) = self.number_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("number")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.is_repeated_opt() {
+    if let Some(value) = self.is_repeated_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("is_repeated")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.r#type_opt() {
+    if let Some(value) = self.r#type_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("type")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.type_index_opt() {
+    if let Some(value) = self.type_index_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("type_index")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.span_opt() {
+    if let Some(value) = self.span_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("span")?;
       debug.write_debug(value);
@@ -1659,6 +1950,12 @@ impl<'msg> __priv_Field::View<'msg> {
   }
 }
 
+impl Default for __priv_Field::View<'_> {
+  fn default() -> Self {
+    Field::DEFAULT
+  }
+}
+
 impl<'msg> __priv_Field::Mut<'msg>  {
   pub fn clear(self) {
     unsafe { Field::__raw_clear(self.ptr.as_ptr()) }
@@ -1669,134 +1966,145 @@ impl<'msg> __priv_Field::Mut<'msg>  {
     ctx.parse(self.ptr.as_ptr() as *mut u8, Field::__tdp_info())
   }
 
-  pub fn name(self) -> &'msg crate::rt::Str {
-    self.name_opt().unwrap_or_default()
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
   }
-  pub fn name_opt(self) -> Option<&'msg crate::rt::Str> {
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().name;
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn name_mut(self) -> crate::rt::StrBuf<'msg> {
+  pub fn name_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
     unsafe {
-      let mut buf = crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena);
-      if self.ptr.as_ref().__hasbits[0] & 1 == 0 {
-        buf.clear();
-      }
-      self.ptr.as_mut().__hasbits[0] |= 1;
-      buf
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_name as usize),
+        self.arena,
+        Field::__hazzer_name,
+      )
     }
   }
-  pub fn name_opt_mut(self) -> Option<crate::rt::StrBuf<'msg>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
-    Some(unsafe {
-      crate::rt::StrBuf::__wrap(&mut self.ptr.as_mut().name, self.arena)
-    })
-  }
-  pub fn name_set<'a>(self, value: impl crate::rt::str::IntoStrOpt<'a>) {
-    match value.into_str_opt() {
-      Some(value) => self.name_mut().set(value.as_bytes()),
-      None => unsafe {
-        self.ptr.as_mut().__hasbits[0] &= !1;
-      }
-    }
+  pub fn name_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
   }
 
-  pub fn number(self) -> i32 {
-    self.number_opt().unwrap_or_default()
+  pub fn number(self) -> crate::rt::View<'msg, i32> {
+    self.number_or().unwrap_or_default()
   }
-  pub fn number_opt(self) -> Option<i32> {
+  pub fn number_or(self) -> Option<crate::rt::View<'msg, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().number) })
   }
-  pub fn number_set(self, value: impl Into<Option<i32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 2;
-        self.ptr.as_mut().number = std::mem::transmute::<i32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !2;
-      }
+  pub fn number_mut(self) -> crate::rt::Mut<'msg, i32> {
+    self.number_mut_or().into_mut()
+  }
+  pub fn number_mut_or(self) -> crate::rt::value::OptMut<'msg, i32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_number as usize),
+        self.arena,
+        Field::__hazzer_number,
+      )
     }
   }
-
-  pub fn is_repeated(self) -> bool {
-    self.is_repeated_opt().unwrap_or_default()
+  pub fn number_set(self, value: i32) {
+    self.number_mut().set(value);
   }
-  pub fn is_repeated_opt(self) -> Option<bool> {
+
+  pub fn is_repeated(self) -> crate::rt::View<'msg, bool> {
+    self.is_repeated_or().unwrap_or_default()
+  }
+  pub fn is_repeated_or(self) -> Option<crate::rt::View<'msg, bool>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().is_repeated) })
   }
-  pub fn is_repeated_set(self, value: impl Into<Option<bool>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 4;
-        self.ptr.as_mut().is_repeated = std::mem::transmute::<bool, bool>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !4;
-      }
+  pub fn is_repeated_mut(self) -> crate::rt::Mut<'msg, bool> {
+    self.is_repeated_mut_or().into_mut()
+  }
+  pub fn is_repeated_mut_or(self) -> crate::rt::value::OptMut<'msg, bool> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_is_repeated as usize),
+        self.arena,
+        Field::__hazzer_is_repeated,
+      )
     }
   }
-
-  pub fn r#type(self) -> Field_Type {
-    self.r#type_opt().unwrap_or_default()
+  pub fn is_repeated_set(self, value: bool) {
+    self.is_repeated_mut().set(value);
   }
-  pub fn r#type_opt(self) -> Option<Field_Type> {
+
+  pub fn r#type(self) -> crate::rt::View<'msg, Field_Type> {
+    self.r#type_or().unwrap_or_default()
+  }
+  pub fn r#type_or(self) -> Option<crate::rt::View<'msg, Field_Type>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, Field_Type>(self.ptr.as_ref().r#type) })
   }
-  pub fn r#type_set(self, value: impl Into<Option<Field_Type>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 8;
-        self.ptr.as_mut().r#type = std::mem::transmute::<Field_Type, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !8;
-      }
+  pub fn r#type_mut(self) -> crate::rt::Mut<'msg, Field_Type> {
+    self.r#type_mut_or().into_mut()
+  }
+  pub fn r#type_mut_or(self) -> crate::rt::value::OptMut<'msg, Field_Type> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_type as usize),
+        self.arena,
+        Field::__hazzer_type,
+      )
     }
   }
-
-  pub fn type_index(self) -> u32 {
-    self.type_index_opt().unwrap_or_default()
+  pub fn r#type_set(self, value: Field_Type) {
+    self.r#type_mut().set(value);
   }
-  pub fn type_index_opt(self) -> Option<u32> {
+
+  pub fn type_index(self) -> crate::rt::View<'msg, u32> {
+    self.type_index_or().unwrap_or_default()
+  }
+  pub fn type_index_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().type_index) })
   }
-  pub fn type_index_set(self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 16;
-        self.ptr.as_mut().type_index = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !16;
-      }
+  pub fn type_index_mut(self) -> crate::rt::Mut<'msg, u32> {
+    self.type_index_mut_or().into_mut()
+  }
+  pub fn type_index_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_type_index as usize),
+        self.arena,
+        Field::__hazzer_type_index,
+      )
     }
   }
-
-  pub fn span(self) -> u32 {
-    self.span_opt().unwrap_or_default()
+  pub fn type_index_set(self, value: u32) {
+    self.type_index_mut().set(value);
   }
-  pub fn span_opt(self) -> Option<u32> {
+
+  pub fn span(self) -> crate::rt::View<'msg, u32> {
+    self.span_or().unwrap_or_default()
+  }
+  pub fn span_or(self) -> Option<crate::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 32 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
-  pub fn span_set(self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 32;
-        self.ptr.as_mut().span = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !32;
-      }
+  pub fn span_mut(self) -> crate::rt::Mut<'msg, u32> {
+    self.span_mut_or().into_mut()
+  }
+  pub fn span_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Field::FIELD_OFFSET_span as usize),
+        self.arena,
+        Field::__hazzer_span,
+      )
     }
+  }
+  pub fn span_set(self, value: u32) {
+    self.span_mut().set(value);
   }
 
 }
@@ -2003,6 +2311,11 @@ impl Default for Field_Type {
   fn default() -> Self {
     Self(0)
   }
+}
+
+impl crate::rt::ptr::Proxied for Field_Type {
+  type View<'a> = Self;
+  type Mut<'a> = crate::rt::ptr::ScalarMut<'a, Self>;
 }
 
 impl std::fmt::Debug for Field_Type {

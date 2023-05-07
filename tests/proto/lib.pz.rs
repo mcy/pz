@@ -81,178 +81,197 @@ impl TestAll {
     self.ptr.as_ptr()
   }
 
-  pub fn opt_i32(&self) -> i32 {
-    self.opt_i32_opt().unwrap_or_default()
+  pub fn opt_i32(&self) -> __rt::rt::View<'_, i32> {
+    self.opt_i32_or().unwrap_or_default()
   }
-  pub fn opt_i32_opt(&self) -> Option<i32> {
+  pub fn opt_i32_or(&self) -> Option<__rt::rt::View<'_, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().opt_i32) })
   }
-  pub fn opt_i32_set(&mut self, value: impl Into<Option<i32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 1;
-        self.ptr.as_mut().opt_i32 = std::mem::transmute::<i32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !1;
-      }
+  pub fn opt_i32_mut(&mut self) -> __rt::rt::Mut<'_, i32> {
+    self.opt_i32_mut_or().into_mut()
+  }
+  pub fn opt_i32_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, i32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_i32 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_i32,
+      )
     }
   }
-
-  pub fn opt_i64(&self) -> i64 {
-    self.opt_i64_opt().unwrap_or_default()
+  pub fn opt_i32_set(&mut self, value: i32) {
+    self.opt_i32_mut().set(value);
   }
-  pub fn opt_i64_opt(&self) -> Option<i64> {
+
+  pub fn opt_i64(&self) -> __rt::rt::View<'_, i64> {
+    self.opt_i64_or().unwrap_or_default()
+  }
+  pub fn opt_i64_or(&self) -> Option<__rt::rt::View<'_, i64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(self.ptr.as_ref().opt_i64) })
   }
-  pub fn opt_i64_set(&mut self, value: impl Into<Option<i64>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 2;
-        self.ptr.as_mut().opt_i64 = std::mem::transmute::<i64, u64>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !2;
-      }
+  pub fn opt_i64_mut(&mut self) -> __rt::rt::Mut<'_, i64> {
+    self.opt_i64_mut_or().into_mut()
+  }
+  pub fn opt_i64_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, i64> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_i64 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_i64,
+      )
     }
   }
-
-  pub fn opt_u32(&self) -> u32 {
-    self.opt_u32_opt().unwrap_or_default()
+  pub fn opt_i64_set(&mut self, value: i64) {
+    self.opt_i64_mut().set(value);
   }
-  pub fn opt_u32_opt(&self) -> Option<u32> {
+
+  pub fn opt_u32(&self) -> __rt::rt::View<'_, u32> {
+    self.opt_u32_or().unwrap_or_default()
+  }
+  pub fn opt_u32_or(&self) -> Option<__rt::rt::View<'_, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().opt_u32) })
   }
-  pub fn opt_u32_set(&mut self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 4;
-        self.ptr.as_mut().opt_u32 = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !4;
-      }
+  pub fn opt_u32_mut(&mut self) -> __rt::rt::Mut<'_, u32> {
+    self.opt_u32_mut_or().into_mut()
+  }
+  pub fn opt_u32_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, u32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_u32 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_u32,
+      )
     }
   }
-
-  pub fn opt_u64(&self) -> u64 {
-    self.opt_u64_opt().unwrap_or_default()
+  pub fn opt_u32_set(&mut self, value: u32) {
+    self.opt_u32_mut().set(value);
   }
-  pub fn opt_u64_opt(&self) -> Option<u64> {
+
+  pub fn opt_u64(&self) -> __rt::rt::View<'_, u64> {
+    self.opt_u64_or().unwrap_or_default()
+  }
+  pub fn opt_u64_or(&self) -> Option<__rt::rt::View<'_, u64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(self.ptr.as_ref().opt_u64) })
   }
-  pub fn opt_u64_set(&mut self, value: impl Into<Option<u64>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 8;
-        self.ptr.as_mut().opt_u64 = std::mem::transmute::<u64, u64>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !8;
-      }
+  pub fn opt_u64_mut(&mut self) -> __rt::rt::Mut<'_, u64> {
+    self.opt_u64_mut_or().into_mut()
+  }
+  pub fn opt_u64_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, u64> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_u64 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_u64,
+      )
     }
   }
-
-  pub fn opt_f32(&self) -> f32 {
-    self.opt_f32_opt().unwrap_or_default()
+  pub fn opt_u64_set(&mut self, value: u64) {
+    self.opt_u64_mut().set(value);
   }
-  pub fn opt_f32_opt(&self) -> Option<f32> {
+
+  pub fn opt_f32(&self) -> __rt::rt::View<'_, f32> {
+    self.opt_f32_or().unwrap_or_default()
+  }
+  pub fn opt_f32_or(&self) -> Option<__rt::rt::View<'_, f32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(self.ptr.as_ref().opt_f32) })
   }
-  pub fn opt_f32_set(&mut self, value: impl Into<Option<f32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 16;
-        self.ptr.as_mut().opt_f32 = std::mem::transmute::<f32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !16;
-      }
+  pub fn opt_f32_mut(&mut self) -> __rt::rt::Mut<'_, f32> {
+    self.opt_f32_mut_or().into_mut()
+  }
+  pub fn opt_f32_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, f32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_f32 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_f32,
+      )
     }
   }
-
-  pub fn opt_f64(&self) -> f64 {
-    self.opt_f64_opt().unwrap_or_default()
+  pub fn opt_f32_set(&mut self, value: f32) {
+    self.opt_f32_mut().set(value);
   }
-  pub fn opt_f64_opt(&self) -> Option<f64> {
+
+  pub fn opt_f64(&self) -> __rt::rt::View<'_, f64> {
+    self.opt_f64_or().unwrap_or_default()
+  }
+  pub fn opt_f64_or(&self) -> Option<__rt::rt::View<'_, f64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 32 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(self.ptr.as_ref().opt_f64) })
   }
-  pub fn opt_f64_set(&mut self, value: impl Into<Option<f64>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 32;
-        self.ptr.as_mut().opt_f64 = std::mem::transmute::<f64, u64>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !32;
-      }
+  pub fn opt_f64_mut(&mut self) -> __rt::rt::Mut<'_, f64> {
+    self.opt_f64_mut_or().into_mut()
+  }
+  pub fn opt_f64_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, f64> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_f64 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_f64,
+      )
     }
   }
-
-  pub fn opt_str(&self) -> &'_ __rt::rt::Str {
-    self.opt_str_opt().unwrap_or_default()
+  pub fn opt_f64_set(&mut self, value: f64) {
+    self.opt_f64_mut().set(value);
   }
-  pub fn opt_str_opt(&self) -> Option<&'_ __rt::rt::Str> {
+
+  pub fn opt_str(&self) -> __rt::rt::View<'_, __rt::rt::Str> {
+    self.opt_str_or().unwrap_or_default()
+  }
+  pub fn opt_str_or(&self) -> Option<__rt::rt::View<'_, __rt::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().opt_str;
       __rt::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn opt_str_mut(&mut self) -> __rt::rt::StrBuf<'_> {
+  pub fn opt_str_mut(&mut self) -> __rt::rt::Mut<'_, __rt::rt::Str> {
+    self.opt_str_mut_or().into_mut()
+  }
+  pub fn opt_str_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, __rt::rt::Str> {
     unsafe {
-      let mut buf = __rt::rt::StrBuf::__wrap(&mut self.ptr.as_mut().opt_str, self.arena);
-      if self.ptr.as_ref().__hasbits[0] & 64 == 0 {
-        buf.clear();
-      }
-      self.ptr.as_mut().__hasbits[0] |= 64;
-      buf
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_str as usize),
+        self.arena,
+        TestAll::__hazzer_opt_str,
+      )
     }
   }
-  pub fn opt_str_opt_mut(&mut self) -> Option<__rt::rt::StrBuf<'_>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
-    Some(unsafe {
-      __rt::rt::StrBuf::__wrap(&mut self.ptr.as_mut().opt_str, self.arena)
-    })
-  }
-  pub fn opt_str_set<'a>(&mut self, value: impl __rt::rt::str::IntoStrOpt<'a>) {
-    match value.into_str_opt() {
-      Some(value) => self.opt_str_mut().set(value.as_bytes()),
-      None => unsafe {
-        self.ptr.as_mut().__hasbits[0] &= !64;
-      }
-    }
+  pub fn opt_str_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.opt_str_mut().set(value);
   }
 
-  pub fn opt_bool(&self) -> bool {
-    self.opt_bool_opt().unwrap_or_default()
+  pub fn opt_bool(&self) -> __rt::rt::View<'_, bool> {
+    self.opt_bool_or().unwrap_or_default()
   }
-  pub fn opt_bool_opt(&self) -> Option<bool> {
+  pub fn opt_bool_or(&self) -> Option<__rt::rt::View<'_, bool>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 128 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().opt_bool) })
   }
-  pub fn opt_bool_set(&mut self, value: impl Into<Option<bool>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 128;
-        self.ptr.as_mut().opt_bool = std::mem::transmute::<bool, bool>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !128;
-      }
+  pub fn opt_bool_mut(&mut self) -> __rt::rt::Mut<'_, bool> {
+    self.opt_bool_mut_or().into_mut()
+  }
+  pub fn opt_bool_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, bool> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_bool as usize),
+        self.arena,
+        TestAll::__hazzer_opt_bool,
+      )
     }
+  }
+  pub fn opt_bool_set(&mut self, value: bool) {
+    self.opt_bool_mut().set(value);
   }
 
   pub fn opt_recursive(&self) -> __rt::rt::View<'_, TestAll> {
-    self.opt_recursive_opt().unwrap_or(TestAll::DEFAULT)
+    self.opt_recursive_or().unwrap_or(TestAll::DEFAULT)
   }
-  pub fn opt_recursive_opt(&self) -> Option<__rt::rt::View<'_, TestAll>> {
+  pub fn opt_recursive_or(&self) -> Option<__rt::rt::View<'_, TestAll>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 256 == 0 { return None }
     Some(__rt::rt::View::<TestAll> {
       ptr: unsafe { __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_recursive) },
@@ -260,40 +279,22 @@ impl TestAll {
     })
   }
   pub fn opt_recursive_mut(&mut self) -> __rt::rt::Mut<'_, TestAll> {
-    unsafe {
-      if self.ptr.as_ref().opt_recursive.is_null() {
-        self.ptr.as_mut().opt_recursive = self.arena.alloc(TestAll::__LAYOUT).as_ptr();
-        TestAll::__raw_init(self.ptr.as_mut().opt_recursive);
-      } else if self.ptr.as_ref().__hasbits[0] & 256 == 0 {
-        TestAll::__raw_clear(self.ptr.as_ref().opt_recursive);
-      }
-
-      unsafe { self.ptr.as_mut() }.__hasbits[0] |= 256;
-      __rt::rt::Mut::<TestAll> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_recursive),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      }
-    }
+    self.opt_recursive_mut_or().into_mut()
   }
-  pub fn opt_recursive_opt_mut(&mut self) -> Option<__rt::rt::Mut<'_, TestAll>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 256 == 0 { return None }
+  pub fn opt_recursive_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, TestAll> {
     unsafe {
-      Some(__rt::rt::Mut::<TestAll> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_recursive),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_recursive as usize),
+        self.arena,
+        TestAll::__hazzer_opt_recursive,
+      )
     }
-  }
-  pub fn opt_recursive_clear(&mut self) {
-    unsafe { self.ptr.as_mut() }.__hasbits[0] &= !256;
   }
 
   pub fn opt_nested(&self) -> __rt::rt::View<'_, TestAll_Nested> {
-    self.opt_nested_opt().unwrap_or(TestAll_Nested::DEFAULT)
+    self.opt_nested_or().unwrap_or(TestAll_Nested::DEFAULT)
   }
-  pub fn opt_nested_opt(&self) -> Option<__rt::rt::View<'_, TestAll_Nested>> {
+  pub fn opt_nested_or(&self) -> Option<__rt::rt::View<'_, TestAll_Nested>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 512 == 0 { return None }
     Some(__rt::rt::View::<TestAll_Nested> {
       ptr: unsafe { __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_nested) },
@@ -301,34 +302,16 @@ impl TestAll {
     })
   }
   pub fn opt_nested_mut(&mut self) -> __rt::rt::Mut<'_, TestAll_Nested> {
-    unsafe {
-      if self.ptr.as_ref().opt_nested.is_null() {
-        self.ptr.as_mut().opt_nested = self.arena.alloc(TestAll_Nested::__LAYOUT).as_ptr();
-        TestAll_Nested::__raw_init(self.ptr.as_mut().opt_nested);
-      } else if self.ptr.as_ref().__hasbits[0] & 512 == 0 {
-        TestAll_Nested::__raw_clear(self.ptr.as_ref().opt_nested);
-      }
-
-      unsafe { self.ptr.as_mut() }.__hasbits[0] |= 512;
-      __rt::rt::Mut::<TestAll_Nested> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_nested),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      }
-    }
+    self.opt_nested_mut_or().into_mut()
   }
-  pub fn opt_nested_opt_mut(&mut self) -> Option<__rt::rt::Mut<'_, TestAll_Nested>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 512 == 0 { return None }
+  pub fn opt_nested_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, TestAll_Nested> {
     unsafe {
-      Some(__rt::rt::Mut::<TestAll_Nested> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_nested),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_nested as usize),
+        self.arena,
+        TestAll::__hazzer_opt_nested,
+      )
     }
-  }
-  pub fn opt_nested_clear(&mut self) {
-    unsafe { self.ptr.as_mut() }.__hasbits[0] &= !512;
   }
 
   pub fn rep_i32(&self) -> &'_ [i32] {
@@ -678,6 +661,197 @@ impl TestAll {
   pub fn __tdp_info() -> *const __rt::rt::__z::tdp::Message {
     &__priv_TestAll::TDP_INFO as *const _ as *const __rt::rt::__z::tdp::Message
   }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_i32(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_i32 as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_i64(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_i64 as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_u32(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_u32 as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 4 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !4,
+      Some(true) => {
+        *word |= 4;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_u64(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_u64 as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 8 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !8,
+      Some(true) => {
+        *word |= 8;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_f32(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_f32 as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 16 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !16,
+      Some(true) => {
+        *word |= 16;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_f64(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_f64 as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 32 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !32,
+      Some(true) => {
+        *word |= 32;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_str(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_str as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 64 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !64,
+      Some(true) => {
+        *word |= 64;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_bool(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_bool as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 128 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !128,
+      Some(true) => {
+        *word |= 128;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_recursive(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_recursive as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 256 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !256,
+      Some(true) => {
+        *word |= 256;
+        let storage = &mut *raw.cast::<__priv_TestAll::Storage>();
+        if storage.opt_recursive.is_null() {
+          storage.opt_recursive = self.arena.alloc(TestAll::__LAYOUT).as_ptr();
+          TestAll::__raw_init(storage.opt_recursive);
+        }
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_opt_nested(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll::FIELD_OFFSET_opt_nested as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 512 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !512,
+      Some(true) => {
+        *word |= 512;
+        let storage = &mut *raw.cast::<__priv_TestAll::Storage>();
+        if storage.opt_nested.is_null() {
+          storage.opt_nested = self.arena.alloc(TestAll_Nested::__LAYOUT).as_ptr();
+          TestAll_Nested::__raw_init(storage.opt_nested);
+        }
+      }
+    }
+    has
+  }
 }
 
 impl Default for TestAll {
@@ -691,59 +865,75 @@ impl __rt::rt::ptr::Proxied for TestAll {
   type Mut<'msg> = __priv_TestAll::Mut<'msg>;
 }
 
-impl<'msg> __priv_TestAll::View<'msg> {
-  pub fn opt_i32(self) -> i32 {
-    self.opt_i32_opt().unwrap_or_default()
+impl __rt::rt::value::Type for TestAll {
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> __rt::rt::View<'a, Self> {
+    __priv_TestAll::View {
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      _ph: std::marker::PhantomData,
+    }
   }
-  pub fn opt_i32_opt(self) -> Option<i32> {
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: __rt::rt::__z::RawArena) -> __rt::rt::Mut<'a, Self> {
+    __priv_TestAll::Mut {
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+}
+
+impl<'msg> __priv_TestAll::View<'msg> {
+  pub fn opt_i32(self) -> __rt::rt::View<'msg, i32> {
+    self.opt_i32_or().unwrap_or_default()
+  }
+  pub fn opt_i32_or(self) -> Option<__rt::rt::View<'msg, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().opt_i32) })
   }
 
-  pub fn opt_i64(self) -> i64 {
-    self.opt_i64_opt().unwrap_or_default()
+  pub fn opt_i64(self) -> __rt::rt::View<'msg, i64> {
+    self.opt_i64_or().unwrap_or_default()
   }
-  pub fn opt_i64_opt(self) -> Option<i64> {
+  pub fn opt_i64_or(self) -> Option<__rt::rt::View<'msg, i64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(self.ptr.as_ref().opt_i64) })
   }
 
-  pub fn opt_u32(self) -> u32 {
-    self.opt_u32_opt().unwrap_or_default()
+  pub fn opt_u32(self) -> __rt::rt::View<'msg, u32> {
+    self.opt_u32_or().unwrap_or_default()
   }
-  pub fn opt_u32_opt(self) -> Option<u32> {
+  pub fn opt_u32_or(self) -> Option<__rt::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().opt_u32) })
   }
 
-  pub fn opt_u64(self) -> u64 {
-    self.opt_u64_opt().unwrap_or_default()
+  pub fn opt_u64(self) -> __rt::rt::View<'msg, u64> {
+    self.opt_u64_or().unwrap_or_default()
   }
-  pub fn opt_u64_opt(self) -> Option<u64> {
+  pub fn opt_u64_or(self) -> Option<__rt::rt::View<'msg, u64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(self.ptr.as_ref().opt_u64) })
   }
 
-  pub fn opt_f32(self) -> f32 {
-    self.opt_f32_opt().unwrap_or_default()
+  pub fn opt_f32(self) -> __rt::rt::View<'msg, f32> {
+    self.opt_f32_or().unwrap_or_default()
   }
-  pub fn opt_f32_opt(self) -> Option<f32> {
+  pub fn opt_f32_or(self) -> Option<__rt::rt::View<'msg, f32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(self.ptr.as_ref().opt_f32) })
   }
 
-  pub fn opt_f64(self) -> f64 {
-    self.opt_f64_opt().unwrap_or_default()
+  pub fn opt_f64(self) -> __rt::rt::View<'msg, f64> {
+    self.opt_f64_or().unwrap_or_default()
   }
-  pub fn opt_f64_opt(self) -> Option<f64> {
+  pub fn opt_f64_or(self) -> Option<__rt::rt::View<'msg, f64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 32 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(self.ptr.as_ref().opt_f64) })
   }
 
-  pub fn opt_str(self) -> &'msg __rt::rt::Str {
-    self.opt_str_opt().unwrap_or_default()
+  pub fn opt_str(self) -> __rt::rt::View<'msg, __rt::rt::Str> {
+    self.opt_str_or().unwrap_or_default()
   }
-  pub fn opt_str_opt(self) -> Option<&'msg __rt::rt::Str> {
+  pub fn opt_str_or(self) -> Option<__rt::rt::View<'msg, __rt::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().opt_str;
@@ -751,18 +941,18 @@ impl<'msg> __priv_TestAll::View<'msg> {
     })
   }
 
-  pub fn opt_bool(self) -> bool {
-    self.opt_bool_opt().unwrap_or_default()
+  pub fn opt_bool(self) -> __rt::rt::View<'msg, bool> {
+    self.opt_bool_or().unwrap_or_default()
   }
-  pub fn opt_bool_opt(self) -> Option<bool> {
+  pub fn opt_bool_or(self) -> Option<__rt::rt::View<'msg, bool>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 128 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().opt_bool) })
   }
 
   pub fn opt_recursive(self) -> __rt::rt::View<'msg, TestAll> {
-    self.opt_recursive_opt().unwrap_or(TestAll::DEFAULT)
+    self.opt_recursive_or().unwrap_or(TestAll::DEFAULT)
   }
-  pub fn opt_recursive_opt(self) -> Option<__rt::rt::View<'msg, TestAll>> {
+  pub fn opt_recursive_or(self) -> Option<__rt::rt::View<'msg, TestAll>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 256 == 0 { return None }
     Some(__rt::rt::View::<TestAll> {
       ptr: unsafe { __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_recursive) },
@@ -771,9 +961,9 @@ impl<'msg> __priv_TestAll::View<'msg> {
   }
 
   pub fn opt_nested(self) -> __rt::rt::View<'msg, TestAll_Nested> {
-    self.opt_nested_opt().unwrap_or(TestAll_Nested::DEFAULT)
+    self.opt_nested_or().unwrap_or(TestAll_Nested::DEFAULT)
   }
-  pub fn opt_nested_opt(self) -> Option<__rt::rt::View<'msg, TestAll_Nested>> {
+  pub fn opt_nested_or(self) -> Option<__rt::rt::View<'msg, TestAll_Nested>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 512 == 0 { return None }
     Some(__rt::rt::View::<TestAll_Nested> {
       ptr: unsafe { __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_nested) },
@@ -884,61 +1074,61 @@ impl<'msg> __priv_TestAll::View<'msg> {
   pub fn __debug(self, debug: &mut __rt::rt::__z::Debug) -> std::fmt::Result {
     let mut count = 0;
     debug.start_block()?;
-    if let Some(value) = self.opt_i32_opt() {
+    if let Some(value) = self.opt_i32_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_i32")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_i64_opt() {
+    if let Some(value) = self.opt_i64_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_i64")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_u32_opt() {
+    if let Some(value) = self.opt_u32_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_u32")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_u64_opt() {
+    if let Some(value) = self.opt_u64_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_u64")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_f32_opt() {
+    if let Some(value) = self.opt_f32_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_f32")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_f64_opt() {
+    if let Some(value) = self.opt_f64_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_f64")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_str_opt() {
+    if let Some(value) = self.opt_str_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_str")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_bool_opt() {
+    if let Some(value) = self.opt_bool_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_bool")?;
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.opt_recursive_opt() {
+    if let Some(value) = self.opt_recursive_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_recursive")?;
       value.__debug(debug)?;
       count += 1;
     }
-    if let Some(value) = self.opt_nested_opt() {
+    if let Some(value) = self.opt_nested_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("opt_nested")?;
       value.__debug(debug)?;
@@ -1019,6 +1209,12 @@ impl<'msg> __priv_TestAll::View<'msg> {
   }
 }
 
+impl Default for __priv_TestAll::View<'_> {
+  fn default() -> Self {
+    TestAll::DEFAULT
+  }
+}
+
 impl<'msg> __priv_TestAll::Mut<'msg>  {
   pub fn clear(self) {
     unsafe { TestAll::__raw_clear(self.ptr.as_ptr()) }
@@ -1029,178 +1225,197 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll::__tdp_info())
   }
 
-  pub fn opt_i32(self) -> i32 {
-    self.opt_i32_opt().unwrap_or_default()
+  pub fn opt_i32(self) -> __rt::rt::View<'msg, i32> {
+    self.opt_i32_or().unwrap_or_default()
   }
-  pub fn opt_i32_opt(self) -> Option<i32> {
+  pub fn opt_i32_or(self) -> Option<__rt::rt::View<'msg, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().opt_i32) })
   }
-  pub fn opt_i32_set(self, value: impl Into<Option<i32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 1;
-        self.ptr.as_mut().opt_i32 = std::mem::transmute::<i32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !1;
-      }
+  pub fn opt_i32_mut(self) -> __rt::rt::Mut<'msg, i32> {
+    self.opt_i32_mut_or().into_mut()
+  }
+  pub fn opt_i32_mut_or(self) -> __rt::rt::value::OptMut<'msg, i32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_i32 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_i32,
+      )
     }
   }
-
-  pub fn opt_i64(self) -> i64 {
-    self.opt_i64_opt().unwrap_or_default()
+  pub fn opt_i32_set(self, value: i32) {
+    self.opt_i32_mut().set(value);
   }
-  pub fn opt_i64_opt(self) -> Option<i64> {
+
+  pub fn opt_i64(self) -> __rt::rt::View<'msg, i64> {
+    self.opt_i64_or().unwrap_or_default()
+  }
+  pub fn opt_i64_or(self) -> Option<__rt::rt::View<'msg, i64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(self.ptr.as_ref().opt_i64) })
   }
-  pub fn opt_i64_set(self, value: impl Into<Option<i64>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 2;
-        self.ptr.as_mut().opt_i64 = std::mem::transmute::<i64, u64>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !2;
-      }
+  pub fn opt_i64_mut(self) -> __rt::rt::Mut<'msg, i64> {
+    self.opt_i64_mut_or().into_mut()
+  }
+  pub fn opt_i64_mut_or(self) -> __rt::rt::value::OptMut<'msg, i64> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_i64 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_i64,
+      )
     }
   }
-
-  pub fn opt_u32(self) -> u32 {
-    self.opt_u32_opt().unwrap_or_default()
+  pub fn opt_i64_set(self, value: i64) {
+    self.opt_i64_mut().set(value);
   }
-  pub fn opt_u32_opt(self) -> Option<u32> {
+
+  pub fn opt_u32(self) -> __rt::rt::View<'msg, u32> {
+    self.opt_u32_or().unwrap_or_default()
+  }
+  pub fn opt_u32_or(self) -> Option<__rt::rt::View<'msg, u32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().opt_u32) })
   }
-  pub fn opt_u32_set(self, value: impl Into<Option<u32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 4;
-        self.ptr.as_mut().opt_u32 = std::mem::transmute::<u32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !4;
-      }
+  pub fn opt_u32_mut(self) -> __rt::rt::Mut<'msg, u32> {
+    self.opt_u32_mut_or().into_mut()
+  }
+  pub fn opt_u32_mut_or(self) -> __rt::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_u32 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_u32,
+      )
     }
   }
-
-  pub fn opt_u64(self) -> u64 {
-    self.opt_u64_opt().unwrap_or_default()
+  pub fn opt_u32_set(self, value: u32) {
+    self.opt_u32_mut().set(value);
   }
-  pub fn opt_u64_opt(self) -> Option<u64> {
+
+  pub fn opt_u64(self) -> __rt::rt::View<'msg, u64> {
+    self.opt_u64_or().unwrap_or_default()
+  }
+  pub fn opt_u64_or(self) -> Option<__rt::rt::View<'msg, u64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 8 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(self.ptr.as_ref().opt_u64) })
   }
-  pub fn opt_u64_set(self, value: impl Into<Option<u64>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 8;
-        self.ptr.as_mut().opt_u64 = std::mem::transmute::<u64, u64>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !8;
-      }
+  pub fn opt_u64_mut(self) -> __rt::rt::Mut<'msg, u64> {
+    self.opt_u64_mut_or().into_mut()
+  }
+  pub fn opt_u64_mut_or(self) -> __rt::rt::value::OptMut<'msg, u64> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_u64 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_u64,
+      )
     }
   }
-
-  pub fn opt_f32(self) -> f32 {
-    self.opt_f32_opt().unwrap_or_default()
+  pub fn opt_u64_set(self, value: u64) {
+    self.opt_u64_mut().set(value);
   }
-  pub fn opt_f32_opt(self) -> Option<f32> {
+
+  pub fn opt_f32(self) -> __rt::rt::View<'msg, f32> {
+    self.opt_f32_or().unwrap_or_default()
+  }
+  pub fn opt_f32_or(self) -> Option<__rt::rt::View<'msg, f32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 16 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(self.ptr.as_ref().opt_f32) })
   }
-  pub fn opt_f32_set(self, value: impl Into<Option<f32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 16;
-        self.ptr.as_mut().opt_f32 = std::mem::transmute::<f32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !16;
-      }
+  pub fn opt_f32_mut(self) -> __rt::rt::Mut<'msg, f32> {
+    self.opt_f32_mut_or().into_mut()
+  }
+  pub fn opt_f32_mut_or(self) -> __rt::rt::value::OptMut<'msg, f32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_f32 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_f32,
+      )
     }
   }
-
-  pub fn opt_f64(self) -> f64 {
-    self.opt_f64_opt().unwrap_or_default()
+  pub fn opt_f32_set(self, value: f32) {
+    self.opt_f32_mut().set(value);
   }
-  pub fn opt_f64_opt(self) -> Option<f64> {
+
+  pub fn opt_f64(self) -> __rt::rt::View<'msg, f64> {
+    self.opt_f64_or().unwrap_or_default()
+  }
+  pub fn opt_f64_or(self) -> Option<__rt::rt::View<'msg, f64>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 32 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(self.ptr.as_ref().opt_f64) })
   }
-  pub fn opt_f64_set(self, value: impl Into<Option<f64>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 32;
-        self.ptr.as_mut().opt_f64 = std::mem::transmute::<f64, u64>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !32;
-      }
+  pub fn opt_f64_mut(self) -> __rt::rt::Mut<'msg, f64> {
+    self.opt_f64_mut_or().into_mut()
+  }
+  pub fn opt_f64_mut_or(self) -> __rt::rt::value::OptMut<'msg, f64> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_f64 as usize),
+        self.arena,
+        TestAll::__hazzer_opt_f64,
+      )
     }
   }
-
-  pub fn opt_str(self) -> &'msg __rt::rt::Str {
-    self.opt_str_opt().unwrap_or_default()
+  pub fn opt_f64_set(self, value: f64) {
+    self.opt_f64_mut().set(value);
   }
-  pub fn opt_str_opt(self) -> Option<&'msg __rt::rt::Str> {
+
+  pub fn opt_str(self) -> __rt::rt::View<'msg, __rt::rt::Str> {
+    self.opt_str_or().unwrap_or_default()
+  }
+  pub fn opt_str_or(self) -> Option<__rt::rt::View<'msg, __rt::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
     Some(unsafe {
       let (ptr, len) = self.ptr.as_ref().opt_str;
       __rt::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn opt_str_mut(self) -> __rt::rt::StrBuf<'msg> {
+  pub fn opt_str_mut(self) -> __rt::rt::Mut<'msg, __rt::rt::Str> {
+    self.opt_str_mut_or().into_mut()
+  }
+  pub fn opt_str_mut_or(self) -> __rt::rt::value::OptMut<'msg, __rt::rt::Str> {
     unsafe {
-      let mut buf = __rt::rt::StrBuf::__wrap(&mut self.ptr.as_mut().opt_str, self.arena);
-      if self.ptr.as_ref().__hasbits[0] & 64 == 0 {
-        buf.clear();
-      }
-      self.ptr.as_mut().__hasbits[0] |= 64;
-      buf
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_str as usize),
+        self.arena,
+        TestAll::__hazzer_opt_str,
+      )
     }
   }
-  pub fn opt_str_opt_mut(self) -> Option<__rt::rt::StrBuf<'msg>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
-    Some(unsafe {
-      __rt::rt::StrBuf::__wrap(&mut self.ptr.as_mut().opt_str, self.arena)
-    })
-  }
-  pub fn opt_str_set<'a>(self, value: impl __rt::rt::str::IntoStrOpt<'a>) {
-    match value.into_str_opt() {
-      Some(value) => self.opt_str_mut().set(value.as_bytes()),
-      None => unsafe {
-        self.ptr.as_mut().__hasbits[0] &= !64;
-      }
-    }
+  pub fn opt_str_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.opt_str_mut().set(value);
   }
 
-  pub fn opt_bool(self) -> bool {
-    self.opt_bool_opt().unwrap_or_default()
+  pub fn opt_bool(self) -> __rt::rt::View<'msg, bool> {
+    self.opt_bool_or().unwrap_or_default()
   }
-  pub fn opt_bool_opt(self) -> Option<bool> {
+  pub fn opt_bool_or(self) -> Option<__rt::rt::View<'msg, bool>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 128 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().opt_bool) })
   }
-  pub fn opt_bool_set(self, value: impl Into<Option<bool>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 128;
-        self.ptr.as_mut().opt_bool = std::mem::transmute::<bool, bool>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !128;
-      }
+  pub fn opt_bool_mut(self) -> __rt::rt::Mut<'msg, bool> {
+    self.opt_bool_mut_or().into_mut()
+  }
+  pub fn opt_bool_mut_or(self) -> __rt::rt::value::OptMut<'msg, bool> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_bool as usize),
+        self.arena,
+        TestAll::__hazzer_opt_bool,
+      )
     }
+  }
+  pub fn opt_bool_set(self, value: bool) {
+    self.opt_bool_mut().set(value);
   }
 
   pub fn opt_recursive(self) -> __rt::rt::View<'msg, TestAll> {
-    self.opt_recursive_opt().unwrap_or(TestAll::DEFAULT)
+    self.opt_recursive_or().unwrap_or(TestAll::DEFAULT)
   }
-  pub fn opt_recursive_opt(self) -> Option<__rt::rt::View<'msg, TestAll>> {
+  pub fn opt_recursive_or(self) -> Option<__rt::rt::View<'msg, TestAll>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 256 == 0 { return None }
     Some(__rt::rt::View::<TestAll> {
       ptr: unsafe { __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_recursive) },
@@ -1208,40 +1423,22 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     })
   }
   pub fn opt_recursive_mut(self) -> __rt::rt::Mut<'msg, TestAll> {
-    unsafe {
-      if self.ptr.as_ref().opt_recursive.is_null() {
-        self.ptr.as_mut().opt_recursive = self.arena.alloc(TestAll::__LAYOUT).as_ptr();
-        TestAll::__raw_init(self.ptr.as_mut().opt_recursive);
-      } else if self.ptr.as_ref().__hasbits[0] & 256 == 0 {
-        TestAll::__raw_clear(self.ptr.as_ref().opt_recursive);
-      }
-
-      unsafe { self.ptr.as_mut() }.__hasbits[0] |= 256;
-      __rt::rt::Mut::<TestAll> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_recursive),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      }
-    }
+    self.opt_recursive_mut_or().into_mut()
   }
-  pub fn opt_recursive_opt_mut(self) -> Option<__rt::rt::Mut<'msg, TestAll>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 256 == 0 { return None }
+  pub fn opt_recursive_mut_or(self) -> __rt::rt::value::OptMut<'msg, TestAll> {
     unsafe {
-      Some(__rt::rt::Mut::<TestAll> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_recursive),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_recursive as usize),
+        self.arena,
+        TestAll::__hazzer_opt_recursive,
+      )
     }
-  }
-  pub fn opt_recursive_clear(self) {
-    unsafe { self.ptr.as_mut() }.__hasbits[0] &= !256;
   }
 
   pub fn opt_nested(self) -> __rt::rt::View<'msg, TestAll_Nested> {
-    self.opt_nested_opt().unwrap_or(TestAll_Nested::DEFAULT)
+    self.opt_nested_or().unwrap_or(TestAll_Nested::DEFAULT)
   }
-  pub fn opt_nested_opt(self) -> Option<__rt::rt::View<'msg, TestAll_Nested>> {
+  pub fn opt_nested_or(self) -> Option<__rt::rt::View<'msg, TestAll_Nested>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 512 == 0 { return None }
     Some(__rt::rt::View::<TestAll_Nested> {
       ptr: unsafe { __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_nested) },
@@ -1249,34 +1446,16 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     })
   }
   pub fn opt_nested_mut(self) -> __rt::rt::Mut<'msg, TestAll_Nested> {
-    unsafe {
-      if self.ptr.as_ref().opt_nested.is_null() {
-        self.ptr.as_mut().opt_nested = self.arena.alloc(TestAll_Nested::__LAYOUT).as_ptr();
-        TestAll_Nested::__raw_init(self.ptr.as_mut().opt_nested);
-      } else if self.ptr.as_ref().__hasbits[0] & 512 == 0 {
-        TestAll_Nested::__raw_clear(self.ptr.as_ref().opt_nested);
-      }
-
-      unsafe { self.ptr.as_mut() }.__hasbits[0] |= 512;
-      __rt::rt::Mut::<TestAll_Nested> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_nested),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      }
-    }
+    self.opt_nested_mut_or().into_mut()
   }
-  pub fn opt_nested_opt_mut(self) -> Option<__rt::rt::Mut<'msg, TestAll_Nested>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 512 == 0 { return None }
+  pub fn opt_nested_mut_or(self) -> __rt::rt::value::OptMut<'msg, TestAll_Nested> {
     unsafe {
-      Some(__rt::rt::Mut::<TestAll_Nested> {
-        ptr: __rt::rt::__z::ABox::from_ptr(self.ptr.as_ref().opt_nested),
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll::FIELD_OFFSET_opt_nested as usize),
+        self.arena,
+        TestAll::__hazzer_opt_nested,
+      )
     }
-  }
-  pub fn opt_nested_clear(self) {
-    unsafe { self.ptr.as_mut() }.__hasbits[0] &= !512;
   }
 
   pub fn rep_i32(self) -> &'msg [i32] {
@@ -2043,23 +2222,27 @@ impl TestAll_Nested {
     self.ptr.as_ptr()
   }
 
-  pub fn a(&self) -> i32 {
-    self.a_opt().unwrap_or_default()
+  pub fn a(&self) -> __rt::rt::View<'_, i32> {
+    self.a_or().unwrap_or_default()
   }
-  pub fn a_opt(&self) -> Option<i32> {
+  pub fn a_or(&self) -> Option<__rt::rt::View<'_, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().a) })
   }
-  pub fn a_set(&mut self, value: impl Into<Option<i32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 1;
-        self.ptr.as_mut().a = std::mem::transmute::<i32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !1;
-      }
+  pub fn a_mut(&mut self) -> __rt::rt::Mut<'_, i32> {
+    self.a_mut_or().into_mut()
+  }
+  pub fn a_mut_or(&mut self) -> __rt::rt::value::OptMut<'_, i32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll_Nested::FIELD_OFFSET_a as usize),
+        self.arena,
+        TestAll_Nested::__hazzer_a,
+      )
     }
+  }
+  pub fn a_set(&mut self, value: i32) {
+    self.a_mut().set(value);
   }
 
   pub fn b_len(&self) -> usize {
@@ -2108,6 +2291,25 @@ impl TestAll_Nested {
   pub fn __tdp_info() -> *const __rt::rt::__z::tdp::Message {
     &__priv_TestAll_Nested::TDP_INFO as *const _ as *const __rt::rt::__z::tdp::Message
   }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_a(
+    raw: *mut u8,
+    arena: __rt::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_TestAll_Nested::FIELD_OFFSET_a as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
 }
 
 impl Default for TestAll_Nested {
@@ -2121,11 +2323,27 @@ impl __rt::rt::ptr::Proxied for TestAll_Nested {
   type Mut<'msg> = __priv_TestAll_Nested::Mut<'msg>;
 }
 
-impl<'msg> __priv_TestAll_Nested::View<'msg> {
-  pub fn a(self) -> i32 {
-    self.a_opt().unwrap_or_default()
+impl __rt::rt::value::Type for TestAll_Nested {
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> __rt::rt::View<'a, Self> {
+    __priv_TestAll_Nested::View {
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      _ph: std::marker::PhantomData,
+    }
   }
-  pub fn a_opt(self) -> Option<i32> {
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: __rt::rt::__z::RawArena) -> __rt::rt::Mut<'a, Self> {
+    __priv_TestAll_Nested::Mut {
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+}
+
+impl<'msg> __priv_TestAll_Nested::View<'msg> {
+  pub fn a(self) -> __rt::rt::View<'msg, i32> {
+    self.a_or().unwrap_or_default()
+  }
+  pub fn a_or(self) -> Option<__rt::rt::View<'msg, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().a) })
   }
@@ -2148,7 +2366,7 @@ impl<'msg> __priv_TestAll_Nested::View<'msg> {
   pub fn __debug(self, debug: &mut __rt::rt::__z::Debug) -> std::fmt::Result {
     let mut count = 0;
     debug.start_block()?;
-    if let Some(value) = self.a_opt() {
+    if let Some(value) = self.a_or() {
       if count != 0 { debug.comma(false)?; }
       debug.field("a")?;
       debug.write_debug(value);
@@ -2168,6 +2386,12 @@ impl<'msg> __priv_TestAll_Nested::View<'msg> {
   }
 }
 
+impl Default for __priv_TestAll_Nested::View<'_> {
+  fn default() -> Self {
+    TestAll_Nested::DEFAULT
+  }
+}
+
 impl<'msg> __priv_TestAll_Nested::Mut<'msg>  {
   pub fn clear(self) {
     unsafe { TestAll_Nested::__raw_clear(self.ptr.as_ptr()) }
@@ -2178,23 +2402,27 @@ impl<'msg> __priv_TestAll_Nested::Mut<'msg>  {
     ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll_Nested::__tdp_info())
   }
 
-  pub fn a(self) -> i32 {
-    self.a_opt().unwrap_or_default()
+  pub fn a(self) -> __rt::rt::View<'msg, i32> {
+    self.a_or().unwrap_or_default()
   }
-  pub fn a_opt(self) -> Option<i32> {
+  pub fn a_or(self) -> Option<__rt::rt::View<'msg, i32>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().a) })
   }
-  pub fn a_set(self, value: impl Into<Option<i32>>) {
-    match value.into() {
-      Some(value) => unsafe {
-        self.ptr.as_mut().__hasbits[0] |= 1;
-        self.ptr.as_mut().a = std::mem::transmute::<i32, u32>(value);
-      }
-      None => {
-        unsafe { self.ptr.as_mut() }.__hasbits[0] &= !1;
-      }
+  pub fn a_mut(self) -> __rt::rt::Mut<'msg, i32> {
+    self.a_mut_or().into_mut()
+  }
+  pub fn a_mut_or(self) -> __rt::rt::value::OptMut<'msg, i32> {
+    unsafe {
+      __rt::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_TestAll_Nested::FIELD_OFFSET_a as usize),
+        self.arena,
+        TestAll_Nested::__hazzer_a,
+      )
     }
+  }
+  pub fn a_set(self, value: i32) {
+    self.a_mut().set(value);
   }
 
   pub fn b_len(self) -> usize {
