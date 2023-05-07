@@ -283,11 +283,15 @@ impl GenField for RepeatedScalar<'_> {
       },
       r"
         $deprecated
-        pub fn $name($self) -> &'$lt [$Type] {
+        pub fn $name($self) -> $rt::Slice<'$lt, $Type> {
           unsafe {
-            let slice = self.ptr.as_ref().$name.as_slice();
-            $transmute::<&'$lt [$Storage], &'$lt [$Type]>(slice)
+            let vec = &self.ptr.as_ref().$name;
+            $rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
           }
+        }
+        $deprecated
+        pub fn ${name}_at($self, idx: usize) -> $rt::View<'$lt, $Type> {
+          self.$name().at(idx)
         }
       ",
     );
@@ -304,30 +308,12 @@ impl GenField for RepeatedScalar<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> &'$lt mut [$Type] {
+        pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Type> {
           unsafe {
-            let slice = self.ptr.as_mut().$name.as_mut_slice();
-            $transmute::<&'$lt mut [$Storage], &'$lt mut [$Type]>(slice)
-          }
-        }
-        $deprecated
-        pub fn ${name}_set($self, that: &[$Type]) {
-          unsafe {
-            let vec = &mut self.ptr.as_mut().$name;
-            vec.resize(that.len(), self.arena);
-            let ptr = vec.as_mut_slice().as_mut_ptr();
-            ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-          }
-        }
-        $deprecated
-        pub fn ${name}_extend($self, that: &[$Type]) {
-          unsafe {
-            let vec = &mut self.ptr.as_mut().$name;
-            let old_len = vec.len();
-            let new_len = old_len + that.len();
-            vec.resize(new_len, self.arena);
-            let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-            ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+            $rt::Repeated::__wrap(
+              (&mut self.ptr.as_mut().$name) as *mut _ as *mut u8,
+              self.arena,
+            )
           }
         }
       ",
@@ -341,11 +327,10 @@ impl GenField for RepeatedScalar<'_> {
         raw_name: self.field.name(),
       },
       r#"
-        let slice = self.$name();
-        if !slice.is_empty() {
+        if !self.$name().is_empty() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
-          debug.iter(slice)?;
+          debug.iter(self.$name())?;
           count += 1;
         }
       "#,
@@ -401,7 +386,8 @@ impl GenField for SingularString<'_> {
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $rt::Str>> {
           if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
           Some(unsafe {
-            let (ptr, len) = self.ptr.as_ref().$name;
+            let (mut ptr, len) = self.ptr.as_ref().$name;
+            if ptr.is_null() { ptr = 1 as *mut u8; }
             $rt::Str::from_raw_parts(ptr, len)
           })
         }
@@ -491,20 +477,15 @@ impl GenField for RepeatedString<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_len($self) -> usize {
-          unsafe { self.ptr.as_ref() }.$name.len()
+        pub fn $name($self) -> $rt::Slice<'$lt, $rt::Str> {
+          unsafe {
+            let vec = &self.ptr.as_ref().$name;
+            $rt::Slice::__wrap(vec.as_ptr(), vec.len())
+          }
         }
         $deprecated
-        pub fn $name($self, n: usize) -> Option<&'$lt $rt::Str> {
-          unsafe { self.ptr.as_ref().$name.as_slice() }.get(n).map(|&(p, n)| unsafe {
-            $rt::Str::from_raw_parts(p, n)
-          })
-        }
-        $deprecated
-        pub fn ${name}_iter($self) -> impl Iterator<Item = &'$lt $rt::Str> + '$lt {
-          unsafe { self.ptr.as_ref().$name.as_slice() }.iter().map(|&(p, n)| unsafe {
-            $rt::Str::from_raw_parts(p, n)
-          })
+        pub fn ${name}_at($self, idx: usize) -> $rt::View<'$lt, $rt::Str> {
+          self.$name().at(idx)
         }
       ",
     );
@@ -519,23 +500,12 @@ impl GenField for RepeatedString<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self, n: usize) -> Option<$rt::StrBuf<'$lt>> {
-          unsafe { self.ptr.as_mut().$name.as_mut_slice() }.get_mut(n)
-            .map(|data| $rt::StrBuf::__wrap(data, self.arena))
-        }
-        $deprecated
-        pub fn ${name}_add($self) -> $rt::StrBuf<'$lt> {
+        pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $rt::Str> {
           unsafe {
-            let vec = &mut self.ptr.as_mut().$name;
-            let new_len = vec.len() + 1;
-            vec.resize(new_len, self.arena);
-            self.${name}_mut(new_len - 1).unwrap_unchecked()
-          }
-        }
-        $deprecated
-        pub fn ${name}_resize($self, n: usize) {
-          unsafe {
-            self.ptr.as_mut().$name.resize(n, self.arena);
+            $rt::Repeated::__wrap(
+              (&mut self.ptr.as_mut().$name) as *mut _ as *mut u8,
+              self.arena,
+            )
           }
         }
       ",
@@ -549,10 +519,10 @@ impl GenField for RepeatedString<'_> {
         raw_name: self.field.name(),
       },
       r#"
-        if self.${name}_len() != 0 {
+        if !self.$name().is_empty() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
-          debug.iter(self.${name}_iter())?;
+          debug.iter(self.$name())?;
           count += 1;
         }
       "#,
@@ -672,7 +642,7 @@ impl GenField for SingularMessage<'_> {
       r"
         let storage = &mut *raw.cast::<$priv::Storage>();
         if storage.$name.is_null() {
-          storage.$name = self.arena.alloc($Submsg::__LAYOUT).as_ptr();
+          storage.$name = arena.alloc($Submsg::__LAYOUT).as_ptr();
           $Submsg::__raw_init(storage.$name);
         }
       ",
@@ -717,24 +687,15 @@ impl GenField for RepeatedMessage<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_len($self) -> usize {
-          unsafe { self.ptr.as_ref() }.$name.len()
+        pub fn $name($self) -> $rt::Slice<'$lt, $Submsg> {
+          unsafe {
+            let vec = &self.ptr.as_ref().$name;
+            $rt::Slice::__wrap(vec.as_ptr(), vec.len())
+          }
         }
         $deprecated
-        pub fn $name($self, n: usize) -> Option<$rt::View<'$lt, $Submsg>> {
-          unsafe { self.ptr.as_ref().$name.as_slice() }.get(n)
-            .map(|&ptr| $rt::View::<$Submsg> {
-              ptr: unsafe { $z::ABox::from_ptr(ptr) },
-              _ph: $PhantomData,
-            })
-        }
-        $deprecated
-        pub fn ${name}_iter($self) -> impl Iterator<Item = $rt::View<'$lt, $Submsg>> + '$lt {
-          unsafe { self.ptr.as_ref().$name.as_slice() }.iter()
-            .map(|&ptr| $rt::View::<$Submsg> {
-              ptr: unsafe { $z::ABox::from_ptr(ptr) },
-              _ph: $PhantomData,
-            })
+        pub fn ${name}_at($self, idx: usize) -> $rt::View<'$lt, $Submsg> {
+          self.$name().at(idx)
         }
       ",
     );
@@ -750,30 +711,12 @@ impl GenField for RepeatedMessage<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self, n: usize) -> Option<$rt::Mut<'$lt, $Submsg>> {
-          unsafe { self.ptr.as_mut().$name.as_mut_slice() }.get_mut(n)
-            .map(|&mut ptr| $rt::Mut::<$Submsg> {
-              ptr: unsafe { $z::ABox::from_ptr(ptr) },
-              _ph: $PhantomData,
-              arena: self.arena,
-            })
-        }
-        $deprecated
-        pub fn ${name}_add($self) -> $rt::Mut<'$lt, $Submsg> {
+        pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Submsg> {
           unsafe {
-            let vec = &mut self.ptr.as_mut().$name;
-            let new_len = vec.len() + 1;
-            vec.resize_msg(new_len, self.arena,
-              $Submsg::__LAYOUT, $Submsg::__raw_init);
-            self.${name}_mut(new_len - 1).unwrap_unchecked()
-          }
-        }
-        $deprecated
-        pub fn ${name}_resize($self, n: usize) {
-          unsafe {
-            self.ptr.as_mut().$name.resize_msg(
-              n, self.arena,
-              $Submsg::__LAYOUT, $Submsg::__raw_init);
+            $rt::Repeated::__wrap(
+              (&mut self.ptr.as_mut().$name) as *mut _ as *mut u8,
+              self.arena,
+            )
           }
         }
       ",
@@ -787,7 +730,7 @@ impl GenField for RepeatedMessage<'_> {
         raw_name: self.field.name(),
       },
       r#"
-        for value in self.${name}_iter() {
+        for value in self.$name() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           value.__debug(debug)?;

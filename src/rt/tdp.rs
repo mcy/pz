@@ -1,19 +1,14 @@
 //! Table-driven codec support.
 
-#![allow(unused)]
-
 use core::slice;
 use std::alloc::Layout;
 use std::io;
 use std::mem;
 use std::ops::BitOr;
 use std::ops::Shl;
-use std::ptr;
 
-use crate::Str;
-
-use super::arena::AVec;
-use super::arena::RawArena;
+use crate::rt::arena::AVec;
+use crate::rt::arena::RawArena;
 
 pub type Result<T = ()> = std::result::Result<T, Error>;
 
@@ -356,7 +351,7 @@ impl<'r> ParseCtx<'r> {
         continue;
       }
 
-      let mut start = *field;
+      let start = *field;
       loop {
         let number = unsafe { &**field }.number;
         if number == tag.number {
@@ -370,7 +365,7 @@ impl<'r> ParseCtx<'r> {
         }
 
         if *field == start {
-          self.skip(tag);
+          self.skip(tag)?;
           continue 'parse;
         }
       }
@@ -431,29 +426,23 @@ impl<'r> ParseCtx<'r> {
             (Kind::I32 | Kind::F32, true) => unsafe {
               // Repeated i32.
               let ptr = raw.add(field.offset as usize);
-              let vec = unsafe { &mut *ptr.cast::<AVec<u32>>() };
+              let vec = &mut *ptr.cast::<AVec<u32>>();
               vec.resize(vec.len() + 1, self.arena);
-              unsafe {
-                *vec.as_mut_slice().last_mut().unwrap_unchecked() = v as u32;
-              }
+              *vec.as_mut_slice().last_mut().unwrap_unchecked() = v as u32;
             },
             (Kind::I64 | Kind::F64, true) => unsafe {
               // Repeated i64.
               let ptr = raw.add(field.offset as usize);
-              let vec = unsafe { &mut *ptr.cast::<AVec<u64>>() };
+              let vec = &mut *ptr.cast::<AVec<u64>>();
               vec.resize(vec.len() + 1, self.arena);
-              unsafe {
-                *vec.as_mut_slice().last_mut().unwrap_unchecked() = v;
-              }
+              *vec.as_mut_slice().last_mut().unwrap_unchecked() = v;
             },
             (Kind::Bool, true) => unsafe {
               // Repeated bool.
               let ptr = raw.add(field.offset as usize);
-              let vec = unsafe { &mut *ptr.cast::<AVec<bool>>() };
+              let vec = &mut *ptr.cast::<AVec<bool>>();
               vec.resize(vec.len() + 1, self.arena);
-              unsafe {
-                *vec.as_mut_slice().last_mut().unwrap_unchecked() = v != 0;
-              }
+              *vec.as_mut_slice().last_mut().unwrap_unchecked() = v != 0;
             },
             _ => unreachable!(),
           }
@@ -503,7 +492,7 @@ impl<'r> ParseCtx<'r> {
           match tag.wire_type {
             WireFormat::LEN => {
               let len = self.input.varint32()?;
-              self.input.push_limit(len as u64);
+              self.input.push_limit(len as u64)?;
               self.group_stack.push(0);
             }
             WireFormat::SGROUP => {
@@ -515,7 +504,7 @@ impl<'r> ParseCtx<'r> {
             }
           }
 
-          let submsg_ptr = unsafe { (*(&**msg).tys.add(field.ty as usize)) }();
+          let submsg_ptr = unsafe { *(&**msg).tys.add(field.ty as usize) }();
           let submsg = unsafe { &*submsg_ptr };
           let layout = unsafe {
             Layout::from_size_align_unchecked(submsg.size as usize, 8)

@@ -12,6 +12,9 @@ pub use self::ptr::Mut;
 pub use self::ptr::View;
 pub use self::str::Str;
 pub use self::str::StrBuf;
+pub use self::value::Repeated;
+pub use self::value::Slice;
+pub use self::value::SliceMut;
 
 #[doc(hidden)]
 pub mod __z {

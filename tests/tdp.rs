@@ -1,5 +1,3 @@
-use pz::Str;
-
 #[path = "proto/lib.pz.rs"]
 mod proto;
 
@@ -104,21 +102,10 @@ fn smoke() {
   assert_eq!(proto.rep_f32(), [f32::INFINITY, 42.0, -0.0]);
   assert_eq!(proto.rep_f64(), [f64::INFINITY]);
   assert_eq!(proto.rep_bool(), [false, true, true]);
+  assert_eq!(proto.rep_str(), ["more", "nor\0mal", "strings?"]);
+  assert_eq!(proto.rep_recursive_at(0).opt_i32(), 1);
+  assert_eq!(proto.rep_recursive_at(1).opt_i32(), 6);
+  assert_eq!(proto.rep_recursive_at(2).opt_i64(), 9);
 
-  assert_eq!(proto.rep_str(0), Some(Str::new("more")));
-  assert_eq!(proto.rep_str(1), Some(Str::new("nor\0mal")));
-  assert_eq!(proto.rep_str(2), Some(Str::new("strings?")));
-  assert_eq!(proto.rep_str(3), None);
-
-  assert_eq!(proto.rep_recursive(0).unwrap().opt_i32(), 1);
-  assert_eq!(proto.rep_recursive(1).unwrap().opt_i32(), 6);
-  assert_eq!(proto.rep_recursive(2).unwrap().opt_i64(), 9);
-
-  assert_eq!(proto.rep_nested(0).unwrap().b(0), Some(Str::new("yet")));
-  assert_eq!(proto.rep_nested(0).unwrap().b(1), Some(Str::new("more")));
-  assert_eq!(
-    proto.rep_nested(0).unwrap().b(2),
-    Some(Str::new("hellropes"))
-  );
-  assert_eq!(proto.rep_nested(0).unwrap().b(3), None);
+  assert_eq!(proto.rep_nested_at(0).b(), ["yet", "more", "hellropes"]);
 }

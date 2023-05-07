@@ -98,6 +98,7 @@ impl<'a, 'b> Debug<'a, 'b> {
     }
     self.comma(true)?;
     self.indent -= 2;
+    self.new_line(false)?;
     self.fmt.write_char(']')?;
 
     Ok(())

@@ -52,19 +52,24 @@ impl<T> Clone for ABox<T> {
 
 impl<T> Copy for ABox<T> {}
 
+#[repr(C)]
 pub struct AVec<T> {
   ptr: NonNull<T>,
   cap: usize,
   len: usize,
 }
 
-impl<T: Copy + std::fmt::Debug> AVec<T> {
+impl<T> AVec<T> {
   pub const fn new() -> AVec<T> {
     Self {
       ptr: NonNull::dangling(),
       cap: 0,
       len: 0,
     }
+  }
+
+  pub fn as_ptr(&self) -> *mut T {
+    self.ptr.as_ptr()
   }
 
   pub fn len(&self) -> usize {
@@ -140,10 +145,8 @@ impl AVec<*mut u8> {
         let ptr = &mut *self.ptr.as_ptr().add(self.len);
         if ptr.is_null() {
           *ptr = arena.alloc(layout).as_ptr();
-          ptr.write_bytes(0, layout.size());
-        } else {
-          clear(*ptr);
         }
+        clear(*ptr);
       }
 
       self.len += 1;

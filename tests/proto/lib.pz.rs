@@ -225,7 +225,8 @@ impl TestAll {
   pub fn opt_str_or(&self) -> Option<__rt::rt::View<'_, __rt::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().opt_str;
+      let (mut ptr, len) = self.ptr.as_ref().opt_str;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       __rt::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -314,335 +315,183 @@ impl TestAll {
     }
   }
 
-  pub fn rep_i32(&self) -> &'_ [i32] {
+  pub fn rep_i32(&self) -> __rt::rt::Slice<'_, i32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_i32.as_slice();
-      std::mem::transmute::<&'_ [u32], &'_ [i32]>(slice)
+      let vec = &self.ptr.as_ref().rep_i32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_i32_mut(&mut self) -> &'_ mut [i32] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_i32.as_mut_slice();
-      std::mem::transmute::<&'_ mut [u32], &'_ mut [i32]>(slice)
-    }
+  pub fn rep_i32_at(&self, idx: usize) -> __rt::rt::View<'_, i32> {
+    self.rep_i32().at(idx)
   }
-  pub fn rep_i32_set(&mut self, that: &[i32]) {
+  pub fn rep_i32_mut(&mut self) -> __rt::rt::Repeated<'_, i32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i32;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_i32_extend(&mut self, that: &[i32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i32;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_i32) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_i64(&self) -> &'_ [i64] {
+  pub fn rep_i64(&self) -> __rt::rt::Slice<'_, i64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_i64.as_slice();
-      std::mem::transmute::<&'_ [u64], &'_ [i64]>(slice)
+      let vec = &self.ptr.as_ref().rep_i64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_i64_mut(&mut self) -> &'_ mut [i64] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_i64.as_mut_slice();
-      std::mem::transmute::<&'_ mut [u64], &'_ mut [i64]>(slice)
-    }
+  pub fn rep_i64_at(&self, idx: usize) -> __rt::rt::View<'_, i64> {
+    self.rep_i64().at(idx)
   }
-  pub fn rep_i64_set(&mut self, that: &[i64]) {
+  pub fn rep_i64_mut(&mut self) -> __rt::rt::Repeated<'_, i64> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i64;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_i64_extend(&mut self, that: &[i64]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i64;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_i64) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_u32(&self) -> &'_ [u32] {
+  pub fn rep_u32(&self) -> __rt::rt::Slice<'_, u32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_u32.as_slice();
-      std::mem::transmute::<&'_ [u32], &'_ [u32]>(slice)
+      let vec = &self.ptr.as_ref().rep_u32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_u32_mut(&mut self) -> &'_ mut [u32] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_u32.as_mut_slice();
-      std::mem::transmute::<&'_ mut [u32], &'_ mut [u32]>(slice)
-    }
+  pub fn rep_u32_at(&self, idx: usize) -> __rt::rt::View<'_, u32> {
+    self.rep_u32().at(idx)
   }
-  pub fn rep_u32_set(&mut self, that: &[u32]) {
+  pub fn rep_u32_mut(&mut self) -> __rt::rt::Repeated<'_, u32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u32;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_u32_extend(&mut self, that: &[u32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u32;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_u32) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_u64(&self) -> &'_ [u64] {
+  pub fn rep_u64(&self) -> __rt::rt::Slice<'_, u64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_u64.as_slice();
-      std::mem::transmute::<&'_ [u64], &'_ [u64]>(slice)
+      let vec = &self.ptr.as_ref().rep_u64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_u64_mut(&mut self) -> &'_ mut [u64] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_u64.as_mut_slice();
-      std::mem::transmute::<&'_ mut [u64], &'_ mut [u64]>(slice)
-    }
+  pub fn rep_u64_at(&self, idx: usize) -> __rt::rt::View<'_, u64> {
+    self.rep_u64().at(idx)
   }
-  pub fn rep_u64_set(&mut self, that: &[u64]) {
+  pub fn rep_u64_mut(&mut self) -> __rt::rt::Repeated<'_, u64> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u64;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_u64_extend(&mut self, that: &[u64]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u64;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_u64) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_f32(&self) -> &'_ [f32] {
+  pub fn rep_f32(&self) -> __rt::rt::Slice<'_, f32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_f32.as_slice();
-      std::mem::transmute::<&'_ [u32], &'_ [f32]>(slice)
+      let vec = &self.ptr.as_ref().rep_f32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_f32_mut(&mut self) -> &'_ mut [f32] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_f32.as_mut_slice();
-      std::mem::transmute::<&'_ mut [u32], &'_ mut [f32]>(slice)
-    }
+  pub fn rep_f32_at(&self, idx: usize) -> __rt::rt::View<'_, f32> {
+    self.rep_f32().at(idx)
   }
-  pub fn rep_f32_set(&mut self, that: &[f32]) {
+  pub fn rep_f32_mut(&mut self) -> __rt::rt::Repeated<'_, f32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f32;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_f32_extend(&mut self, that: &[f32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f32;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_f32) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_f64(&self) -> &'_ [f64] {
+  pub fn rep_f64(&self) -> __rt::rt::Slice<'_, f64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_f64.as_slice();
-      std::mem::transmute::<&'_ [u64], &'_ [f64]>(slice)
+      let vec = &self.ptr.as_ref().rep_f64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_f64_mut(&mut self) -> &'_ mut [f64] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_f64.as_mut_slice();
-      std::mem::transmute::<&'_ mut [u64], &'_ mut [f64]>(slice)
-    }
+  pub fn rep_f64_at(&self, idx: usize) -> __rt::rt::View<'_, f64> {
+    self.rep_f64().at(idx)
   }
-  pub fn rep_f64_set(&mut self, that: &[f64]) {
+  pub fn rep_f64_mut(&mut self) -> __rt::rt::Repeated<'_, f64> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f64;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_f64_extend(&mut self, that: &[f64]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f64;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_f64) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_str_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_str.len()
-  }
-  pub fn rep_str(&self, n: usize) -> Option<&'_ __rt::rt::Str> {
-    unsafe { self.ptr.as_ref().rep_str.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn rep_str_iter(&self) -> impl Iterator<Item = &'_ __rt::rt::Str> + '_ {
-    unsafe { self.ptr.as_ref().rep_str.as_slice() }.iter().map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn rep_str_mut(&mut self, n: usize) -> Option<__rt::rt::StrBuf<'_>> {
-    unsafe { self.ptr.as_mut().rep_str.as_mut_slice() }.get_mut(n)
-      .map(|data| __rt::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn rep_str_add(&mut self) -> __rt::rt::StrBuf<'_> {
+  pub fn rep_str(&self) -> __rt::rt::Slice<'_, __rt::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_str;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.rep_str_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().rep_str;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn rep_str_resize(&mut self, n: usize) {
+  pub fn rep_str_at(&self, idx: usize) -> __rt::rt::View<'_, __rt::rt::Str> {
+    self.rep_str().at(idx)
+  }
+  pub fn rep_str_mut(&mut self) -> __rt::rt::Repeated<'_, __rt::rt::Str> {
     unsafe {
-      self.ptr.as_mut().rep_str.resize(n, self.arena);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_str) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_bool(&self) -> &'_ [bool] {
+  pub fn rep_bool(&self) -> __rt::rt::Slice<'_, bool> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_bool.as_slice();
-      std::mem::transmute::<&'_ [bool], &'_ [bool]>(slice)
+      let vec = &self.ptr.as_ref().rep_bool;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_bool_mut(&mut self) -> &'_ mut [bool] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_bool.as_mut_slice();
-      std::mem::transmute::<&'_ mut [bool], &'_ mut [bool]>(slice)
-    }
+  pub fn rep_bool_at(&self, idx: usize) -> __rt::rt::View<'_, bool> {
+    self.rep_bool().at(idx)
   }
-  pub fn rep_bool_set(&mut self, that: &[bool]) {
+  pub fn rep_bool_mut(&mut self) -> __rt::rt::Repeated<'_, bool> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_bool;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_bool_extend(&mut self, that: &[bool]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_bool;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_bool) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_recursive_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_recursive.len()
-  }
-  pub fn rep_recursive(&self, n: usize) -> Option<__rt::rt::View<'_, TestAll>> {
-    unsafe { self.ptr.as_ref().rep_recursive.as_slice() }.get(n)
-      .map(|&ptr| __rt::rt::View::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_recursive_iter(&self) -> impl Iterator<Item = __rt::rt::View<'_, TestAll>> + '_ {
-    unsafe { self.ptr.as_ref().rep_recursive.as_slice() }.iter()
-      .map(|&ptr| __rt::rt::View::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_recursive_mut(&mut self, n: usize) -> Option<__rt::rt::Mut<'_, TestAll>> {
-    unsafe { self.ptr.as_mut().rep_recursive.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| __rt::rt::Mut::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn rep_recursive_add(&mut self) -> __rt::rt::Mut<'_, TestAll> {
+  pub fn rep_recursive(&self) -> __rt::rt::Slice<'_, TestAll> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_recursive;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_init);
-      self.rep_recursive_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().rep_recursive;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn rep_recursive_resize(&mut self, n: usize) {
+  pub fn rep_recursive_at(&self, idx: usize) -> __rt::rt::View<'_, TestAll> {
+    self.rep_recursive().at(idx)
+  }
+  pub fn rep_recursive_mut(&mut self) -> __rt::rt::Repeated<'_, TestAll> {
     unsafe {
-      self.ptr.as_mut().rep_recursive.resize_msg(
-        n, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_init);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_recursive) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_nested_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_nested.len()
-  }
-  pub fn rep_nested(&self, n: usize) -> Option<__rt::rt::View<'_, TestAll_Nested>> {
-    unsafe { self.ptr.as_ref().rep_nested.as_slice() }.get(n)
-      .map(|&ptr| __rt::rt::View::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_nested_iter(&self) -> impl Iterator<Item = __rt::rt::View<'_, TestAll_Nested>> + '_ {
-    unsafe { self.ptr.as_ref().rep_nested.as_slice() }.iter()
-      .map(|&ptr| __rt::rt::View::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_nested_mut(&mut self, n: usize) -> Option<__rt::rt::Mut<'_, TestAll_Nested>> {
-    unsafe { self.ptr.as_mut().rep_nested.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| __rt::rt::Mut::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn rep_nested_add(&mut self) -> __rt::rt::Mut<'_, TestAll_Nested> {
+  pub fn rep_nested(&self) -> __rt::rt::Slice<'_, TestAll_Nested> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_nested;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
-      self.rep_nested_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().rep_nested;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn rep_nested_resize(&mut self, n: usize) {
+  pub fn rep_nested_at(&self, idx: usize) -> __rt::rt::View<'_, TestAll_Nested> {
+    self.rep_nested().at(idx)
+  }
+  pub fn rep_nested_mut(&mut self) -> __rt::rt::Repeated<'_, TestAll_Nested> {
     unsafe {
-      self.ptr.as_mut().rep_nested.resize_msg(
-        n, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_nested) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
@@ -822,7 +671,7 @@ impl TestAll {
         *word |= 256;
         let storage = &mut *raw.cast::<__priv_TestAll::Storage>();
         if storage.opt_recursive.is_null() {
-          storage.opt_recursive = self.arena.alloc(TestAll::__LAYOUT).as_ptr();
+          storage.opt_recursive = arena.alloc(TestAll::__LAYOUT).as_ptr();
           TestAll::__raw_init(storage.opt_recursive);
         }
       }
@@ -845,7 +694,7 @@ impl TestAll {
         *word |= 512;
         let storage = &mut *raw.cast::<__priv_TestAll::Storage>();
         if storage.opt_nested.is_null() {
-          storage.opt_nested = self.arena.alloc(TestAll_Nested::__LAYOUT).as_ptr();
+          storage.opt_nested = arena.alloc(TestAll_Nested::__LAYOUT).as_ptr();
           TestAll_Nested::__raw_init(storage.opt_nested);
         }
       }
@@ -866,18 +715,25 @@ impl __rt::rt::ptr::Proxied for TestAll {
 }
 
 impl __rt::rt::value::Type for TestAll {
+  type __Storage = *mut u8;
+
   unsafe fn __make_view<'a>(ptr: *mut u8) -> __rt::rt::View<'a, Self> {
     __priv_TestAll::View {
-      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       _ph: std::marker::PhantomData,
     }
   }
   unsafe fn __make_mut<'a>(ptr: *mut u8, arena: __rt::rt::__z::RawArena) -> __rt::rt::Mut<'a, Self> {
     __priv_TestAll::Mut {
-      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       arena,
       _ph: std::marker::PhantomData,
     }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: __rt::rt::__z::RawArena) {
+    (&mut *ptr.cast::<__rt::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
   }
 }
 
@@ -936,7 +792,8 @@ impl<'msg> __priv_TestAll::View<'msg> {
   pub fn opt_str_or(self) -> Option<__rt::rt::View<'msg, __rt::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().opt_str;
+      let (mut ptr, len) = self.ptr.as_ref().opt_str;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       __rt::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -971,103 +828,104 @@ impl<'msg> __priv_TestAll::View<'msg> {
     })
   }
 
-  pub fn rep_i32(self) -> &'msg [i32] {
+  pub fn rep_i32(self) -> __rt::rt::Slice<'msg, i32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_i32.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [i32]>(slice)
+      let vec = &self.ptr.as_ref().rep_i32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
+  pub fn rep_i32_at(self, idx: usize) -> __rt::rt::View<'msg, i32> {
+    self.rep_i32().at(idx)
+  }
 
-  pub fn rep_i64(self) -> &'msg [i64] {
+  pub fn rep_i64(self) -> __rt::rt::Slice<'msg, i64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_i64.as_slice();
-      std::mem::transmute::<&'msg [u64], &'msg [i64]>(slice)
+      let vec = &self.ptr.as_ref().rep_i64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
+  pub fn rep_i64_at(self, idx: usize) -> __rt::rt::View<'msg, i64> {
+    self.rep_i64().at(idx)
+  }
 
-  pub fn rep_u32(self) -> &'msg [u32] {
+  pub fn rep_u32(self) -> __rt::rt::Slice<'msg, u32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_u32.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [u32]>(slice)
+      let vec = &self.ptr.as_ref().rep_u32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
+  pub fn rep_u32_at(self, idx: usize) -> __rt::rt::View<'msg, u32> {
+    self.rep_u32().at(idx)
+  }
 
-  pub fn rep_u64(self) -> &'msg [u64] {
+  pub fn rep_u64(self) -> __rt::rt::Slice<'msg, u64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_u64.as_slice();
-      std::mem::transmute::<&'msg [u64], &'msg [u64]>(slice)
+      let vec = &self.ptr.as_ref().rep_u64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
+  pub fn rep_u64_at(self, idx: usize) -> __rt::rt::View<'msg, u64> {
+    self.rep_u64().at(idx)
+  }
 
-  pub fn rep_f32(self) -> &'msg [f32] {
+  pub fn rep_f32(self) -> __rt::rt::Slice<'msg, f32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_f32.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [f32]>(slice)
+      let vec = &self.ptr.as_ref().rep_f32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
+  pub fn rep_f32_at(self, idx: usize) -> __rt::rt::View<'msg, f32> {
+    self.rep_f32().at(idx)
+  }
 
-  pub fn rep_f64(self) -> &'msg [f64] {
+  pub fn rep_f64(self) -> __rt::rt::Slice<'msg, f64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_f64.as_slice();
-      std::mem::transmute::<&'msg [u64], &'msg [f64]>(slice)
+      let vec = &self.ptr.as_ref().rep_f64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-
-  pub fn rep_str_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_str.len()
-  }
-  pub fn rep_str(self, n: usize) -> Option<&'msg __rt::rt::Str> {
-    unsafe { self.ptr.as_ref().rep_str.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn rep_str_iter(self) -> impl Iterator<Item = &'msg __rt::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().rep_str.as_slice() }.iter().map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
+  pub fn rep_f64_at(self, idx: usize) -> __rt::rt::View<'msg, f64> {
+    self.rep_f64().at(idx)
   }
 
-  pub fn rep_bool(self) -> &'msg [bool] {
+  pub fn rep_str(self) -> __rt::rt::Slice<'msg, __rt::rt::Str> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_bool.as_slice();
-      std::mem::transmute::<&'msg [bool], &'msg [bool]>(slice)
+      let vec = &self.ptr.as_ref().rep_str;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-
-  pub fn rep_recursive_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_recursive.len()
-  }
-  pub fn rep_recursive(self, n: usize) -> Option<__rt::rt::View<'msg, TestAll>> {
-    unsafe { self.ptr.as_ref().rep_recursive.as_slice() }.get(n)
-      .map(|&ptr| __rt::rt::View::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_recursive_iter(self) -> impl Iterator<Item = __rt::rt::View<'msg, TestAll>> + 'msg {
-    unsafe { self.ptr.as_ref().rep_recursive.as_slice() }.iter()
-      .map(|&ptr| __rt::rt::View::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
+  pub fn rep_str_at(self, idx: usize) -> __rt::rt::View<'msg, __rt::rt::Str> {
+    self.rep_str().at(idx)
   }
 
-  pub fn rep_nested_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_nested.len()
+  pub fn rep_bool(self) -> __rt::rt::Slice<'msg, bool> {
+    unsafe {
+      let vec = &self.ptr.as_ref().rep_bool;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+    }
   }
-  pub fn rep_nested(self, n: usize) -> Option<__rt::rt::View<'msg, TestAll_Nested>> {
-    unsafe { self.ptr.as_ref().rep_nested.as_slice() }.get(n)
-      .map(|&ptr| __rt::rt::View::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
+  pub fn rep_bool_at(self, idx: usize) -> __rt::rt::View<'msg, bool> {
+    self.rep_bool().at(idx)
   }
-  pub fn rep_nested_iter(self) -> impl Iterator<Item = __rt::rt::View<'msg, TestAll_Nested>> + 'msg {
-    unsafe { self.ptr.as_ref().rep_nested.as_slice() }.iter()
-      .map(|&ptr| __rt::rt::View::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
+
+  pub fn rep_recursive(self) -> __rt::rt::Slice<'msg, TestAll> {
+    unsafe {
+      let vec = &self.ptr.as_ref().rep_recursive;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn rep_recursive_at(self, idx: usize) -> __rt::rt::View<'msg, TestAll> {
+    self.rep_recursive().at(idx)
+  }
+
+  pub fn rep_nested(self) -> __rt::rt::Slice<'msg, TestAll_Nested> {
+    unsafe {
+      let vec = &self.ptr.as_ref().rep_nested;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn rep_nested_at(self, idx: usize) -> __rt::rt::View<'msg, TestAll_Nested> {
+    self.rep_nested().at(idx)
   }
 
   #[doc(hidden)]
@@ -1134,68 +992,61 @@ impl<'msg> __priv_TestAll::View<'msg> {
       value.__debug(debug)?;
       count += 1;
     }
-    let slice = self.rep_i32();
-    if !slice.is_empty() {
+    if !self.rep_i32().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_i32")?;
-      debug.iter(slice)?;
+      debug.iter(self.rep_i32())?;
       count += 1;
     }
-    let slice = self.rep_i64();
-    if !slice.is_empty() {
+    if !self.rep_i64().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_i64")?;
-      debug.iter(slice)?;
+      debug.iter(self.rep_i64())?;
       count += 1;
     }
-    let slice = self.rep_u32();
-    if !slice.is_empty() {
+    if !self.rep_u32().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_u32")?;
-      debug.iter(slice)?;
+      debug.iter(self.rep_u32())?;
       count += 1;
     }
-    let slice = self.rep_u64();
-    if !slice.is_empty() {
+    if !self.rep_u64().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_u64")?;
-      debug.iter(slice)?;
+      debug.iter(self.rep_u64())?;
       count += 1;
     }
-    let slice = self.rep_f32();
-    if !slice.is_empty() {
+    if !self.rep_f32().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_f32")?;
-      debug.iter(slice)?;
+      debug.iter(self.rep_f32())?;
       count += 1;
     }
-    let slice = self.rep_f64();
-    if !slice.is_empty() {
+    if !self.rep_f64().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_f64")?;
-      debug.iter(slice)?;
+      debug.iter(self.rep_f64())?;
       count += 1;
     }
-    if self.rep_str_len() != 0 {
+    if !self.rep_str().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_str")?;
-      debug.iter(self.rep_str_iter())?;
+      debug.iter(self.rep_str())?;
       count += 1;
     }
-    let slice = self.rep_bool();
-    if !slice.is_empty() {
+    if !self.rep_bool().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_bool")?;
-      debug.iter(slice)?;
+      debug.iter(self.rep_bool())?;
       count += 1;
     }
-    for value in self.rep_recursive_iter() {
+    for value in self.rep_recursive() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_recursive")?;
       value.__debug(debug)?;
       count += 1;
     }
-    for value in self.rep_nested_iter() {
+    for value in self.rep_nested() {
       if count != 0 { debug.comma(false)?; }
       debug.field("rep_nested")?;
       value.__debug(debug)?;
@@ -1369,7 +1220,8 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
   pub fn opt_str_or(self) -> Option<__rt::rt::View<'msg, __rt::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 64 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().opt_str;
+      let (mut ptr, len) = self.ptr.as_ref().opt_str;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       __rt::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -1458,335 +1310,183 @@ impl<'msg> __priv_TestAll::Mut<'msg>  {
     }
   }
 
-  pub fn rep_i32(self) -> &'msg [i32] {
+  pub fn rep_i32(self) -> __rt::rt::Slice<'msg, i32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_i32.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [i32]>(slice)
+      let vec = &self.ptr.as_ref().rep_i32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_i32_mut(self) -> &'msg mut [i32] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_i32.as_mut_slice();
-      std::mem::transmute::<&'msg mut [u32], &'msg mut [i32]>(slice)
-    }
+  pub fn rep_i32_at(self, idx: usize) -> __rt::rt::View<'msg, i32> {
+    self.rep_i32().at(idx)
   }
-  pub fn rep_i32_set(self, that: &[i32]) {
+  pub fn rep_i32_mut(self) -> __rt::rt::Repeated<'msg, i32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i32;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_i32_extend(self, that: &[i32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i32;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_i32) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_i64(self) -> &'msg [i64] {
+  pub fn rep_i64(self) -> __rt::rt::Slice<'msg, i64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_i64.as_slice();
-      std::mem::transmute::<&'msg [u64], &'msg [i64]>(slice)
+      let vec = &self.ptr.as_ref().rep_i64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_i64_mut(self) -> &'msg mut [i64] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_i64.as_mut_slice();
-      std::mem::transmute::<&'msg mut [u64], &'msg mut [i64]>(slice)
-    }
+  pub fn rep_i64_at(self, idx: usize) -> __rt::rt::View<'msg, i64> {
+    self.rep_i64().at(idx)
   }
-  pub fn rep_i64_set(self, that: &[i64]) {
+  pub fn rep_i64_mut(self) -> __rt::rt::Repeated<'msg, i64> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i64;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_i64_extend(self, that: &[i64]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_i64;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_i64) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_u32(self) -> &'msg [u32] {
+  pub fn rep_u32(self) -> __rt::rt::Slice<'msg, u32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_u32.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [u32]>(slice)
+      let vec = &self.ptr.as_ref().rep_u32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_u32_mut(self) -> &'msg mut [u32] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_u32.as_mut_slice();
-      std::mem::transmute::<&'msg mut [u32], &'msg mut [u32]>(slice)
-    }
+  pub fn rep_u32_at(self, idx: usize) -> __rt::rt::View<'msg, u32> {
+    self.rep_u32().at(idx)
   }
-  pub fn rep_u32_set(self, that: &[u32]) {
+  pub fn rep_u32_mut(self) -> __rt::rt::Repeated<'msg, u32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u32;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_u32_extend(self, that: &[u32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u32;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_u32) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_u64(self) -> &'msg [u64] {
+  pub fn rep_u64(self) -> __rt::rt::Slice<'msg, u64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_u64.as_slice();
-      std::mem::transmute::<&'msg [u64], &'msg [u64]>(slice)
+      let vec = &self.ptr.as_ref().rep_u64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_u64_mut(self) -> &'msg mut [u64] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_u64.as_mut_slice();
-      std::mem::transmute::<&'msg mut [u64], &'msg mut [u64]>(slice)
-    }
+  pub fn rep_u64_at(self, idx: usize) -> __rt::rt::View<'msg, u64> {
+    self.rep_u64().at(idx)
   }
-  pub fn rep_u64_set(self, that: &[u64]) {
+  pub fn rep_u64_mut(self) -> __rt::rt::Repeated<'msg, u64> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u64;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_u64_extend(self, that: &[u64]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_u64;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_u64) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_f32(self) -> &'msg [f32] {
+  pub fn rep_f32(self) -> __rt::rt::Slice<'msg, f32> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_f32.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [f32]>(slice)
+      let vec = &self.ptr.as_ref().rep_f32;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_f32_mut(self) -> &'msg mut [f32] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_f32.as_mut_slice();
-      std::mem::transmute::<&'msg mut [u32], &'msg mut [f32]>(slice)
-    }
+  pub fn rep_f32_at(self, idx: usize) -> __rt::rt::View<'msg, f32> {
+    self.rep_f32().at(idx)
   }
-  pub fn rep_f32_set(self, that: &[f32]) {
+  pub fn rep_f32_mut(self) -> __rt::rt::Repeated<'msg, f32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f32;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_f32_extend(self, that: &[f32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f32;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_f32) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_f64(self) -> &'msg [f64] {
+  pub fn rep_f64(self) -> __rt::rt::Slice<'msg, f64> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_f64.as_slice();
-      std::mem::transmute::<&'msg [u64], &'msg [f64]>(slice)
+      let vec = &self.ptr.as_ref().rep_f64;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_f64_mut(self) -> &'msg mut [f64] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_f64.as_mut_slice();
-      std::mem::transmute::<&'msg mut [u64], &'msg mut [f64]>(slice)
-    }
+  pub fn rep_f64_at(self, idx: usize) -> __rt::rt::View<'msg, f64> {
+    self.rep_f64().at(idx)
   }
-  pub fn rep_f64_set(self, that: &[f64]) {
+  pub fn rep_f64_mut(self) -> __rt::rt::Repeated<'msg, f64> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f64;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_f64_extend(self, that: &[f64]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_f64;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_f64) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_str_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_str.len()
-  }
-  pub fn rep_str(self, n: usize) -> Option<&'msg __rt::rt::Str> {
-    unsafe { self.ptr.as_ref().rep_str.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn rep_str_iter(self) -> impl Iterator<Item = &'msg __rt::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().rep_str.as_slice() }.iter().map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn rep_str_mut(self, n: usize) -> Option<__rt::rt::StrBuf<'msg>> {
-    unsafe { self.ptr.as_mut().rep_str.as_mut_slice() }.get_mut(n)
-      .map(|data| __rt::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn rep_str_add(self) -> __rt::rt::StrBuf<'msg> {
+  pub fn rep_str(self) -> __rt::rt::Slice<'msg, __rt::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_str;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.rep_str_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().rep_str;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn rep_str_resize(self, n: usize) {
+  pub fn rep_str_at(self, idx: usize) -> __rt::rt::View<'msg, __rt::rt::Str> {
+    self.rep_str().at(idx)
+  }
+  pub fn rep_str_mut(self) -> __rt::rt::Repeated<'msg, __rt::rt::Str> {
     unsafe {
-      self.ptr.as_mut().rep_str.resize(n, self.arena);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_str) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_bool(self) -> &'msg [bool] {
+  pub fn rep_bool(self) -> __rt::rt::Slice<'msg, bool> {
     unsafe {
-      let slice = self.ptr.as_ref().rep_bool.as_slice();
-      std::mem::transmute::<&'msg [bool], &'msg [bool]>(slice)
+      let vec = &self.ptr.as_ref().rep_bool;
+      __rt::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn rep_bool_mut(self) -> &'msg mut [bool] {
-    unsafe {
-      let slice = self.ptr.as_mut().rep_bool.as_mut_slice();
-      std::mem::transmute::<&'msg mut [bool], &'msg mut [bool]>(slice)
-    }
+  pub fn rep_bool_at(self, idx: usize) -> __rt::rt::View<'msg, bool> {
+    self.rep_bool().at(idx)
   }
-  pub fn rep_bool_set(self, that: &[bool]) {
+  pub fn rep_bool_mut(self) -> __rt::rt::Repeated<'msg, bool> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_bool;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn rep_bool_extend(self, that: &[bool]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().rep_bool;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_bool) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_recursive_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_recursive.len()
-  }
-  pub fn rep_recursive(self, n: usize) -> Option<__rt::rt::View<'msg, TestAll>> {
-    unsafe { self.ptr.as_ref().rep_recursive.as_slice() }.get(n)
-      .map(|&ptr| __rt::rt::View::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_recursive_iter(self) -> impl Iterator<Item = __rt::rt::View<'msg, TestAll>> + 'msg {
-    unsafe { self.ptr.as_ref().rep_recursive.as_slice() }.iter()
-      .map(|&ptr| __rt::rt::View::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_recursive_mut(self, n: usize) -> Option<__rt::rt::Mut<'msg, TestAll>> {
-    unsafe { self.ptr.as_mut().rep_recursive.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| __rt::rt::Mut::<TestAll> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn rep_recursive_add(self) -> __rt::rt::Mut<'msg, TestAll> {
+  pub fn rep_recursive(self) -> __rt::rt::Slice<'msg, TestAll> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_recursive;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_init);
-      self.rep_recursive_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().rep_recursive;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn rep_recursive_resize(self, n: usize) {
+  pub fn rep_recursive_at(self, idx: usize) -> __rt::rt::View<'msg, TestAll> {
+    self.rep_recursive().at(idx)
+  }
+  pub fn rep_recursive_mut(self) -> __rt::rt::Repeated<'msg, TestAll> {
     unsafe {
-      self.ptr.as_mut().rep_recursive.resize_msg(
-        n, self.arena,
-        TestAll::__LAYOUT, TestAll::__raw_init);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_recursive) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn rep_nested_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.rep_nested.len()
-  }
-  pub fn rep_nested(self, n: usize) -> Option<__rt::rt::View<'msg, TestAll_Nested>> {
-    unsafe { self.ptr.as_ref().rep_nested.as_slice() }.get(n)
-      .map(|&ptr| __rt::rt::View::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_nested_iter(self) -> impl Iterator<Item = __rt::rt::View<'msg, TestAll_Nested>> + 'msg {
-    unsafe { self.ptr.as_ref().rep_nested.as_slice() }.iter()
-      .map(|&ptr| __rt::rt::View::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn rep_nested_mut(self, n: usize) -> Option<__rt::rt::Mut<'msg, TestAll_Nested>> {
-    unsafe { self.ptr.as_mut().rep_nested.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| __rt::rt::Mut::<TestAll_Nested> {
-        ptr: unsafe { __rt::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn rep_nested_add(self) -> __rt::rt::Mut<'msg, TestAll_Nested> {
+  pub fn rep_nested(self) -> __rt::rt::Slice<'msg, TestAll_Nested> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().rep_nested;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
-      self.rep_nested_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().rep_nested;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn rep_nested_resize(self, n: usize) {
+  pub fn rep_nested_at(self, idx: usize) -> __rt::rt::View<'msg, TestAll_Nested> {
+    self.rep_nested().at(idx)
+  }
+  pub fn rep_nested_mut(self) -> __rt::rt::Repeated<'msg, TestAll_Nested> {
     unsafe {
-      self.ptr.as_mut().rep_nested.resize_msg(
-        n, self.arena,
-        TestAll_Nested::__LAYOUT, TestAll_Nested::__raw_init);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().rep_nested) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
@@ -2245,34 +1945,21 @@ impl TestAll_Nested {
     self.a_mut().set(value);
   }
 
-  pub fn b_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.b.len()
-  }
-  pub fn b(&self, n: usize) -> Option<&'_ __rt::rt::Str> {
-    unsafe { self.ptr.as_ref().b.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn b_iter(&self) -> impl Iterator<Item = &'_ __rt::rt::Str> + '_ {
-    unsafe { self.ptr.as_ref().b.as_slice() }.iter().map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn b_mut(&mut self, n: usize) -> Option<__rt::rt::StrBuf<'_>> {
-    unsafe { self.ptr.as_mut().b.as_mut_slice() }.get_mut(n)
-      .map(|data| __rt::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn b_add(&mut self) -> __rt::rt::StrBuf<'_> {
+  pub fn b(&self) -> __rt::rt::Slice<'_, __rt::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().b;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.b_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().b;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn b_resize(&mut self, n: usize) {
+  pub fn b_at(&self, idx: usize) -> __rt::rt::View<'_, __rt::rt::Str> {
+    self.b().at(idx)
+  }
+  pub fn b_mut(&mut self) -> __rt::rt::Repeated<'_, __rt::rt::Str> {
     unsafe {
-      self.ptr.as_mut().b.resize(n, self.arena);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().b) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
@@ -2324,18 +2011,25 @@ impl __rt::rt::ptr::Proxied for TestAll_Nested {
 }
 
 impl __rt::rt::value::Type for TestAll_Nested {
+  type __Storage = *mut u8;
+
   unsafe fn __make_view<'a>(ptr: *mut u8) -> __rt::rt::View<'a, Self> {
     __priv_TestAll_Nested::View {
-      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       _ph: std::marker::PhantomData,
     }
   }
   unsafe fn __make_mut<'a>(ptr: *mut u8, arena: __rt::rt::__z::RawArena) -> __rt::rt::Mut<'a, Self> {
     __priv_TestAll_Nested::Mut {
-      ptr: __rt::rt::__z::ABox::from_ptr(ptr),
+      ptr: __rt::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       arena,
       _ph: std::marker::PhantomData,
     }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: __rt::rt::__z::RawArena) {
+    (&mut *ptr.cast::<__rt::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
   }
 }
 
@@ -2348,18 +2042,14 @@ impl<'msg> __priv_TestAll_Nested::View<'msg> {
     Some(unsafe { std::mem::transmute::<u32, i32>(self.ptr.as_ref().a) })
   }
 
-  pub fn b_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.b.len()
+  pub fn b(self) -> __rt::rt::Slice<'msg, __rt::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().b;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
   }
-  pub fn b(self, n: usize) -> Option<&'msg __rt::rt::Str> {
-    unsafe { self.ptr.as_ref().b.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn b_iter(self) -> impl Iterator<Item = &'msg __rt::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().b.as_slice() }.iter().map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
+  pub fn b_at(self, idx: usize) -> __rt::rt::View<'msg, __rt::rt::Str> {
+    self.b().at(idx)
   }
 
   #[doc(hidden)]
@@ -2372,10 +2062,10 @@ impl<'msg> __priv_TestAll_Nested::View<'msg> {
       debug.write_debug(value);
       count += 1;
     }
-    if self.b_len() != 0 {
+    if !self.b().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("b")?;
-      debug.iter(self.b_iter())?;
+      debug.iter(self.b())?;
       count += 1;
     }
     if count != 0 {
@@ -2425,34 +2115,21 @@ impl<'msg> __priv_TestAll_Nested::Mut<'msg>  {
     self.a_mut().set(value);
   }
 
-  pub fn b_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.b.len()
-  }
-  pub fn b(self, n: usize) -> Option<&'msg __rt::rt::Str> {
-    unsafe { self.ptr.as_ref().b.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn b_iter(self) -> impl Iterator<Item = &'msg __rt::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().b.as_slice() }.iter().map(|&(p, n)| unsafe {
-      __rt::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn b_mut(self, n: usize) -> Option<__rt::rt::StrBuf<'msg>> {
-    unsafe { self.ptr.as_mut().b.as_mut_slice() }.get_mut(n)
-      .map(|data| __rt::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn b_add(self) -> __rt::rt::StrBuf<'msg> {
+  pub fn b(self) -> __rt::rt::Slice<'msg, __rt::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().b;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.b_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().b;
+      __rt::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn b_resize(self, n: usize) {
+  pub fn b_at(self, idx: usize) -> __rt::rt::View<'msg, __rt::rt::Str> {
+    self.b().at(idx)
+  }
+  pub fn b_mut(self) -> __rt::rt::Repeated<'msg, __rt::rt::Str> {
     unsafe {
-      self.ptr.as_mut().b.resize(n, self.arena);
+      __rt::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().b) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 

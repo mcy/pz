@@ -199,14 +199,23 @@ impl<'a> StrBuf<'a> {
     }
   }
 
+  /// Clears the underlying buffer.
   pub fn clear(&mut self) {
     self.truncate(0);
   }
 
+  /// Truncated the underlying buffer.
+  ///
+  /// If `len > self.len()`, the buffer is unaffected.
   pub fn truncate(&mut self, len: usize) {
     self.data.1 = self.len().min(len);
   }
 
+  /// Sets the contents of the underlying buffer to `data`.
+  ///
+  /// If `data` is longer than the underlying buffer, this may trigger
+  /// re-allocation. Note that resizes cannot be amortized, so `StrBuf` does not
+  /// provide append or write features.
   pub fn set(&mut self, data: &(impl AsRef<[u8]> + ?Sized)) {
     let data = data.as_ref();
     if data.len() > self.len() || self.data.0.is_null() {
@@ -227,13 +236,23 @@ impl Deref for StrBuf<'_> {
   type Target = Str;
 
   fn deref(&self) -> &Str {
-    unsafe { Str::from_raw_parts(self.data.0, self.data.1) }
+    let mut ptr = self.data.0;
+    if ptr.is_null() {
+      ptr = 1 as *mut u8;
+    }
+
+    unsafe { Str::from_raw_parts(ptr, self.data.1) }
   }
 }
 
 impl DerefMut for StrBuf<'_> {
   fn deref_mut(&mut self) -> &mut Str {
-    unsafe { Str::from_raw_parts_mut(self.data.0, self.data.1) }
+    let mut ptr = self.data.0;
+    if ptr.is_null() {
+      ptr = 1 as *mut u8;
+    }
+
+    unsafe { Str::from_raw_parts_mut(ptr, self.data.1) }
   }
 }
 

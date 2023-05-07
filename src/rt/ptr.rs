@@ -1,5 +1,7 @@
 //! Non-trivial pointer types.
 
+use std::fmt;
+
 use crate::Str;
 use crate::StrBuf;
 
@@ -10,7 +12,7 @@ use crate::StrBuf;
 /// layout and performance optimizations.
 pub trait Proxied {
   /// The view type, analogous to a shared reference.
-  type View<'a>: ViewFor<'a, Self> + Copy;
+  type View<'a>: ViewFor<'a, Self> + Copy + Default + fmt::Debug;
 
   /// The mutator type, analogous to a mutable reference.
   type Mut<'a>: MutFor<'a, Self>;

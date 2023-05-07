@@ -63,107 +63,57 @@ impl Bundle {
     self.ptr.as_ptr()
   }
 
-  pub fn types_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.types.len()
-  }
-  pub fn types(&self, n: usize) -> Option<crate::rt::View<'_, Type>> {
-    unsafe { self.ptr.as_ref().types.as_slice() }.get(n)
-      .map(|&ptr| crate::rt::View::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn types_iter(&self) -> impl Iterator<Item = crate::rt::View<'_, Type>> + '_ {
-    unsafe { self.ptr.as_ref().types.as_slice() }.iter()
-      .map(|&ptr| crate::rt::View::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn types_mut(&mut self, n: usize) -> Option<crate::rt::Mut<'_, Type>> {
-    unsafe { self.ptr.as_mut().types.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| crate::rt::Mut::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn types_add(&mut self) -> crate::rt::Mut<'_, Type> {
+  pub fn types(&self) -> crate::rt::Slice<'_, Type> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().types;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        Type::__LAYOUT, Type::__raw_init);
-      self.types_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().types;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn types_resize(&mut self, n: usize) {
+  pub fn types_at(&self, idx: usize) -> crate::rt::View<'_, Type> {
+    self.types().at(idx)
+  }
+  pub fn types_mut(&mut self) -> crate::rt::Repeated<'_, Type> {
     unsafe {
-      self.ptr.as_mut().types.resize_msg(
-        n, self.arena,
-        Type::__LAYOUT, Type::__raw_init);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().types) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn packages_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.packages.len()
-  }
-  pub fn packages(&self, n: usize) -> Option<&'_ crate::rt::Str> {
-    unsafe { self.ptr.as_ref().packages.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn packages_iter(&self) -> impl Iterator<Item = &'_ crate::rt::Str> + '_ {
-    unsafe { self.ptr.as_ref().packages.as_slice() }.iter().map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn packages_mut(&mut self, n: usize) -> Option<crate::rt::StrBuf<'_>> {
-    unsafe { self.ptr.as_mut().packages.as_mut_slice() }.get_mut(n)
-      .map(|data| crate::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn packages_add(&mut self) -> crate::rt::StrBuf<'_> {
+  pub fn packages(&self) -> crate::rt::Slice<'_, crate::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().packages;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.packages_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().packages;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn packages_resize(&mut self, n: usize) {
+  pub fn packages_at(&self, idx: usize) -> crate::rt::View<'_, crate::rt::Str> {
+    self.packages().at(idx)
+  }
+  pub fn packages_mut(&mut self) -> crate::rt::Repeated<'_, crate::rt::Str> {
     unsafe {
-      self.ptr.as_mut().packages.resize(n, self.arena);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().packages) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn foreign_types_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.foreign_types.len()
-  }
-  pub fn foreign_types(&self, n: usize) -> Option<&'_ crate::rt::Str> {
-    unsafe { self.ptr.as_ref().foreign_types.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn foreign_types_iter(&self) -> impl Iterator<Item = &'_ crate::rt::Str> + '_ {
-    unsafe { self.ptr.as_ref().foreign_types.as_slice() }.iter().map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn foreign_types_mut(&mut self, n: usize) -> Option<crate::rt::StrBuf<'_>> {
-    unsafe { self.ptr.as_mut().foreign_types.as_mut_slice() }.get_mut(n)
-      .map(|data| crate::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn foreign_types_add(&mut self) -> crate::rt::StrBuf<'_> {
+  pub fn foreign_types(&self) -> crate::rt::Slice<'_, crate::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().foreign_types;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.foreign_types_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().foreign_types;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn foreign_types_resize(&mut self, n: usize) {
+  pub fn foreign_types_at(&self, idx: usize) -> crate::rt::View<'_, crate::rt::Str> {
+    self.foreign_types().at(idx)
+  }
+  pub fn foreign_types_mut(&mut self) -> crate::rt::Repeated<'_, crate::rt::Str> {
     unsafe {
-      self.ptr.as_mut().foreign_types.resize(n, self.arena);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().foreign_types) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
@@ -197,88 +147,79 @@ impl crate::rt::ptr::Proxied for Bundle {
 }
 
 impl crate::rt::value::Type for Bundle {
+  type __Storage = *mut u8;
+
   unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
     __priv_Bundle::View {
-      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       _ph: std::marker::PhantomData,
     }
   }
   unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
     __priv_Bundle::Mut {
-      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
 }
 
 impl<'msg> __priv_Bundle::View<'msg> {
-  pub fn types_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.types.len()
+  pub fn types(self) -> crate::rt::Slice<'msg, Type> {
+    unsafe {
+      let vec = &self.ptr.as_ref().types;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
   }
-  pub fn types(self, n: usize) -> Option<crate::rt::View<'msg, Type>> {
-    unsafe { self.ptr.as_ref().types.as_slice() }.get(n)
-      .map(|&ptr| crate::rt::View::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn types_iter(self) -> impl Iterator<Item = crate::rt::View<'msg, Type>> + 'msg {
-    unsafe { self.ptr.as_ref().types.as_slice() }.iter()
-      .map(|&ptr| crate::rt::View::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
+  pub fn types_at(self, idx: usize) -> crate::rt::View<'msg, Type> {
+    self.types().at(idx)
   }
 
-  pub fn packages_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.packages.len()
+  pub fn packages(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().packages;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
   }
-  pub fn packages(self, n: usize) -> Option<&'msg crate::rt::Str> {
-    unsafe { self.ptr.as_ref().packages.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn packages_iter(self) -> impl Iterator<Item = &'msg crate::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().packages.as_slice() }.iter().map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
+  pub fn packages_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.packages().at(idx)
   }
 
-  pub fn foreign_types_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.foreign_types.len()
+  pub fn foreign_types(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().foreign_types;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
   }
-  pub fn foreign_types(self, n: usize) -> Option<&'msg crate::rt::Str> {
-    unsafe { self.ptr.as_ref().foreign_types.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn foreign_types_iter(self) -> impl Iterator<Item = &'msg crate::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().foreign_types.as_slice() }.iter().map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
+  pub fn foreign_types_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.foreign_types().at(idx)
   }
 
   #[doc(hidden)]
   pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
     let mut count = 0;
     debug.start_block()?;
-    for value in self.types_iter() {
+    for value in self.types() {
       if count != 0 { debug.comma(false)?; }
       debug.field("types")?;
       value.__debug(debug)?;
       count += 1;
     }
-    if self.packages_len() != 0 {
+    if !self.packages().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("packages")?;
-      debug.iter(self.packages_iter())?;
+      debug.iter(self.packages())?;
       count += 1;
     }
-    if self.foreign_types_len() != 0 {
+    if !self.foreign_types().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("foreign_types")?;
-      debug.iter(self.foreign_types_iter())?;
+      debug.iter(self.foreign_types())?;
       count += 1;
     }
     if count != 0 {
@@ -305,107 +246,57 @@ impl<'msg> __priv_Bundle::Mut<'msg>  {
     ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle::__tdp_info())
   }
 
-  pub fn types_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.types.len()
-  }
-  pub fn types(self, n: usize) -> Option<crate::rt::View<'msg, Type>> {
-    unsafe { self.ptr.as_ref().types.as_slice() }.get(n)
-      .map(|&ptr| crate::rt::View::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn types_iter(self) -> impl Iterator<Item = crate::rt::View<'msg, Type>> + 'msg {
-    unsafe { self.ptr.as_ref().types.as_slice() }.iter()
-      .map(|&ptr| crate::rt::View::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn types_mut(self, n: usize) -> Option<crate::rt::Mut<'msg, Type>> {
-    unsafe { self.ptr.as_mut().types.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| crate::rt::Mut::<Type> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn types_add(self) -> crate::rt::Mut<'msg, Type> {
+  pub fn types(self) -> crate::rt::Slice<'msg, Type> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().types;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        Type::__LAYOUT, Type::__raw_init);
-      self.types_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().types;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn types_resize(self, n: usize) {
+  pub fn types_at(self, idx: usize) -> crate::rt::View<'msg, Type> {
+    self.types().at(idx)
+  }
+  pub fn types_mut(self) -> crate::rt::Repeated<'msg, Type> {
     unsafe {
-      self.ptr.as_mut().types.resize_msg(
-        n, self.arena,
-        Type::__LAYOUT, Type::__raw_init);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().types) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn packages_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.packages.len()
-  }
-  pub fn packages(self, n: usize) -> Option<&'msg crate::rt::Str> {
-    unsafe { self.ptr.as_ref().packages.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn packages_iter(self) -> impl Iterator<Item = &'msg crate::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().packages.as_slice() }.iter().map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn packages_mut(self, n: usize) -> Option<crate::rt::StrBuf<'msg>> {
-    unsafe { self.ptr.as_mut().packages.as_mut_slice() }.get_mut(n)
-      .map(|data| crate::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn packages_add(self) -> crate::rt::StrBuf<'msg> {
+  pub fn packages(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().packages;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.packages_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().packages;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn packages_resize(self, n: usize) {
+  pub fn packages_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.packages().at(idx)
+  }
+  pub fn packages_mut(self) -> crate::rt::Repeated<'msg, crate::rt::Str> {
     unsafe {
-      self.ptr.as_mut().packages.resize(n, self.arena);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().packages) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn foreign_types_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.foreign_types.len()
-  }
-  pub fn foreign_types(self, n: usize) -> Option<&'msg crate::rt::Str> {
-    unsafe { self.ptr.as_ref().foreign_types.as_slice() }.get(n).map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn foreign_types_iter(self) -> impl Iterator<Item = &'msg crate::rt::Str> + 'msg {
-    unsafe { self.ptr.as_ref().foreign_types.as_slice() }.iter().map(|&(p, n)| unsafe {
-      crate::rt::Str::from_raw_parts(p, n)
-    })
-  }
-  pub fn foreign_types_mut(self, n: usize) -> Option<crate::rt::StrBuf<'msg>> {
-    unsafe { self.ptr.as_mut().foreign_types.as_mut_slice() }.get_mut(n)
-      .map(|data| crate::rt::StrBuf::__wrap(data, self.arena))
-  }
-  pub fn foreign_types_add(self) -> crate::rt::StrBuf<'msg> {
+  pub fn foreign_types(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().foreign_types;
-      let new_len = vec.len() + 1;
-      vec.resize(new_len, self.arena);
-      self.foreign_types_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().foreign_types;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn foreign_types_resize(self, n: usize) {
+  pub fn foreign_types_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.foreign_types().at(idx)
+  }
+  pub fn foreign_types_mut(self) -> crate::rt::Repeated<'msg, crate::rt::Str> {
     unsafe {
-      self.ptr.as_mut().foreign_types.resize(n, self.arena);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().foreign_types) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
@@ -613,7 +504,8 @@ impl Type {
   pub fn name_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().name;
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -702,76 +594,39 @@ impl Type {
     self.declared_in_mut().set(value);
   }
 
-  pub fn fields_len(&self) -> usize {
-    unsafe { self.ptr.as_ref() }.fields.len()
-  }
-  pub fn fields(&self, n: usize) -> Option<crate::rt::View<'_, Field>> {
-    unsafe { self.ptr.as_ref().fields.as_slice() }.get(n)
-      .map(|&ptr| crate::rt::View::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn fields_iter(&self) -> impl Iterator<Item = crate::rt::View<'_, Field>> + '_ {
-    unsafe { self.ptr.as_ref().fields.as_slice() }.iter()
-      .map(|&ptr| crate::rt::View::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn fields_mut(&mut self, n: usize) -> Option<crate::rt::Mut<'_, Field>> {
-    unsafe { self.ptr.as_mut().fields.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| crate::rt::Mut::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn fields_add(&mut self) -> crate::rt::Mut<'_, Field> {
+  pub fn fields(&self) -> crate::rt::Slice<'_, Field> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().fields;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        Field::__LAYOUT, Field::__raw_init);
-      self.fields_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().fields;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn fields_resize(&mut self, n: usize) {
+  pub fn fields_at(&self, idx: usize) -> crate::rt::View<'_, Field> {
+    self.fields().at(idx)
+  }
+  pub fn fields_mut(&mut self) -> crate::rt::Repeated<'_, Field> {
     unsafe {
-      self.ptr.as_mut().fields.resize_msg(
-        n, self.arena,
-        Field::__LAYOUT, Field::__raw_init);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().fields) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn nesteds(&self) -> &'_ [u32] {
+  pub fn nesteds(&self) -> crate::rt::Slice<'_, u32> {
     unsafe {
-      let slice = self.ptr.as_ref().nesteds.as_slice();
-      std::mem::transmute::<&'_ [u32], &'_ [u32]>(slice)
+      let vec = &self.ptr.as_ref().nesteds;
+      crate::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn nesteds_mut(&mut self) -> &'_ mut [u32] {
-    unsafe {
-      let slice = self.ptr.as_mut().nesteds.as_mut_slice();
-      std::mem::transmute::<&'_ mut [u32], &'_ mut [u32]>(slice)
-    }
+  pub fn nesteds_at(&self, idx: usize) -> crate::rt::View<'_, u32> {
+    self.nesteds().at(idx)
   }
-  pub fn nesteds_set(&mut self, that: &[u32]) {
+  pub fn nesteds_mut(&mut self) -> crate::rt::Repeated<'_, u32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().nesteds;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn nesteds_extend(&mut self, that: &[u32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().nesteds;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().nesteds) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
@@ -918,18 +773,25 @@ impl crate::rt::ptr::Proxied for Type {
 }
 
 impl crate::rt::value::Type for Type {
+  type __Storage = *mut u8;
+
   unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
     __priv_Type::View {
-      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       _ph: std::marker::PhantomData,
     }
   }
   unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
     __priv_Type::Mut {
-      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       arena,
       _ph: std::marker::PhantomData,
     }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
   }
 }
 
@@ -940,7 +802,8 @@ impl<'msg> __priv_Type::View<'msg> {
   pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().name;
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -969,29 +832,24 @@ impl<'msg> __priv_Type::View<'msg> {
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().declared_in) })
   }
 
-  pub fn fields_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.fields.len()
+  pub fn fields(self) -> crate::rt::Slice<'msg, Field> {
+    unsafe {
+      let vec = &self.ptr.as_ref().fields;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
   }
-  pub fn fields(self, n: usize) -> Option<crate::rt::View<'msg, Field>> {
-    unsafe { self.ptr.as_ref().fields.as_slice() }.get(n)
-      .map(|&ptr| crate::rt::View::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn fields_iter(self) -> impl Iterator<Item = crate::rt::View<'msg, Field>> + 'msg {
-    unsafe { self.ptr.as_ref().fields.as_slice() }.iter()
-      .map(|&ptr| crate::rt::View::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
+  pub fn fields_at(self, idx: usize) -> crate::rt::View<'msg, Field> {
+    self.fields().at(idx)
   }
 
-  pub fn nesteds(self) -> &'msg [u32] {
+  pub fn nesteds(self) -> crate::rt::Slice<'msg, u32> {
     unsafe {
-      let slice = self.ptr.as_ref().nesteds.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [u32]>(slice)
+      let vec = &self.ptr.as_ref().nesteds;
+      crate::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
+  }
+  pub fn nesteds_at(self, idx: usize) -> crate::rt::View<'msg, u32> {
+    self.nesteds().at(idx)
   }
 
   pub fn span(self) -> crate::rt::View<'msg, u32> {
@@ -1030,17 +888,16 @@ impl<'msg> __priv_Type::View<'msg> {
       debug.write_debug(value);
       count += 1;
     }
-    for value in self.fields_iter() {
+    for value in self.fields() {
       if count != 0 { debug.comma(false)?; }
       debug.field("fields")?;
       value.__debug(debug)?;
       count += 1;
     }
-    let slice = self.nesteds();
-    if !slice.is_empty() {
+    if !self.nesteds().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("nesteds")?;
-      debug.iter(slice)?;
+      debug.iter(self.nesteds())?;
       count += 1;
     }
     if let Some(value) = self.span_or() {
@@ -1079,7 +936,8 @@ impl<'msg> __priv_Type::Mut<'msg>  {
   pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().name;
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -1168,76 +1026,39 @@ impl<'msg> __priv_Type::Mut<'msg>  {
     self.declared_in_mut().set(value);
   }
 
-  pub fn fields_len(self) -> usize {
-    unsafe { self.ptr.as_ref() }.fields.len()
-  }
-  pub fn fields(self, n: usize) -> Option<crate::rt::View<'msg, Field>> {
-    unsafe { self.ptr.as_ref().fields.as_slice() }.get(n)
-      .map(|&ptr| crate::rt::View::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn fields_iter(self) -> impl Iterator<Item = crate::rt::View<'msg, Field>> + 'msg {
-    unsafe { self.ptr.as_ref().fields.as_slice() }.iter()
-      .map(|&ptr| crate::rt::View::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-      })
-  }
-  pub fn fields_mut(self, n: usize) -> Option<crate::rt::Mut<'msg, Field>> {
-    unsafe { self.ptr.as_mut().fields.as_mut_slice() }.get_mut(n)
-      .map(|&mut ptr| crate::rt::Mut::<Field> {
-        ptr: unsafe { crate::rt::__z::ABox::from_ptr(ptr) },
-        _ph: std::marker::PhantomData,
-        arena: self.arena,
-      })
-  }
-  pub fn fields_add(self) -> crate::rt::Mut<'msg, Field> {
+  pub fn fields(self) -> crate::rt::Slice<'msg, Field> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().fields;
-      let new_len = vec.len() + 1;
-      vec.resize_msg(new_len, self.arena,
-        Field::__LAYOUT, Field::__raw_init);
-      self.fields_mut(new_len - 1).unwrap_unchecked()
+      let vec = &self.ptr.as_ref().fields;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn fields_resize(self, n: usize) {
+  pub fn fields_at(self, idx: usize) -> crate::rt::View<'msg, Field> {
+    self.fields().at(idx)
+  }
+  pub fn fields_mut(self) -> crate::rt::Repeated<'msg, Field> {
     unsafe {
-      self.ptr.as_mut().fields.resize_msg(
-        n, self.arena,
-        Field::__LAYOUT, Field::__raw_init);
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().fields) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
-  pub fn nesteds(self) -> &'msg [u32] {
+  pub fn nesteds(self) -> crate::rt::Slice<'msg, u32> {
     unsafe {
-      let slice = self.ptr.as_ref().nesteds.as_slice();
-      std::mem::transmute::<&'msg [u32], &'msg [u32]>(slice)
+      let vec = &self.ptr.as_ref().nesteds;
+      crate::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn nesteds_mut(self) -> &'msg mut [u32] {
-    unsafe {
-      let slice = self.ptr.as_mut().nesteds.as_mut_slice();
-      std::mem::transmute::<&'msg mut [u32], &'msg mut [u32]>(slice)
-    }
+  pub fn nesteds_at(self, idx: usize) -> crate::rt::View<'msg, u32> {
+    self.nesteds().at(idx)
   }
-  pub fn nesteds_set(self, that: &[u32]) {
+  pub fn nesteds_mut(self) -> crate::rt::Repeated<'msg, u32> {
     unsafe {
-      let vec = &mut self.ptr.as_mut().nesteds;
-      vec.resize(that.len(), self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr();
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
-    }
-  }
-  pub fn nesteds_extend(self, that: &[u32]) {
-    unsafe {
-      let vec = &mut self.ptr.as_mut().nesteds;
-      let old_len = vec.len();
-      let new_len = old_len + that.len();
-      vec.resize(new_len, self.arena);
-      let ptr = vec.as_mut_slice().as_mut_ptr().add(old_len);
-      ptr.copy_from_nonoverlapping(that.as_ptr() as *const _, that.len());
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().nesteds) as *mut _ as *mut u8,
+        self.arena,
+      )
     }
   }
 
@@ -1562,7 +1383,8 @@ impl Field {
   pub fn name_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().name;
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -1835,18 +1657,25 @@ impl crate::rt::ptr::Proxied for Field {
 }
 
 impl crate::rt::value::Type for Field {
+  type __Storage = *mut u8;
+
   unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
     __priv_Field::View {
-      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       _ph: std::marker::PhantomData,
     }
   }
   unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
     __priv_Field::Mut {
-      ptr: crate::rt::__z::ABox::from_ptr(ptr),
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
       arena,
       _ph: std::marker::PhantomData,
     }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
   }
 }
 
@@ -1857,7 +1686,8 @@ impl<'msg> __priv_Field::View<'msg> {
   pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().name;
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
@@ -1972,7 +1802,8 @@ impl<'msg> __priv_Field::Mut<'msg>  {
   pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
     Some(unsafe {
-      let (ptr, len) = self.ptr.as_ref().name;
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
