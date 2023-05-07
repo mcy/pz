@@ -1,0 +1,21 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+  "name": "pz",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "[rust]": {
+          "editor.formatOnSave": true
+        }
+      },
+      "extensions": [
+        "GitHub.copilot",
+        "rust-lang.rust-analyzer"
+      ]
+    }
+  }
+}
