@@ -25,3 +25,7 @@ unindent = "0.2.1"
 
 [build-dependencies]
 prost-build = "0.11.9"
+
+[[bin]]
+name = "pz"
+path = "src/main.rs"

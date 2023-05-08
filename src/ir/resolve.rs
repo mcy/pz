@@ -340,8 +340,27 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
     // At this point, we've loaded all of the bundles, so we can proceed with
     // creating the new "resolved" bundle.
 
-    // First, un-nest all the declarations.
+    // First, un-nest all the declarations. This needs to happen before we
+    // resolve imports, because intra-compilation-unit imports can point to
+    // any file.
     let mut all_symbols = Vec::new();
+
+    let insert_symbol = |symbols: &mut HashMap<_, _>,
+                         key: &str,
+                         ty: &'rcx ir::Type<'src, 'rcx>,
+                         span: syn::Span,
+                         report: &mut Report| {
+      match symbols.entry(key.to_string()) {
+        Entry::Occupied(e) => {
+          let (_, orig) = e.get();
+          redef_error(report, ty.name(), Some(span), Some(*orig));
+        }
+        Entry::Vacant(e) => {
+          e.insert((ty, span));
+        }
+      }
+    };
+
     for file in files {
       let mut package = AString::new_in(&self.arena);
       for (i, name) in file.package.path.components.iter().enumerate() {
@@ -354,53 +373,6 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
       let package = package.into_bump_str();
 
       let mut symbols = HashMap::new();
-      let mut insert_symbol =
-        |key: &str,
-         ty: &'rcx ir::Type<'src, 'rcx>,
-         span: syn::Span,
-         report: &mut Report| {
-          match symbols.entry(key.to_string()) {
-            Entry::Occupied(e) => {
-              let (_, orig) = e.get();
-              redef_error(report, ty.name(), Some(span), Some(*orig));
-            }
-            Entry::Vacant(e) => {
-              e.insert((ty, span));
-            }
-          }
-        };
-
-      for import in &file.imports {
-        let package = import.package.join(self.scx);
-        for (name, rename) in &import.symbols {
-          let key = TypeName {
-            package: &package,
-            name: &name.join(self.scx),
-          };
-          match self.type_by_name(key) {
-            Some(ty) => {
-              insert_symbol(&key.to_string(), ty, name.span(), report);
-              match rename {
-                Some(id) => {
-                  insert_symbol(id.name(self.scx), ty, name.span(), report)
-                }
-                None => insert_symbol(
-                  name.components.last().unwrap().name(self.scx),
-                  ty,
-                  name.span(),
-                  report,
-                ),
-              }
-            }
-            None => {
-              report
-                .error(format_args!("cannot find imported symbol {key}"))
-                .saying(&import.package, "package specified here")
-                .saying(name, "symbol specified here");
-            }
-          }
-        }
-      }
 
       let mut roots = AVec::new_in(&self.arena);
       let mut types = Vec::new();
@@ -417,6 +389,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
 
       for root in roots {
         insert_symbol(
+          &mut symbols,
           root.name().name,
           root,
           root.decl().unwrap().name.span(),
@@ -424,7 +397,46 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
         );
       }
 
-      all_symbols.push((types, symbols));
+      all_symbols.push((file, types, symbols));
+    }
+
+    for (file, _, symbols) in &mut all_symbols {
+      for import in &file.imports {
+        let package = import.package.join(self.scx);
+        for (name, rename) in &import.symbols {
+          let key = TypeName {
+            package: &package,
+            name: &name.join(self.scx),
+          };
+          match self.type_by_name(key) {
+            Some(ty) => {
+              insert_symbol(symbols, &key.to_string(), ty, name.span(), report);
+              match rename {
+                Some(id) => insert_symbol(
+                  symbols,
+                  id.name(self.scx),
+                  ty,
+                  name.span(),
+                  report,
+                ),
+                None => insert_symbol(
+                  symbols,
+                  name.components.last().unwrap().name(self.scx),
+                  ty,
+                  name.span(),
+                  report,
+                ),
+              }
+            }
+            None => {
+              report
+                .error(format_args!("cannot find imported symbol {key}"))
+                .saying(&import.package, "package specified here")
+                .saying(name, "symbol specified here");
+            }
+          }
+        }
+      }
     }
 
     if report.has_errors() {
@@ -436,7 +448,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
     };
 
     // Next, resolve the types of all the fields.
-    for (tys, top_level_symbols) in all_symbols {
+    for (_, tys, top_level_symbols) in all_symbols {
       for ty in tys {
         bundle.types.borrow_mut().push(ty);
         let decl = ty.decl().unwrap();

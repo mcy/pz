@@ -6,9 +6,13 @@ package pz
 /// This type is a sort of Protobuf object code.
 message Bundle {
   1. types: repeated Type
-  
   2. packages: repeated str
-  3. foreign_types: repeated str
+
+  message ForeignType {
+    1. name: str
+    2. package: u32
+  }
+  3. foreign_types: repeated ForeignType
 }
 
 /// A Protobuf type.
@@ -20,6 +24,11 @@ message Type {
     3. ENUM
   }
 
+  message Attrs {
+    1. deprecated: str
+    100. docs: repeated str
+  }
+
   1. name: str
   2. package: u32
   3. kind: Kind
@@ -27,7 +36,8 @@ message Type {
 
   10. fields: repeated Field
   11. nesteds: repeated u32
-
+  12. attrs: Attrs
+  
   20. span: u32
 }
 
@@ -50,11 +60,17 @@ message Field {
     10. FOREIGN
   }
 
+  message Attrs {
+    1. deprecated: str
+    100. docs: repeated str
+  }
+
   1. name: str
   2. number: i32
   3. is_repeated: bool
   4. type: Type
   5. type_index: u32
 
+  10. attrs: Attrs
   20. span: u32
 }

@@ -41,6 +41,10 @@ struct Pz {
   #[arg(long)]
   output_dir: Option<PathBuf>,
 
+  /// Bundle files to use for resolving imports.
+  #[arg(long = "extern")]
+  bundles: Vec<PathBuf>,
+
   /// The `.pz` files to pass to the plugin.
   files: Vec<PathBuf>,
 }
@@ -234,6 +238,27 @@ Options:
     .iter()
     .filter_map(|path| scx.open_file(path, &mut report))
     .collect::<Vec<_>>();
+
+  let bundles = opts
+    .bundles
+    .iter()
+    .filter_map(|path| match fs::read(path) {
+      Ok(data) => match pz::proto::Bundle::decode(&*data) {
+        Ok(b) => Some((path.to_string_lossy().into_owned(), b)),
+        Err(e) => {
+          report
+            .error(format_args!("could not process --extern argument: {e}"));
+          None
+        }
+      },
+
+      Err(e) => {
+        report.error(format_args!("could not process --extern argument: {e}"));
+        None
+      }
+    })
+    .collect::<Vec<_>>();
+
   report.dump_and_die(&scx, 2);
 
   let files = contents
@@ -243,7 +268,7 @@ Options:
   report.dump_and_die(&scx, 2);
 
   let rcx = ir::ResolveCtx::new(&scx);
-  let bundle = rcx.resolve(&[], &files, &mut report);
+  let bundle = rcx.resolve(&bundles, &files, &mut report);
   report.dump_and_die(&scx, 2);
 
   let bundle_proto = bundle.unwrap().to_proto();
