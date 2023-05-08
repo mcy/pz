@@ -119,6 +119,10 @@ impl Report {
     }
   }
 
+  pub fn has_errors(&self) -> bool {
+    self.errors.iter().any(|e| e.kind == Kind::Error)
+  }
+
   /// Adds a new fatal error to this report, and then kills the program with
   /// the given exit code.
   #[track_caller]

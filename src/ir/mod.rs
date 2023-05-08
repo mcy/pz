@@ -2,6 +2,7 @@
 
 use std::cell::Cell;
 use std::cell::RefCell;
+use std::fmt;
 
 use bumpalo::collections::Vec as AVec;
 
@@ -23,23 +24,34 @@ impl Bundle<'_, '_> {
   }
 }
 
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
+pub struct TypeName<'rcx> {
+  pub package: &'rcx str,
+  pub name: &'rcx str,
+}
+
+impl fmt::Display for TypeName<'_> {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    if self.package.is_empty() {
+      f.write_str(self.name)
+    } else {
+      write!(f, "{}.{}", self.package, self.name)
+    }
+  }
+}
+
 pub struct Type<'syn, 'rcx> {
-  package: Cell<&'rcx str>,
-  name: Cell<&'rcx str>,
+  name: Cell<TypeName<'rcx>>,
   kind: Cell<syn::DeclKind>,
   decl: Option<&'syn syn::Decl>,
   fields: RefCell<AVec<'rcx, Field<'syn, 'rcx>>>,
   nesteds: RefCell<AVec<'rcx, &'rcx Type<'syn, 'rcx>>>,
-  parent: Option<&'rcx Type<'syn, 'rcx>>,
+  parent: Cell<Option<&'rcx Type<'syn, 'rcx>>>,
   attrs: proto::r#type::Attrs,
 }
 
 impl<'syn, 'rcx> Type<'syn, 'rcx> {
-  pub fn package(&self) -> &'rcx str {
-    self.package.get()
-  }
-
-  pub fn name(&self) -> &'rcx str {
+  pub fn name(&self) -> TypeName<'rcx> {
     self.name.get()
   }
 
@@ -52,7 +64,7 @@ impl<'syn, 'rcx> Type<'syn, 'rcx> {
   }
 
   pub fn parent(&self) -> Option<&'rcx Type<'syn, 'rcx>> {
-    self.parent
+    self.parent.get()
   }
 
   pub fn field<R>(
@@ -142,5 +154,4 @@ pub enum FieldTypeKind<'syn, 'rcx> {
   Bool,
   String,
   Type(&'rcx Type<'syn, 'rcx>),
-  Unresolved(&'rcx str),
 }

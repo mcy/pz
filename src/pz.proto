@@ -6,7 +6,12 @@ package pz;
 message Bundle {
   repeated Type types = 1;
   repeated string packages = 2;
-  repeated string foreign_types = 3;
+
+  message ForeignType {
+    optional string name = 1;
+    optional uint32 package = 2;
+  }
+  repeated ForeignType foreign_types = 3;
 }
 
 message Type {

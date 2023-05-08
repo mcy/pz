@@ -1,0 +1,68 @@
+@edition = "2023"
+package pz.plugin
+
+import pz { Bundle }
+
+choice Request {
+  1. about: AboutRequest
+  2. codegen: CodegenRequest
+}
+
+choice Response {
+  1. about: AboutResponse
+  2. codegen: CodegenResponse
+}
+
+message AboutRequest {}
+
+message AboutResponse {
+  message Option {
+    1. name: str
+    2. help: str
+  }
+
+  1. name: str
+  2. version: str
+  10. options: repeated str
+}
+
+message CodegenRequest {
+  1. bundle: Bundle
+  2. requested_indices: u32
+
+  message Option {
+    1. name: str
+    2. value: str
+  }
+
+  3. options: repeated Option
+  4. debug: bool
+}
+
+message CodegenResponse {
+  message File {
+    1. path: str
+    2. content: str
+  }
+
+  1. files: repeated File
+  2. report: repeated Diagnostic
+}
+
+message Diagnostic {
+  enum Kind {
+    0. ERROR
+    1. WARNING
+  }
+
+  message Snippet {
+    1. span: u32
+    2. info: str
+    3. is_remark: bool
+  }
+
+  1. kind: Kind
+  2. info: str
+  3. snippets: repeated Snippet
+  4. notes: repeated str
+}

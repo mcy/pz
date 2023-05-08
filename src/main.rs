@@ -41,8 +41,8 @@ struct Pz {
   #[arg(long)]
   output_dir: Option<PathBuf>,
 
-  /// The `.pz` file to pass to the plugin.
-  file: Option<PathBuf>,
+  /// The `.pz` files to pass to the plugin.
+  files: Vec<PathBuf>,
 }
 
 fn expect<T, E: fmt::Display>(
@@ -225,21 +225,28 @@ Options:
     }
   }
 
-  let Some(path) = opts.file.as_ref() else {
+  if opts.files.is_empty() {
     report.fatal(&scx, 2, "missing input filename");
-  };
-  let file = scx.open_file(path, &mut report);
+  }
+
+  let contents = opts
+    .files
+    .iter()
+    .filter_map(|path| scx.open_file(path, &mut report))
+    .collect::<Vec<_>>();
   report.dump_and_die(&scx, 2);
 
-  let file = syn::PzFile::parse(file.unwrap(), &mut scx, &mut report);
+  let files = contents
+    .iter()
+    .filter_map(|file| syn::PzFile::parse(*file, &mut scx, &mut report))
+    .collect::<Vec<_>>();
   report.dump_and_die(&scx, 2);
-  let file = file.unwrap();
 
   let rcx = ir::ResolveCtx::new(&scx);
-  let bundle = rcx.resolve(&file, &mut report);
+  let bundle = rcx.resolve(&[], &files, &mut report);
   report.dump_and_die(&scx, 2);
 
-  let bundle_proto = bundle.to_proto();
+  let bundle_proto = bundle.unwrap().to_proto();
   let req = plugin::Request {
     value: Some(plugin::request::Value::Codegen(plugin::CodegenRequest {
       requested_indices: (0..bundle_proto.types.len() as u32).collect(),

@@ -1,5 +1,5 @@
-edition = "2023";
-package pz;
+@edition = "2023"
+package pz
 
 /// A bundle, i.e., a collection of types and associated metadata.
 ///

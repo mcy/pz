@@ -2168,3 +2168,4122 @@ impl std::fmt::Debug for Field_Type {
   }
 }
 
+/// message `pz.plugin.AboutRequest`
+pub struct AboutRequest {
+  ptr: crate::rt::__z::ABox<__priv_AboutRequest::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl AboutRequest {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_AboutRequest::Storage = __priv_AboutRequest::Storage {
+      __hasbits: [0; 0],
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_AboutRequest::Storage as *mut __priv_AboutRequest::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_AboutRequest::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_AboutRequest::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { AboutRequest::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_AboutRequest::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_AboutRequest::Storage>()).__hasbits = [0; 0];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_AboutRequest::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_AboutRequest::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+}
+
+impl Default for AboutRequest {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for AboutRequest {
+  type View<'msg> = __priv_AboutRequest::View<'msg>;
+  type Mut<'msg> = __priv_AboutRequest::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for AboutRequest {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_AboutRequest::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_AboutRequest::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_AboutRequest::View<'msg> {
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_AboutRequest::View<'_> {
+  fn default() -> Self {
+    AboutRequest::DEFAULT
+  }
+}
+
+impl<'msg> __priv_AboutRequest::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { AboutRequest::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, AboutRequest::__tdp_info())
+  }
+
+}
+
+impl Drop for AboutRequest {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_AboutRequest::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.AboutRequest ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_AboutRequest::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for AboutRequest {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_AboutRequest {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 0],
+  }
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{0 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{0 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = AboutRequest::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: AboutRequest::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_AboutRequest::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg AboutRequest>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::AboutRequest> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_AboutRequest::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut AboutRequest>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::AboutRequest> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::AboutRequest> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// message `pz.plugin.AboutResponse`
+pub struct AboutResponse {
+  ptr: crate::rt::__z::ABox<__priv_AboutResponse::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl AboutResponse {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_AboutResponse::Storage = __priv_AboutResponse::Storage {
+      __hasbits: [0; 1],
+      name: (0 as *mut u8, 0),
+      version: (0 as *mut u8, 0),
+      options: crate::rt::__z::AVec::new(),
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_AboutResponse::Storage as *mut __priv_AboutResponse::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_AboutResponse::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_AboutResponse::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { AboutResponse::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn name(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn name_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse::FIELD_OFFSET_name as usize),
+        self.arena,
+        AboutResponse::__hazzer_name,
+      )
+    }
+  }
+  pub fn name_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
+  }
+
+  pub fn version(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.version_or().unwrap_or_default()
+  }
+  pub fn version_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().version;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn version_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.version_mut_or().into_mut()
+  }
+  pub fn version_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse::FIELD_OFFSET_version as usize),
+        self.arena,
+        AboutResponse::__hazzer_version,
+      )
+    }
+  }
+  pub fn version_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.version_mut().set(value);
+  }
+
+  pub fn options(&self) -> crate::rt::Slice<'_, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().options;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn options_at(&self, idx: usize) -> crate::rt::View<'_, crate::rt::Str> {
+    self.options().at(idx)
+  }
+  pub fn options_mut(&mut self) -> crate::rt::Repeated<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().options) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_AboutResponse::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_AboutResponse::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_AboutResponse::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_AboutResponse::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_name(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_AboutResponse::FIELD_OFFSET_name as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_version(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_AboutResponse::FIELD_OFFSET_version as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+}
+
+impl Default for AboutResponse {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for AboutResponse {
+  type View<'msg> = __priv_AboutResponse::View<'msg>;
+  type Mut<'msg> = __priv_AboutResponse::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for AboutResponse {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_AboutResponse::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_AboutResponse::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_AboutResponse::View<'msg> {
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  pub fn version(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.version_or().unwrap_or_default()
+  }
+  pub fn version_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().version;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  pub fn options(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().options;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.options().at(idx)
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.name_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("name")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.version_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("version")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if !self.options().is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("options")?;
+      debug.iter(self.options())?;
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_AboutResponse::View<'_> {
+  fn default() -> Self {
+    AboutResponse::DEFAULT
+  }
+}
+
+impl<'msg> __priv_AboutResponse::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { AboutResponse::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, AboutResponse::__tdp_info())
+  }
+
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn name_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse::FIELD_OFFSET_name as usize),
+        self.arena,
+        AboutResponse::__hazzer_name,
+      )
+    }
+  }
+  pub fn name_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
+  }
+
+  pub fn version(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.version_or().unwrap_or_default()
+  }
+  pub fn version_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().version;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn version_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.version_mut_or().into_mut()
+  }
+  pub fn version_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse::FIELD_OFFSET_version as usize),
+        self.arena,
+        AboutResponse::__hazzer_version,
+      )
+    }
+  }
+  pub fn version_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.version_mut().set(value);
+  }
+
+  pub fn options(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().options;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.options().at(idx)
+  }
+  pub fn options_mut(self) -> crate::rt::Repeated<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().options) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+}
+
+impl Drop for AboutResponse {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_AboutResponse::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.AboutResponse ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_AboutResponse::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for AboutResponse {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_AboutResponse {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 1],
+    pub(in super) name: (*mut u8, usize),
+    pub(in super) version: (*mut u8, usize),
+    pub(crate) options: crate::rt::__z::AVec<(*mut u8, usize)>,
+  }
+
+  pub const FIELD_OFFSET_name: u32 = unsafe {
+    let msg = AboutResponse::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_version: u32 = unsafe {
+    let msg = AboutResponse::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().version as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_options: u32 = unsafe {
+    let msg = AboutResponse::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().options as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{3 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{3 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = AboutResponse::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: AboutResponse::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_AboutResponse::FIELD_OFFSET_name,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_AboutResponse::FIELD_OFFSET_version,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 10,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
+          offset: __priv_AboutResponse::FIELD_OFFSET_options,
+          ty: 0,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_AboutResponse::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg AboutResponse>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::AboutResponse> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_AboutResponse::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut AboutResponse>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::AboutResponse> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::AboutResponse> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// message `pz.plugin.AboutResponse.Option`
+pub struct AboutResponse_Option {
+  ptr: crate::rt::__z::ABox<__priv_AboutResponse_Option::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl AboutResponse_Option {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_AboutResponse_Option::Storage = __priv_AboutResponse_Option::Storage {
+      __hasbits: [0; 1],
+      name: (0 as *mut u8, 0),
+      help: (0 as *mut u8, 0),
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_AboutResponse_Option::Storage as *mut __priv_AboutResponse_Option::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_AboutResponse_Option::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_AboutResponse_Option::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { AboutResponse_Option::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn name(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn name_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse_Option::FIELD_OFFSET_name as usize),
+        self.arena,
+        AboutResponse_Option::__hazzer_name,
+      )
+    }
+  }
+  pub fn name_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
+  }
+
+  pub fn help(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.help_or().unwrap_or_default()
+  }
+  pub fn help_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().help;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn help_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.help_mut_or().into_mut()
+  }
+  pub fn help_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse_Option::FIELD_OFFSET_help as usize),
+        self.arena,
+        AboutResponse_Option::__hazzer_help,
+      )
+    }
+  }
+  pub fn help_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.help_mut().set(value);
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_AboutResponse_Option::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_AboutResponse_Option::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_AboutResponse_Option::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_AboutResponse_Option::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_name(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_AboutResponse_Option::FIELD_OFFSET_name as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_help(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_AboutResponse_Option::FIELD_OFFSET_help as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+}
+
+impl Default for AboutResponse_Option {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for AboutResponse_Option {
+  type View<'msg> = __priv_AboutResponse_Option::View<'msg>;
+  type Mut<'msg> = __priv_AboutResponse_Option::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for AboutResponse_Option {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_AboutResponse_Option::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_AboutResponse_Option::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_AboutResponse_Option::View<'msg> {
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  pub fn help(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.help_or().unwrap_or_default()
+  }
+  pub fn help_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().help;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.name_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("name")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.help_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("help")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_AboutResponse_Option::View<'_> {
+  fn default() -> Self {
+    AboutResponse_Option::DEFAULT
+  }
+}
+
+impl<'msg> __priv_AboutResponse_Option::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { AboutResponse_Option::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, AboutResponse_Option::__tdp_info())
+  }
+
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn name_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse_Option::FIELD_OFFSET_name as usize),
+        self.arena,
+        AboutResponse_Option::__hazzer_name,
+      )
+    }
+  }
+  pub fn name_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
+  }
+
+  pub fn help(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.help_or().unwrap_or_default()
+  }
+  pub fn help_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().help;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn help_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.help_mut_or().into_mut()
+  }
+  pub fn help_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_AboutResponse_Option::FIELD_OFFSET_help as usize),
+        self.arena,
+        AboutResponse_Option::__hazzer_help,
+      )
+    }
+  }
+  pub fn help_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.help_mut().set(value);
+  }
+
+}
+
+impl Drop for AboutResponse_Option {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_AboutResponse_Option::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.AboutResponse.Option ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_AboutResponse_Option::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for AboutResponse_Option {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_AboutResponse_Option {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 1],
+    pub(in super) name: (*mut u8, usize),
+    pub(in super) help: (*mut u8, usize),
+  }
+
+  pub const FIELD_OFFSET_name: u32 = unsafe {
+    let msg = AboutResponse_Option::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_help: u32 = unsafe {
+    let msg = AboutResponse_Option::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().help as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{2 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{2 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = AboutResponse_Option::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: AboutResponse_Option::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_AboutResponse_Option::FIELD_OFFSET_name,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_AboutResponse_Option::FIELD_OFFSET_help,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_AboutResponse_Option::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg AboutResponse_Option>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::AboutResponse_Option> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_AboutResponse_Option::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut AboutResponse_Option>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::AboutResponse_Option> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::AboutResponse_Option> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// message `pz.plugin.CodegenRequest`
+pub struct CodegenRequest {
+  ptr: crate::rt::__z::ABox<__priv_CodegenRequest::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl CodegenRequest {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_CodegenRequest::Storage = __priv_CodegenRequest::Storage {
+      __hasbits: [0; 1],
+      bundle: 0 as *mut u8,
+      requested_indices: 0,
+      options: crate::rt::__z::AVec::new(),
+      debug: false,
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_CodegenRequest::Storage as *mut __priv_CodegenRequest::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_CodegenRequest::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_CodegenRequest::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { CodegenRequest::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn bundle(&self) -> crate::rt::View<'_, Bundle> {
+    self.bundle_or().unwrap_or(Bundle::DEFAULT)
+  }
+  pub fn bundle_or(&self) -> Option<crate::rt::View<'_, Bundle>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(crate::rt::View::<Bundle> {
+      ptr: unsafe { crate::rt::__z::ABox::from_ptr(self.ptr.as_ref().bundle) },
+      _ph: std::marker::PhantomData,
+    })
+  }
+  pub fn bundle_mut(&mut self) -> crate::rt::Mut<'_, Bundle> {
+    self.bundle_mut_or().into_mut()
+  }
+  pub fn bundle_mut_or(&mut self) -> crate::rt::value::OptMut<'_, Bundle> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_bundle as usize),
+        self.arena,
+        CodegenRequest::__hazzer_bundle,
+      )
+    }
+  }
+
+  pub fn requested_indices(&self) -> crate::rt::View<'_, u32> {
+    self.requested_indices_or().unwrap_or_default()
+  }
+  pub fn requested_indices_or(&self) -> Option<crate::rt::View<'_, u32>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().requested_indices) })
+  }
+  pub fn requested_indices_mut(&mut self) -> crate::rt::Mut<'_, u32> {
+    self.requested_indices_mut_or().into_mut()
+  }
+  pub fn requested_indices_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_requested_indices as usize),
+        self.arena,
+        CodegenRequest::__hazzer_requested_indices,
+      )
+    }
+  }
+  pub fn requested_indices_set(&mut self, value: u32) {
+    self.requested_indices_mut().set(value);
+  }
+
+  pub fn options(&self) -> crate::rt::Slice<'_, CodegenRequest_Option> {
+    unsafe {
+      let vec = &self.ptr.as_ref().options;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn options_at(&self, idx: usize) -> crate::rt::View<'_, CodegenRequest_Option> {
+    self.options().at(idx)
+  }
+  pub fn options_mut(&mut self) -> crate::rt::Repeated<'_, CodegenRequest_Option> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().options) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  pub fn debug(&self) -> crate::rt::View<'_, bool> {
+    self.debug_or().unwrap_or_default()
+  }
+  pub fn debug_or(&self) -> Option<crate::rt::View<'_, bool>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().debug) })
+  }
+  pub fn debug_mut(&mut self) -> crate::rt::Mut<'_, bool> {
+    self.debug_mut_or().into_mut()
+  }
+  pub fn debug_mut_or(&mut self) -> crate::rt::value::OptMut<'_, bool> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_debug as usize),
+        self.arena,
+        CodegenRequest::__hazzer_debug,
+      )
+    }
+  }
+  pub fn debug_set(&mut self, value: bool) {
+    self.debug_mut().set(value);
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_CodegenRequest::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_CodegenRequest::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_CodegenRequest::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_CodegenRequest::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_bundle(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_CodegenRequest::FIELD_OFFSET_bundle as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+        let storage = &mut *raw.cast::<__priv_CodegenRequest::Storage>();
+        if storage.bundle.is_null() {
+          storage.bundle = arena.alloc(Bundle::__LAYOUT).as_ptr();
+          Bundle::__raw_init(storage.bundle);
+        }
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_requested_indices(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_CodegenRequest::FIELD_OFFSET_requested_indices as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_debug(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_CodegenRequest::FIELD_OFFSET_debug as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 4 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !4,
+      Some(true) => {
+        *word |= 4;
+      }
+    }
+    has
+  }
+}
+
+impl Default for CodegenRequest {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for CodegenRequest {
+  type View<'msg> = __priv_CodegenRequest::View<'msg>;
+  type Mut<'msg> = __priv_CodegenRequest::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for CodegenRequest {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_CodegenRequest::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_CodegenRequest::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_CodegenRequest::View<'msg> {
+  pub fn bundle(self) -> crate::rt::View<'msg, Bundle> {
+    self.bundle_or().unwrap_or(Bundle::DEFAULT)
+  }
+  pub fn bundle_or(self) -> Option<crate::rt::View<'msg, Bundle>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(crate::rt::View::<Bundle> {
+      ptr: unsafe { crate::rt::__z::ABox::from_ptr(self.ptr.as_ref().bundle) },
+      _ph: std::marker::PhantomData,
+    })
+  }
+
+  pub fn requested_indices(self) -> crate::rt::View<'msg, u32> {
+    self.requested_indices_or().unwrap_or_default()
+  }
+  pub fn requested_indices_or(self) -> Option<crate::rt::View<'msg, u32>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().requested_indices) })
+  }
+
+  pub fn options(self) -> crate::rt::Slice<'msg, CodegenRequest_Option> {
+    unsafe {
+      let vec = &self.ptr.as_ref().options;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, CodegenRequest_Option> {
+    self.options().at(idx)
+  }
+
+  pub fn debug(self) -> crate::rt::View<'msg, bool> {
+    self.debug_or().unwrap_or_default()
+  }
+  pub fn debug_or(self) -> Option<crate::rt::View<'msg, bool>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().debug) })
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.bundle_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("bundle")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    if let Some(value) = self.requested_indices_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("requested_indices")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    for value in self.options() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("options")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    if let Some(value) = self.debug_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("debug")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_CodegenRequest::View<'_> {
+  fn default() -> Self {
+    CodegenRequest::DEFAULT
+  }
+}
+
+impl<'msg> __priv_CodegenRequest::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { CodegenRequest::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenRequest::__tdp_info())
+  }
+
+  pub fn bundle(self) -> crate::rt::View<'msg, Bundle> {
+    self.bundle_or().unwrap_or(Bundle::DEFAULT)
+  }
+  pub fn bundle_or(self) -> Option<crate::rt::View<'msg, Bundle>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(crate::rt::View::<Bundle> {
+      ptr: unsafe { crate::rt::__z::ABox::from_ptr(self.ptr.as_ref().bundle) },
+      _ph: std::marker::PhantomData,
+    })
+  }
+  pub fn bundle_mut(self) -> crate::rt::Mut<'msg, Bundle> {
+    self.bundle_mut_or().into_mut()
+  }
+  pub fn bundle_mut_or(self) -> crate::rt::value::OptMut<'msg, Bundle> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_bundle as usize),
+        self.arena,
+        CodegenRequest::__hazzer_bundle,
+      )
+    }
+  }
+
+  pub fn requested_indices(self) -> crate::rt::View<'msg, u32> {
+    self.requested_indices_or().unwrap_or_default()
+  }
+  pub fn requested_indices_or(self) -> Option<crate::rt::View<'msg, u32>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().requested_indices) })
+  }
+  pub fn requested_indices_mut(self) -> crate::rt::Mut<'msg, u32> {
+    self.requested_indices_mut_or().into_mut()
+  }
+  pub fn requested_indices_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_requested_indices as usize),
+        self.arena,
+        CodegenRequest::__hazzer_requested_indices,
+      )
+    }
+  }
+  pub fn requested_indices_set(self, value: u32) {
+    self.requested_indices_mut().set(value);
+  }
+
+  pub fn options(self) -> crate::rt::Slice<'msg, CodegenRequest_Option> {
+    unsafe {
+      let vec = &self.ptr.as_ref().options;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, CodegenRequest_Option> {
+    self.options().at(idx)
+  }
+  pub fn options_mut(self) -> crate::rt::Repeated<'msg, CodegenRequest_Option> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().options) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  pub fn debug(self) -> crate::rt::View<'msg, bool> {
+    self.debug_or().unwrap_or_default()
+  }
+  pub fn debug_or(self) -> Option<crate::rt::View<'msg, bool>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().debug) })
+  }
+  pub fn debug_mut(self) -> crate::rt::Mut<'msg, bool> {
+    self.debug_mut_or().into_mut()
+  }
+  pub fn debug_mut_or(self) -> crate::rt::value::OptMut<'msg, bool> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_debug as usize),
+        self.arena,
+        CodegenRequest::__hazzer_debug,
+      )
+    }
+  }
+  pub fn debug_set(self, value: bool) {
+    self.debug_mut().set(value);
+  }
+
+}
+
+impl Drop for CodegenRequest {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenRequest::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.CodegenRequest ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenRequest::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for CodegenRequest {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_CodegenRequest {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 1],
+    pub(in super) bundle: *mut u8,
+    pub(in super) requested_indices: u32,
+    pub(in super) options: crate::rt::__z::AVec<*mut u8>,
+    pub(in super) debug: bool,
+  }
+
+  pub const FIELD_OFFSET_bundle: u32 = unsafe {
+    let msg = CodegenRequest::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().bundle as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_requested_indices: u32 = unsafe {
+    let msg = CodegenRequest::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().requested_indices as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_options: u32 = unsafe {
+    let msg = CodegenRequest::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().options as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_debug: u32 = unsafe {
+    let msg = CodegenRequest::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().debug as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{4 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{4 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = CodegenRequest::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+            Bundle::__tdp_info,
+            CodegenRequest_Option::__tdp_info,
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: CodegenRequest::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (0 << 4),
+          offset: __priv_CodegenRequest::FIELD_OFFSET_bundle,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_CodegenRequest::FIELD_OFFSET_requested_indices,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 3,
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
+          offset: __priv_CodegenRequest::FIELD_OFFSET_options,
+          ty: 1,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 4,
+          flags: (crate::rt::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
+          offset: __priv_CodegenRequest::FIELD_OFFSET_debug,
+          ty: 0,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenRequest::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg CodegenRequest>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenRequest> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenRequest::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut CodegenRequest>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenRequest> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::CodegenRequest> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// message `pz.plugin.CodegenRequest.Option`
+pub struct CodegenRequest_Option {
+  ptr: crate::rt::__z::ABox<__priv_CodegenRequest_Option::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl CodegenRequest_Option {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_CodegenRequest_Option::Storage = __priv_CodegenRequest_Option::Storage {
+      __hasbits: [0; 1],
+      name: (0 as *mut u8, 0),
+      value: (0 as *mut u8, 0),
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_CodegenRequest_Option::Storage as *mut __priv_CodegenRequest_Option::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_CodegenRequest_Option::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_CodegenRequest_Option::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { CodegenRequest_Option::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn name(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn name_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest_Option::FIELD_OFFSET_name as usize),
+        self.arena,
+        CodegenRequest_Option::__hazzer_name,
+      )
+    }
+  }
+  pub fn name_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
+  }
+
+  pub fn value(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.value_or().unwrap_or_default()
+  }
+  pub fn value_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().value;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn value_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.value_mut_or().into_mut()
+  }
+  pub fn value_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest_Option::FIELD_OFFSET_value as usize),
+        self.arena,
+        CodegenRequest_Option::__hazzer_value,
+      )
+    }
+  }
+  pub fn value_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.value_mut().set(value);
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_CodegenRequest_Option::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_CodegenRequest_Option::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_CodegenRequest_Option::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_CodegenRequest_Option::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_name(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_CodegenRequest_Option::FIELD_OFFSET_name as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_value(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_CodegenRequest_Option::FIELD_OFFSET_value as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+}
+
+impl Default for CodegenRequest_Option {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for CodegenRequest_Option {
+  type View<'msg> = __priv_CodegenRequest_Option::View<'msg>;
+  type Mut<'msg> = __priv_CodegenRequest_Option::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for CodegenRequest_Option {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_CodegenRequest_Option::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_CodegenRequest_Option::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_CodegenRequest_Option::View<'msg> {
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  pub fn value(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.value_or().unwrap_or_default()
+  }
+  pub fn value_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().value;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.name_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("name")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.value_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("value")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_CodegenRequest_Option::View<'_> {
+  fn default() -> Self {
+    CodegenRequest_Option::DEFAULT
+  }
+}
+
+impl<'msg> __priv_CodegenRequest_Option::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { CodegenRequest_Option::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenRequest_Option::__tdp_info())
+  }
+
+  pub fn name(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.name_or().unwrap_or_default()
+  }
+  pub fn name_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().name;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn name_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.name_mut_or().into_mut()
+  }
+  pub fn name_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest_Option::FIELD_OFFSET_name as usize),
+        self.arena,
+        CodegenRequest_Option::__hazzer_name,
+      )
+    }
+  }
+  pub fn name_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.name_mut().set(value);
+  }
+
+  pub fn value(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.value_or().unwrap_or_default()
+  }
+  pub fn value_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().value;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn value_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.value_mut_or().into_mut()
+  }
+  pub fn value_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenRequest_Option::FIELD_OFFSET_value as usize),
+        self.arena,
+        CodegenRequest_Option::__hazzer_value,
+      )
+    }
+  }
+  pub fn value_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.value_mut().set(value);
+  }
+
+}
+
+impl Drop for CodegenRequest_Option {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenRequest_Option::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.CodegenRequest.Option ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenRequest_Option::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for CodegenRequest_Option {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_CodegenRequest_Option {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 1],
+    pub(in super) name: (*mut u8, usize),
+    pub(in super) value: (*mut u8, usize),
+  }
+
+  pub const FIELD_OFFSET_name: u32 = unsafe {
+    let msg = CodegenRequest_Option::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_value: u32 = unsafe {
+    let msg = CodegenRequest_Option::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().value as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{2 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{2 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = CodegenRequest_Option::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: CodegenRequest_Option::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_CodegenRequest_Option::FIELD_OFFSET_name,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_CodegenRequest_Option::FIELD_OFFSET_value,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenRequest_Option::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg CodegenRequest_Option>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenRequest_Option> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenRequest_Option::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut CodegenRequest_Option>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenRequest_Option> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::CodegenRequest_Option> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// message `pz.plugin.CodegenResponse`
+pub struct CodegenResponse {
+  ptr: crate::rt::__z::ABox<__priv_CodegenResponse::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl CodegenResponse {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_CodegenResponse::Storage = __priv_CodegenResponse::Storage {
+      __hasbits: [0; 0],
+      files: crate::rt::__z::AVec::new(),
+      report: crate::rt::__z::AVec::new(),
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_CodegenResponse::Storage as *mut __priv_CodegenResponse::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_CodegenResponse::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_CodegenResponse::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { CodegenResponse::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn files(&self) -> crate::rt::Slice<'_, CodegenResponse_File> {
+    unsafe {
+      let vec = &self.ptr.as_ref().files;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn files_at(&self, idx: usize) -> crate::rt::View<'_, CodegenResponse_File> {
+    self.files().at(idx)
+  }
+  pub fn files_mut(&mut self) -> crate::rt::Repeated<'_, CodegenResponse_File> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().files) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  pub fn report(&self) -> crate::rt::Slice<'_, Diagnostic> {
+    unsafe {
+      let vec = &self.ptr.as_ref().report;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn report_at(&self, idx: usize) -> crate::rt::View<'_, Diagnostic> {
+    self.report().at(idx)
+  }
+  pub fn report_mut(&mut self) -> crate::rt::Repeated<'_, Diagnostic> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().report) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_CodegenResponse::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_CodegenResponse::Storage>()).__hasbits = [0; 0];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_CodegenResponse::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_CodegenResponse::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+}
+
+impl Default for CodegenResponse {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for CodegenResponse {
+  type View<'msg> = __priv_CodegenResponse::View<'msg>;
+  type Mut<'msg> = __priv_CodegenResponse::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for CodegenResponse {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_CodegenResponse::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_CodegenResponse::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_CodegenResponse::View<'msg> {
+  pub fn files(self) -> crate::rt::Slice<'msg, CodegenResponse_File> {
+    unsafe {
+      let vec = &self.ptr.as_ref().files;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn files_at(self, idx: usize) -> crate::rt::View<'msg, CodegenResponse_File> {
+    self.files().at(idx)
+  }
+
+  pub fn report(self) -> crate::rt::Slice<'msg, Diagnostic> {
+    unsafe {
+      let vec = &self.ptr.as_ref().report;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn report_at(self, idx: usize) -> crate::rt::View<'msg, Diagnostic> {
+    self.report().at(idx)
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    for value in self.files() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("files")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    for value in self.report() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("report")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_CodegenResponse::View<'_> {
+  fn default() -> Self {
+    CodegenResponse::DEFAULT
+  }
+}
+
+impl<'msg> __priv_CodegenResponse::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { CodegenResponse::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenResponse::__tdp_info())
+  }
+
+  pub fn files(self) -> crate::rt::Slice<'msg, CodegenResponse_File> {
+    unsafe {
+      let vec = &self.ptr.as_ref().files;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn files_at(self, idx: usize) -> crate::rt::View<'msg, CodegenResponse_File> {
+    self.files().at(idx)
+  }
+  pub fn files_mut(self) -> crate::rt::Repeated<'msg, CodegenResponse_File> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().files) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  pub fn report(self) -> crate::rt::Slice<'msg, Diagnostic> {
+    unsafe {
+      let vec = &self.ptr.as_ref().report;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn report_at(self, idx: usize) -> crate::rt::View<'msg, Diagnostic> {
+    self.report().at(idx)
+  }
+  pub fn report_mut(self) -> crate::rt::Repeated<'msg, Diagnostic> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().report) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+}
+
+impl Drop for CodegenResponse {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenResponse::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.CodegenResponse ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenResponse::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for CodegenResponse {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_CodegenResponse {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 0],
+    pub(in super) files: crate::rt::__z::AVec<*mut u8>,
+    pub(in super) report: crate::rt::__z::AVec<*mut u8>,
+  }
+
+  pub const FIELD_OFFSET_files: u32 = unsafe {
+    let msg = CodegenResponse::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().files as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_report: u32 = unsafe {
+    let msg = CodegenResponse::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().report as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{2 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{2 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = CodegenResponse::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+            CodegenResponse_File::__tdp_info,
+            Diagnostic::__tdp_info,
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: CodegenResponse::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
+          offset: __priv_CodegenResponse::FIELD_OFFSET_files,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
+          offset: __priv_CodegenResponse::FIELD_OFFSET_report,
+          ty: 1,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenResponse::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg CodegenResponse>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenResponse> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenResponse::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut CodegenResponse>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenResponse> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::CodegenResponse> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// message `pz.plugin.CodegenResponse.File`
+pub struct CodegenResponse_File {
+  ptr: crate::rt::__z::ABox<__priv_CodegenResponse_File::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl CodegenResponse_File {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_CodegenResponse_File::Storage = __priv_CodegenResponse_File::Storage {
+      __hasbits: [0; 1],
+      path: (0 as *mut u8, 0),
+      content: (0 as *mut u8, 0),
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_CodegenResponse_File::Storage as *mut __priv_CodegenResponse_File::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_CodegenResponse_File::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_CodegenResponse_File::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { CodegenResponse_File::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn path(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.path_or().unwrap_or_default()
+  }
+  pub fn path_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().path;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn path_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.path_mut_or().into_mut()
+  }
+  pub fn path_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenResponse_File::FIELD_OFFSET_path as usize),
+        self.arena,
+        CodegenResponse_File::__hazzer_path,
+      )
+    }
+  }
+  pub fn path_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.path_mut().set(value);
+  }
+
+  pub fn content(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.content_or().unwrap_or_default()
+  }
+  pub fn content_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().content;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn content_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.content_mut_or().into_mut()
+  }
+  pub fn content_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenResponse_File::FIELD_OFFSET_content as usize),
+        self.arena,
+        CodegenResponse_File::__hazzer_content,
+      )
+    }
+  }
+  pub fn content_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.content_mut().set(value);
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_CodegenResponse_File::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_CodegenResponse_File::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_CodegenResponse_File::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_CodegenResponse_File::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_path(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_CodegenResponse_File::FIELD_OFFSET_path as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_content(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_CodegenResponse_File::FIELD_OFFSET_content as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+}
+
+impl Default for CodegenResponse_File {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for CodegenResponse_File {
+  type View<'msg> = __priv_CodegenResponse_File::View<'msg>;
+  type Mut<'msg> = __priv_CodegenResponse_File::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for CodegenResponse_File {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_CodegenResponse_File::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_CodegenResponse_File::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_CodegenResponse_File::View<'msg> {
+  pub fn path(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.path_or().unwrap_or_default()
+  }
+  pub fn path_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().path;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  pub fn content(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.content_or().unwrap_or_default()
+  }
+  pub fn content_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().content;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.path_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("path")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.content_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("content")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_CodegenResponse_File::View<'_> {
+  fn default() -> Self {
+    CodegenResponse_File::DEFAULT
+  }
+}
+
+impl<'msg> __priv_CodegenResponse_File::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { CodegenResponse_File::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenResponse_File::__tdp_info())
+  }
+
+  pub fn path(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.path_or().unwrap_or_default()
+  }
+  pub fn path_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().path;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn path_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.path_mut_or().into_mut()
+  }
+  pub fn path_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenResponse_File::FIELD_OFFSET_path as usize),
+        self.arena,
+        CodegenResponse_File::__hazzer_path,
+      )
+    }
+  }
+  pub fn path_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.path_mut().set(value);
+  }
+
+  pub fn content(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.content_or().unwrap_or_default()
+  }
+  pub fn content_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().content;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn content_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.content_mut_or().into_mut()
+  }
+  pub fn content_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_CodegenResponse_File::FIELD_OFFSET_content as usize),
+        self.arena,
+        CodegenResponse_File::__hazzer_content,
+      )
+    }
+  }
+  pub fn content_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.content_mut().set(value);
+  }
+
+}
+
+impl Drop for CodegenResponse_File {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenResponse_File::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.CodegenResponse.File ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_CodegenResponse_File::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for CodegenResponse_File {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_CodegenResponse_File {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 1],
+    pub(in super) path: (*mut u8, usize),
+    pub(in super) content: (*mut u8, usize),
+  }
+
+  pub const FIELD_OFFSET_path: u32 = unsafe {
+    let msg = CodegenResponse_File::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().path as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_content: u32 = unsafe {
+    let msg = CodegenResponse_File::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().content as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{2 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{2 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = CodegenResponse_File::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: CodegenResponse_File::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_CodegenResponse_File::FIELD_OFFSET_path,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_CodegenResponse_File::FIELD_OFFSET_content,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenResponse_File::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg CodegenResponse_File>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenResponse_File> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_CodegenResponse_File::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut CodegenResponse_File>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::CodegenResponse_File> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::CodegenResponse_File> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// message `pz.plugin.Diagnostic`
+pub struct Diagnostic {
+  ptr: crate::rt::__z::ABox<__priv_Diagnostic::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl Diagnostic {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_Diagnostic::Storage = __priv_Diagnostic::Storage {
+      __hasbits: [0; 1],
+      kind: Diagnostic_Kind::new().0 as u32,
+      info: (0 as *mut u8, 0),
+      snippets: crate::rt::__z::AVec::new(),
+      notes: crate::rt::__z::AVec::new(),
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_Diagnostic::Storage as *mut __priv_Diagnostic::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_Diagnostic::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_Diagnostic::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { Diagnostic::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn kind(&self) -> crate::rt::View<'_, Diagnostic_Kind> {
+    self.kind_or().unwrap_or_default()
+  }
+  pub fn kind_or(&self) -> Option<crate::rt::View<'_, Diagnostic_Kind>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(self.ptr.as_ref().kind) })
+  }
+  pub fn kind_mut(&mut self) -> crate::rt::Mut<'_, Diagnostic_Kind> {
+    self.kind_mut_or().into_mut()
+  }
+  pub fn kind_mut_or(&mut self) -> crate::rt::value::OptMut<'_, Diagnostic_Kind> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_kind as usize),
+        self.arena,
+        Diagnostic::__hazzer_kind,
+      )
+    }
+  }
+  pub fn kind_set(&mut self, value: Diagnostic_Kind) {
+    self.kind_mut().set(value);
+  }
+
+  pub fn info(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.info_or().unwrap_or_default()
+  }
+  pub fn info_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().info;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn info_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.info_mut_or().into_mut()
+  }
+  pub fn info_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_info as usize),
+        self.arena,
+        Diagnostic::__hazzer_info,
+      )
+    }
+  }
+  pub fn info_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.info_mut().set(value);
+  }
+
+  pub fn snippets(&self) -> crate::rt::Slice<'_, Diagnostic_Snippet> {
+    unsafe {
+      let vec = &self.ptr.as_ref().snippets;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn snippets_at(&self, idx: usize) -> crate::rt::View<'_, Diagnostic_Snippet> {
+    self.snippets().at(idx)
+  }
+  pub fn snippets_mut(&mut self) -> crate::rt::Repeated<'_, Diagnostic_Snippet> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().snippets) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  pub fn notes(&self) -> crate::rt::Slice<'_, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().notes;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn notes_at(&self, idx: usize) -> crate::rt::View<'_, crate::rt::Str> {
+    self.notes().at(idx)
+  }
+  pub fn notes_mut(&mut self) -> crate::rt::Repeated<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().notes) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Diagnostic::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_Diagnostic::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_Diagnostic::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Diagnostic::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_kind(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Diagnostic::FIELD_OFFSET_kind as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_info(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Diagnostic::FIELD_OFFSET_info as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+}
+
+impl Default for Diagnostic {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for Diagnostic {
+  type View<'msg> = __priv_Diagnostic::View<'msg>;
+  type Mut<'msg> = __priv_Diagnostic::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for Diagnostic {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_Diagnostic::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_Diagnostic::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_Diagnostic::View<'msg> {
+  pub fn kind(self) -> crate::rt::View<'msg, Diagnostic_Kind> {
+    self.kind_or().unwrap_or_default()
+  }
+  pub fn kind_or(self) -> Option<crate::rt::View<'msg, Diagnostic_Kind>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(self.ptr.as_ref().kind) })
+  }
+
+  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.info_or().unwrap_or_default()
+  }
+  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().info;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  pub fn snippets(self) -> crate::rt::Slice<'msg, Diagnostic_Snippet> {
+    unsafe {
+      let vec = &self.ptr.as_ref().snippets;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn snippets_at(self, idx: usize) -> crate::rt::View<'msg, Diagnostic_Snippet> {
+    self.snippets().at(idx)
+  }
+
+  pub fn notes(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().notes;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn notes_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.notes().at(idx)
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.kind_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("kind")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.info_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("info")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    for value in self.snippets() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("snippets")?;
+      value.__debug(debug)?;
+      count += 1;
+    }
+    if !self.notes().is_empty() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("notes")?;
+      debug.iter(self.notes())?;
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_Diagnostic::View<'_> {
+  fn default() -> Self {
+    Diagnostic::DEFAULT
+  }
+}
+
+impl<'msg> __priv_Diagnostic::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { Diagnostic::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Diagnostic::__tdp_info())
+  }
+
+  pub fn kind(self) -> crate::rt::View<'msg, Diagnostic_Kind> {
+    self.kind_or().unwrap_or_default()
+  }
+  pub fn kind_or(self) -> Option<crate::rt::View<'msg, Diagnostic_Kind>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(self.ptr.as_ref().kind) })
+  }
+  pub fn kind_mut(self) -> crate::rt::Mut<'msg, Diagnostic_Kind> {
+    self.kind_mut_or().into_mut()
+  }
+  pub fn kind_mut_or(self) -> crate::rt::value::OptMut<'msg, Diagnostic_Kind> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_kind as usize),
+        self.arena,
+        Diagnostic::__hazzer_kind,
+      )
+    }
+  }
+  pub fn kind_set(self, value: Diagnostic_Kind) {
+    self.kind_mut().set(value);
+  }
+
+  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.info_or().unwrap_or_default()
+  }
+  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().info;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn info_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.info_mut_or().into_mut()
+  }
+  pub fn info_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_info as usize),
+        self.arena,
+        Diagnostic::__hazzer_info,
+      )
+    }
+  }
+  pub fn info_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.info_mut().set(value);
+  }
+
+  pub fn snippets(self) -> crate::rt::Slice<'msg, Diagnostic_Snippet> {
+    unsafe {
+      let vec = &self.ptr.as_ref().snippets;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn snippets_at(self, idx: usize) -> crate::rt::View<'msg, Diagnostic_Snippet> {
+    self.snippets().at(idx)
+  }
+  pub fn snippets_mut(self) -> crate::rt::Repeated<'msg, Diagnostic_Snippet> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().snippets) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+  pub fn notes(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+    unsafe {
+      let vec = &self.ptr.as_ref().notes;
+      crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
+    }
+  }
+  pub fn notes_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.notes().at(idx)
+  }
+  pub fn notes_mut(self) -> crate::rt::Repeated<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().notes) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
+  }
+
+}
+
+impl Drop for Diagnostic {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_Diagnostic::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.Diagnostic ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_Diagnostic::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for Diagnostic {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_Diagnostic {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 1],
+    pub(in super) kind: u32,
+    pub(in super) info: (*mut u8, usize),
+    pub(in super) snippets: crate::rt::__z::AVec<*mut u8>,
+    pub(crate) notes: crate::rt::__z::AVec<(*mut u8, usize)>,
+  }
+
+  pub const FIELD_OFFSET_kind: u32 = unsafe {
+    let msg = Diagnostic::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().kind as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_info: u32 = unsafe {
+    let msg = Diagnostic::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().info as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_snippets: u32 = unsafe {
+    let msg = Diagnostic::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().snippets as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_notes: u32 = unsafe {
+    let msg = Diagnostic::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().notes as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{4 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{4 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = Diagnostic::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+            Diagnostic_Snippet::__tdp_info,
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: Diagnostic::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Diagnostic::FIELD_OFFSET_kind,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_Diagnostic::FIELD_OFFSET_info,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 3,
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
+          offset: __priv_Diagnostic::FIELD_OFFSET_snippets,
+          ty: 0,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 4,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
+          offset: __priv_Diagnostic::FIELD_OFFSET_notes,
+          ty: 0,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_Diagnostic::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg Diagnostic>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::Diagnostic> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_Diagnostic::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut Diagnostic>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::Diagnostic> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::Diagnostic> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+
+/// enum `pz.plugin.Diagnostic.Kind`
+#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[repr(transparent)]
+pub struct Diagnostic_Kind(pub i32);
+
+impl Diagnostic_Kind {
+  pub const Error: Self = Self(0);
+  pub const Warning: Self = Self(1);
+
+  pub const fn new() -> Self {
+    Self(0)
+  }
+}
+
+impl Default for Diagnostic_Kind {
+  fn default() -> Self {
+    Self(0)
+  }
+}
+
+impl crate::rt::ptr::Proxied for Diagnostic_Kind {
+  type View<'a> = Self;
+  type Mut<'a> = crate::rt::ptr::ScalarMut<'a, Self>;
+}
+
+impl std::fmt::Debug for Diagnostic_Kind {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    match *self {
+      Self::Error => std::write!(fmt, "Error"),
+      Self::Warning => std::write!(fmt, "Warning"),
+      Self(n) => std::write!(fmt, "pz.plugin.Diagnostic.Kind({n})"),
+    }
+  }
+}
+
+/// message `pz.plugin.Diagnostic.Snippet`
+pub struct Diagnostic_Snippet {
+  ptr: crate::rt::__z::ABox<__priv_Diagnostic_Snippet::Storage>,
+  arena: crate::rt::__z::RawArena,
+}
+
+impl Diagnostic_Snippet {
+  pub const DEFAULT: crate::rt::View<'static, Self> = unsafe {
+    const VALUE: __priv_Diagnostic_Snippet::Storage = __priv_Diagnostic_Snippet::Storage {
+      __hasbits: [0; 1],
+      span: 0,
+      info: (0 as *mut u8, 0),
+      is_remark: false,
+    };
+    crate::rt::View::<Self> {
+      ptr: crate::rt::__z::ABox::from_ptr(&VALUE as *const __priv_Diagnostic_Snippet::Storage as *mut __priv_Diagnostic_Snippet::Storage as *mut u8),
+      _ph: std::marker::PhantomData,
+    }
+  };
+
+  pub fn new() -> Self {
+    let arena = crate::rt::__z::RawArena::new();
+    let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
+    unsafe {
+      Self::__raw_init(ptr);
+      Self {
+        ptr: crate::rt::__z::ABox::from_ptr(ptr),
+        arena,
+      }
+    }
+  }
+
+  pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, crate::rt::Error> {
+    let mut new = Self::new();
+    new.parse_pb(input)?;
+    Ok(new)
+  }
+
+  pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    self.as_mut().parse_pb(input)
+  }
+
+  pub fn as_view(&self) -> crate::rt::View<Self> {
+    __priv_Diagnostic_Snippet::View { ptr: self.ptr, _ph: std::marker::PhantomData }
+  }
+
+  pub fn as_mut(&mut self) -> crate::rt::Mut<Self> {
+    __priv_Diagnostic_Snippet::Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+  }
+
+  pub fn clear(&mut self) {
+    unsafe { Diagnostic_Snippet::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn into_raw(self) -> *mut u8 {
+    self.ptr.as_ptr()
+  }
+
+  pub fn span(&self) -> crate::rt::View<'_, u32> {
+    self.span_or().unwrap_or_default()
+  }
+  pub fn span_or(&self) -> Option<crate::rt::View<'_, u32>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
+  }
+  pub fn span_mut(&mut self) -> crate::rt::Mut<'_, u32> {
+    self.span_mut_or().into_mut()
+  }
+  pub fn span_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_span as usize),
+        self.arena,
+        Diagnostic_Snippet::__hazzer_span,
+      )
+    }
+  }
+  pub fn span_set(&mut self, value: u32) {
+    self.span_mut().set(value);
+  }
+
+  pub fn info(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.info_or().unwrap_or_default()
+  }
+  pub fn info_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().info;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn info_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.info_mut_or().into_mut()
+  }
+  pub fn info_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_info as usize),
+        self.arena,
+        Diagnostic_Snippet::__hazzer_info,
+      )
+    }
+  }
+  pub fn info_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.info_mut().set(value);
+  }
+
+  pub fn is_remark(&self) -> crate::rt::View<'_, bool> {
+    self.is_remark_or().unwrap_or_default()
+  }
+  pub fn is_remark_or(&self) -> Option<crate::rt::View<'_, bool>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().is_remark) })
+  }
+  pub fn is_remark_mut(&mut self) -> crate::rt::Mut<'_, bool> {
+    self.is_remark_mut_or().into_mut()
+  }
+  pub fn is_remark_mut_or(&mut self) -> crate::rt::value::OptMut<'_, bool> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_is_remark as usize),
+        self.arena,
+        Diagnostic_Snippet::__hazzer_is_remark,
+      )
+    }
+  }
+  pub fn is_remark_set(&mut self, value: bool) {
+    self.is_remark_mut().set(value);
+  }
+
+  #[doc(hidden)]
+  pub const __LAYOUT: std::alloc::Layout = std::alloc::Layout::new::<__priv_Diagnostic_Snippet::Storage>();
+  #[doc(hidden)]
+  pub unsafe fn __raw_clear(raw: *mut u8) {
+    (&mut *raw.cast::<__priv_Diagnostic_Snippet::Storage>()).__hasbits = [0; 1];
+  }
+  #[doc(hidden)]
+  pub unsafe fn __raw_init(raw: *mut u8) {
+    raw.cast::<__priv_Diagnostic_Snippet::Storage>()
+      .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
+  }
+  #[doc(hidden)]
+  pub fn __tdp_info() -> *const crate::rt::__z::tdp::Message {
+    &__priv_Diagnostic_Snippet::TDP_INFO as *const _ as *const crate::rt::__z::tdp::Message
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_span(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Diagnostic_Snippet::FIELD_OFFSET_span as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 1 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !1,
+      Some(true) => {
+        *word |= 1;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_info(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Diagnostic_Snippet::FIELD_OFFSET_info as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 2 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !2,
+      Some(true) => {
+        *word |= 2;
+      }
+    }
+    has
+  }
+  #[doc(hidden)]
+  pub unsafe fn __hazzer_is_remark(
+    raw: *mut u8,
+    arena: crate::rt::__z::RawArena,
+    flag: Option<bool>,
+  ) -> bool {
+    let offset = __priv_Diagnostic_Snippet::FIELD_OFFSET_is_remark as usize;
+    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
+    let has = *word & 4 != 0;
+    match flag {
+      None => {},
+      Some(false) => *word &= !4,
+      Some(true) => {
+        *word |= 4;
+      }
+    }
+    has
+  }
+}
+
+impl Default for Diagnostic_Snippet {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
+impl crate::rt::ptr::Proxied for Diagnostic_Snippet {
+  type View<'msg> = __priv_Diagnostic_Snippet::View<'msg>;
+  type Mut<'msg> = __priv_Diagnostic_Snippet::Mut<'msg>;
+}
+
+impl crate::rt::value::Type for Diagnostic_Snippet {
+  type __Storage = *mut u8;
+
+  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::rt::View<'a, Self> {
+    __priv_Diagnostic_Snippet::View {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      _ph: std::marker::PhantomData,
+    }
+  }
+  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::rt::__z::RawArena) -> crate::rt::Mut<'a, Self> {
+    __priv_Diagnostic_Snippet::Mut {
+      ptr: crate::rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      arena,
+      _ph: std::marker::PhantomData,
+    }
+  }
+
+  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::rt::__z::RawArena) {
+    (&mut *ptr.cast::<crate::rt::__z::AVec<*mut u8>>()).resize_msg(
+      new_len, arena, Self::__LAYOUT, Self::__raw_init)
+  }
+}
+
+impl<'msg> __priv_Diagnostic_Snippet::View<'msg> {
+  pub fn span(self) -> crate::rt::View<'msg, u32> {
+    self.span_or().unwrap_or_default()
+  }
+  pub fn span_or(self) -> Option<crate::rt::View<'msg, u32>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
+  }
+
+  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.info_or().unwrap_or_default()
+  }
+  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().info;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+
+  pub fn is_remark(self) -> crate::rt::View<'msg, bool> {
+    self.is_remark_or().unwrap_or_default()
+  }
+  pub fn is_remark_or(self) -> Option<crate::rt::View<'msg, bool>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().is_remark) })
+  }
+
+  #[doc(hidden)]
+  pub fn __debug(self, debug: &mut crate::rt::__z::Debug) -> std::fmt::Result {
+    let mut count = 0;
+    debug.start_block()?;
+    if let Some(value) = self.span_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("span")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.info_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("info")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if let Some(value) = self.is_remark_or() {
+      if count != 0 { debug.comma(false)?; }
+      debug.field("is_remark")?;
+      debug.write_debug(value);
+      count += 1;
+    }
+    if count != 0 {
+      debug.comma(true)?;
+    }
+    debug.end_block()?;
+    Ok(())
+  }
+}
+
+impl Default for __priv_Diagnostic_Snippet::View<'_> {
+  fn default() -> Self {
+    Diagnostic_Snippet::DEFAULT
+  }
+}
+
+impl<'msg> __priv_Diagnostic_Snippet::Mut<'msg>  {
+  pub fn clear(self) {
+    unsafe { Diagnostic_Snippet::__raw_clear(self.ptr.as_ptr()) }
+  }
+
+  pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::rt::Error> {
+    let mut ctx = crate::rt::__z::tdp::ParseCtx::new(input, self.arena);
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Diagnostic_Snippet::__tdp_info())
+  }
+
+  pub fn span(self) -> crate::rt::View<'msg, u32> {
+    self.span_or().unwrap_or_default()
+  }
+  pub fn span_or(self) -> Option<crate::rt::View<'msg, u32>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 1 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
+  }
+  pub fn span_mut(self) -> crate::rt::Mut<'msg, u32> {
+    self.span_mut_or().into_mut()
+  }
+  pub fn span_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_span as usize),
+        self.arena,
+        Diagnostic_Snippet::__hazzer_span,
+      )
+    }
+  }
+  pub fn span_set(self, value: u32) {
+    self.span_mut().set(value);
+  }
+
+  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.info_or().unwrap_or_default()
+  }
+  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
+    Some(unsafe {
+      let (mut ptr, len) = self.ptr.as_ref().info;
+      if ptr.is_null() { ptr = 1 as *mut u8; }
+      crate::rt::Str::from_raw_parts(ptr, len)
+    })
+  }
+  pub fn info_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.info_mut_or().into_mut()
+  }
+  pub fn info_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_info as usize),
+        self.arena,
+        Diagnostic_Snippet::__hazzer_info,
+      )
+    }
+  }
+  pub fn info_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.info_mut().set(value);
+  }
+
+  pub fn is_remark(self) -> crate::rt::View<'msg, bool> {
+    self.is_remark_or().unwrap_or_default()
+  }
+  pub fn is_remark_or(self) -> Option<crate::rt::View<'msg, bool>> {
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().is_remark) })
+  }
+  pub fn is_remark_mut(self) -> crate::rt::Mut<'msg, bool> {
+    self.is_remark_mut_or().into_mut()
+  }
+  pub fn is_remark_mut_or(self) -> crate::rt::value::OptMut<'msg, bool> {
+    unsafe {
+      crate::rt::value::OptMut::__wrap(
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_is_remark as usize),
+        self.arena,
+        Diagnostic_Snippet::__hazzer_is_remark,
+      )
+    }
+  }
+  pub fn is_remark_set(self, value: bool) {
+    self.is_remark_mut().set(value);
+  }
+
+}
+
+impl Drop for Diagnostic_Snippet {
+  fn drop(&mut self) {
+    unsafe { self.arena.destroy() }
+  }
+}
+
+impl std::fmt::Debug for __priv_Diagnostic_Snippet::View<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    fmt.write_str("pz.plugin.Diagnostic.Snippet ")?;
+    let mut debug = crate::rt::__z::Debug::new(fmt);
+    self.__debug(&mut debug)
+  }
+}
+
+impl std::fmt::Debug for __priv_Diagnostic_Snippet::Mut<'_> {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    use crate::rt::ptr::ViewFor;
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+impl std::fmt::Debug for Diagnostic_Snippet {
+  fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+    std::fmt::Debug::fmt(&self.as_view(), fmt)
+  }
+}
+
+mod __priv_Diagnostic_Snippet {
+  pub use super::*;
+
+  #[repr(C)]
+  pub struct Storage {
+    pub(crate) __hasbits: [u32; 1],
+    pub(in super) span: u32,
+    pub(in super) info: (*mut u8, usize),
+    pub(in super) is_remark: bool,
+  }
+
+  pub const FIELD_OFFSET_span: u32 = unsafe {
+    let msg = Diagnostic_Snippet::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().span as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_info: u32 = unsafe {
+    let msg = Diagnostic_Snippet::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().info as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+  pub const FIELD_OFFSET_is_remark: u32 = unsafe {
+    let msg = Diagnostic_Snippet::DEFAULT;
+    let top = msg.ptr.as_ptr().cast::<u8>();
+    let field = &msg.ptr.as_ref().is_remark as *const _ as *const u8;
+    field.offset_from(top) as u32
+  };
+
+  pub static TDP_INFO: crate::rt::__z::tdp::MessageAndFields<{3 + 1}> =
+    crate::rt::__z::tdp::MessageAndFields::<{3 + 1}> {
+      msg: crate::rt::__z::tdp::Message {
+        size: {
+          let size = Diagnostic_Snippet::__LAYOUT.size();
+          assert!(size <= (u32::MAX as usize));
+          size as u32
+        },
+        tys: {
+          const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+          ];
+          TYS.as_ptr()
+        },
+        raw_init: Diagnostic_Snippet::__raw_init,
+      },
+      fields: [
+        crate::rt::__z::tdp::Field {
+          number: 1,
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          offset: __priv_Diagnostic_Snippet::FIELD_OFFSET_span,
+          ty: 0,
+          hasbit: 0,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 2,
+          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          offset: __priv_Diagnostic_Snippet::FIELD_OFFSET_info,
+          ty: 0,
+          hasbit: 1,
+        },
+        crate::rt::__z::tdp::Field {
+          number: 3,
+          flags: (crate::rt::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
+          offset: __priv_Diagnostic_Snippet::FIELD_OFFSET_is_remark,
+          ty: 0,
+          hasbit: 2,
+        },
+        crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+      ],
+    };
+
+  #[derive(Copy, Clone)]
+  pub struct View<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_Diagnostic_Snippet::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg Diagnostic_Snippet>,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::Diagnostic_Snippet> for View<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  pub struct Mut<'msg> {
+    pub(in super) ptr: crate::rt::__z::ABox<__priv_Diagnostic_Snippet::Storage>,
+    pub(in super) _ph: std::marker::PhantomData<&'msg mut Diagnostic_Snippet>,
+    pub(in super) arena: crate::rt::__z::RawArena,
+  }
+
+  impl<'msg> crate::rt::ptr::ViewFor<'msg, super::Diagnostic_Snippet> for Mut<'msg> {
+    fn as_view(&self) -> View {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+  }
+
+  impl<'msg> crate::rt::ptr::MutFor<'msg, super::Diagnostic_Snippet> for Mut<'msg> {
+    fn into_view(self) -> View<'msg> {
+      View { ptr: self.ptr, _ph: std::marker::PhantomData }
+    }
+
+    fn as_mut(&mut self) -> Mut {
+      Mut { ptr: self.ptr, _ph: std::marker::PhantomData, arena: self.arena }
+    }
+  }
+}
+

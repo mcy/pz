@@ -1,5 +1,5 @@
-edition = "2023";
-package pz;
+@edition = "2023"
+package pz.test
 
 // Tests everything in the language.
 

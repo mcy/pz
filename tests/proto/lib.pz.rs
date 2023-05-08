@@ -6,7 +6,7 @@
 #![allow(unused)]
 extern crate pz as __rt;
 
-/// message `pz.TestAll`
+/// message `pz.test.TestAll`
 pub struct TestAll {
   ptr: __rt::rt::__z::ABox<__priv_TestAll::Storage>,
   arena: __rt::rt::__z::RawArena,
@@ -1500,7 +1500,7 @@ impl Drop for TestAll {
 
 impl std::fmt::Debug for __priv_TestAll::View<'_> {
   fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-    fmt.write_str("pz.TestAll ")?;
+    fmt.write_str("pz.test.TestAll ")?;
     let mut debug = __rt::rt::__z::Debug::new(fmt);
     self.__debug(&mut debug)
   }
@@ -1865,7 +1865,7 @@ mod __priv_TestAll {
   }
 }
 
-/// message `pz.TestAll.Nested`
+/// message `pz.test.TestAll.Nested`
 pub struct TestAll_Nested {
   ptr: __rt::rt::__z::ABox<__priv_TestAll_Nested::Storage>,
   arena: __rt::rt::__z::RawArena,
@@ -2143,7 +2143,7 @@ impl Drop for TestAll_Nested {
 
 impl std::fmt::Debug for __priv_TestAll_Nested::View<'_> {
   fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-    fmt.write_str("pz.TestAll.Nested ")?;
+    fmt.write_str("pz.test.TestAll.Nested ")?;
     let mut debug = __rt::rt::__z::Debug::new(fmt);
     self.__debug(&mut debug)
   }

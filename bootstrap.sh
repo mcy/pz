@@ -4,9 +4,8 @@ set -e
 cd $(dirname $0)
 
 build() {
-  path=$1
-  out=$2
-  rt=$3
+  rt=$1; shift
+  out=$1; shift
 
   cp $out $out.bck
   
@@ -15,7 +14,7 @@ build() {
     --plugin=rust \
     --output-dir=$(dirname $out) \
     --rust.rt-crate $rt \
-    $path
+    $@
 
   set +e
   cargo build
@@ -26,5 +25,5 @@ build() {
   fi
 }
 
-build src/pz.pz src/lib.pz.rs crate
-build tests/test.pz tests/proto/lib.pz.rs pz
+build crate src/lib.pz.rs src/pz.pz src/plugin.pz
+build pz tests/proto/lib.pz.rs tests/test.pz 

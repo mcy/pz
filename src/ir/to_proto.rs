@@ -17,13 +17,13 @@ pub fn to_proto(bundle: &ir::Bundle) -> proto::Bundle {
   for (i, &ty) in bundle.types.borrow().iter().enumerate() {
     ty_to_idx.insert(ty as *const ir::Type, i);
 
-    let &mut pkg = pkg_to_idx.entry(ty.package()).or_insert_with(|| {
-      proto.packages.push(ty.package().to_string());
+    let &mut pkg = pkg_to_idx.entry(ty.name().package).or_insert_with(|| {
+      proto.packages.push(ty.name().package.to_string());
       proto.packages.len() - 1
     });
 
     proto.types.push(proto::Type {
-      name: Some(ty.name().to_string()),
+      name: Some(ty.name().name.to_string()),
       package: Some(pkg as u32),
       kind: match ty.kind() {
         syn::DeclKind::Message => Some(proto::r#type::Kind::Message as i32),
@@ -64,19 +64,31 @@ pub fn to_proto(bundle: &ir::Bundle) -> proto::Bundle {
           ir::FieldTypeKind::F64 => proto::field::Type::F64,
           ir::FieldTypeKind::Bool => proto::field::Type::Bool,
           ir::FieldTypeKind::String => proto::field::Type::String,
-          ir::FieldTypeKind::Type(_) => proto::field::Type::Type,
-          ir::FieldTypeKind::Unresolved(_) => proto::field::Type::Foreign,
+          ir::FieldTypeKind::Type(ty) if ty.decl().is_some() => {
+            proto::field::Type::Type
+          }
+          ir::FieldTypeKind::Type(..) => proto::field::Type::Foreign,
         } as i32);
 
         let type_index = field.ty().and_then(|t| match t.kind {
-          ir::FieldTypeKind::Type(ty) => {
+          ir::FieldTypeKind::Type(ty) if ty.decl().is_some() => {
             Some(ty_to_idx[&(ty as *const ir::Type)] as u32)
           }
-          ir::FieldTypeKind::Unresolved(name) => {
-            let &mut idx = foreign_to_idx.entry(name).or_insert_with(|| {
-              proto.foreign_types.push(name.to_string());
-              proto.foreign_types.len() - 1
-            });
+          ir::FieldTypeKind::Type(ty) => {
+            let &mut pkg =
+              pkg_to_idx.entry(ty.name().package).or_insert_with(|| {
+                proto.packages.push(ty.name().package.to_string());
+                proto.packages.len() - 1
+              });
+
+            let &mut idx =
+              foreign_to_idx.entry(ty.name()).or_insert_with(|| {
+                proto.foreign_types.push(proto::bundle::ForeignType {
+                  name: Some(ty.name().name.to_string()),
+                  package: Some(pkg as u32),
+                });
+                proto.foreign_types.len() - 1
+              });
             Some(idx as u32)
           }
           _ => None,
