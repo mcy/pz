@@ -1,0 +1,10 @@
+[package]
+name = "pz_plugins"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pz = { path = ".." }
+
+heck = "0.4.1"
+prost = "0.11.9"

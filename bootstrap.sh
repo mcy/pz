@@ -25,5 +25,5 @@ build() {
   fi
 }
 
-build crate src/lib.pz.rs src/pz.pz src/plugin.pz
-build pz tests/proto/lib.pz.rs tests/test.pz 
+build crate rust/src/proto/lib.pz.rs rust/src/proto/*.pz
+build pz rust/tests/proto/lib.pz.rs rust/tests/proto/*.pz 
