@@ -3,66 +3,129 @@ package pz.plugin
 
 import pz { Bundle }
 
+/// A request to a plugin.
+///
+/// When a plugin is executed, a message of this type is sent to it over stdin.
 choice Request {
   1. about: AboutRequest
   2. codegen: CodegenRequest
 }
 
+/// A response from a plugin.
+///
+/// When a plugin is executed, the plugin driver expects a message of this type
+/// to be written to stdout.
 choice Response {
   1. about: AboutResponse
   2. codegen: CodegenResponse
 }
 
+/// The preflight negotiation request, used to learn information about the
+/// plugin.
 message AboutRequest {}
 
+/// The negotiation response, which allows a plugin to describe itself. 
 message AboutResponse {
+  /// The name of this plugin. This is only used for identification purposes.
+  1. name: str
+  /// The version of this plugin. This is shown to users.
+  2. version: str
+
+  /// Command-line options that the plugin understands.
+  10. options: repeated Option
   message Option {
+    /// The name of the option. This is added to the CLI flags the parser can
+    /// parse, namespaced under this plugin. For example, if the plugin "foo"
+    /// has an option named "bar", it is set at the command line as `--foo.bar`.
     1. name: str
+
+    /// Help text for this option to show on the command line.
     2. help: str
   }
-
-  1. name: str
-  2. version: str
-  10. options: repeated str
 }
 
+/// A code generation request sent to a plugin.
 message CodegenRequest {
+  /// A bundle containing all of the relevant definitions for this request.
+  ///
+  /// By construction, this bundle will not contain any foreign references.
   1. bundle: Bundle
-  2. requested_indices: u32
 
+  /// A list of indices into `bundle.types` that refer to types that 
+  /// should be code-generated.
+  2. requested_indices: repeated u32
+
+  /// Command line options passed into the compiler, which were requested in
+  /// the `AboutResponse`.
+  ///
+  /// Options requested in `AboutResponse` will not be present if they were not
+  /// explicitly passed on the command line.
+  3. options: repeated Option
   message Option {
+    /// The name of the option, as specified in `AboutResponse.options`.
     1. name: str
+    /// The value of the option.
     2. value: str
   }
 
-  3. options: repeated Option
+  /// Whether to run the plugin in "debug mode".
   4. debug: bool
 }
 
+/// A code generation response from a plugin.
 message CodegenResponse {
-  message File {
-    1. path: str
-    2. content: str
-  }
-
+  /// The output of code generation as a list of files.
+  ///
+  /// The driver will output these files relative to the output directory.
   1. files: repeated File
+  message File { 1. path: str, 2. content: str }
+
+  /// Diagnostics that the driver should render.
   2. report: repeated Diagnostic
 }
 
+/// A diagnostic, essentially a structured log line from the plugin. 
 message Diagnostic {
+  /// The kind of diagnostic this is.
+  1. kind: Kind
   enum Kind {
+    /// Something went wrong and we couldn't generate code correctly.
     0. ERROR
+
+    /// Something looked bad, but code generation succeeded. 
     1. WARNING
   }
 
+  /// A message to display to the user.
+  ///
+  /// The rendering framework prefers this to be a single declarative sentence
+  /// that is not capitalized and has no ending period.
+  2. msg: str
+
+  /// A list of snippets of input source code that are relevant to the
+  /// diagnostic.
+  3. snippets: repeated Snippet
   message Snippet {
+    /// An ID refering to a location in the input. Messages in `pz.pz` may
+    /// contain a span that can be used to refer to the corresponding syntactic
+    /// structure in a snippet. There is no way to turn a span into line and
+    /// column information directly; this is done by the driver.
     1. span: u32
-    2. info: str
+
+    /// An optional message to display in the snippet (e.g. next to the
+    /// underline portion of the code).
+    ///
+    /// It should be in the same style as Diagnostic.msg.
+    2. msg: str
+    
+    /// Whether this is a "remark", which is additional information related to
+    /// a problem that isn't the direct cause. This is rendered slightly
+    /// differently. 
     3. is_remark: bool
   }
 
-  1. kind: Kind
-  2. info: str
-  3. snippets: repeated Snippet
+  /// A list of notes to append at the end of the diagnostic after the snippets.
+  ///
+  /// They should be in the same style as Diagnostic.msg.
   4. notes: repeated str
 }

@@ -3943,16 +3943,16 @@ impl AboutResponse {
     self.version_mut().set(value);
   }
 
-  pub fn options(&self) -> crate::rt::Slice<'_, crate::rt::Str> {
+  pub fn options(&self) -> crate::rt::Slice<'_, AboutResponse_Option> {
     unsafe {
       let vec = &self.ptr.as_ref().options;
       crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn options_at(&self, idx: usize) -> crate::rt::View<'_, crate::rt::Str> {
+  pub fn options_at(&self, idx: usize) -> crate::rt::View<'_, AboutResponse_Option> {
     self.options().at(idx)
   }
-  pub fn options_mut(&mut self) -> crate::rt::Repeated<'_, crate::rt::Str> {
+  pub fn options_mut(&mut self) -> crate::rt::Repeated<'_, AboutResponse_Option> {
     unsafe {
       crate::rt::Repeated::__wrap(
         (&mut self.ptr.as_mut().options) as *mut _ as *mut u8,
@@ -4074,13 +4074,13 @@ impl<'msg> __priv_AboutResponse::View<'msg> {
     })
   }
 
-  pub fn options(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+  pub fn options(self) -> crate::rt::Slice<'msg, AboutResponse_Option> {
     unsafe {
       let vec = &self.ptr.as_ref().options;
       crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, AboutResponse_Option> {
     self.options().at(idx)
   }
 
@@ -4100,10 +4100,10 @@ impl<'msg> __priv_AboutResponse::View<'msg> {
       debug.write_debug(value);
       count += 1;
     }
-    if !self.options().is_empty() {
+    for value in self.options() {
       if count != 0 { debug.comma(false)?; }
       debug.field("options")?;
-      debug.iter(self.options())?;
+      value.__debug(debug)?;
       count += 1;
     }
     if count != 0 {
@@ -4184,16 +4184,16 @@ impl<'msg> __priv_AboutResponse::Mut<'msg>  {
     self.version_mut().set(value);
   }
 
-  pub fn options(self) -> crate::rt::Slice<'msg, crate::rt::Str> {
+  pub fn options(self) -> crate::rt::Slice<'msg, AboutResponse_Option> {
     unsafe {
       let vec = &self.ptr.as_ref().options;
       crate::rt::Slice::__wrap(vec.as_ptr(), vec.len())
     }
   }
-  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, crate::rt::Str> {
+  pub fn options_at(self, idx: usize) -> crate::rt::View<'msg, AboutResponse_Option> {
     self.options().at(idx)
   }
-  pub fn options_mut(self) -> crate::rt::Repeated<'msg, crate::rt::Str> {
+  pub fn options_mut(self) -> crate::rt::Repeated<'msg, AboutResponse_Option> {
     unsafe {
       crate::rt::Repeated::__wrap(
         (&mut self.ptr.as_mut().options) as *mut _ as *mut u8,
@@ -4239,7 +4239,7 @@ mod __priv_AboutResponse {
     pub(crate) __hasbits: [u32; 1],
     pub(in super) name: (*mut u8, usize),
     pub(in super) version: (*mut u8, usize),
-    pub(crate) options: crate::rt::__z::AVec<(*mut u8, usize)>,
+    pub(in super) options: crate::rt::__z::AVec<*mut u8>,
   }
 
   pub const FIELD_OFFSET_name: u32 = unsafe {
@@ -4271,6 +4271,7 @@ mod __priv_AboutResponse {
         },
         tys: {
           const TYS: &[fn() -> *const crate::rt::__z::tdp::Message] = &[
+            AboutResponse_Option::__tdp_info,
           ];
           TYS.as_ptr()
         },
@@ -4293,7 +4294,7 @@ mod __priv_AboutResponse {
         },
         crate::rt::__z::tdp::Field {
           number: 10,
-          flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
+          flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
           offset: __priv_AboutResponse::FIELD_OFFSET_options,
           ty: 0,
           hasbit: 2,
@@ -4787,7 +4788,7 @@ impl CodegenRequest {
     const VALUE: __priv_CodegenRequest::Storage = __priv_CodegenRequest::Storage {
       __hasbits: [0; 1],
       bundle: 0 as *mut u8,
-      requested_indices: 0,
+      requested_indices: crate::rt::__z::AVec::new(),
       options: crate::rt::__z::AVec::new(),
       debug: false,
     };
@@ -4858,27 +4859,22 @@ impl CodegenRequest {
     }
   }
 
-  pub fn requested_indices(&self) -> crate::rt::View<'_, u32> {
-    self.requested_indices_or().unwrap_or_default()
-  }
-  pub fn requested_indices_or(&self) -> Option<crate::rt::View<'_, u32>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().requested_indices) })
-  }
-  pub fn requested_indices_mut(&mut self) -> crate::rt::Mut<'_, u32> {
-    self.requested_indices_mut_or().into_mut()
-  }
-  pub fn requested_indices_mut_or(&mut self) -> crate::rt::value::OptMut<'_, u32> {
+  pub fn requested_indices(&self) -> crate::rt::Slice<'_, u32> {
     unsafe {
-      crate::rt::value::OptMut::__wrap(
-        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_requested_indices as usize),
-        self.arena,
-        CodegenRequest::__hazzer_requested_indices,
-      )
+      let vec = &self.ptr.as_ref().requested_indices;
+      crate::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn requested_indices_set(&mut self, value: u32) {
-    self.requested_indices_mut().set(value);
+  pub fn requested_indices_at(&self, idx: usize) -> crate::rt::View<'_, u32> {
+    self.requested_indices().at(idx)
+  }
+  pub fn requested_indices_mut(&mut self) -> crate::rt::Repeated<'_, u32> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().requested_indices) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
   }
 
   pub fn options(&self) -> crate::rt::Slice<'_, CodegenRequest_Option> {
@@ -4903,7 +4899,7 @@ impl CodegenRequest {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(&self) -> Option<crate::rt::View<'_, bool>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().debug) })
   }
   pub fn debug_mut(&mut self) -> crate::rt::Mut<'_, bool> {
@@ -4962,24 +4958,6 @@ impl CodegenRequest {
     has
   }
   #[doc(hidden)]
-  pub unsafe fn __hazzer_requested_indices(
-    raw: *mut u8,
-    arena: crate::rt::__z::RawArena,
-    flag: Option<bool>,
-  ) -> bool {
-    let offset = __priv_CodegenRequest::FIELD_OFFSET_requested_indices as usize;
-    let word = &mut *raw.sub(offset).cast::<u32>().add(0);
-    let has = *word & 2 != 0;
-    match flag {
-      None => {},
-      Some(false) => *word &= !2,
-      Some(true) => {
-        *word |= 2;
-      }
-    }
-    has
-  }
-  #[doc(hidden)]
   pub unsafe fn __hazzer_debug(
     raw: *mut u8,
     arena: crate::rt::__z::RawArena,
@@ -4987,12 +4965,12 @@ impl CodegenRequest {
   ) -> bool {
     let offset = __priv_CodegenRequest::FIELD_OFFSET_debug as usize;
     let word = &mut *raw.sub(offset).cast::<u32>().add(0);
-    let has = *word & 4 != 0;
+    let has = *word & 2 != 0;
     match flag {
       None => {},
-      Some(false) => *word &= !4,
+      Some(false) => *word &= !2,
       Some(true) => {
-        *word |= 4;
+        *word |= 2;
       }
     }
     has
@@ -5045,12 +5023,14 @@ impl<'msg> __priv_CodegenRequest::View<'msg> {
     })
   }
 
-  pub fn requested_indices(self) -> crate::rt::View<'msg, u32> {
-    self.requested_indices_or().unwrap_or_default()
+  pub fn requested_indices(self) -> crate::rt::Slice<'msg, u32> {
+    unsafe {
+      let vec = &self.ptr.as_ref().requested_indices;
+      crate::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+    }
   }
-  pub fn requested_indices_or(self) -> Option<crate::rt::View<'msg, u32>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().requested_indices) })
+  pub fn requested_indices_at(self, idx: usize) -> crate::rt::View<'msg, u32> {
+    self.requested_indices().at(idx)
   }
 
   pub fn options(self) -> crate::rt::Slice<'msg, CodegenRequest_Option> {
@@ -5067,7 +5047,7 @@ impl<'msg> __priv_CodegenRequest::View<'msg> {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(self) -> Option<crate::rt::View<'msg, bool>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().debug) })
   }
 
@@ -5081,10 +5061,10 @@ impl<'msg> __priv_CodegenRequest::View<'msg> {
       value.__debug(debug)?;
       count += 1;
     }
-    if let Some(value) = self.requested_indices_or() {
+    if !self.requested_indices().is_empty() {
       if count != 0 { debug.comma(false)?; }
       debug.field("requested_indices")?;
-      debug.write_debug(value);
+      debug.iter(self.requested_indices())?;
       count += 1;
     }
     for value in self.options() {
@@ -5146,27 +5126,22 @@ impl<'msg> __priv_CodegenRequest::Mut<'msg>  {
     }
   }
 
-  pub fn requested_indices(self) -> crate::rt::View<'msg, u32> {
-    self.requested_indices_or().unwrap_or_default()
-  }
-  pub fn requested_indices_or(self) -> Option<crate::rt::View<'msg, u32>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().requested_indices) })
-  }
-  pub fn requested_indices_mut(self) -> crate::rt::Mut<'msg, u32> {
-    self.requested_indices_mut_or().into_mut()
-  }
-  pub fn requested_indices_mut_or(self) -> crate::rt::value::OptMut<'msg, u32> {
+  pub fn requested_indices(self) -> crate::rt::Slice<'msg, u32> {
     unsafe {
-      crate::rt::value::OptMut::__wrap(
-        self.ptr.as_ptr().add(__priv_CodegenRequest::FIELD_OFFSET_requested_indices as usize),
-        self.arena,
-        CodegenRequest::__hazzer_requested_indices,
-      )
+      let vec = &self.ptr.as_ref().requested_indices;
+      crate::rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
     }
   }
-  pub fn requested_indices_set(self, value: u32) {
-    self.requested_indices_mut().set(value);
+  pub fn requested_indices_at(self, idx: usize) -> crate::rt::View<'msg, u32> {
+    self.requested_indices().at(idx)
+  }
+  pub fn requested_indices_mut(self) -> crate::rt::Repeated<'msg, u32> {
+    unsafe {
+      crate::rt::Repeated::__wrap(
+        (&mut self.ptr.as_mut().requested_indices) as *mut _ as *mut u8,
+        self.arena,
+      )
+    }
   }
 
   pub fn options(self) -> crate::rt::Slice<'msg, CodegenRequest_Option> {
@@ -5191,7 +5166,7 @@ impl<'msg> __priv_CodegenRequest::Mut<'msg>  {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(self) -> Option<crate::rt::View<'msg, bool>> {
-    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 4 == 0 { return None }
+    if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(self.ptr.as_ref().debug) })
   }
   pub fn debug_mut(self) -> crate::rt::Mut<'msg, bool> {
@@ -5246,7 +5221,7 @@ mod __priv_CodegenRequest {
   pub struct Storage {
     pub(crate) __hasbits: [u32; 1],
     pub(in super) bundle: *mut u8,
-    pub(in super) requested_indices: u32,
+    pub (in super) requested_indices: crate::rt::__z::AVec<u32>,
     pub(in super) options: crate::rt::__z::AVec<*mut u8>,
     pub(in super) debug: bool,
   }
@@ -5303,7 +5278,7 @@ mod __priv_CodegenRequest {
         },
         crate::rt::__z::tdp::Field {
           number: 2,
-          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          flags: (crate::rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
           offset: __priv_CodegenRequest::FIELD_OFFSET_requested_indices,
           ty: 0,
           hasbit: 1,
@@ -5313,14 +5288,14 @@ mod __priv_CodegenRequest {
           flags: (crate::rt::__z::tdp::Kind::Msg as u8 as u32) | (1 << 4),
           offset: __priv_CodegenRequest::FIELD_OFFSET_options,
           ty: 1,
-          hasbit: 2,
+          hasbit: 1,
         },
         crate::rt::__z::tdp::Field {
           number: 4,
           flags: (crate::rt::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
           offset: __priv_CodegenRequest::FIELD_OFFSET_debug,
           ty: 0,
-          hasbit: 2,
+          hasbit: 1,
         },
         crate::rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
       ],
@@ -6615,7 +6590,7 @@ impl Diagnostic {
     const VALUE: __priv_Diagnostic::Storage = __priv_Diagnostic::Storage {
       __hasbits: [0; 1],
       kind: Diagnostic_Kind::new().0 as u32,
-      info: (0 as *mut u8, 0),
+      msg: (0 as *mut u8, 0),
       snippets: crate::rt::__z::AVec::new(),
       notes: crate::rt::__z::AVec::new(),
     };
@@ -6686,31 +6661,31 @@ impl Diagnostic {
     self.kind_mut().set(value);
   }
 
-  pub fn info(&self) -> crate::rt::View<'_, crate::rt::Str> {
-    self.info_or().unwrap_or_default()
+  pub fn msg(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.msg_or().unwrap_or_default()
   }
-  pub fn info_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+  pub fn msg_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe {
-      let (mut ptr, len) = self.ptr.as_ref().info;
+      let (mut ptr, len) = self.ptr.as_ref().msg;
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn info_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
-    self.info_mut_or().into_mut()
+  pub fn msg_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.msg_mut_or().into_mut()
   }
-  pub fn info_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+  pub fn msg_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
     unsafe {
       crate::rt::value::OptMut::__wrap(
-        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_info as usize),
+        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_msg as usize),
         self.arena,
-        Diagnostic::__hazzer_info,
+        Diagnostic::__hazzer_msg,
       )
     }
   }
-  pub fn info_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
-    self.info_mut().set(value);
+  pub fn msg_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.msg_mut().set(value);
   }
 
   pub fn snippets(&self) -> crate::rt::Slice<'_, Diagnostic_Snippet> {
@@ -6784,12 +6759,12 @@ impl Diagnostic {
     has
   }
   #[doc(hidden)]
-  pub unsafe fn __hazzer_info(
+  pub unsafe fn __hazzer_msg(
     raw: *mut u8,
     arena: crate::rt::__z::RawArena,
     flag: Option<bool>,
   ) -> bool {
-    let offset = __priv_Diagnostic::FIELD_OFFSET_info as usize;
+    let offset = __priv_Diagnostic::FIELD_OFFSET_msg as usize;
     let word = &mut *raw.sub(offset).cast::<u32>().add(0);
     let has = *word & 2 != 0;
     match flag {
@@ -6846,13 +6821,13 @@ impl<'msg> __priv_Diagnostic::View<'msg> {
     Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(self.ptr.as_ref().kind) })
   }
 
-  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
-    self.info_or().unwrap_or_default()
+  pub fn msg(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.msg_or().unwrap_or_default()
   }
-  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+  pub fn msg_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe {
-      let (mut ptr, len) = self.ptr.as_ref().info;
+      let (mut ptr, len) = self.ptr.as_ref().msg;
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
@@ -6888,9 +6863,9 @@ impl<'msg> __priv_Diagnostic::View<'msg> {
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.info_or() {
+    if let Some(value) = self.msg_or() {
       if count != 0 { debug.comma(false)?; }
-      debug.field("info")?;
+      debug.field("msg")?;
       debug.write_debug(value);
       count += 1;
     }
@@ -6953,31 +6928,31 @@ impl<'msg> __priv_Diagnostic::Mut<'msg>  {
     self.kind_mut().set(value);
   }
 
-  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
-    self.info_or().unwrap_or_default()
+  pub fn msg(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.msg_or().unwrap_or_default()
   }
-  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+  pub fn msg_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe {
-      let (mut ptr, len) = self.ptr.as_ref().info;
+      let (mut ptr, len) = self.ptr.as_ref().msg;
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn info_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
-    self.info_mut_or().into_mut()
+  pub fn msg_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.msg_mut_or().into_mut()
   }
-  pub fn info_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+  pub fn msg_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
     unsafe {
       crate::rt::value::OptMut::__wrap(
-        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_info as usize),
+        self.ptr.as_ptr().add(__priv_Diagnostic::FIELD_OFFSET_msg as usize),
         self.arena,
-        Diagnostic::__hazzer_info,
+        Diagnostic::__hazzer_msg,
       )
     }
   }
-  pub fn info_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
-    self.info_mut().set(value);
+  pub fn msg_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.msg_mut().set(value);
   }
 
   pub fn snippets(self) -> crate::rt::Slice<'msg, Diagnostic_Snippet> {
@@ -7052,7 +7027,7 @@ mod __priv_Diagnostic {
   pub struct Storage {
     pub(crate) __hasbits: [u32; 1],
     pub(in super) kind: u32,
-    pub(in super) info: (*mut u8, usize),
+    pub(in super) msg: (*mut u8, usize),
     pub(in super) snippets: crate::rt::__z::AVec<*mut u8>,
     pub(crate) notes: crate::rt::__z::AVec<(*mut u8, usize)>,
   }
@@ -7063,10 +7038,10 @@ mod __priv_Diagnostic {
     let field = &msg.ptr.as_ref().kind as *const _ as *const u8;
     field.offset_from(top) as u32
   };
-  pub const FIELD_OFFSET_info: u32 = unsafe {
+  pub const FIELD_OFFSET_msg: u32 = unsafe {
     let msg = Diagnostic::DEFAULT;
     let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().info as *const _ as *const u8;
+    let field = &msg.ptr.as_ref().msg as *const _ as *const u8;
     field.offset_from(top) as u32
   };
   pub const FIELD_OFFSET_snippets: u32 = unsafe {
@@ -7109,7 +7084,7 @@ mod __priv_Diagnostic {
         crate::rt::__z::tdp::Field {
           number: 2,
           flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: __priv_Diagnostic::FIELD_OFFSET_info,
+          offset: __priv_Diagnostic::FIELD_OFFSET_msg,
           ty: 0,
           hasbit: 1,
         },
@@ -7212,7 +7187,7 @@ impl Diagnostic_Snippet {
     const VALUE: __priv_Diagnostic_Snippet::Storage = __priv_Diagnostic_Snippet::Storage {
       __hasbits: [0; 1],
       span: 0,
-      info: (0 as *mut u8, 0),
+      msg: (0 as *mut u8, 0),
       is_remark: false,
     };
     crate::rt::View::<Self> {
@@ -7282,31 +7257,31 @@ impl Diagnostic_Snippet {
     self.span_mut().set(value);
   }
 
-  pub fn info(&self) -> crate::rt::View<'_, crate::rt::Str> {
-    self.info_or().unwrap_or_default()
+  pub fn msg(&self) -> crate::rt::View<'_, crate::rt::Str> {
+    self.msg_or().unwrap_or_default()
   }
-  pub fn info_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
+  pub fn msg_or(&self) -> Option<crate::rt::View<'_, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe {
-      let (mut ptr, len) = self.ptr.as_ref().info;
+      let (mut ptr, len) = self.ptr.as_ref().msg;
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn info_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
-    self.info_mut_or().into_mut()
+  pub fn msg_mut(&mut self) -> crate::rt::Mut<'_, crate::rt::Str> {
+    self.msg_mut_or().into_mut()
   }
-  pub fn info_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
+  pub fn msg_mut_or(&mut self) -> crate::rt::value::OptMut<'_, crate::rt::Str> {
     unsafe {
       crate::rt::value::OptMut::__wrap(
-        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_info as usize),
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_msg as usize),
         self.arena,
-        Diagnostic_Snippet::__hazzer_info,
+        Diagnostic_Snippet::__hazzer_msg,
       )
     }
   }
-  pub fn info_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
-    self.info_mut().set(value);
+  pub fn msg_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.msg_mut().set(value);
   }
 
   pub fn is_remark(&self) -> crate::rt::View<'_, bool> {
@@ -7367,12 +7342,12 @@ impl Diagnostic_Snippet {
     has
   }
   #[doc(hidden)]
-  pub unsafe fn __hazzer_info(
+  pub unsafe fn __hazzer_msg(
     raw: *mut u8,
     arena: crate::rt::__z::RawArena,
     flag: Option<bool>,
   ) -> bool {
-    let offset = __priv_Diagnostic_Snippet::FIELD_OFFSET_info as usize;
+    let offset = __priv_Diagnostic_Snippet::FIELD_OFFSET_msg as usize;
     let word = &mut *raw.sub(offset).cast::<u32>().add(0);
     let has = *word & 2 != 0;
     match flag {
@@ -7447,13 +7422,13 @@ impl<'msg> __priv_Diagnostic_Snippet::View<'msg> {
     Some(unsafe { std::mem::transmute::<u32, u32>(self.ptr.as_ref().span) })
   }
 
-  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
-    self.info_or().unwrap_or_default()
+  pub fn msg(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.msg_or().unwrap_or_default()
   }
-  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+  pub fn msg_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe {
-      let (mut ptr, len) = self.ptr.as_ref().info;
+      let (mut ptr, len) = self.ptr.as_ref().msg;
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
@@ -7477,9 +7452,9 @@ impl<'msg> __priv_Diagnostic_Snippet::View<'msg> {
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.info_or() {
+    if let Some(value) = self.msg_or() {
       if count != 0 { debug.comma(false)?; }
-      debug.field("info")?;
+      debug.field("msg")?;
       debug.write_debug(value);
       count += 1;
     }
@@ -7536,31 +7511,31 @@ impl<'msg> __priv_Diagnostic_Snippet::Mut<'msg>  {
     self.span_mut().set(value);
   }
 
-  pub fn info(self) -> crate::rt::View<'msg, crate::rt::Str> {
-    self.info_or().unwrap_or_default()
+  pub fn msg(self) -> crate::rt::View<'msg, crate::rt::Str> {
+    self.msg_or().unwrap_or_default()
   }
-  pub fn info_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
+  pub fn msg_or(self) -> Option<crate::rt::View<'msg, crate::rt::Str>> {
     if unsafe { self.ptr.as_ref() }.__hasbits[0] & 2 == 0 { return None }
     Some(unsafe {
-      let (mut ptr, len) = self.ptr.as_ref().info;
+      let (mut ptr, len) = self.ptr.as_ref().msg;
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::rt::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn info_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
-    self.info_mut_or().into_mut()
+  pub fn msg_mut(self) -> crate::rt::Mut<'msg, crate::rt::Str> {
+    self.msg_mut_or().into_mut()
   }
-  pub fn info_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
+  pub fn msg_mut_or(self) -> crate::rt::value::OptMut<'msg, crate::rt::Str> {
     unsafe {
       crate::rt::value::OptMut::__wrap(
-        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_info as usize),
+        self.ptr.as_ptr().add(__priv_Diagnostic_Snippet::FIELD_OFFSET_msg as usize),
         self.arena,
-        Diagnostic_Snippet::__hazzer_info,
+        Diagnostic_Snippet::__hazzer_msg,
       )
     }
   }
-  pub fn info_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
-    self.info_mut().set(value);
+  pub fn msg_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.msg_mut().set(value);
   }
 
   pub fn is_remark(self) -> crate::rt::View<'msg, bool> {
@@ -7622,7 +7597,7 @@ mod __priv_Diagnostic_Snippet {
   pub struct Storage {
     pub(crate) __hasbits: [u32; 1],
     pub(in super) span: u32,
-    pub(in super) info: (*mut u8, usize),
+    pub(in super) msg: (*mut u8, usize),
     pub(in super) is_remark: bool,
   }
 
@@ -7632,10 +7607,10 @@ mod __priv_Diagnostic_Snippet {
     let field = &msg.ptr.as_ref().span as *const _ as *const u8;
     field.offset_from(top) as u32
   };
-  pub const FIELD_OFFSET_info: u32 = unsafe {
+  pub const FIELD_OFFSET_msg: u32 = unsafe {
     let msg = Diagnostic_Snippet::DEFAULT;
     let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().info as *const _ as *const u8;
+    let field = &msg.ptr.as_ref().msg as *const _ as *const u8;
     field.offset_from(top) as u32
   };
   pub const FIELD_OFFSET_is_remark: u32 = unsafe {
@@ -7671,7 +7646,7 @@ mod __priv_Diagnostic_Snippet {
         crate::rt::__z::tdp::Field {
           number: 2,
           flags: (crate::rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: __priv_Diagnostic_Snippet::FIELD_OFFSET_info,
+          offset: __priv_Diagnostic_Snippet::FIELD_OFFSET_msg,
           ty: 0,
           hasbit: 1,
         },

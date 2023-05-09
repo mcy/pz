@@ -5,18 +5,37 @@ package pz
 ///
 /// This type is a sort of Protobuf object code.
 message Bundle {
+  /// Types in this bundle.
   1. types: repeated Type
+
+  /// Packages that this bundle defines or depends on.
   2. packages: repeated str
 
+  /// Foreign types referred to by fields in this bundle.
+  3. foreign_types: repeated ForeignType
   message ForeignType {
+    /// The name of the relocated type.
     1. name: str
+
+    /// An index into `Bundle.packages`.
     2. package: u32
   }
-  3. foreign_types: repeated ForeignType
 }
 
-/// A Protobuf type.
+/// A type declaration.
 message Type {
+  /// The name of types type. If this is a nested type, it will be
+  /// period-delimited, e.g. `Foo.Bar` is `Bar` nested in `Foo`.
+  1. name: str
+
+  /// The package this type belongs to.
+  ///
+  /// This is an index into `Bundle.types`.
+  2. package: u32
+
+  
+  /// The kind of declaration this is. 
+  3. kind: Kind
   enum Kind {
     0. MESSAGE
     1. STRUCT
@@ -24,26 +43,55 @@ message Type {
     3. ENUM
   }
 
-  message Attrs {
-    1. deprecated: str
-    100. docs: repeated str
-  }
-
-  1. name: str
-  2. package: u32
-  3. kind: Kind
+  /// The type this type is nested in, if present.
+  ///
+  /// This is an index into `Bundle.types`.
   4. declared_in: u32
 
+  /// This type's fields.
   10. fields: repeated Field
+
+  /// Types that are nested in this type.
+  ///
+  /// This is an index into `Bundle.types`.
   11. nesteds: repeated u32
+
+  /// Known attributes on this type.
   12. attrs: Attrs
+  message Attrs {
+    /// If set, this indicates that this type is deprecated; the value
+    /// of this field is the reason.
+    1. deprecated: str
+
+    /// The contents of every `///` comment attached to the type.
+    100. docs: repeated str
+  }
   
+  /// The source code span this type came from, if any. This is an opaque value
+  /// that can only be interpreted with respect to a particular plugin
+  /// invocation.
   20. span: u32
 }
 
-/// A Protobuf type's field.
+/// A type's field.
 message Field {
+  /// This field's name. This is always a single identifier.
+  1. name: str
+  /// The field number. May not be present for some type kinds (e.g. structs).
+  2. number: i32
+  
+  /// Whether this is a repeated field.
+  3. is_repeated: bool 
+  
+  /// The field's type.
+  ///
+  /// The interpretation of `type_index` depends on the value of this field.
+  ///
+  /// TODO(mcyoung): this might make more sense as a `choice`.
+  4. type: Type
   enum Type {
+    /// Indicates that this field has no type, such as the case for enum
+    /// fields.
     0. NONE
 
     1. I32
@@ -60,17 +108,27 @@ message Field {
     10. FOREIGN
   }
 
+  /// An index into `Bundle.types` or `Bundle.foreign_types`.
+  ///
+  /// When `type` is `Type.TYPE`, this means it refers to a type defined in
+  /// this bundle, which can be found by looking at the `types` field. If it
+  /// is `Type.FOREIGN`, it is a type defined in another bundle, listed under
+  /// `Bundle.foreign_types`.
+  5. type_index: u32
+
+  /// Known attributes on this field.
+  10. attrs: Attrs
   message Attrs {
+    /// If set, this indicates that this field is deprecated; the value
+    /// of this field is the reason.
     1. deprecated: str
+
+    /// The contents of every `///` comment attached to the field.
     100. docs: repeated str
   }
 
-  1. name: str
-  2. number: i32
-  3. is_repeated: bool
-  4. type: Type
-  5. type_index: u32
-
-  10. attrs: Attrs
+  /// The source code span this field came from, if any. This is an opaque value
+  /// that can only be interpreted with respect to a particular plugin
+  /// invocation.
   20. span: u32
 }
