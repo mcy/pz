@@ -17,6 +17,10 @@ impl RawArena {
     }
   }
 
+  pub fn null() -> Self {
+    Self { bump: 0 as *mut _ }
+  }
+
   pub fn alloc(&self, layout: Layout) -> NonNull<u8> {
     unsafe { &*self.bump }.alloc_layout(layout)
   }
@@ -64,6 +68,14 @@ pub struct AVec<T> {
   // initializeable by zeroing.
   ptr: *mut T,
   cap: usize,
+}
+
+// This type is Copy so we can put it inside of a union; it has no destructor.
+impl<T> Copy for AVec<T> {}
+impl<T> Clone for AVec<T> {
+  fn clone(&self) -> Self {
+    *self
+  }
 }
 
 impl<T> AVec<T> {

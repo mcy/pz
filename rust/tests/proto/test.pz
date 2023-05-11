@@ -20,6 +20,7 @@ message TestAll {
     2. b: repeated str
   }
   11. opt_nested: Nested
+  12. opt_choice: TestAll2
 
   21. rep_i32: repeated i32
   22. rep_i64: repeated i64
@@ -32,4 +33,34 @@ message TestAll {
 
   30. rep_recursive: repeated TestAll
   31. rep_nested: repeated Nested
+  32. rep_choice: repeated TestAll2
+}
+
+choice TestAll2 {
+  1. opt_i32: i32
+  2. opt_i64: i64
+  3. opt_u32: u32
+  4. opt_u64: u64
+  5. opt_f32: f32
+  6. opt_f64: f64
+  7. opt_str: str
+  8. opt_bool: bool
+
+  10. opt_recursive: TestAll
+
+  11. opt_nested: pz.test.TestAll.Nested
+  12. opt_choice: TestAll2
+
+  21. rep_i32: repeated i32
+  22. rep_i64: repeated i64
+  23. rep_u32: repeated u32
+  24. rep_u64: repeated u64
+  25. rep_f32: repeated f32
+  26. rep_f64: repeated f64
+  27. rep_str: repeated str
+  28. rep_bool: repeated bool
+
+  30. rep_recursive: repeated TestAll
+  31. rep_nested: repeated pz.test.TestAll.Nested
+  32. rep_choice: repeated TestAll2
 }

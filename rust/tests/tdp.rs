@@ -108,3 +108,45 @@ fn smoke() {
   assert_eq!(proto.rep_recursive_at(2).opt_i64(), 9);
   assert_eq!(proto.rep_nested_at(0).b(), ["yet", "more", "hellropes"]);
 }
+
+#[test]
+fn smoke_choice() {
+  let _protoscope = r#"
+    1: 42
+  "#;
+
+  let data = [0x08, 0x2a];
+
+  let proto = dbg!(proto::TestAll2::from_pb(&mut &data[..]).unwrap());
+
+  assert_eq!(proto.opt_i32_or(), Some(42));
+  assert!(matches!(proto.cases(), proto::TestAll2Cases::OptI32(42)));
+
+  let _protoscope = r#"
+    7: {"a normal-looking string"}
+    1: 42
+    27: {"more"}
+    27: {"nor\x00mal"}
+    27: {"strings?"}
+  "#;
+
+  let data = [
+    0x3a, 0x17, 0x61, 0x20, 0x6e, 0x6f, 0x72, 0x6d, 0x61, 0x6c, 0x2d, 0x6c,
+    0x6f, 0x6f, 0x6b, 0x69, 0x6e, 0x67, 0x20, 0x73, 0x74, 0x72, 0x69, 0x6e,
+    0x67, 0x08, 0x2a, 0xda, 0x01, 0x04, 0x6d, 0x6f, 0x72, 0x65, 0xda, 0x01,
+    0x07, 0x6e, 0x6f, 0x72, 0x00, 0x6d, 0x61, 0x6c, 0xda, 0x01, 0x08, 0x73,
+    0x74, 0x72, 0x69, 0x6e, 0x67, 0x73, 0x3f,
+  ];
+
+  let proto = dbg!(proto::TestAll2::from_pb(&mut &data[..]).unwrap());
+
+  assert!(proto.opt_str_or().is_none());
+  assert!(proto.opt_i32_or().is_none());
+  assert_eq!(proto.rep_str(), ["more", "nor\0mal", "strings?"]);
+  match proto.cases() {
+    proto::TestAll2Cases::RepStr(s) => {
+      assert_eq!(s, ["more", "nor\0mal", "strings?"])
+    }
+    _ => panic!(),
+  };
+}

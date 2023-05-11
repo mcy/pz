@@ -14,7 +14,7 @@ use crate::Type;
 
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum Where {
-  MsgImpl,
+  TypeImpl,
   ViewImpl,
   MutImpl,
 }
@@ -73,9 +73,6 @@ impl<'ccx> GenField<'ccx> {
   pub fn in_debug(&self, w: &mut SourceWriter) {
     self.common_vars(w, |w| self.gen.in_debug(self.field, w))
   }
-  pub fn in_init(&self, w: &mut SourceWriter) {
-    self.common_vars(w, |w| self.gen.in_init(self.field, w))
-  }
 }
 
 #[allow(unused_variables)]
@@ -84,9 +81,9 @@ trait GenFieldImpl {
   fn in_variants(&self, field: Field, w: &mut SourceWriter) {}
   fn in_storage_init(&self, field: Field, w: &mut SourceWriter) {}
   fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {}
+  fn in_adt_ref_methods(&self, field: Field, w: &mut SourceWriter) {}
   fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {}
   fn in_debug(&self, field: Field, w: &mut SourceWriter) {}
-  fn in_init(&self, field: Field, w: &mut SourceWriter) {}
 }
 
 pub struct FieldGenerators<'ccx> {
@@ -106,7 +103,7 @@ impl<'ccx> FieldGenerators<'ccx> {
         ((TypeEnum::String, _), false) => Box::new(SingularString),
         ((TypeEnum::String, _), true) => Box::new(RepeatedString),
         ((TypeEnum::Type, Some(submsg)), false) => match submsg.kind() {
-          Kind::Message => Box::new(SingularMessage { submsg }),
+          Kind::Message | Kind::Choice => Box::new(SingularMessage { submsg }),
           Kind::Enum => Box::new(SingularScalar),
           _ => {
             field
@@ -117,7 +114,7 @@ impl<'ccx> FieldGenerators<'ccx> {
           }
         },
         ((TypeEnum::Type, Some(submsg)), true) => match submsg.kind() {
-          Kind::Message => Box::new(RepeatedMessage { submsg }),
+          Kind::Message | Kind::Choice => Box::new(RepeatedMessage { submsg }),
           Kind::Enum => Box::new(RepeatedScalar),
           _ => {
             field
@@ -204,9 +201,9 @@ impl GenFieldImpl for SingularScalar {
 
   fn in_variants(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { Storage: scalar_storage_type(field) },
+      vars! { Scalar: scalar_type(field) },
       "
-        $Name($rt::ptr::Proxy<'cho, $Storage, Which>),
+        $Name($rt::ptr::Proxy<'proto, $Scalar, Which>),
       ",
     );
   }
@@ -223,20 +220,20 @@ impl GenFieldImpl for SingularScalar {
   fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        Type: scalar_type(field),
+        Scalar: scalar_type(field),
         Storage: scalar_storage_type(field),
-        self: if at == Where::MsgImpl { "&self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
-        pub fn $name($self) -> $rt::View<'$lt, $Type> {
+        pub fn $name($self) -> $rt::View<'$lt, $Scalar> {
           self.${name}_or().unwrap_or_default()
         }
         $deprecated
-        pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Type>> {
-          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
-          Some(unsafe { $transmute::<$Storage, $Type>(*$field) })
+        pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Scalar>> {
+          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
+          Some(unsafe { $transmute::<$Storage, $Scalar>(*$field) })
         }
       ",
     );
@@ -245,27 +242,27 @@ impl GenFieldImpl for SingularScalar {
   fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        Type: scalar_type(field),
-        self: if at == Where::MsgImpl { "&mut self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        Scalar: scalar_type(field),
+        self: if at == Where::TypeImpl { "&mut self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $Type> {
+        pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $Scalar> {
           self.${name}_mut_or().into_mut()
         }
         $deprecated
-        pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $Type> {
+        pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $Scalar> {
           unsafe {
             $rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Msg::__HAZZER_$raw_name,
+              $Type::__HAZZER_$raw_name,
             )
           }
         }
         $deprecated
-        pub fn ${name}_set($self, value: $Type) {
+        pub fn ${name}_set($self, value: $Scalar) {
           self.${name}_mut().set(value);
         }
       ",
@@ -300,9 +297,9 @@ impl GenFieldImpl for RepeatedScalar {
 
   fn in_variants(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { Storage: scalar_storage_type(field) },
+      vars! { Scalar: scalar_type(field) },
       "
-        $Name($rt::ptr::Proxy<'cho, $rt::ptr::Rep<$Storage>, Which>),
+        $Name($rt::ptr::Proxy<'proto, $rt::ptr::Rep<$Scalar>, Which>),
       ",
     );
   }
@@ -319,22 +316,22 @@ impl GenFieldImpl for RepeatedScalar {
   fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        Type: scalar_type(field),
+        Scalar: scalar_type(field),
         Storage: scalar_storage_type(field),
-        self: if at == Where::MsgImpl { "&self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
-        pub fn $name($self) -> $rt::Slice<'$lt, $Type> {
-          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
+        pub fn $name($self) -> $rt::Slice<'$lt, $Scalar> {
+          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
             let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
           }
         }
         $deprecated
-        pub fn ${name}_at($self, idx: usize) -> $rt::View<'$lt, $Type> {
+        pub fn ${name}_at($self, idx: usize) -> $rt::View<'$lt, $Scalar> {
           self.$name().at(idx)
         }
       ",
@@ -344,16 +341,16 @@ impl GenFieldImpl for RepeatedScalar {
   fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        Type: scalar_type(field),
+        Scalar: scalar_type(field),
         Storage: scalar_storage_type(field),
-        self: if at == Where::MsgImpl { "&mut self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&mut self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Type> {
+        pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Scalar> {
           unsafe {
-            $Msg::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
+            $Type::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
               $field_mut as *mut _ as *mut u8,
               self.arena,
@@ -383,7 +380,7 @@ struct SingularString;
 impl GenFieldImpl for SingularString {
   fn in_storage(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { Type: scalar_type(field) },
+      vars! { Scalar: scalar_type(field) },
       "
         pub(in super) $name: (*mut u8, usize),
       ",
@@ -394,7 +391,7 @@ impl GenFieldImpl for SingularString {
     w.emit(
       vars! { Storage: scalar_storage_type(field) },
       "
-        $Name($rt::ptr::Proxy<'cho, $rt::Str, Which>),
+        $Name($rt::ptr::Proxy<'proto, $rt::Str, Which>),
       ",
     );
   }
@@ -411,9 +408,9 @@ impl GenFieldImpl for SingularString {
   fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        Type: scalar_type(field),
-        self: if at == Where::MsgImpl { "&self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        Scalar: scalar_type(field),
+        self: if at == Where::TypeImpl { "&self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
@@ -422,7 +419,7 @@ impl GenFieldImpl for SingularString {
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $rt::Str>> {
-          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
+          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
           Some(unsafe {
             let (mut ptr, len) = *$field;
             if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -436,9 +433,9 @@ impl GenFieldImpl for SingularString {
   fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        Type: scalar_type(field),
-        self: if at == Where::MsgImpl { "&mut self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        Scalar: scalar_type(field),
+        self: if at == Where::TypeImpl { "&mut self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
@@ -451,7 +448,7 @@ impl GenFieldImpl for SingularString {
             $rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Msg::__HAZZER_$raw_name,
+              $Type::__HAZZER_$raw_name,
             )
           }
         }
@@ -493,7 +490,7 @@ impl GenFieldImpl for RepeatedString {
     w.emit(
       vars! {},
       "
-        $Name($rt::ptr::Proxy<'cho, $rt::ptr::Rep<$rt::Str>, Which>),
+        $Name($rt::ptr::Proxy<'proto, $rt::ptr::Rep<$rt::Str>, Which>),
       ",
     );
   }
@@ -510,13 +507,13 @@ impl GenFieldImpl for RepeatedString {
   fn in_ref_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        self: if at == Where::MsgImpl { "&self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $rt::Str> {
-          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
+          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
             let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -533,14 +530,14 @@ impl GenFieldImpl for RepeatedString {
   fn in_mut_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        self: if at == Where::MsgImpl { "&mut self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&mut self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $rt::Str> {
           unsafe {
-            $Msg::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
+            $Type::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
               $field_mut as *mut _ as *mut u8,
               self.arena,
@@ -587,7 +584,7 @@ impl GenFieldImpl for SingularMessage<'_> {
     w.emit(
       vars! { Submsg: type_name(self.submsg) },
       "
-        $Name($rt::ptr::Proxy<'cho, $Submsg, Which>),
+        $Name($rt::ptr::Proxy<'proto, $Submsg, Which>),
       ",
     );
   }
@@ -605,21 +602,18 @@ impl GenFieldImpl for SingularMessage<'_> {
     w.emit(
       vars! {
         Submsg: type_name(self.submsg),
-        self: if at == Where::MsgImpl { "&self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
         pub fn $name($self) -> $rt::View<'$lt, $Submsg> {
-          self.${name}_or().unwrap_or($Submsg::DEFAULT)
+          self.${name}_or().unwrap_or_default()
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Submsg>> {
-          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
-          Some($rt::View::<$Submsg> {
-            ptr: unsafe { $z::ABox::from_ptr(*$field) },
-            _ph: $PhantomData,
-          })
+          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
+          unsafe { Some(<$Submsg as $rt::value::Type>::__make_view($field_mut as *mut _ as *mut u8)) }
         }
       ",
     );
@@ -629,8 +623,8 @@ impl GenFieldImpl for SingularMessage<'_> {
     w.emit(
       vars! {
         Submsg: type_name(self.submsg),
-        self: if at == Where::MsgImpl { "&mut self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&mut self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
@@ -643,7 +637,7 @@ impl GenFieldImpl for SingularMessage<'_> {
             $rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Msg::__HAZZER_$raw_name,
+              $Type::__HAZZER_$raw_name,
             )
           }
         }
@@ -684,7 +678,7 @@ impl GenFieldImpl for RepeatedMessage<'_> {
     w.emit(
       vars! { Submsg: type_name(self.submsg) },
       "
-        $Name($rt::ptr::Proxy<'cho, $rt::Rep<$Submsg>, Which>),
+        $Name($rt::ptr::Proxy<'proto, $rt::ptr::Rep<$Submsg>, Which>),
       ",
     );
   }
@@ -702,13 +696,13 @@ impl GenFieldImpl for RepeatedMessage<'_> {
     w.emit(
       vars! {
         Submsg: type_name(self.submsg),
-        self: if at == Where::MsgImpl { "&self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $Submsg> {
-          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
+          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
             let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -726,14 +720,14 @@ impl GenFieldImpl for RepeatedMessage<'_> {
     w.emit(
       vars! {
         Submsg: type_name(self.submsg),
-        self: if at == Where::MsgImpl { "&mut self" } else { "self" },
-        lt: if at == Where::MsgImpl { "_" } else { "msg" },
+        self: if at == Where::TypeImpl { "&mut self" } else { "self" },
+        lt: if at == Where::TypeImpl { "_" } else { "proto" },
       },
       r"
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Submsg> {
           unsafe {
-            $Msg::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
+            $Type::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
               $field_mut as *mut _ as *mut u8,
               self.arena,

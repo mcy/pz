@@ -372,7 +372,7 @@ impl<T: Type + ?Sized> fmt::Debug for Slice<'_, T> {
     for value in self {
       dbg.entry(&value);
     }
-    Ok(())
+    dbg.finish()
   }
 }
 

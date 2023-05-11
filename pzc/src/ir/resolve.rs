@@ -398,6 +398,16 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
         );
       }
 
+      for ty in &types {
+        insert_symbol(
+          &mut symbols,
+          &ty.name().to_string(),
+          ty,
+          ty.decl().unwrap().name.span(),
+          report,
+        );
+      }
+
       all_symbols.push((file, types, symbols));
     }
 

@@ -102,7 +102,7 @@ where
   }
 }
 
-// Comparing between the n^2 combinations of custom slice types.
+// Comparing between the n^2 combinations of custom slice.
 
 impl<T, U> PartialEq<Slice<'_, U>> for Slice<'_, T>
 where

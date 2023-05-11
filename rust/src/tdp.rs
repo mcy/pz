@@ -31,9 +31,17 @@ impl From<io::Error> for Error {
 }
 
 #[derive(Debug)]
-pub struct Message {
+pub struct Type {
   pub size: u32,
-  pub tys: *const fn() -> *const Message,
+  pub tys: *const fn() -> *const Type,
+  pub kind: TyKind,
+}
+
+#[repr(u8)]
+#[derive(Debug, Copy, Clone)]
+pub enum TyKind {
+  Msg = 0,
+  Choice = 1,
 }
 
 #[derive(Debug)]
@@ -57,21 +65,21 @@ impl Field {
 
 #[repr(C)]
 #[derive(Debug)]
-pub struct MessageAndFields<const FIELDS: usize> {
-  pub msg: Message,
+pub struct TypeAndFields<const FIELDS: usize> {
+  pub msg: Type,
   pub fields: [Field; FIELDS],
 }
-unsafe impl<const FIELDS: usize> Sync for MessageAndFields<FIELDS> {}
+unsafe impl<const FIELDS: usize> Sync for TypeAndFields<FIELDS> {}
 
 #[repr(u8)]
 pub enum Kind {
-  Msg = 0,
-  Str = 1,
-  I32 = 2,
-  I64 = 3,
-  F32 = 4,
-  F64 = 5,
-  Bool = 6,
+  I32 = 0,
+  I64 = 1,
+  F32 = 2,
+  F64 = 3,
+  Bool = 4,
+  Str = 5,
+  Type = 6,
 }
 
 struct WireFormat<'r> {
@@ -318,7 +326,7 @@ impl<'r> ParseCtx<'r> {
     self.group_stack.last().copied().unwrap_or(0) != 0
   }
 
-  pub fn parse(&mut self, raw: *mut u8, msg: *const Message) -> Result {
+  pub fn parse(&mut self, raw: *mut u8, msg: *const Type) -> Result {
     let mut ty_stack = vec![(raw, msg, unsafe { msg.add(1).cast::<Field>() })];
 
     'parse: while let Some((raw, msg, field)) = ty_stack.last_mut() {
@@ -371,7 +379,32 @@ impl<'r> ParseCtx<'r> {
       let field = unsafe { &**field };
 
       let is_repeated = unsafe { field.is_repeated() };
-      if !is_repeated {
+      if matches!(unsafe { (&**msg).kind }, TyKind::Choice) {
+        let which = unsafe { &mut *raw.cast::<u32>() };
+        if *which != field.number {
+          *which = field.number;
+          let value = unsafe { raw.add(field.offset as usize) };
+          if is_repeated {
+            unsafe {
+              // We need to vaporize the *whole* AVec, since we don't know a
+              // priori if it had a compatible layout.
+              value.write_bytes(0, 3 * mem::size_of::<usize>());
+            }
+          } else {
+            unsafe {
+              // We need to zero out any pointers, so that we don't misinterpret
+              // some other data as a pointer inappropriately.
+              match field.kind() {
+                Kind::Str => {
+                  value.write_bytes(0, mem::size_of::<(*mut u8, usize)>())
+                }
+                Kind::Type => value.write_bytes(0, mem::size_of::<*mut u8>()),
+                _ => {} // Non-pointer types.
+              }
+            }
+          }
+        }
+      } else if !is_repeated {
         let hasbit_index = field.hasbit as usize / 32;
         let hasbit_mask = 1u32 << (field.hasbit % 32);
 
@@ -487,7 +520,7 @@ impl<'r> ParseCtx<'r> {
             }
           }
         }
-        Kind::Msg => {
+        Kind::Type => {
           match tag.wire_type {
             WireFormat::LEN => {
               let len = self.input.varint32()?;

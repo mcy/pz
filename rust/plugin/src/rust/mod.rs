@@ -6,6 +6,7 @@ use crate::emit;
 use crate::exec_plugin;
 use crate::rust::names::deprecated;
 
+mod choice;
 mod r#enum;
 mod fields;
 mod message;
@@ -67,11 +68,7 @@ pub fn rust_plugin() -> ! {
                 .warn("sorry: can't emit this kind of type yet")
                 .at(ty.span().unwrap());
             }
-            crate::proto::r#type::Kind::Choice => {
-              ctx
-                .warn("sorry: can't emit this kind of type yet")
-                .at(ty.span().unwrap());
-            }
+            crate::proto::r#type::Kind::Choice => choice::emit(ty, w),
             crate::proto::r#type::Kind::Enum => r#enum::emit(ty, w),
           },
         )
