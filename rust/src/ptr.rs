@@ -1,7 +1,12 @@
 //! Non-trivial pointer types.
 
 use std::fmt;
+use std::marker::PhantomData;
 
+use crate::value::OptMut;
+use crate::value::Type;
+use crate::Repeated;
+use crate::Slice;
 use crate::Str;
 use crate::StrBuf;
 
@@ -10,7 +15,7 @@ use crate::StrBuf;
 /// These types have special reference-like types: a "view" and a "mutator".
 /// These are not necessarily implemented as references, to enable various
 /// layout and performance optimizations.
-pub trait Proxied {
+pub trait Proxied: 'static {
   /// The view type, analogous to a shared reference.
   type View<'a>: ViewFor<'a, Self> + Copy + Default + fmt::Debug;
 
@@ -23,6 +28,103 @@ pub type View<'a, T> = <T as Proxied>::View<'a>;
 
 /// Shorthand for [`Proxied::Mut`].
 pub type Mut<'a, T> = <T as Proxied>::Mut<'a>;
+
+/// A generic shorthand for picking `View` or `Mut` based on a type parameter.
+///
+/// The `Which` parameter must implement the [`select::Select`] trait, which is only
+/// implemented by [`select::View`] and [`select::Mut`].
+pub type Proxy<'a, T, Which> = <Which as select::Select>::__Proxy<'a, T>;
+
+/// Selector types for [`Proxy`].
+pub mod select {
+  use super::*;
+
+  /// A selector for use with the [`Proxy`] helper.
+  pub trait Select {
+    #[doc(hidden)]
+    type __Proxy<'a, T: Proxied + ?Sized>: ViewFor<'a, T>;
+  }
+
+  /// A [`Select`] that selects a proxied type's view.
+  #[derive(Copy, Clone)]
+  pub struct View(());
+  impl Select for View {
+    type __Proxy<'a, T: Proxied + ?Sized> = T::View<'a>;
+  }
+
+  /// A [`Select`] that selects a proxied type's mutator.
+  #[derive(Copy, Clone)]
+  pub struct Mut(());
+  impl Select for Mut {
+    type __Proxy<'a, T: Proxied + ?Sized> = T::Mut<'a>;
+  }
+}
+
+/// Helper for projecting a [`Type`] through to the view/mut of an optional
+/// field.
+pub struct Opt<T: ?Sized>(PhantomData<*mut T>);
+impl<T: Type + ?Sized> Proxied for Opt<T> {
+  type View<'a> = Option<View<'a, T>>;
+  type Mut<'a> = OptMut<'a, T>;
+}
+
+impl<'a, T: Type + ?Sized> ViewFor<'a, Opt<T>> for Option<View<'a, T>> {
+  fn as_view(&self) -> View<Opt<T>> {
+    self.as_ref().map(ViewFor::as_view)
+  }
+}
+
+impl<'a, T: Type + ?Sized> ViewFor<'a, Opt<T>> for OptMut<'a, T> {
+  fn as_view(&self) -> View<Opt<T>> {
+    if !self.has() {
+      return None;
+    }
+    Some(self.as_view())
+  }
+}
+
+impl<'a, T: Type + ?Sized> MutFor<'a, Opt<T>> for OptMut<'a, T> {
+  fn into_view(self) -> View<'a, Opt<T>> {
+    if !self.has() {
+      return None;
+    }
+    Some(self.into_view())
+  }
+
+  fn as_mut(&mut self) -> Mut<Opt<T>> {
+    self.reborrow()
+  }
+}
+
+/// Helper for projecting a [`Type`] through to the view/mut of a repeated
+/// field.
+pub struct Rep<T: ?Sized>(PhantomData<*mut T>);
+impl<T: Type + ?Sized> Proxied for Rep<T> {
+  type View<'a> = Slice<'a, T>;
+  type Mut<'a> = Repeated<'a, T>;
+}
+
+impl<'a, T: Type + ?Sized> ViewFor<'a, Rep<T>> for Slice<'a, T> {
+  fn as_view(&self) -> View<Rep<T>> {
+    *self
+  }
+}
+
+impl<'a, T: Type + ?Sized> ViewFor<'a, Rep<T>> for Repeated<'a, T> {
+  fn as_view(&self) -> View<Rep<T>> {
+    self.as_view()
+  }
+}
+
+impl<'a, T: Type + ?Sized> MutFor<'a, Rep<T>> for Repeated<'a, T> {
+  fn into_view(self) -> View<'a, Rep<T>> {
+    self.into_view()
+  }
+
+  fn as_mut(&mut self) -> Mut<Rep<T>> {
+    self.reborrow()
+  }
+}
 
 /// A view-like type, analogous to a shared reference.
 pub trait ViewFor<'a, T: Proxied + ?Sized> {

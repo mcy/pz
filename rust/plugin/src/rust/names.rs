@@ -16,14 +16,15 @@ const KWS: &[&str] = &[
   "override", "priv", "typeof", "unsized", "virtual", "yield", "try",
 ];
 
-pub fn ident(name: &str) -> impl fmt::Display + '_ {
+pub fn ident(name: impl fmt::Display) -> impl fmt::Display {
   emit::display(move |f| {
-    if INESCAPABLE_KWS.contains(&name) {
+    let name = name.to_string();
+    if INESCAPABLE_KWS.contains(&name.as_str()) {
       write!(f, "{name}_")
-    } else if KWS.contains(&name) {
+    } else if KWS.contains(&name.as_str()) {
       write!(f, "r#{name}")
     } else {
-      f.write_str(name)
+      f.write_str(name.as_str())
     }
   })
 }

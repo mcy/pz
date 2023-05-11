@@ -1,6 +1,7 @@
 //! Arena support.
 
 use std::alloc::Layout;
+use std::mem;
 use std::ptr::NonNull;
 use std::slice;
 
@@ -54,22 +55,32 @@ impl<T> Copy for ABox<T> {}
 
 #[repr(C)]
 pub struct AVec<T> {
-  ptr: NonNull<T>,
-  cap: usize,
+  // This is intentionally the first value, so that in Hazzer we can specify
+  // "clear the first eight bytes" to clear a repeated field without trashing
+  // its internal pointer.
   len: usize,
+
+  // This is a raw pointer, NOT a NonNull, because it is intended to be
+  // initializeable by zeroing.
+  ptr: *mut T,
+  cap: usize,
 }
 
 impl<T> AVec<T> {
   pub const fn new() -> AVec<T> {
     Self {
-      ptr: NonNull::dangling(),
+      ptr: 0 as *mut T,
       cap: 0,
       len: 0,
     }
   }
 
   pub fn as_ptr(&self) -> *mut T {
-    self.ptr.as_ptr()
+    if self.ptr.is_null() {
+      return mem::align_of::<T>() as *mut T;
+    }
+
+    self.ptr
   }
 
   pub fn len(&self) -> usize {
@@ -81,11 +92,11 @@ impl<T> AVec<T> {
   }
 
   pub unsafe fn as_slice(&self) -> &[T] {
-    slice::from_raw_parts(self.ptr.as_ptr(), self.len)
+    slice::from_raw_parts(self.as_ptr(), self.len)
   }
 
   pub unsafe fn as_mut_slice(&mut self) -> &mut [T] {
-    slice::from_raw_parts_mut(self.ptr.as_ptr(), self.len)
+    slice::from_raw_parts_mut(self.as_ptr(), self.len)
   }
 
   pub fn resize(&mut self, new_len: usize, arena: RawArena) {
@@ -108,16 +119,15 @@ impl<T> AVec<T> {
       self.cap = 16;
     }
 
-    let old_ptr = self.ptr.as_ptr();
-    self.ptr = arena.alloc(Layout::array::<T>(self.cap).unwrap()).cast();
+    let old_ptr = self.as_ptr();
+    self.ptr = arena
+      .alloc(Layout::array::<T>(self.cap).unwrap())
+      .as_ptr()
+      .cast::<T>();
 
     unsafe {
-      self.ptr.as_ptr().copy_from_nonoverlapping(old_ptr, old_cap);
-      self
-        .ptr
-        .as_ptr()
-        .add(old_cap)
-        .write_bytes(0, self.cap - old_cap);
+      self.ptr.copy_from_nonoverlapping(old_ptr, old_cap);
+      self.ptr.add(old_cap).write_bytes(0, self.cap - old_cap);
     }
   }
 }
@@ -128,7 +138,6 @@ impl AVec<*mut u8> {
     new_len: usize,
     arena: RawArena,
     layout: Layout,
-    clear: unsafe fn(*mut u8),
   ) {
     if new_len > self.cap {
       let cap = if new_len.is_power_of_two() {
@@ -142,14 +151,96 @@ impl AVec<*mut u8> {
 
     while self.len < new_len {
       unsafe {
-        let ptr = &mut *self.ptr.as_ptr().add(self.len);
+        let ptr = &mut *self.ptr.add(self.len);
         if ptr.is_null() {
           *ptr = arena.alloc(layout).as_ptr();
         }
-        clear(*ptr);
+        ptr.write_bytes(0, layout.size());
       }
 
       self.len += 1;
+    }
+  }
+}
+
+pub struct Hazzer {
+  // Positive indicates this is a hasbit index; negative indicates this is
+  // the field number for a choice. If this is a repeated field, it should be
+  // i32::MIN.
+  pub hasbit_or_number: i32,
+  // Offset of the field relative to the top of storage.
+  pub offset: u32,
+  // The number of bytes to memset to zero on init. If this is negative, instead
+  // this value is behind a pointer and this is the size of the pointee (which
+  // should also be memset to zero).
+  pub size: i32,
+}
+
+impl Hazzer {
+  pub unsafe fn has(&self, raw: *mut u8) -> bool {
+    let n = self.hasbit_or_number;
+    if n == i32::MIN {
+      return true;
+    }
+
+    if n >= 0 {
+      let word_idx = n / 32;
+      let bit_idx = 1 << (n % 32);
+      let word = raw.cast::<u32>().add(word_idx as usize).read();
+      word & bit_idx != 0
+    } else {
+      raw.cast::<u32>().read() == (-n as u32)
+    }
+  }
+
+  pub unsafe fn init(&self, raw: *mut u8, arena: RawArena) {
+    let n = self.hasbit_or_number;
+    if n == i32::MIN {
+      return;
+    }
+
+    if n >= 0 {
+      let word_idx = n / 32;
+      let bit_idx = 1 << (n % 32);
+      let word = &mut *raw.cast::<u32>().add(word_idx as usize);
+      if *word & bit_idx != 0 {
+        return;
+      }
+      *word |= bit_idx;
+    } else {
+      let number = -n as u32;
+      let which = &mut *raw.cast::<u32>();
+      if *which == number {
+        return;
+      }
+      *which = number;
+    }
+
+    let ptr = raw.add(self.offset as usize);
+    if self.size >= 0 {
+      ptr.write_bytes(0, self.size as usize);
+    } else {
+      let ptr = &mut *ptr.cast::<*mut u8>();
+      let layout = Layout::from_size_align_unchecked(-self.size as usize, 8);
+      if ptr.is_null() {
+        *ptr = arena.alloc(layout).as_ptr();
+      }
+      ptr.write_bytes(0, layout.size());
+    }
+  }
+
+  pub unsafe fn clear(&self, raw: *mut u8) {
+    let n = self.hasbit_or_number;
+    if n == i32::MIN {
+      return;
+    }
+
+    if n >= 0 {
+      let word_idx = n / 32;
+      let bit_idx = 1 << (n % 32);
+      *raw.cast::<u32>().add(word_idx as usize) &= !bit_idx;
+    } else {
+      raw.cast::<u32>().write(0);
     }
   }
 }

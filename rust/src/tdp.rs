@@ -34,7 +34,6 @@ impl From<io::Error> for Error {
 pub struct Message {
   pub size: u32,
   pub tys: *const fn() -> *const Message,
-  pub raw_init: unsafe fn(*mut u8),
 }
 
 #[derive(Debug)]
@@ -517,7 +516,7 @@ impl<'r> ParseCtx<'r> {
               let mut sub = ptr.read();
               if sub.is_null() {
                 sub = self.arena.alloc(layout).as_ptr();
-                (submsg.raw_init)(sub);
+                sub.write_bytes(0, submsg.size as usize);
                 ptr.write(sub);
               }
               sub
@@ -528,12 +527,7 @@ impl<'r> ParseCtx<'r> {
               let ptr = raw.add(field.offset as usize);
               let vec = &mut *ptr.cast::<AVec<*mut u8>>();
 
-              vec.resize_msg(
-                vec.len() + 1,
-                self.arena,
-                layout,
-                submsg.raw_init,
-              );
+              vec.resize_msg(vec.len() + 1, self.arena, layout);
               *vec.as_mut_slice().last_mut().unwrap_unchecked()
             }
           };

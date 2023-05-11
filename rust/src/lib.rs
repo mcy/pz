@@ -5,6 +5,7 @@ mod debug;
 mod tdp;
 
 pub mod ptr;
+pub mod rep;
 pub mod str;
 pub mod value;
 
@@ -12,11 +13,11 @@ pub mod proto;
 
 pub use self::ptr::Mut;
 pub use self::ptr::View;
+pub use self::rep::Repeated;
+pub use self::rep::Slice;
+pub use self::rep::SliceMut;
 pub use self::str::Str;
 pub use self::str::StrBuf;
-pub use self::value::Repeated;
-pub use self::value::Slice;
-pub use self::value::SliceMut;
 
 #[doc(hidden)]
 pub mod __z {

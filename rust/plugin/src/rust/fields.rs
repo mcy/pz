@@ -19,19 +19,79 @@ pub enum Where {
   MutImpl,
 }
 
+pub struct GenField<'ccx> {
+  gen: Box<dyn GenFieldImpl + 'ccx>,
+  pub field: Field<'ccx>,
+  pub hasbit: Option<u32>,
+}
+
+impl<'ccx> GenField<'ccx> {
+  fn common_vars(
+    &self,
+    w: &mut SourceWriter,
+    cb: impl FnOnce(&mut SourceWriter),
+  ) {
+    w.with_vars(
+      vars! {
+        name: ident(self.field.name()),
+        Name: ident(heck::AsPascalCase(self.field.name())),
+        raw_name: self.field.name(),
+        field: |w| {
+          if self.field.parent().kind() == Kind::Choice {
+            w.emit(vars! {}, "unsafe { &self.ptr.as_ref().union.$name }")
+          } else {
+            w.emit(vars! {}, "unsafe { &self.ptr.as_ref().$name }")
+          }
+        },
+        field_mut: |w| {
+          if self.field.parent().kind() == Kind::Choice {
+            w.emit(vars! {}, "unsafe { &mut self.ptr.as_mut().union.$name }")
+          } else {
+            w.emit(vars! {}, "unsafe { &mut self.ptr.as_mut().$name }")
+          }
+        },
+      },
+      cb,
+    )
+  }
+
+  pub fn in_storage(&self, w: &mut SourceWriter) {
+    self.common_vars(w, |w| self.gen.in_storage(self.field, w));
+  }
+  pub fn in_variants(&self, w: &mut SourceWriter) {
+    self.common_vars(w, |w| self.gen.in_variants(self.field, w));
+  }
+  pub fn in_storage_init(&self, w: &mut SourceWriter) {
+    self.common_vars(w, |w| self.gen.in_storage_init(self.field, w));
+  }
+  pub fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {
+    self.common_vars(w, |w| self.gen.in_ref_methods(self.field, at, w));
+  }
+  pub fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
+    self.common_vars(w, |w| self.gen.in_mut_methods(self.field, at, w))
+  }
+  pub fn in_debug(&self, w: &mut SourceWriter) {
+    self.common_vars(w, |w| self.gen.in_debug(self.field, w))
+  }
+  pub fn in_init(&self, w: &mut SourceWriter) {
+    self.common_vars(w, |w| self.gen.in_init(self.field, w))
+  }
+}
+
 #[allow(unused_variables)]
-pub trait GenField {
-  fn in_storage(&self, w: &mut SourceWriter) {}
-  fn in_storage_init(&self, w: &mut SourceWriter) {}
-  fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {}
-  fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {}
-  fn in_debug(&self, w: &mut SourceWriter) {}
-  fn in_init(&self, w: &mut SourceWriter) {}
+trait GenFieldImpl {
+  fn in_storage(&self, field: Field, w: &mut SourceWriter) {}
+  fn in_variants(&self, field: Field, w: &mut SourceWriter) {}
+  fn in_storage_init(&self, field: Field, w: &mut SourceWriter) {}
+  fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {}
+  fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {}
+  fn in_debug(&self, field: Field, w: &mut SourceWriter) {}
+  fn in_init(&self, field: Field, w: &mut SourceWriter) {}
 }
 
 pub struct FieldGenerators<'ccx> {
   pub num_hasbits: u32,
-  pub fields: Vec<Box<dyn GenField + 'ccx>>,
+  pub fields: Vec<GenField<'ccx>>,
 }
 
 impl<'ccx> FieldGenerators<'ccx> {
@@ -42,22 +102,12 @@ impl<'ccx> FieldGenerators<'ccx> {
     };
 
     for field in fields {
-      let gen: Box<dyn GenField> = match (field.ty(), field.is_repeated()) {
-        ((TypeEnum::String, _), false) => Box::new(SingularString {
-          field,
-          hasbit_index: generators.num_hasbits,
-        }),
-        ((TypeEnum::String, _), true) => Box::new(RepeatedString { field }),
+      let gen: Box<dyn GenFieldImpl> = match (field.ty(), field.is_repeated()) {
+        ((TypeEnum::String, _), false) => Box::new(SingularString),
+        ((TypeEnum::String, _), true) => Box::new(RepeatedString),
         ((TypeEnum::Type, Some(submsg)), false) => match submsg.kind() {
-          Kind::Message => Box::new(SingularMessage {
-            field,
-            submsg,
-            hasbit_index: generators.num_hasbits,
-          }),
-          Kind::Enum => Box::new(SingularScalar {
-            field,
-            hasbit_index: generators.num_hasbits,
-          }),
+          Kind::Message => Box::new(SingularMessage { submsg }),
+          Kind::Enum => Box::new(SingularScalar),
           _ => {
             field
               .ccx()
@@ -67,8 +117,8 @@ impl<'ccx> FieldGenerators<'ccx> {
           }
         },
         ((TypeEnum::Type, Some(submsg)), true) => match submsg.kind() {
-          Kind::Message => Box::new(RepeatedMessage { field, submsg }),
-          Kind::Enum => Box::new(RepeatedScalar { field }),
+          Kind::Message => Box::new(RepeatedMessage { submsg }),
+          Kind::Enum => Box::new(RepeatedScalar),
           _ => {
             field
               .ccx()
@@ -78,27 +128,27 @@ impl<'ccx> FieldGenerators<'ccx> {
           }
         },
         ((TypeEnum::Foreign, _), _) => unreachable!(),
-        (_, false) => Box::new(SingularScalar {
-          field,
-          hasbit_index: generators.num_hasbits,
-        }),
-        (_, true) => Box::new(RepeatedScalar { field }),
+        (_, false) => Box::new(SingularScalar),
+        (_, true) => Box::new(RepeatedScalar),
       };
 
-      if !field.is_repeated() {
-        generators.num_hasbits += 1;
-      }
-      generators.fields.push(gen);
+      let needs_hasbit =
+        field.parent().kind() != Kind::Choice && !field.is_repeated();
+      generators.fields.push(GenField {
+        gen,
+        field,
+        hasbit: needs_hasbit.then(|| {
+          generators.num_hasbits += 1;
+          generators.num_hasbits - 1
+        }),
+      });
     }
 
     generators
   }
 }
 
-struct SingularScalar<'ccx> {
-  field: Field<'ccx>,
-  hasbit_index: u32,
-}
+struct SingularScalar;
 
 fn scalar_storage_type<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
   emit::display(move |f| match field.ty() {
@@ -142,41 +192,39 @@ fn scalar_default<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
   })
 }
 
-impl GenField for SingularScalar<'_> {
-  fn in_storage(&self, w: &mut SourceWriter) {
+impl GenFieldImpl for SingularScalar {
+  fn in_storage(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        Storage: scalar_storage_type(self.field),
-      },
+      vars! { Storage: scalar_storage_type(field) },
       "
         pub(in super) $name: $Storage,
       ",
     );
   }
 
-  fn in_storage_init(&self, w: &mut SourceWriter) {
+  fn in_variants(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        default: scalar_default(self.field),
-      },
+      vars! { Storage: scalar_storage_type(field) },
+      "
+        $Name($rt::ptr::Proxy<'cho, $Storage, Which>),
+      ",
+    );
+  }
+
+  fn in_storage_init(&self, field: Field, w: &mut SourceWriter) {
+    w.emit(
+      vars! { default: scalar_default(field) },
       "
         $name: $default,
       ",
     );
   }
 
-  fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {
-    let hasbit_word = self.hasbit_index / 32;
-    let hasbit_bit = 1 << (self.hasbit_index % 32);
+  fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        hasbit_word,
-        hasbit_bit,
-        name: ident(self.field.name()),
-        Type: scalar_type(self.field),
-        Storage: scalar_storage_type(self.field),
+        Type: scalar_type(field),
+        Storage: scalar_storage_type(field),
         self: if at == Where::MsgImpl { "&self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
@@ -187,19 +235,17 @@ impl GenField for SingularScalar<'_> {
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Type>> {
-          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
-          Some(unsafe { $transmute::<$Storage, $Type>(self.ptr.as_ref().$name) })
+          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
+          Some(unsafe { $transmute::<$Storage, $Type>(*$field) })
         }
       ",
     );
   }
 
-  fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-        Type: scalar_type(self.field),
+        Type: scalar_type(field),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
@@ -212,9 +258,9 @@ impl GenField for SingularScalar<'_> {
         pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $Type> {
           unsafe {
             $rt::value::OptMut::__wrap(
-              self.ptr.as_ptr().add($priv::FIELD_OFFSET_$raw_name as usize),
+              self.ptr.as_ptr(),
               self.arena,
-              $Msg::__hazzer_$raw_name,
+              $Msg::__HAZZER_$raw_name,
             )
           }
         }
@@ -226,12 +272,9 @@ impl GenField for SingularScalar<'_> {
     );
   }
 
-  fn in_debug(&self, w: &mut SourceWriter) {
+  fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-      },
+      vars! {},
       r#"
         if let Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
@@ -244,48 +287,49 @@ impl GenField for SingularScalar<'_> {
   }
 }
 
-struct RepeatedScalar<'ccx> {
-  field: Field<'ccx>,
-}
-
-impl GenField for RepeatedScalar<'_> {
-  fn in_storage(&self, w: &mut SourceWriter) {
+struct RepeatedScalar;
+impl GenFieldImpl for RepeatedScalar {
+  fn in_storage(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        Storage: scalar_storage_type(self.field),
-      },
+      vars! { Storage: scalar_storage_type(field) },
       "
         pub (in super) $name: $z::AVec<$Storage>,
       ",
     );
   }
 
-  fn in_storage_init(&self, w: &mut SourceWriter) {
+  fn in_variants(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-      },
+      vars! { Storage: scalar_storage_type(field) },
+      "
+        $Name($rt::ptr::Proxy<'cho, $rt::ptr::Rep<$Storage>, Which>),
+      ",
+    );
+  }
+
+  fn in_storage_init(&self, field: Field, w: &mut SourceWriter) {
+    w.emit(
+      vars! { name: ident(field.name()) },
       "
         $name: $z::AVec::new(),
       ",
     );
   }
 
-  fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
-        Type: scalar_type(self.field),
-        Storage: scalar_storage_type(self.field),
+        Type: scalar_type(field),
+        Storage: scalar_storage_type(field),
         self: if at == Where::MsgImpl { "&self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $Type> {
+          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
-            let vec = &self.ptr.as_ref().$name;
+            let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
           }
         }
@@ -297,12 +341,11 @@ impl GenField for RepeatedScalar<'_> {
     );
   }
 
-  fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
-        Type: scalar_type(self.field),
-        Storage: scalar_storage_type(self.field),
+        Type: scalar_type(field),
+        Storage: scalar_storage_type(field),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
@@ -310,8 +353,9 @@ impl GenField for RepeatedScalar<'_> {
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Type> {
           unsafe {
+            $Msg::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
-              (&mut self.ptr.as_mut().$name) as *mut _ as *mut u8,
+              $field_mut as *mut _ as *mut u8,
               self.arena,
             )
           }
@@ -320,12 +364,9 @@ impl GenField for RepeatedScalar<'_> {
     );
   }
 
-  fn in_debug(&self, w: &mut SourceWriter) {
+  fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-      },
+      vars! {},
       r#"
         if !self.$name().is_empty() {
           if count != 0 { debug.comma(false)?; }
@@ -338,42 +379,39 @@ impl GenField for RepeatedScalar<'_> {
   }
 }
 
-struct SingularString<'ccx> {
-  field: Field<'ccx>,
-  hasbit_index: u32,
-}
-
-impl GenField for SingularString<'_> {
-  fn in_storage(&self, w: &mut SourceWriter) {
+struct SingularString;
+impl GenFieldImpl for SingularString {
+  fn in_storage(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        Type: scalar_type(self.field),
-      },
+      vars! { Type: scalar_type(field) },
       "
         pub(in super) $name: (*mut u8, usize),
       ",
     );
   }
 
-  fn in_storage_init(&self, w: &mut SourceWriter) {
+  fn in_variants(&self, field: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { name: ident(self.field.name()), },
+      vars! { Storage: scalar_storage_type(field) },
+      "
+        $Name($rt::ptr::Proxy<'cho, $rt::Str, Which>),
+      ",
+    );
+  }
+
+  fn in_storage_init(&self, _: Field, w: &mut SourceWriter) {
+    w.emit(
+      vars! {},
       "
         $name: (0 as *mut u8, 0),
       ",
     );
   }
 
-  fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {
-    let hasbit_word = self.hasbit_index / 32;
-    let hasbit_bit = 1 << (self.hasbit_index % 32);
+  fn in_ref_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        hasbit_word,
-        hasbit_bit,
-        name: ident(self.field.name()),
-        Type: scalar_type(self.field),
+        Type: scalar_type(field),
         self: if at == Where::MsgImpl { "&self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
@@ -384,9 +422,9 @@ impl GenField for SingularString<'_> {
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $rt::Str>> {
-          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
           Some(unsafe {
-            let (mut ptr, len) = self.ptr.as_ref().$name;
+            let (mut ptr, len) = *$field;
             if ptr.is_null() { ptr = 1 as *mut u8; }
             $rt::Str::from_raw_parts(ptr, len)
           })
@@ -395,12 +433,10 @@ impl GenField for SingularString<'_> {
     );
   }
 
-  fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_mut_methods(&self, field: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-        Type: scalar_type(self.field),
+        Type: scalar_type(field),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
@@ -413,9 +449,9 @@ impl GenField for SingularString<'_> {
         pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $rt::Str> {
           unsafe {
             $rt::value::OptMut::__wrap(
-              self.ptr.as_ptr().add($priv::FIELD_OFFSET_$raw_name as usize),
+              self.ptr.as_ptr(),
               self.arena,
-              $Msg::__hazzer_$raw_name,
+              $Msg::__HAZZER_$raw_name,
             )
           }
         }
@@ -427,12 +463,9 @@ impl GenField for SingularString<'_> {
     );
   }
 
-  fn in_debug(&self, w: &mut SourceWriter) {
+  fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-      },
+      vars! {},
       r#"
         if let Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
@@ -445,41 +478,47 @@ impl GenField for SingularString<'_> {
   }
 }
 
-struct RepeatedString<'ccx> {
-  field: Field<'ccx>,
-}
-
-impl GenField for RepeatedString<'_> {
-  fn in_storage(&self, w: &mut SourceWriter) {
+struct RepeatedString;
+impl GenFieldImpl for RepeatedString {
+  fn in_storage(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { name: ident(self.field.name()) },
+      vars! {},
       "
         pub(crate) $name: $z::AVec<(*mut u8, usize)>,
       ",
     );
   }
 
-  fn in_storage_init(&self, w: &mut SourceWriter) {
+  fn in_variants(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { name: ident(self.field.name()) },
+      vars! {},
+      "
+        $Name($rt::ptr::Proxy<'cho, $rt::ptr::Rep<$rt::Str>, Which>),
+      ",
+    );
+  }
+
+  fn in_storage_init(&self, _: Field, w: &mut SourceWriter) {
+    w.emit(
+      vars! {},
       "
         $name: $z::AVec::new(),
       ",
     );
   }
 
-  fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_ref_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
         self: if at == Where::MsgImpl { "&self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $rt::Str> {
+          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
-            let vec = &self.ptr.as_ref().$name;
+            let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr(), vec.len())
           }
         }
@@ -491,10 +530,9 @@ impl GenField for RepeatedString<'_> {
     );
   }
 
-  fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_mut_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
       },
@@ -502,8 +540,9 @@ impl GenField for RepeatedString<'_> {
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $rt::Str> {
           unsafe {
+            $Msg::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
-              (&mut self.ptr.as_mut().$name) as *mut _ as *mut u8,
+              $field_mut as *mut _ as *mut u8,
               self.arena,
             )
           }
@@ -512,12 +551,9 @@ impl GenField for RepeatedString<'_> {
     );
   }
 
-  fn in_debug(&self, w: &mut SourceWriter) {
+  fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-      },
+      vars! {},
       r#"
         if !self.$name().is_empty() {
           if count != 0 { debug.comma(false)?; }
@@ -531,16 +567,13 @@ impl GenField for RepeatedString<'_> {
 }
 
 struct SingularMessage<'ccx> {
-  field: Field<'ccx>,
   submsg: Type<'ccx>,
-  hasbit_index: u32,
 }
 
-impl GenField for SingularMessage<'_> {
-  fn in_storage(&self, w: &mut SourceWriter) {
+impl GenFieldImpl for SingularMessage<'_> {
+  fn in_storage(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
         Submsg: type_name(self.submsg),
         priv: format!("__priv_{}", type_name(self.submsg)),
       },
@@ -550,23 +583,27 @@ impl GenField for SingularMessage<'_> {
     );
   }
 
-  fn in_storage_init(&self, w: &mut SourceWriter) {
+  fn in_variants(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { name: ident(self.field.name()), },
+      vars! { Submsg: type_name(self.submsg) },
+      "
+        $Name($rt::ptr::Proxy<'cho, $Submsg, Which>),
+      ",
+    );
+  }
+
+  fn in_storage_init(&self, _: Field, w: &mut SourceWriter) {
+    w.emit(
+      vars! {},
       "
         $name: 0 as *mut u8,
       ",
     );
   }
 
-  fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {
-    let hasbit_word = self.hasbit_index / 32;
-    let hasbit_bit = 1 << (self.hasbit_index % 32);
+  fn in_ref_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        hasbit_word,
-        hasbit_bit,
-        name: ident(self.field.name()),
         Submsg: type_name(self.submsg),
         self: if at == Where::MsgImpl { "&self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
@@ -578,9 +615,9 @@ impl GenField for SingularMessage<'_> {
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Submsg>> {
-          if unsafe { self.ptr.as_ref() }.__hasbits[$hasbit_word] & $hasbit_bit == 0 { return None }
+          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
           Some($rt::View::<$Submsg> {
-            ptr: unsafe { $z::ABox::from_ptr(self.ptr.as_ref().$name) },
+            ptr: unsafe { $z::ABox::from_ptr(*$field) },
             _ph: $PhantomData,
           })
         }
@@ -588,11 +625,9 @@ impl GenField for SingularMessage<'_> {
     );
   }
 
-  fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_mut_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
         Submsg: type_name(self.submsg),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
@@ -606,9 +641,9 @@ impl GenField for SingularMessage<'_> {
         pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $Submsg> {
           unsafe {
             $rt::value::OptMut::__wrap(
-              self.ptr.as_ptr().add($priv::FIELD_OFFSET_$raw_name as usize),
+              self.ptr.as_ptr(),
               self.arena,
-              $Msg::__hazzer_$raw_name,
+              $Msg::__HAZZER_$raw_name,
             )
           }
         }
@@ -616,12 +651,9 @@ impl GenField for SingularMessage<'_> {
     );
   }
 
-  fn in_debug(&self, w: &mut SourceWriter) {
+  fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-      },
+      vars! {},
       r#"
         if let Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
@@ -632,55 +664,43 @@ impl GenField for SingularMessage<'_> {
       "#,
     );
   }
-
-  fn in_init(&self, w: &mut SourceWriter) {
-    w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        Submsg: type_name(self.submsg),
-      },
-      r"
-        let storage = &mut *raw.cast::<$priv::Storage>();
-        if storage.$name.is_null() {
-          storage.$name = arena.alloc($Submsg::__LAYOUT).as_ptr();
-          $Submsg::__raw_init(storage.$name);
-        }
-      ",
-    );
-  }
 }
 
 struct RepeatedMessage<'ccx> {
-  field: Field<'ccx>,
   submsg: Type<'ccx>,
 }
 
-impl GenField for RepeatedMessage<'_> {
-  fn in_storage(&self, w: &mut SourceWriter) {
+impl GenFieldImpl for RepeatedMessage<'_> {
+  fn in_storage(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        Submsg: type_name(self.submsg),
-      },
+      vars! { Submsg: type_name(self.submsg) },
       "
         pub(in super) $name: $z::AVec<*mut u8>,
       ",
     );
   }
 
-  fn in_storage_init(&self, w: &mut SourceWriter) {
+  fn in_variants(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! { name: ident(self.field.name()) },
+      vars! { Submsg: type_name(self.submsg) },
+      "
+        $Name($rt::ptr::Proxy<'cho, $rt::Rep<$Submsg>, Which>),
+      ",
+    );
+  }
+
+  fn in_storage_init(&self, _: Field, w: &mut SourceWriter) {
+    w.emit(
+      vars! {},
       "
         $name: $z::AVec::new(),
       ",
     );
   }
 
-  fn in_ref_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_ref_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
         Submsg: type_name(self.submsg),
         self: if at == Where::MsgImpl { "&self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
@@ -688,8 +708,9 @@ impl GenField for RepeatedMessage<'_> {
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $Submsg> {
+          if !unsafe { $Msg::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
-            let vec = &self.ptr.as_ref().$name;
+            let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr(), vec.len())
           }
         }
@@ -701,10 +722,9 @@ impl GenField for RepeatedMessage<'_> {
     );
   }
 
-  fn in_mut_methods(&self, at: Where, w: &mut SourceWriter) {
+  fn in_mut_methods(&self, _: Field, at: Where, w: &mut SourceWriter) {
     w.emit(
       vars! {
-        name: ident(self.field.name()),
         Submsg: type_name(self.submsg),
         self: if at == Where::MsgImpl { "&mut self" } else { "self" },
         lt: if at == Where::MsgImpl { "_" } else { "msg" },
@@ -713,8 +733,9 @@ impl GenField for RepeatedMessage<'_> {
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Submsg> {
           unsafe {
+            $Msg::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
-              (&mut self.ptr.as_mut().$name) as *mut _ as *mut u8,
+              $field_mut as *mut _ as *mut u8,
               self.arena,
             )
           }
@@ -723,12 +744,9 @@ impl GenField for RepeatedMessage<'_> {
     );
   }
 
-  fn in_debug(&self, w: &mut SourceWriter) {
+  fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.emit(
-      vars! {
-        name: ident(self.field.name()),
-        raw_name: self.field.name(),
-      },
+      vars! {},
       r#"
         for value in self.$name() {
           if count != 0 { debug.comma(false)?; }

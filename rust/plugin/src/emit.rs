@@ -142,6 +142,10 @@ impl SourceWriter {
     })
   }
 
+  pub fn write(&mut self, tpl: &str) {
+    self.emit(vars! {}, tpl)
+  }
+
   #[track_caller]
   fn exec(&mut self, tpl: Template) {
     let ambient_indent = self.indent;

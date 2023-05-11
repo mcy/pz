@@ -174,6 +174,7 @@ impl<'ccx> Type<'ccx> {
       ctx: self.ctx,
       bundle: self.bundle,
       proto: f,
+      parent: self.proto,
       index: i as u32,
     })
   }
@@ -192,6 +193,7 @@ pub struct Field<'ccx> {
   ctx: &'ccx CodegenCtx,
   bundle: &'ccx proto::Bundle,
   proto: &'ccx proto::Field,
+  parent: &'ccx proto::Type,
   index: u32,
 }
 
@@ -214,6 +216,14 @@ impl<'ccx> Field<'ccx> {
 
   pub fn is_repeated(&self) -> bool {
     self.proto.is_repeated()
+  }
+
+  pub fn parent(&self) -> Type<'ccx> {
+    Type {
+      ctx: self.ctx,
+      bundle: self.bundle,
+      proto: self.parent,
+    }
   }
 
   pub fn ty(&self) -> (proto::field::Type, Option<Type<'ccx>>) {

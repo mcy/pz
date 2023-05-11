@@ -47,46 +47,53 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       "Msg::debug": |w| for field in &gen.fields {
         field.in_debug(w);
       },
-      "Msg::hazzers": |w| {
-        let mut hasbit_index = 0u32;
-        for (field, gen) in ty.fields().zip(&gen.fields) {
-          if field.is_repeated() { continue }
-
-          let hasbit_word = hasbit_index / 32;
-          let hasbit_bit = 1 << (hasbit_index % 32);
-          w.emit(
-            vars! {
-              hasbit_word,
-              hasbit_bit,
-              raw_name: field.name(),
-              init: |w| gen.in_init(w),
-            },
-            "
-              #[doc(hidden)]
-              pub unsafe fn __hazzer_$raw_name(
-                raw: *mut u8,
-                arena: $z::RawArena,
-                flag: Option<bool>,
-              ) -> bool {
-                let offset = $priv::FIELD_OFFSET_$raw_name as usize;
-                let word = &mut *raw.sub(offset).cast::<u32>().add($hasbit_word);
-                let has = *word & $hasbit_bit != 0;
-                match flag {
-                  None => {},
-                  Some(false) => *word &= !$hasbit_bit,
-                  Some(true) => {
-                    *word |= $hasbit_bit;
-                    $init
-                  }
-                }
-                has
+      "Msg::tables": |w| for gen in &gen.fields {
+        w.emit(
+          vars! {
+            hasbit: gen.hasbit.map(|x| x as i32).unwrap_or(i32::MIN),
+            name: ident(gen.field.name()),
+            raw_name: gen.field.name(),
+            size: |w| {
+              if gen.field.is_repeated() {
+                // This will clear only the FIRST pointer in the AVec that backs
+                // this repeated field. This will set the length, which is
+                // intentionally the first field, to zero.
+                w.write("(usize::BITS / 8) as i32");
+                return;
               }
-            "
-          );
-          if !field.is_repeated() {
-            hasbit_index += 1;
-          }
-        }
+
+              match gen.field.ty() {
+                (TypeEnum::I32 | TypeEnum::U32 | TypeEnum::F32, _) => w.write("4"),
+                (TypeEnum::I64 | TypeEnum::U64 | TypeEnum::F64, _) => w.write("8"),
+                (TypeEnum::Bool, _) => w.write("1"),
+                (TypeEnum::String, _) => w.write("(usize::BITS / 8 * 2) as i32"),
+                (TypeEnum::Type, Some(ty)) => match ty.kind() {
+                    Kind::Enum => w.write("4"),
+                    _ => w.emit(
+                      vars! { Type: type_name(ty) },
+                      "-($Type::__LAYOUT.size() as i32)",
+                    ),
+                },
+                _ => unreachable!(),
+              }
+            }
+          },
+          "
+            #[doc(hidden)]
+            pub const __OFFSET_${raw_name}: u32 = unsafe {
+              let msg = $Msg::DEFAULT;
+              let top = msg.ptr.as_ptr().cast::<u8>();
+              let field = &msg.ptr.as_ref().$name as *const _ as *const u8;
+              field.offset_from(top) as u32
+            };
+            #[doc(hidden)]
+            pub const __HAZZER_$raw_name: &$z::Hazzer = &$z::Hazzer {
+              hasbit_or_number: $hasbit,
+              offset: Self::__OFFSET_${raw_name},
+              size: $size,
+            };
+          "
+        )
       },
       "View::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::ViewImpl, w);
@@ -96,22 +103,6 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         field.in_ref_methods(Where::MutImpl, w);
         field.in_mut_methods(Where::MutImpl, w);
         w.new_line();
-      },
-      "Msg::OFFSETS": |w| for field in ty.fields() {
-        w.emit(
-          vars! {
-            name: ident(field.name()),
-            raw_name: field.name(),
-          },
-          "
-            pub const FIELD_OFFSET_${raw_name}: u32 = unsafe {
-              let msg = $Msg::DEFAULT;
-              let top = msg.ptr.as_ptr().cast::<u8>();
-              let field = &msg.ptr.as_ref().$name as *const _ as *const u8;
-              field.offset_from(top) as u32
-            };
-          "
-        );
       },
       tdp_tys: |w| for &ty in &ty_ptrs {
         w.emit(
@@ -162,7 +153,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               $z::tdp::Field {
                 number: $number,
                 flags: ($z::tdp::Kind::$tdp_kind as u8 as u32) | ($repeated << 4),
-                offset: $priv::FIELD_OFFSET_${raw_name},
+                offset: $Msg::__OFFSET_${raw_name},
                 ty: $ty_idx,
                 hasbit: $hasbit_index,
               },
@@ -198,11 +189,8 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           let arena = $z::RawArena::new();
           let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
           unsafe {
-            Self::__raw_init(ptr);
-            Self {
-              ptr: $z::ABox::from_ptr(ptr),
-              arena,
-            }
+            ptr.write_bytes(0, Self::__LAYOUT.size());
+            Self { ptr: $z::ABox::from_ptr(ptr), arena }
           }
         }
 
@@ -241,16 +229,11 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           (&mut *raw.cast::<$priv::Storage>()).__hasbits = [0; $hasbit_words];
         }
         #[doc(hidden)]
-        pub unsafe fn __raw_init(raw: *mut u8) {
-          raw.cast::<$priv::Storage>()
-            .copy_from_nonoverlapping(Self::DEFAULT.ptr.as_ptr().cast(), 1);
-        }
-        #[doc(hidden)]
         pub fn __tdp_info() -> *const $z::tdp::Message {
           &$priv::TDP_INFO as *const _ as *const $z::tdp::Message
         }
 
-        ${Msg::hazzers}
+        ${Msg::tables}
       }
 
       impl Default for $Msg {
@@ -283,7 +266,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
 
         unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: $z::RawArena) {
           (&mut *ptr.cast::<$z::AVec<*mut u8>>()).resize_msg(
-            new_len, arena, Self::__LAYOUT, Self::__raw_init)
+            new_len, arena, Self::__LAYOUT)
         }
       }
 
@@ -357,8 +340,6 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           pub(crate) __hasbits: [u32; $hasbit_words],
           ${Msg::fields}    
         }
-
-        ${Msg::OFFSETS}
        
         pub static TDP_INFO: $z::tdp::MessageAndFields<{$NUM_FIELDS + 1}> =
           $z::tdp::MessageAndFields::<{$NUM_FIELDS + 1}> {
@@ -374,7 +355,6 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
                 ];
                 TYS.as_ptr()
               },
-              raw_init: $Msg::__raw_init,
             },
             fields: [
               $tdp_fields
