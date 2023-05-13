@@ -11,6 +11,13 @@ pub struct Request {
   arena: crate::__z::RawArena,
 }
 
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Request::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
+
 impl Request {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
     const VALUE: __priv_Request::Storage = __priv_Request::Storage {
@@ -70,7 +77,7 @@ impl Request {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(&self) -> Option<crate::View<'_, AboutRequest>> {
-    if !unsafe { Request::__HAZZER_about.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Request::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<AboutRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
   }
   pub fn about_mut(&mut self) -> crate::Mut<'_, AboutRequest> {
@@ -81,7 +88,7 @@ impl Request {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Request::__HAZZER_about,
+        Request::__tdp_info().field(0),
       )
     }
   }
@@ -90,7 +97,7 @@ impl Request {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(&self) -> Option<crate::View<'_, CodegenRequest>> {
-    if !unsafe { Request::__HAZZER_codegen.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Request::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<CodegenRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
   }
   pub fn codegen_mut(&mut self) -> crate::Mut<'_, CodegenRequest> {
@@ -101,7 +108,7 @@ impl Request {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Request::__HAZZER_codegen,
+        Request::__tdp_info().field(1),
       )
     }
   }
@@ -113,29 +120,13 @@ impl Request {
     (&mut *raw.cast::<__priv_Request::Storage>()).which = 0;
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Request::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Request::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_about: u32 = __priv_Request::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_about: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -1,
-    offset: Self::__OFFSET_about,
-    size: -(AboutRequest::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_codegen: u32 = __priv_Request::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_codegen: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2,
-    offset: Self::__OFFSET_codegen,
-    size: -(CodegenRequest::__LAYOUT.size() as i32),
-  };
 }
 
 pub enum RequestCases<'proto, Which: crate::ptr::select::Select> {
@@ -177,7 +168,7 @@ impl<'proto> __priv_Request::View<'proto> {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutRequest>> {
-    if !unsafe { Request::__HAZZER_about.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Request::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<AboutRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
   }
 
@@ -185,7 +176,7 @@ impl<'proto> __priv_Request::View<'proto> {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenRequest>> {
-    if !unsafe { Request::__HAZZER_codegen.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Request::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<CodegenRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
   }
 
@@ -254,7 +245,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Request::__tdp_info())
   }
 
@@ -262,7 +253,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutRequest>> {
-    if !unsafe { Request::__HAZZER_about.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Request::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<AboutRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
   }
   pub fn about_mut(self) -> crate::Mut<'proto, AboutRequest> {
@@ -273,7 +264,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Request::__HAZZER_about,
+        Request::__tdp_info().field(0),
       )
     }
   }
@@ -282,7 +273,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenRequest>> {
-    if !unsafe { Request::__HAZZER_codegen.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Request::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<CodegenRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
   }
   pub fn codegen_mut(self) -> crate::Mut<'proto, CodegenRequest> {
@@ -293,7 +284,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Request::__HAZZER_codegen,
+        Request::__tdp_info().field(1),
       )
     }
   }
@@ -370,39 +361,44 @@ mod __priv_Request {
     if align < 4 { 4 } else { align }
   };
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Request::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             AboutRequest::__tdp_info,
             CodegenRequest::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Choice,
+        num_hasbit_words: 0,
+        kind: crate::__z::tdp::DescKind::Choice,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
           offset: __priv_Request::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
           offset: __priv_Request::UNION_OFFSET as u32,
-          ty: 1,
+          desc: 1,
           hasbit: 0,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -446,6 +442,13 @@ pub struct Response {
   ptr: crate::__z::ABox<__priv_Response::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Response::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl Response {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -506,7 +509,7 @@ impl Response {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(&self) -> Option<crate::View<'_, AboutResponse>> {
-    if !unsafe { Response::__HAZZER_about.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Response::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<AboutResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
   }
   pub fn about_mut(&mut self) -> crate::Mut<'_, AboutResponse> {
@@ -517,7 +520,7 @@ impl Response {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Response::__HAZZER_about,
+        Response::__tdp_info().field(0),
       )
     }
   }
@@ -526,7 +529,7 @@ impl Response {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(&self) -> Option<crate::View<'_, CodegenResponse>> {
-    if !unsafe { Response::__HAZZER_codegen.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Response::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<CodegenResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
   }
   pub fn codegen_mut(&mut self) -> crate::Mut<'_, CodegenResponse> {
@@ -537,7 +540,7 @@ impl Response {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Response::__HAZZER_codegen,
+        Response::__tdp_info().field(1),
       )
     }
   }
@@ -549,29 +552,13 @@ impl Response {
     (&mut *raw.cast::<__priv_Response::Storage>()).which = 0;
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Response::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Response::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_about: u32 = __priv_Response::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_about: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -1,
-    offset: Self::__OFFSET_about,
-    size: -(AboutResponse::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_codegen: u32 = __priv_Response::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_codegen: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2,
-    offset: Self::__OFFSET_codegen,
-    size: -(CodegenResponse::__LAYOUT.size() as i32),
-  };
 }
 
 pub enum ResponseCases<'proto, Which: crate::ptr::select::Select> {
@@ -613,7 +600,7 @@ impl<'proto> __priv_Response::View<'proto> {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutResponse>> {
-    if !unsafe { Response::__HAZZER_about.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Response::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<AboutResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
   }
 
@@ -621,7 +608,7 @@ impl<'proto> __priv_Response::View<'proto> {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenResponse>> {
-    if !unsafe { Response::__HAZZER_codegen.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Response::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<CodegenResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
   }
 
@@ -690,7 +677,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Response::__tdp_info())
   }
 
@@ -698,7 +685,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutResponse>> {
-    if !unsafe { Response::__HAZZER_about.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Response::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<AboutResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
   }
   pub fn about_mut(self) -> crate::Mut<'proto, AboutResponse> {
@@ -709,7 +696,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Response::__HAZZER_about,
+        Response::__tdp_info().field(0),
       )
     }
   }
@@ -718,7 +705,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenResponse>> {
-    if !unsafe { Response::__HAZZER_codegen.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Response::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<CodegenResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
   }
   pub fn codegen_mut(self) -> crate::Mut<'proto, CodegenResponse> {
@@ -729,7 +716,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Response::__HAZZER_codegen,
+        Response::__tdp_info().field(1),
       )
     }
   }
@@ -806,39 +793,44 @@ mod __priv_Response {
     if align < 4 { 4 } else { align }
   };
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Response::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             AboutResponse::__tdp_info,
             CodegenResponse::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Choice,
+        num_hasbit_words: 0,
+        kind: crate::__z::tdp::DescKind::Choice,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
           offset: __priv_Response::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
           offset: __priv_Response::UNION_OFFSET as u32,
-          ty: 1,
+          desc: 1,
           hasbit: 0,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -882,6 +874,13 @@ pub struct AboutRequest {
   ptr: crate::__z::ABox<__priv_AboutRequest::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_AboutRequest::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl AboutRequest {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -936,8 +935,8 @@ impl AboutRequest {
     (&mut *raw.cast::<__priv_AboutRequest::Storage>()).__hasbits = [0; 0];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_AboutRequest::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_AboutRequest::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
@@ -1019,7 +1018,7 @@ impl<'proto> __priv_AboutRequest::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, AboutRequest::__tdp_info())
   }
 
@@ -1060,23 +1059,24 @@ mod __priv_AboutRequest {
     pub(crate) __hasbits: [u32; 0],
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{0 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{0 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{0 + 1}> =
+    crate::__z::tdp::DescStorage::<{0 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = AboutRequest::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 0,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -1120,6 +1120,13 @@ pub struct AboutResponse {
   ptr: crate::__z::ABox<__priv_AboutResponse::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_AboutResponse::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl AboutResponse {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -1174,7 +1181,7 @@ impl AboutResponse {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1189,7 +1196,7 @@ impl AboutResponse {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse::__HAZZER_name,
+        AboutResponse::__tdp_info().field(0),
       )
     }
   }
@@ -1201,7 +1208,7 @@ impl AboutResponse {
     self.version_or().unwrap_or_default()
   }
   pub fn version_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse::__HAZZER_version.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().version };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1216,7 +1223,7 @@ impl AboutResponse {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse::__HAZZER_version,
+        AboutResponse::__tdp_info().field(1),
       )
     }
   }
@@ -1225,7 +1232,7 @@ impl AboutResponse {
   }
 
   pub fn options(&self) -> crate::Slice<'_, AboutResponse_Option> {
-    if !unsafe { AboutResponse::__HAZZER_options.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { AboutResponse::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().options };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1236,7 +1243,7 @@ impl AboutResponse {
   }
   pub fn options_mut(&mut self) -> crate::Repeated<'_, AboutResponse_Option> {
     unsafe {
-      AboutResponse::__HAZZER_options.init(self.ptr.as_ptr(), self.arena);
+      AboutResponse::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
         self.arena,
@@ -1251,52 +1258,13 @@ impl AboutResponse {
     (&mut *raw.cast::<__priv_AboutResponse::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_AboutResponse::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_AboutResponse::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_name: u32 = unsafe {
-    let msg = AboutResponse::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_name: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_name,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_version: u32 = unsafe {
-    let msg = AboutResponse::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().version as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_version: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_version,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_options: u32 = unsafe {
-    let msg = AboutResponse::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().options as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_options: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_options,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for AboutResponse {
@@ -1341,7 +1309,7 @@ impl<'proto> __priv_AboutResponse::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1353,7 +1321,7 @@ impl<'proto> __priv_AboutResponse::View<'proto> {
     self.version_or().unwrap_or_default()
   }
   pub fn version_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__HAZZER_version.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().version };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1362,7 +1330,7 @@ impl<'proto> __priv_AboutResponse::View<'proto> {
   }
 
   pub fn options(self) -> crate::Slice<'proto, AboutResponse_Option> {
-    if !unsafe { AboutResponse::__HAZZER_options.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { AboutResponse::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().options };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1426,7 +1394,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, AboutResponse::__tdp_info())
   }
 
@@ -1434,7 +1402,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1449,7 +1417,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse::__HAZZER_name,
+        AboutResponse::__tdp_info().field(0),
       )
     }
   }
@@ -1461,7 +1429,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
     self.version_or().unwrap_or_default()
   }
   pub fn version_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__HAZZER_version.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().version };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1476,7 +1444,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse::__HAZZER_version,
+        AboutResponse::__tdp_info().field(1),
       )
     }
   }
@@ -1485,7 +1453,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
 
   pub fn options(self) -> crate::Slice<'proto, AboutResponse_Option> {
-    if !unsafe { AboutResponse::__HAZZER_options.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { AboutResponse::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().options };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1496,7 +1464,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
   pub fn options_mut(self) -> crate::Repeated<'proto, AboutResponse_Option> {
     unsafe {
-      AboutResponse::__HAZZER_options.init(self.ptr.as_ptr(), self.arena);
+      AboutResponse::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
         self.arena,
@@ -1544,45 +1512,67 @@ mod __priv_AboutResponse {
     pub(in super) options: crate::__z::AVec<*mut u8>,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{3 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{3 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{3 + 1}> =
+    crate::__z::tdp::DescStorage::<{3 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = AboutResponse::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             AboutResponse_Option::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: AboutResponse::__OFFSET_name,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = AboutResponse::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: AboutResponse::__OFFSET_version,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = AboutResponse::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().version as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 10,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: AboutResponse::__OFFSET_options,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = AboutResponse::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().options as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 2,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -1626,6 +1616,13 @@ pub struct AboutResponse_Option {
   ptr: crate::__z::ABox<__priv_AboutResponse_Option::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_AboutResponse_Option::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl AboutResponse_Option {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -1679,7 +1676,7 @@ impl AboutResponse_Option {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1694,7 +1691,7 @@ impl AboutResponse_Option {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse_Option::__HAZZER_name,
+        AboutResponse_Option::__tdp_info().field(0),
       )
     }
   }
@@ -1706,7 +1703,7 @@ impl AboutResponse_Option {
     self.help_or().unwrap_or_default()
   }
   pub fn help_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__HAZZER_help.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().help };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1721,7 +1718,7 @@ impl AboutResponse_Option {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse_Option::__HAZZER_help,
+        AboutResponse_Option::__tdp_info().field(1),
       )
     }
   }
@@ -1736,39 +1733,13 @@ impl AboutResponse_Option {
     (&mut *raw.cast::<__priv_AboutResponse_Option::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_AboutResponse_Option::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_AboutResponse_Option::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_name: u32 = unsafe {
-    let msg = AboutResponse_Option::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_name: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_name,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_help: u32 = unsafe {
-    let msg = AboutResponse_Option::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().help as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_help: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_help,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
 }
 
 impl Default for AboutResponse_Option {
@@ -1813,7 +1784,7 @@ impl<'proto> __priv_AboutResponse_Option::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1825,7 +1796,7 @@ impl<'proto> __priv_AboutResponse_Option::View<'proto> {
     self.help_or().unwrap_or_default()
   }
   pub fn help_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__HAZZER_help.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().help };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1881,7 +1852,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, AboutResponse_Option::__tdp_info())
   }
 
@@ -1889,7 +1860,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1904,7 +1875,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse_Option::__HAZZER_name,
+        AboutResponse_Option::__tdp_info().field(0),
       )
     }
   }
@@ -1916,7 +1887,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
     self.help_or().unwrap_or_default()
   }
   pub fn help_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__HAZZER_help.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { AboutResponse_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().help };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1931,7 +1902,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        AboutResponse_Option::__HAZZER_help,
+        AboutResponse_Option::__tdp_info().field(1),
       )
     }
   }
@@ -1978,37 +1949,52 @@ mod __priv_AboutResponse_Option {
     pub(in super) help: (*mut u8, usize),
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = AboutResponse_Option::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: AboutResponse_Option::__OFFSET_name,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = AboutResponse_Option::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: AboutResponse_Option::__OFFSET_help,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = AboutResponse_Option::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().help as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -2052,6 +2038,13 @@ pub struct CodegenRequest {
   ptr: crate::__z::ABox<__priv_CodegenRequest::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_CodegenRequest::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl CodegenRequest {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -2107,7 +2100,7 @@ impl CodegenRequest {
     self.bundle_or().unwrap_or_default()
   }
   pub fn bundle_or(&self) -> Option<crate::View<'_, Bundle>> {
-    if !unsafe { CodegenRequest::__HAZZER_bundle.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Bundle as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().bundle } as *mut _ as *mut u8)) }
   }
   pub fn bundle_mut(&mut self) -> crate::Mut<'_, Bundle> {
@@ -2118,13 +2111,13 @@ impl CodegenRequest {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest::__HAZZER_bundle,
+        CodegenRequest::__tdp_info().field(0),
       )
     }
   }
 
   pub fn requested_indices(&self) -> crate::Slice<'_, u32> {
-    if !unsafe { CodegenRequest::__HAZZER_requested_indices.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenRequest::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().requested_indices };
       crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2135,7 +2128,7 @@ impl CodegenRequest {
   }
   pub fn requested_indices_mut(&mut self) -> crate::Repeated<'_, u32> {
     unsafe {
-      CodegenRequest::__HAZZER_requested_indices.init(self.ptr.as_ptr(), self.arena);
+      CodegenRequest::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().requested_indices } as *mut _ as *mut u8,
         self.arena,
@@ -2144,7 +2137,7 @@ impl CodegenRequest {
   }
 
   pub fn options(&self) -> crate::Slice<'_, CodegenRequest_Option> {
-    if !unsafe { CodegenRequest::__HAZZER_options.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenRequest::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().options };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2155,7 +2148,7 @@ impl CodegenRequest {
   }
   pub fn options_mut(&mut self) -> crate::Repeated<'_, CodegenRequest_Option> {
     unsafe {
-      CodegenRequest::__HAZZER_options.init(self.ptr.as_ptr(), self.arena);
+      CodegenRequest::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
         self.arena,
@@ -2167,7 +2160,7 @@ impl CodegenRequest {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(&self) -> Option<crate::View<'_, bool>> {
-    if !unsafe { CodegenRequest::__HAZZER_debug.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().debug }) })
   }
   pub fn debug_mut(&mut self) -> crate::Mut<'_, bool> {
@@ -2178,7 +2171,7 @@ impl CodegenRequest {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest::__HAZZER_debug,
+        CodegenRequest::__tdp_info().field(3),
       )
     }
   }
@@ -2193,65 +2186,13 @@ impl CodegenRequest {
     (&mut *raw.cast::<__priv_CodegenRequest::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_CodegenRequest::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_CodegenRequest::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_bundle: u32 = unsafe {
-    let msg = CodegenRequest::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().bundle as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_bundle: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_bundle,
-    size: -(Bundle::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_requested_indices: u32 = unsafe {
-    let msg = CodegenRequest::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().requested_indices as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_requested_indices: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_requested_indices,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_options: u32 = unsafe {
-    let msg = CodegenRequest::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().options as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_options: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_options,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_debug: u32 = unsafe {
-    let msg = CodegenRequest::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().debug as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_debug: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_debug,
-    size: 1,
-  };
 }
 
 impl Default for CodegenRequest {
@@ -2296,12 +2237,12 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
     self.bundle_or().unwrap_or_default()
   }
   pub fn bundle_or(self) -> Option<crate::View<'proto, Bundle>> {
-    if !unsafe { CodegenRequest::__HAZZER_bundle.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Bundle as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().bundle } as *mut _ as *mut u8)) }
   }
 
   pub fn requested_indices(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { CodegenRequest::__HAZZER_requested_indices.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenRequest::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().requested_indices };
       crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2312,7 +2253,7 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
   }
 
   pub fn options(self) -> crate::Slice<'proto, CodegenRequest_Option> {
-    if !unsafe { CodegenRequest::__HAZZER_options.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenRequest::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().options };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2326,7 +2267,7 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { CodegenRequest::__HAZZER_debug.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().debug }) })
   }
 
@@ -2390,7 +2331,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenRequest::__tdp_info())
   }
 
@@ -2398,7 +2339,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
     self.bundle_or().unwrap_or_default()
   }
   pub fn bundle_or(self) -> Option<crate::View<'proto, Bundle>> {
-    if !unsafe { CodegenRequest::__HAZZER_bundle.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Bundle as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().bundle } as *mut _ as *mut u8)) }
   }
   pub fn bundle_mut(self) -> crate::Mut<'proto, Bundle> {
@@ -2409,13 +2350,13 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest::__HAZZER_bundle,
+        CodegenRequest::__tdp_info().field(0),
       )
     }
   }
 
   pub fn requested_indices(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { CodegenRequest::__HAZZER_requested_indices.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenRequest::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().requested_indices };
       crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2426,7 +2367,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn requested_indices_mut(self) -> crate::Repeated<'proto, u32> {
     unsafe {
-      CodegenRequest::__HAZZER_requested_indices.init(self.ptr.as_ptr(), self.arena);
+      CodegenRequest::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().requested_indices } as *mut _ as *mut u8,
         self.arena,
@@ -2435,7 +2376,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
 
   pub fn options(self) -> crate::Slice<'proto, CodegenRequest_Option> {
-    if !unsafe { CodegenRequest::__HAZZER_options.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenRequest::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().options };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2446,7 +2387,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn options_mut(self) -> crate::Repeated<'proto, CodegenRequest_Option> {
     unsafe {
-      CodegenRequest::__HAZZER_options.init(self.ptr.as_ptr(), self.arena);
+      CodegenRequest::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
         self.arena,
@@ -2458,7 +2399,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { CodegenRequest::__HAZZER_debug.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().debug }) })
   }
   pub fn debug_mut(self) -> crate::Mut<'proto, bool> {
@@ -2469,7 +2410,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest::__HAZZER_debug,
+        CodegenRequest::__tdp_info().field(3),
       )
     }
   }
@@ -2518,53 +2459,82 @@ mod __priv_CodegenRequest {
     pub(in super) debug: bool,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{4 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{4 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{4 + 1}> =
+    crate::__z::tdp::DescStorage::<{4 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = CodegenRequest::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             Bundle::__tdp_info,
             CodegenRequest_Option::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
-          offset: CodegenRequest::__OFFSET_bundle,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenRequest::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().bundle as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
-          offset: CodegenRequest::__OFFSET_requested_indices,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenRequest::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().requested_indices as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 3,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: CodegenRequest::__OFFSET_options,
-          ty: 1,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenRequest::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().options as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 1,
           hasbit: 1,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 4,
-          flags: (crate::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
-          offset: CodegenRequest::__OFFSET_debug,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Bool.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenRequest::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().debug as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -2608,6 +2578,13 @@ pub struct CodegenRequest_Option {
   ptr: crate::__z::ABox<__priv_CodegenRequest_Option::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_CodegenRequest_Option::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl CodegenRequest_Option {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -2661,7 +2638,7 @@ impl CodegenRequest_Option {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -2676,7 +2653,7 @@ impl CodegenRequest_Option {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest_Option::__HAZZER_name,
+        CodegenRequest_Option::__tdp_info().field(0),
       )
     }
   }
@@ -2688,7 +2665,7 @@ impl CodegenRequest_Option {
     self.value_or().unwrap_or_default()
   }
   pub fn value_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__HAZZER_value.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().value };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -2703,7 +2680,7 @@ impl CodegenRequest_Option {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest_Option::__HAZZER_value,
+        CodegenRequest_Option::__tdp_info().field(1),
       )
     }
   }
@@ -2718,39 +2695,13 @@ impl CodegenRequest_Option {
     (&mut *raw.cast::<__priv_CodegenRequest_Option::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_CodegenRequest_Option::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_CodegenRequest_Option::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_name: u32 = unsafe {
-    let msg = CodegenRequest_Option::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_name: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_name,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_value: u32 = unsafe {
-    let msg = CodegenRequest_Option::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().value as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_value: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_value,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
 }
 
 impl Default for CodegenRequest_Option {
@@ -2795,7 +2746,7 @@ impl<'proto> __priv_CodegenRequest_Option::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -2807,7 +2758,7 @@ impl<'proto> __priv_CodegenRequest_Option::View<'proto> {
     self.value_or().unwrap_or_default()
   }
   pub fn value_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__HAZZER_value.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().value };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -2863,7 +2814,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenRequest_Option::__tdp_info())
   }
 
@@ -2871,7 +2822,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -2886,7 +2837,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest_Option::__HAZZER_name,
+        CodegenRequest_Option::__tdp_info().field(0),
       )
     }
   }
@@ -2898,7 +2849,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
     self.value_or().unwrap_or_default()
   }
   pub fn value_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__HAZZER_value.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenRequest_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().value };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -2913,7 +2864,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenRequest_Option::__HAZZER_value,
+        CodegenRequest_Option::__tdp_info().field(1),
       )
     }
   }
@@ -2960,37 +2911,52 @@ mod __priv_CodegenRequest_Option {
     pub(in super) value: (*mut u8, usize),
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = CodegenRequest_Option::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: CodegenRequest_Option::__OFFSET_name,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenRequest_Option::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: CodegenRequest_Option::__OFFSET_value,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenRequest_Option::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().value as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -3034,6 +3000,13 @@ pub struct CodegenResponse {
   ptr: crate::__z::ABox<__priv_CodegenResponse::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_CodegenResponse::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl CodegenResponse {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -3084,7 +3057,7 @@ impl CodegenResponse {
   }
 
   pub fn files(&self) -> crate::Slice<'_, CodegenResponse_File> {
-    if !unsafe { CodegenResponse::__HAZZER_files.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().files };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3095,7 +3068,7 @@ impl CodegenResponse {
   }
   pub fn files_mut(&mut self) -> crate::Repeated<'_, CodegenResponse_File> {
     unsafe {
-      CodegenResponse::__HAZZER_files.init(self.ptr.as_ptr(), self.arena);
+      CodegenResponse::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().files } as *mut _ as *mut u8,
         self.arena,
@@ -3104,7 +3077,7 @@ impl CodegenResponse {
   }
 
   pub fn report(&self) -> crate::Slice<'_, Diagnostic> {
-    if !unsafe { CodegenResponse::__HAZZER_report.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().report };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3115,7 +3088,7 @@ impl CodegenResponse {
   }
   pub fn report_mut(&mut self) -> crate::Repeated<'_, Diagnostic> {
     unsafe {
-      CodegenResponse::__HAZZER_report.init(self.ptr.as_ptr(), self.arena);
+      CodegenResponse::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().report } as *mut _ as *mut u8,
         self.arena,
@@ -3130,39 +3103,13 @@ impl CodegenResponse {
     (&mut *raw.cast::<__priv_CodegenResponse::Storage>()).__hasbits = [0; 0];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_CodegenResponse::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_CodegenResponse::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_files: u32 = unsafe {
-    let msg = CodegenResponse::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().files as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_files: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_files,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_report: u32 = unsafe {
-    let msg = CodegenResponse::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().report as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_report: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_report,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for CodegenResponse {
@@ -3204,7 +3151,7 @@ impl<'proto> __priv_CodegenResponse::View<'proto> {
   }
 
   pub fn files(self) -> crate::Slice<'proto, CodegenResponse_File> {
-    if !unsafe { CodegenResponse::__HAZZER_files.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().files };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3215,7 +3162,7 @@ impl<'proto> __priv_CodegenResponse::View<'proto> {
   }
 
   pub fn report(self) -> crate::Slice<'proto, Diagnostic> {
-    if !unsafe { CodegenResponse::__HAZZER_report.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().report };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3273,12 +3220,12 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenResponse::__tdp_info())
   }
 
   pub fn files(self) -> crate::Slice<'proto, CodegenResponse_File> {
-    if !unsafe { CodegenResponse::__HAZZER_files.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().files };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3289,7 +3236,7 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
   pub fn files_mut(self) -> crate::Repeated<'proto, CodegenResponse_File> {
     unsafe {
-      CodegenResponse::__HAZZER_files.init(self.ptr.as_ptr(), self.arena);
+      CodegenResponse::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().files } as *mut _ as *mut u8,
         self.arena,
@@ -3298,7 +3245,7 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
 
   pub fn report(self) -> crate::Slice<'proto, Diagnostic> {
-    if !unsafe { CodegenResponse::__HAZZER_report.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { CodegenResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().report };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3309,7 +3256,7 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
   pub fn report_mut(self) -> crate::Repeated<'proto, Diagnostic> {
     unsafe {
-      CodegenResponse::__HAZZER_report.init(self.ptr.as_ptr(), self.arena);
+      CodegenResponse::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().report } as *mut _ as *mut u8,
         self.arena,
@@ -3356,39 +3303,54 @@ mod __priv_CodegenResponse {
     pub(in super) report: crate::__z::AVec<*mut u8>,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = CodegenResponse::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             CodegenResponse_File::__tdp_info,
             Diagnostic::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 0,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: CodegenResponse::__OFFSET_files,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenResponse::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().files as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: CodegenResponse::__OFFSET_report,
-          ty: 1,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenResponse::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().report as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 1,
           hasbit: 0,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -3432,6 +3394,13 @@ pub struct CodegenResponse_File {
   ptr: crate::__z::ABox<__priv_CodegenResponse_File::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_CodegenResponse_File::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl CodegenResponse_File {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -3485,7 +3454,7 @@ impl CodegenResponse_File {
     self.path_or().unwrap_or_default()
   }
   pub fn path_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__HAZZER_path.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenResponse_File::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().path };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3500,7 +3469,7 @@ impl CodegenResponse_File {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenResponse_File::__HAZZER_path,
+        CodegenResponse_File::__tdp_info().field(0),
       )
     }
   }
@@ -3512,7 +3481,7 @@ impl CodegenResponse_File {
     self.content_or().unwrap_or_default()
   }
   pub fn content_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__HAZZER_content.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenResponse_File::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().content };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3527,7 +3496,7 @@ impl CodegenResponse_File {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenResponse_File::__HAZZER_content,
+        CodegenResponse_File::__tdp_info().field(1),
       )
     }
   }
@@ -3542,39 +3511,13 @@ impl CodegenResponse_File {
     (&mut *raw.cast::<__priv_CodegenResponse_File::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_CodegenResponse_File::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_CodegenResponse_File::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_path: u32 = unsafe {
-    let msg = CodegenResponse_File::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().path as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_path: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_path,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_content: u32 = unsafe {
-    let msg = CodegenResponse_File::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().content as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_content: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_content,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
 }
 
 impl Default for CodegenResponse_File {
@@ -3619,7 +3562,7 @@ impl<'proto> __priv_CodegenResponse_File::View<'proto> {
     self.path_or().unwrap_or_default()
   }
   pub fn path_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__HAZZER_path.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenResponse_File::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().path };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3631,7 +3574,7 @@ impl<'proto> __priv_CodegenResponse_File::View<'proto> {
     self.content_or().unwrap_or_default()
   }
   pub fn content_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__HAZZER_content.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenResponse_File::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().content };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3687,7 +3630,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenResponse_File::__tdp_info())
   }
 
@@ -3695,7 +3638,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
     self.path_or().unwrap_or_default()
   }
   pub fn path_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__HAZZER_path.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenResponse_File::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().path };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3710,7 +3653,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenResponse_File::__HAZZER_path,
+        CodegenResponse_File::__tdp_info().field(0),
       )
     }
   }
@@ -3722,7 +3665,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
     self.content_or().unwrap_or_default()
   }
   pub fn content_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__HAZZER_content.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { CodegenResponse_File::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().content };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3737,7 +3680,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        CodegenResponse_File::__HAZZER_content,
+        CodegenResponse_File::__tdp_info().field(1),
       )
     }
   }
@@ -3784,37 +3727,52 @@ mod __priv_CodegenResponse_File {
     pub(in super) content: (*mut u8, usize),
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = CodegenResponse_File::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: CodegenResponse_File::__OFFSET_path,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenResponse_File::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().path as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: CodegenResponse_File::__OFFSET_content,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = CodegenResponse_File::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().content as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -3858,6 +3816,13 @@ pub struct Diagnostic {
   ptr: crate::__z::ABox<__priv_Diagnostic::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Diagnostic::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl Diagnostic {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -3913,7 +3878,7 @@ impl Diagnostic {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(&self) -> Option<crate::View<'_, Diagnostic_Kind>> {
-    if !unsafe { Diagnostic::__HAZZER_kind.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
   }
   pub fn kind_mut(&mut self) -> crate::Mut<'_, Diagnostic_Kind> {
@@ -3924,7 +3889,7 @@ impl Diagnostic {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic::__HAZZER_kind,
+        Diagnostic::__tdp_info().field(0),
       )
     }
   }
@@ -3936,7 +3901,7 @@ impl Diagnostic {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Diagnostic::__HAZZER_msg.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3951,7 +3916,7 @@ impl Diagnostic {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic::__HAZZER_msg,
+        Diagnostic::__tdp_info().field(1),
       )
     }
   }
@@ -3960,7 +3925,7 @@ impl Diagnostic {
   }
 
   pub fn snippets(&self) -> crate::Slice<'_, Diagnostic_Snippet> {
-    if !unsafe { Diagnostic::__HAZZER_snippets.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Diagnostic::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().snippets };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3971,7 +3936,7 @@ impl Diagnostic {
   }
   pub fn snippets_mut(&mut self) -> crate::Repeated<'_, Diagnostic_Snippet> {
     unsafe {
-      Diagnostic::__HAZZER_snippets.init(self.ptr.as_ptr(), self.arena);
+      Diagnostic::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().snippets } as *mut _ as *mut u8,
         self.arena,
@@ -3980,7 +3945,7 @@ impl Diagnostic {
   }
 
   pub fn notes(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Diagnostic::__HAZZER_notes.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Diagnostic::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().notes };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3991,7 +3956,7 @@ impl Diagnostic {
   }
   pub fn notes_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Diagnostic::__HAZZER_notes.init(self.ptr.as_ptr(), self.arena);
+      Diagnostic::__tdp_info().field(3).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().notes } as *mut _ as *mut u8,
         self.arena,
@@ -4006,65 +3971,13 @@ impl Diagnostic {
     (&mut *raw.cast::<__priv_Diagnostic::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Diagnostic::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Diagnostic::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_kind: u32 = unsafe {
-    let msg = Diagnostic::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().kind as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_kind: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_kind,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_msg: u32 = unsafe {
-    let msg = Diagnostic::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().msg as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_msg: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_msg,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_snippets: u32 = unsafe {
-    let msg = Diagnostic::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().snippets as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_snippets: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_snippets,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_notes: u32 = unsafe {
-    let msg = Diagnostic::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().notes as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_notes: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_notes,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for Diagnostic {
@@ -4109,7 +4022,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Diagnostic_Kind>> {
-    if !unsafe { Diagnostic::__HAZZER_kind.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
   }
 
@@ -4117,7 +4030,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic::__HAZZER_msg.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -4126,7 +4039,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
   }
 
   pub fn snippets(self) -> crate::Slice<'proto, Diagnostic_Snippet> {
-    if !unsafe { Diagnostic::__HAZZER_snippets.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Diagnostic::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().snippets };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4137,7 +4050,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
   }
 
   pub fn notes(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Diagnostic::__HAZZER_notes.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Diagnostic::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().notes };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4207,7 +4120,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Diagnostic::__tdp_info())
   }
 
@@ -4215,7 +4128,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Diagnostic_Kind>> {
-    if !unsafe { Diagnostic::__HAZZER_kind.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
   }
   pub fn kind_mut(self) -> crate::Mut<'proto, Diagnostic_Kind> {
@@ -4226,7 +4139,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic::__HAZZER_kind,
+        Diagnostic::__tdp_info().field(0),
       )
     }
   }
@@ -4238,7 +4151,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic::__HAZZER_msg.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -4253,7 +4166,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic::__HAZZER_msg,
+        Diagnostic::__tdp_info().field(1),
       )
     }
   }
@@ -4262,7 +4175,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
 
   pub fn snippets(self) -> crate::Slice<'proto, Diagnostic_Snippet> {
-    if !unsafe { Diagnostic::__HAZZER_snippets.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Diagnostic::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().snippets };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4273,7 +4186,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn snippets_mut(self) -> crate::Repeated<'proto, Diagnostic_Snippet> {
     unsafe {
-      Diagnostic::__HAZZER_snippets.init(self.ptr.as_ptr(), self.arena);
+      Diagnostic::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().snippets } as *mut _ as *mut u8,
         self.arena,
@@ -4282,7 +4195,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
 
   pub fn notes(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Diagnostic::__HAZZER_notes.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Diagnostic::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().notes };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4293,7 +4206,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn notes_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Diagnostic::__HAZZER_notes.init(self.ptr.as_ptr(), self.arena);
+      Diagnostic::__tdp_info().field(3).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().notes } as *mut _ as *mut u8,
         self.arena,
@@ -4342,52 +4255,81 @@ mod __priv_Diagnostic {
     pub(crate) notes: crate::__z::AVec<(*mut u8, usize)>,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{4 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{4 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{4 + 1}> =
+    crate::__z::tdp::DescStorage::<{4 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Diagnostic::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             Diagnostic_Snippet::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Diagnostic::__OFFSET_kind,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Diagnostic::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().kind as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: Diagnostic::__OFFSET_msg,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Diagnostic::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().msg as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 3,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: Diagnostic::__OFFSET_snippets,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Diagnostic::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().snippets as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 2,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 4,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
-          offset: Diagnostic::__OFFSET_notes,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Diagnostic::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().notes as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 2,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -4467,6 +4409,13 @@ pub struct Diagnostic_Snippet {
   arena: crate::__z::RawArena,
 }
 
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Diagnostic_Snippet::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
+
 impl Diagnostic_Snippet {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
     const VALUE: __priv_Diagnostic_Snippet::Storage = __priv_Diagnostic_Snippet::Storage {
@@ -4520,7 +4469,7 @@ impl Diagnostic_Snippet {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
   pub fn span_mut(&mut self) -> crate::Mut<'_, u32> {
@@ -4531,7 +4480,7 @@ impl Diagnostic_Snippet {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic_Snippet::__HAZZER_span,
+        Diagnostic_Snippet::__tdp_info().field(0),
       )
     }
   }
@@ -4543,7 +4492,7 @@ impl Diagnostic_Snippet {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_msg.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -4558,7 +4507,7 @@ impl Diagnostic_Snippet {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic_Snippet::__HAZZER_msg,
+        Diagnostic_Snippet::__tdp_info().field(1),
       )
     }
   }
@@ -4570,7 +4519,7 @@ impl Diagnostic_Snippet {
     self.is_remark_or().unwrap_or_default()
   }
   pub fn is_remark_or(&self) -> Option<crate::View<'_, bool>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_is_remark.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_remark }) })
   }
   pub fn is_remark_mut(&mut self) -> crate::Mut<'_, bool> {
@@ -4581,7 +4530,7 @@ impl Diagnostic_Snippet {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic_Snippet::__HAZZER_is_remark,
+        Diagnostic_Snippet::__tdp_info().field(2),
       )
     }
   }
@@ -4596,52 +4545,13 @@ impl Diagnostic_Snippet {
     (&mut *raw.cast::<__priv_Diagnostic_Snippet::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Diagnostic_Snippet::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Diagnostic_Snippet::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_span: u32 = unsafe {
-    let msg = Diagnostic_Snippet::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().span as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_span: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_span,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_msg: u32 = unsafe {
-    let msg = Diagnostic_Snippet::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().msg as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_msg: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_msg,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_is_remark: u32 = unsafe {
-    let msg = Diagnostic_Snippet::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().is_remark as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_is_remark: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 2,
-    offset: Self::__OFFSET_is_remark,
-    size: 1,
-  };
 }
 
 impl Default for Diagnostic_Snippet {
@@ -4686,7 +4596,7 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
 
@@ -4694,7 +4604,7 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_msg.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -4706,7 +4616,7 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
     self.is_remark_or().unwrap_or_default()
   }
   pub fn is_remark_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_is_remark.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_remark }) })
   }
 
@@ -4764,7 +4674,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Diagnostic_Snippet::__tdp_info())
   }
 
@@ -4772,7 +4682,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
   pub fn span_mut(self) -> crate::Mut<'proto, u32> {
@@ -4783,7 +4693,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic_Snippet::__HAZZER_span,
+        Diagnostic_Snippet::__tdp_info().field(0),
       )
     }
   }
@@ -4795,7 +4705,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_msg.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -4810,7 +4720,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic_Snippet::__HAZZER_msg,
+        Diagnostic_Snippet::__tdp_info().field(1),
       )
     }
   }
@@ -4822,7 +4732,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
     self.is_remark_or().unwrap_or_default()
   }
   pub fn is_remark_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Diagnostic_Snippet::__HAZZER_is_remark.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Diagnostic_Snippet::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_remark }) })
   }
   pub fn is_remark_mut(self) -> crate::Mut<'proto, bool> {
@@ -4833,7 +4743,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Diagnostic_Snippet::__HAZZER_is_remark,
+        Diagnostic_Snippet::__tdp_info().field(2),
       )
     }
   }
@@ -4881,44 +4791,66 @@ mod __priv_Diagnostic_Snippet {
     pub(in super) is_remark: bool,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{3 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{3 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{3 + 1}> =
+    crate::__z::tdp::DescStorage::<{3 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Diagnostic_Snippet::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Diagnostic_Snippet::__OFFSET_span,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Diagnostic_Snippet::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().span as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: Diagnostic_Snippet::__OFFSET_msg,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Diagnostic_Snippet::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().msg as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 3,
-          flags: (crate::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
-          offset: Diagnostic_Snippet::__OFFSET_is_remark,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Bool.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Diagnostic_Snippet::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().is_remark as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 2,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -4962,6 +4894,13 @@ pub struct Bundle {
   ptr: crate::__z::ABox<__priv_Bundle::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Bundle::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl Bundle {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -5013,7 +4952,7 @@ impl Bundle {
   }
 
   pub fn types(&self) -> crate::Slice<'_, Type> {
-    if !unsafe { Bundle::__HAZZER_types.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().types };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5024,7 +4963,7 @@ impl Bundle {
   }
   pub fn types_mut(&mut self) -> crate::Repeated<'_, Type> {
     unsafe {
-      Bundle::__HAZZER_types.init(self.ptr.as_ptr(), self.arena);
+      Bundle::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().types } as *mut _ as *mut u8,
         self.arena,
@@ -5033,7 +4972,7 @@ impl Bundle {
   }
 
   pub fn packages(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Bundle::__HAZZER_packages.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().packages };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5044,7 +4983,7 @@ impl Bundle {
   }
   pub fn packages_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Bundle::__HAZZER_packages.init(self.ptr.as_ptr(), self.arena);
+      Bundle::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().packages } as *mut _ as *mut u8,
         self.arena,
@@ -5053,7 +4992,7 @@ impl Bundle {
   }
 
   pub fn foreign_types(&self) -> crate::Slice<'_, Bundle_ForeignType> {
-    if !unsafe { Bundle::__HAZZER_foreign_types.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().foreign_types };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5064,7 +5003,7 @@ impl Bundle {
   }
   pub fn foreign_types_mut(&mut self) -> crate::Repeated<'_, Bundle_ForeignType> {
     unsafe {
-      Bundle::__HAZZER_foreign_types.init(self.ptr.as_ptr(), self.arena);
+      Bundle::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().foreign_types } as *mut _ as *mut u8,
         self.arena,
@@ -5079,52 +5018,13 @@ impl Bundle {
     (&mut *raw.cast::<__priv_Bundle::Storage>()).__hasbits = [0; 0];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Bundle::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Bundle::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_types: u32 = unsafe {
-    let msg = Bundle::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().types as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_types: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_types,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_packages: u32 = unsafe {
-    let msg = Bundle::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().packages as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_packages: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_packages,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_foreign_types: u32 = unsafe {
-    let msg = Bundle::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().foreign_types as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_foreign_types: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_foreign_types,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for Bundle {
@@ -5166,7 +5066,7 @@ impl<'proto> __priv_Bundle::View<'proto> {
   }
 
   pub fn types(self) -> crate::Slice<'proto, Type> {
-    if !unsafe { Bundle::__HAZZER_types.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().types };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5177,7 +5077,7 @@ impl<'proto> __priv_Bundle::View<'proto> {
   }
 
   pub fn packages(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Bundle::__HAZZER_packages.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().packages };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5188,7 +5088,7 @@ impl<'proto> __priv_Bundle::View<'proto> {
   }
 
   pub fn foreign_types(self) -> crate::Slice<'proto, Bundle_ForeignType> {
-    if !unsafe { Bundle::__HAZZER_foreign_types.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().foreign_types };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5252,12 +5152,12 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle::__tdp_info())
   }
 
   pub fn types(self) -> crate::Slice<'proto, Type> {
-    if !unsafe { Bundle::__HAZZER_types.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().types };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5268,7 +5168,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn types_mut(self) -> crate::Repeated<'proto, Type> {
     unsafe {
-      Bundle::__HAZZER_types.init(self.ptr.as_ptr(), self.arena);
+      Bundle::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().types } as *mut _ as *mut u8,
         self.arena,
@@ -5277,7 +5177,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
 
   pub fn packages(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Bundle::__HAZZER_packages.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().packages };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5288,7 +5188,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn packages_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Bundle::__HAZZER_packages.init(self.ptr.as_ptr(), self.arena);
+      Bundle::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().packages } as *mut _ as *mut u8,
         self.arena,
@@ -5297,7 +5197,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
 
   pub fn foreign_types(self) -> crate::Slice<'proto, Bundle_ForeignType> {
-    if !unsafe { Bundle::__HAZZER_foreign_types.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Bundle::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().foreign_types };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -5308,7 +5208,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn foreign_types_mut(self) -> crate::Repeated<'proto, Bundle_ForeignType> {
     unsafe {
-      Bundle::__HAZZER_foreign_types.init(self.ptr.as_ptr(), self.arena);
+      Bundle::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().foreign_types } as *mut _ as *mut u8,
         self.arena,
@@ -5356,46 +5256,68 @@ mod __priv_Bundle {
     pub(in super) foreign_types: crate::__z::AVec<*mut u8>,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{3 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{3 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{3 + 1}> =
+    crate::__z::tdp::DescStorage::<{3 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Bundle::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             Bundle_ForeignType::__tdp_info,
             Type::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 0,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: Bundle::__OFFSET_types,
-          ty: 1,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Bundle::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().types as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 1,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
-          offset: Bundle::__OFFSET_packages,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Bundle::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().packages as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 3,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: Bundle::__OFFSET_foreign_types,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Bundle::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().foreign_types as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -5439,6 +5361,13 @@ pub struct Bundle_ForeignType {
   ptr: crate::__z::ABox<__priv_Bundle_ForeignType::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Bundle_ForeignType::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl Bundle_ForeignType {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -5492,7 +5421,7 @@ impl Bundle_ForeignType {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Bundle_ForeignType::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Bundle_ForeignType::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -5507,7 +5436,7 @@ impl Bundle_ForeignType {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Bundle_ForeignType::__HAZZER_name,
+        Bundle_ForeignType::__tdp_info().field(0),
       )
     }
   }
@@ -5519,7 +5448,7 @@ impl Bundle_ForeignType {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Bundle_ForeignType::__HAZZER_package.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Bundle_ForeignType::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
   }
   pub fn package_mut(&mut self) -> crate::Mut<'_, u32> {
@@ -5530,7 +5459,7 @@ impl Bundle_ForeignType {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Bundle_ForeignType::__HAZZER_package,
+        Bundle_ForeignType::__tdp_info().field(1),
       )
     }
   }
@@ -5545,39 +5474,13 @@ impl Bundle_ForeignType {
     (&mut *raw.cast::<__priv_Bundle_ForeignType::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Bundle_ForeignType::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Bundle_ForeignType::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_name: u32 = unsafe {
-    let msg = Bundle_ForeignType::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_name: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_name,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_package: u32 = unsafe {
-    let msg = Bundle_ForeignType::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().package as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_package: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_package,
-    size: 4,
-  };
 }
 
 impl Default for Bundle_ForeignType {
@@ -5622,7 +5525,7 @@ impl<'proto> __priv_Bundle_ForeignType::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Bundle_ForeignType::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Bundle_ForeignType::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -5634,7 +5537,7 @@ impl<'proto> __priv_Bundle_ForeignType::View<'proto> {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Bundle_ForeignType::__HAZZER_package.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Bundle_ForeignType::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
   }
 
@@ -5686,7 +5589,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle_ForeignType::__tdp_info())
   }
 
@@ -5694,7 +5597,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Bundle_ForeignType::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Bundle_ForeignType::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -5709,7 +5612,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Bundle_ForeignType::__HAZZER_name,
+        Bundle_ForeignType::__tdp_info().field(0),
       )
     }
   }
@@ -5721,7 +5624,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Bundle_ForeignType::__HAZZER_package.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Bundle_ForeignType::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
   }
   pub fn package_mut(self) -> crate::Mut<'proto, u32> {
@@ -5732,7 +5635,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Bundle_ForeignType::__HAZZER_package,
+        Bundle_ForeignType::__tdp_info().field(1),
       )
     }
   }
@@ -5779,37 +5682,52 @@ mod __priv_Bundle_ForeignType {
     pub(in super) package: u32,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Bundle_ForeignType::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: Bundle_ForeignType::__OFFSET_name,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Bundle_ForeignType::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Bundle_ForeignType::__OFFSET_package,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Bundle_ForeignType::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().package as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -5853,6 +5771,13 @@ pub struct Type {
   ptr: crate::__z::ABox<__priv_Type::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Type::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl Type {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -5912,7 +5837,7 @@ impl Type {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Type::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -5927,7 +5852,7 @@ impl Type {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_name,
+        Type::__tdp_info().field(0),
       )
     }
   }
@@ -5939,7 +5864,7 @@ impl Type {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Type::__HAZZER_package.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
   }
   pub fn package_mut(&mut self) -> crate::Mut<'_, u32> {
@@ -5950,7 +5875,7 @@ impl Type {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_package,
+        Type::__tdp_info().field(1),
       )
     }
   }
@@ -5962,7 +5887,7 @@ impl Type {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(&self) -> Option<crate::View<'_, Type_Kind>> {
-    if !unsafe { Type::__HAZZER_kind.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Type_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
   }
   pub fn kind_mut(&mut self) -> crate::Mut<'_, Type_Kind> {
@@ -5973,7 +5898,7 @@ impl Type {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_kind,
+        Type::__tdp_info().field(2),
       )
     }
   }
@@ -5985,7 +5910,7 @@ impl Type {
     self.declared_in_or().unwrap_or_default()
   }
   pub fn declared_in_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Type::__HAZZER_declared_in.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().declared_in }) })
   }
   pub fn declared_in_mut(&mut self) -> crate::Mut<'_, u32> {
@@ -5996,7 +5921,7 @@ impl Type {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_declared_in,
+        Type::__tdp_info().field(3),
       )
     }
   }
@@ -6005,7 +5930,7 @@ impl Type {
   }
 
   pub fn fields(&self) -> crate::Slice<'_, Field> {
-    if !unsafe { Type::__HAZZER_fields.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().fields };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -6016,7 +5941,7 @@ impl Type {
   }
   pub fn fields_mut(&mut self) -> crate::Repeated<'_, Field> {
     unsafe {
-      Type::__HAZZER_fields.init(self.ptr.as_ptr(), self.arena);
+      Type::__tdp_info().field(4).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().fields } as *mut _ as *mut u8,
         self.arena,
@@ -6025,7 +5950,7 @@ impl Type {
   }
 
   pub fn nesteds(&self) -> crate::Slice<'_, u32> {
-    if !unsafe { Type::__HAZZER_nesteds.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().nesteds };
       crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -6036,7 +5961,7 @@ impl Type {
   }
   pub fn nesteds_mut(&mut self) -> crate::Repeated<'_, u32> {
     unsafe {
-      Type::__HAZZER_nesteds.init(self.ptr.as_ptr(), self.arena);
+      Type::__tdp_info().field(5).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().nesteds } as *mut _ as *mut u8,
         self.arena,
@@ -6048,7 +5973,7 @@ impl Type {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(&self) -> Option<crate::View<'_, Type_Attrs>> {
-    if !unsafe { Type::__HAZZER_attrs.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Type_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
   }
   pub fn attrs_mut(&mut self) -> crate::Mut<'_, Type_Attrs> {
@@ -6059,7 +5984,7 @@ impl Type {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_attrs,
+        Type::__tdp_info().field(6),
       )
     }
   }
@@ -6068,7 +5993,7 @@ impl Type {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Type::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
   pub fn span_mut(&mut self) -> crate::Mut<'_, u32> {
@@ -6079,7 +6004,7 @@ impl Type {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_span,
+        Type::__tdp_info().field(7),
       )
     }
   }
@@ -6094,117 +6019,13 @@ impl Type {
     (&mut *raw.cast::<__priv_Type::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Type::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Type::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_name: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_name: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_name,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_package: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().package as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_package: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_package,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_kind: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().kind as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_kind: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 2,
-    offset: Self::__OFFSET_kind,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_declared_in: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().declared_in as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_declared_in: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 3,
-    offset: Self::__OFFSET_declared_in,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_fields: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().fields as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_fields: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_fields,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_nesteds: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().nesteds as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_nesteds: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_nesteds,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_attrs: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().attrs as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_attrs: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 4,
-    offset: Self::__OFFSET_attrs,
-    size: -(Type_Attrs::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_span: u32 = unsafe {
-    let msg = Type::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().span as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_span: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 5,
-    offset: Self::__OFFSET_span,
-    size: 4,
-  };
 }
 
 impl Default for Type {
@@ -6249,7 +6070,7 @@ impl<'proto> __priv_Type::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -6261,7 +6082,7 @@ impl<'proto> __priv_Type::View<'proto> {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__HAZZER_package.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
   }
 
@@ -6269,7 +6090,7 @@ impl<'proto> __priv_Type::View<'proto> {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Type_Kind>> {
-    if !unsafe { Type::__HAZZER_kind.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Type_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
   }
 
@@ -6277,12 +6098,12 @@ impl<'proto> __priv_Type::View<'proto> {
     self.declared_in_or().unwrap_or_default()
   }
   pub fn declared_in_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__HAZZER_declared_in.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().declared_in }) })
   }
 
   pub fn fields(self) -> crate::Slice<'proto, Field> {
-    if !unsafe { Type::__HAZZER_fields.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().fields };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -6293,7 +6114,7 @@ impl<'proto> __priv_Type::View<'proto> {
   }
 
   pub fn nesteds(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { Type::__HAZZER_nesteds.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().nesteds };
       crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -6307,7 +6128,7 @@ impl<'proto> __priv_Type::View<'proto> {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Type_Attrs>> {
-    if !unsafe { Type::__HAZZER_attrs.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Type_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
   }
 
@@ -6315,7 +6136,7 @@ impl<'proto> __priv_Type::View<'proto> {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
 
@@ -6403,7 +6224,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Type::__tdp_info())
   }
 
@@ -6411,7 +6232,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -6426,7 +6247,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_name,
+        Type::__tdp_info().field(0),
       )
     }
   }
@@ -6438,7 +6259,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__HAZZER_package.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
   }
   pub fn package_mut(self) -> crate::Mut<'proto, u32> {
@@ -6449,7 +6270,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_package,
+        Type::__tdp_info().field(1),
       )
     }
   }
@@ -6461,7 +6282,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Type_Kind>> {
-    if !unsafe { Type::__HAZZER_kind.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Type_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
   }
   pub fn kind_mut(self) -> crate::Mut<'proto, Type_Kind> {
@@ -6472,7 +6293,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_kind,
+        Type::__tdp_info().field(2),
       )
     }
   }
@@ -6484,7 +6305,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.declared_in_or().unwrap_or_default()
   }
   pub fn declared_in_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__HAZZER_declared_in.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().declared_in }) })
   }
   pub fn declared_in_mut(self) -> crate::Mut<'proto, u32> {
@@ -6495,7 +6316,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_declared_in,
+        Type::__tdp_info().field(3),
       )
     }
   }
@@ -6504,7 +6325,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
 
   pub fn fields(self) -> crate::Slice<'proto, Field> {
-    if !unsafe { Type::__HAZZER_fields.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().fields };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -6515,7 +6336,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn fields_mut(self) -> crate::Repeated<'proto, Field> {
     unsafe {
-      Type::__HAZZER_fields.init(self.ptr.as_ptr(), self.arena);
+      Type::__tdp_info().field(4).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().fields } as *mut _ as *mut u8,
         self.arena,
@@ -6524,7 +6345,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
 
   pub fn nesteds(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { Type::__HAZZER_nesteds.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().nesteds };
       crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -6535,7 +6356,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn nesteds_mut(self) -> crate::Repeated<'proto, u32> {
     unsafe {
-      Type::__HAZZER_nesteds.init(self.ptr.as_ptr(), self.arena);
+      Type::__tdp_info().field(5).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().nesteds } as *mut _ as *mut u8,
         self.arena,
@@ -6547,7 +6368,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Type_Attrs>> {
-    if !unsafe { Type::__HAZZER_attrs.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Type_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
   }
   pub fn attrs_mut(self) -> crate::Mut<'proto, Type_Attrs> {
@@ -6558,7 +6379,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_attrs,
+        Type::__tdp_info().field(6),
       )
     }
   }
@@ -6567,7 +6388,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
   pub fn span_mut(self) -> crate::Mut<'proto, u32> {
@@ -6578,7 +6399,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type::__HAZZER_span,
+        Type::__tdp_info().field(7),
       )
     }
   }
@@ -6631,81 +6452,138 @@ mod __priv_Type {
     pub(in super) span: u32,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{8 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{8 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{8 + 1}> =
+    crate::__z::tdp::DescStorage::<{8 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Type::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             Field::__tdp_info,
             Type_Attrs::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: Type::__OFFSET_name,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Type::__OFFSET_package,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().package as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 3,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Type::__OFFSET_kind,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().kind as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 2,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 4,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Type::__OFFSET_declared_in,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().declared_in as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 3,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 10,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: Type::__OFFSET_fields,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().fields as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 4,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 11,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
-          offset: Type::__OFFSET_nesteds,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().nesteds as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 4,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 12,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
-          offset: Type::__OFFSET_attrs,
-          ty: 1,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().attrs as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 1,
           hasbit: 4,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 20,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Type::__OFFSET_span,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().span as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 5,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -6789,6 +6667,13 @@ pub struct Type_Attrs {
   arena: crate::__z::RawArena,
 }
 
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Type_Attrs::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
+
 impl Type_Attrs {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
     const VALUE: __priv_Type_Attrs::Storage = __priv_Type_Attrs::Storage {
@@ -6841,7 +6726,7 @@ impl Type_Attrs {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Type_Attrs::__HAZZER_deprecated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -6856,7 +6741,7 @@ impl Type_Attrs {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type_Attrs::__HAZZER_deprecated,
+        Type_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -6865,7 +6750,7 @@ impl Type_Attrs {
   }
 
   pub fn docs(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Type_Attrs::__HAZZER_docs.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().docs };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -6876,7 +6761,7 @@ impl Type_Attrs {
   }
   pub fn docs_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Type_Attrs::__HAZZER_docs.init(self.ptr.as_ptr(), self.arena);
+      Type_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
         self.arena,
@@ -6891,39 +6776,13 @@ impl Type_Attrs {
     (&mut *raw.cast::<__priv_Type_Attrs::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Type_Attrs::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Type_Attrs::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_deprecated: u32 = unsafe {
-    let msg = Type_Attrs::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().deprecated as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_deprecated: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_deprecated,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_docs: u32 = unsafe {
-    let msg = Type_Attrs::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().docs as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_docs: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_docs,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for Type_Attrs {
@@ -6968,7 +6827,7 @@ impl<'proto> __priv_Type_Attrs::View<'proto> {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type_Attrs::__HAZZER_deprecated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -6977,7 +6836,7 @@ impl<'proto> __priv_Type_Attrs::View<'proto> {
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Type_Attrs::__HAZZER_docs.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().docs };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -7035,7 +6894,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Type_Attrs::__tdp_info())
   }
 
@@ -7043,7 +6902,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type_Attrs::__HAZZER_deprecated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Type_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -7058,7 +6917,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Type_Attrs::__HAZZER_deprecated,
+        Type_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -7067,7 +6926,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Type_Attrs::__HAZZER_docs.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Type_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().docs };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -7078,7 +6937,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   }
   pub fn docs_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Type_Attrs::__HAZZER_docs.init(self.ptr.as_ptr(), self.arena);
+      Type_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
         self.arena,
@@ -7125,37 +6984,52 @@ mod __priv_Type_Attrs {
     pub(crate) docs: crate::__z::AVec<(*mut u8, usize)>,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Type_Attrs::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: Type_Attrs::__OFFSET_deprecated,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type_Attrs::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().deprecated as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 100,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
-          offset: Type_Attrs::__OFFSET_docs,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Type_Attrs::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().docs as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -7199,6 +7073,13 @@ pub struct Field {
   ptr: crate::__z::ABox<__priv_Field::Storage>,
   arena: crate::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Field::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl Field {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
@@ -7257,7 +7138,7 @@ impl Field {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Field::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -7272,7 +7153,7 @@ impl Field {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_name,
+        Field::__tdp_info().field(0),
       )
     }
   }
@@ -7284,7 +7165,7 @@ impl Field {
     self.number_or().unwrap_or_default()
   }
   pub fn number_or(&self) -> Option<crate::View<'_, i32>> {
-    if !unsafe { Field::__HAZZER_number.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().number }) })
   }
   pub fn number_mut(&mut self) -> crate::Mut<'_, i32> {
@@ -7295,7 +7176,7 @@ impl Field {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_number,
+        Field::__tdp_info().field(1),
       )
     }
   }
@@ -7307,7 +7188,7 @@ impl Field {
     self.is_repeated_or().unwrap_or_default()
   }
   pub fn is_repeated_or(&self) -> Option<crate::View<'_, bool>> {
-    if !unsafe { Field::__HAZZER_is_repeated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_repeated }) })
   }
   pub fn is_repeated_mut(&mut self) -> crate::Mut<'_, bool> {
@@ -7318,7 +7199,7 @@ impl Field {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_is_repeated,
+        Field::__tdp_info().field(2),
       )
     }
   }
@@ -7330,7 +7211,7 @@ impl Field {
     self.r#type_or().unwrap_or_default()
   }
   pub fn r#type_or(&self) -> Option<crate::View<'_, Field_Type>> {
-    if !unsafe { Field::__HAZZER_type.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Field_Type>(*unsafe { &self.ptr.as_ref().r#type }) })
   }
   pub fn r#type_mut(&mut self) -> crate::Mut<'_, Field_Type> {
@@ -7341,7 +7222,7 @@ impl Field {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_type,
+        Field::__tdp_info().field(3),
       )
     }
   }
@@ -7353,7 +7234,7 @@ impl Field {
     self.type_index_or().unwrap_or_default()
   }
   pub fn type_index_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Field::__HAZZER_type_index.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().type_index }) })
   }
   pub fn type_index_mut(&mut self) -> crate::Mut<'_, u32> {
@@ -7364,7 +7245,7 @@ impl Field {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_type_index,
+        Field::__tdp_info().field(4),
       )
     }
   }
@@ -7376,7 +7257,7 @@ impl Field {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(&self) -> Option<crate::View<'_, Field_Attrs>> {
-    if !unsafe { Field::__HAZZER_attrs.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Field_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
   }
   pub fn attrs_mut(&mut self) -> crate::Mut<'_, Field_Attrs> {
@@ -7387,7 +7268,7 @@ impl Field {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_attrs,
+        Field::__tdp_info().field(5),
       )
     }
   }
@@ -7396,7 +7277,7 @@ impl Field {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Field::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
   pub fn span_mut(&mut self) -> crate::Mut<'_, u32> {
@@ -7407,7 +7288,7 @@ impl Field {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_span,
+        Field::__tdp_info().field(6),
       )
     }
   }
@@ -7422,104 +7303,13 @@ impl Field {
     (&mut *raw.cast::<__priv_Field::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Field::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Field::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_name: u32 = unsafe {
-    let msg = Field::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().name as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_name: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_name,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_number: u32 = unsafe {
-    let msg = Field::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().number as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_number: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_number,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_is_repeated: u32 = unsafe {
-    let msg = Field::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().is_repeated as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_is_repeated: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 2,
-    offset: Self::__OFFSET_is_repeated,
-    size: 1,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_type: u32 = unsafe {
-    let msg = Field::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().r#type as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_type: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 3,
-    offset: Self::__OFFSET_type,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_type_index: u32 = unsafe {
-    let msg = Field::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().type_index as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_type_index: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 4,
-    offset: Self::__OFFSET_type_index,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_attrs: u32 = unsafe {
-    let msg = Field::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().attrs as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_attrs: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 5,
-    offset: Self::__OFFSET_attrs,
-    size: -(Field_Attrs::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_span: u32 = unsafe {
-    let msg = Field::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().span as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_span: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 6,
-    offset: Self::__OFFSET_span,
-    size: 4,
-  };
 }
 
 impl Default for Field {
@@ -7564,7 +7354,7 @@ impl<'proto> __priv_Field::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -7576,7 +7366,7 @@ impl<'proto> __priv_Field::View<'proto> {
     self.number_or().unwrap_or_default()
   }
   pub fn number_or(self) -> Option<crate::View<'proto, i32>> {
-    if !unsafe { Field::__HAZZER_number.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().number }) })
   }
 
@@ -7584,7 +7374,7 @@ impl<'proto> __priv_Field::View<'proto> {
     self.is_repeated_or().unwrap_or_default()
   }
   pub fn is_repeated_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Field::__HAZZER_is_repeated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_repeated }) })
   }
 
@@ -7592,7 +7382,7 @@ impl<'proto> __priv_Field::View<'proto> {
     self.r#type_or().unwrap_or_default()
   }
   pub fn r#type_or(self) -> Option<crate::View<'proto, Field_Type>> {
-    if !unsafe { Field::__HAZZER_type.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Field_Type>(*unsafe { &self.ptr.as_ref().r#type }) })
   }
 
@@ -7600,7 +7390,7 @@ impl<'proto> __priv_Field::View<'proto> {
     self.type_index_or().unwrap_or_default()
   }
   pub fn type_index_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__HAZZER_type_index.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().type_index }) })
   }
 
@@ -7608,7 +7398,7 @@ impl<'proto> __priv_Field::View<'proto> {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Field_Attrs>> {
-    if !unsafe { Field::__HAZZER_attrs.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Field_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
   }
 
@@ -7616,7 +7406,7 @@ impl<'proto> __priv_Field::View<'proto> {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
 
@@ -7698,7 +7488,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Field::__tdp_info())
   }
 
@@ -7706,7 +7496,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field::__HAZZER_name.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -7721,7 +7511,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_name,
+        Field::__tdp_info().field(0),
       )
     }
   }
@@ -7733,7 +7523,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.number_or().unwrap_or_default()
   }
   pub fn number_or(self) -> Option<crate::View<'proto, i32>> {
-    if !unsafe { Field::__HAZZER_number.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().number }) })
   }
   pub fn number_mut(self) -> crate::Mut<'proto, i32> {
@@ -7744,7 +7534,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_number,
+        Field::__tdp_info().field(1),
       )
     }
   }
@@ -7756,7 +7546,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.is_repeated_or().unwrap_or_default()
   }
   pub fn is_repeated_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Field::__HAZZER_is_repeated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_repeated }) })
   }
   pub fn is_repeated_mut(self) -> crate::Mut<'proto, bool> {
@@ -7767,7 +7557,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_is_repeated,
+        Field::__tdp_info().field(2),
       )
     }
   }
@@ -7779,7 +7569,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.r#type_or().unwrap_or_default()
   }
   pub fn r#type_or(self) -> Option<crate::View<'proto, Field_Type>> {
-    if !unsafe { Field::__HAZZER_type.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, Field_Type>(*unsafe { &self.ptr.as_ref().r#type }) })
   }
   pub fn r#type_mut(self) -> crate::Mut<'proto, Field_Type> {
@@ -7790,7 +7580,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_type,
+        Field::__tdp_info().field(3),
       )
     }
   }
@@ -7802,7 +7592,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.type_index_or().unwrap_or_default()
   }
   pub fn type_index_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__HAZZER_type_index.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().type_index }) })
   }
   pub fn type_index_mut(self) -> crate::Mut<'proto, u32> {
@@ -7813,7 +7603,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_type_index,
+        Field::__tdp_info().field(4),
       )
     }
   }
@@ -7825,7 +7615,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Field_Attrs>> {
-    if !unsafe { Field::__HAZZER_attrs.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<Field_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
   }
   pub fn attrs_mut(self) -> crate::Mut<'proto, Field_Attrs> {
@@ -7836,7 +7626,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_attrs,
+        Field::__tdp_info().field(5),
       )
     }
   }
@@ -7845,7 +7635,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__HAZZER_span.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
   pub fn span_mut(self) -> crate::Mut<'proto, u32> {
@@ -7856,7 +7646,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field::__HAZZER_span,
+        Field::__tdp_info().field(6),
       )
     }
   }
@@ -7908,73 +7698,123 @@ mod __priv_Field {
     pub(in super) span: u32,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{7 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{7 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{7 + 1}> =
+    crate::__z::tdp::DescStorage::<{7 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Field::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
             Field_Attrs::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: Field::__OFFSET_name,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().name as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 2,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Field::__OFFSET_number,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().number as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 3,
-          flags: (crate::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
-          offset: Field::__OFFSET_is_repeated,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Bool.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().is_repeated as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 2,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 4,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Field::__OFFSET_type,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().r#type as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 3,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 5,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Field::__OFFSET_type_index,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().type_index as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 4,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 10,
-          flags: (crate::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
-          offset: Field::__OFFSET_attrs,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Type.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().attrs as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 5,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 20,
-          flags: (crate::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: Field::__OFFSET_span,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::I32.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().span as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 6,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -8072,6 +7912,13 @@ pub struct Field_Attrs {
   arena: crate::__z::RawArena,
 }
 
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_Field_Attrs::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
+
 impl Field_Attrs {
   pub const DEFAULT: crate::View<'static, Self> = unsafe {
     const VALUE: __priv_Field_Attrs::Storage = __priv_Field_Attrs::Storage {
@@ -8124,7 +7971,7 @@ impl Field_Attrs {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Field_Attrs::__HAZZER_deprecated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -8139,7 +7986,7 @@ impl Field_Attrs {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field_Attrs::__HAZZER_deprecated,
+        Field_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -8148,7 +7995,7 @@ impl Field_Attrs {
   }
 
   pub fn docs(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Field_Attrs::__HAZZER_docs.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Field_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().docs };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -8159,7 +8006,7 @@ impl Field_Attrs {
   }
   pub fn docs_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Field_Attrs::__HAZZER_docs.init(self.ptr.as_ptr(), self.arena);
+      Field_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
         self.arena,
@@ -8174,39 +8021,13 @@ impl Field_Attrs {
     (&mut *raw.cast::<__priv_Field_Attrs::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const crate::__z::tdp::Type {
-    &__priv_Field_Attrs::TDP_INFO as *const _ as *const crate::__z::tdp::Type
+  pub fn __tdp_info() -> crate::__z::tdp::Desc {
+    unsafe { __priv_Field_Attrs::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_deprecated: u32 = unsafe {
-    let msg = Field_Attrs::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().deprecated as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_deprecated: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_deprecated,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_docs: u32 = unsafe {
-    let msg = Field_Attrs::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().docs as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_docs: &crate::__z::Hazzer = &crate::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_docs,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for Field_Attrs {
@@ -8251,7 +8072,7 @@ impl<'proto> __priv_Field_Attrs::View<'proto> {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field_Attrs::__HAZZER_deprecated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -8260,7 +8081,7 @@ impl<'proto> __priv_Field_Attrs::View<'proto> {
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Field_Attrs::__HAZZER_docs.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Field_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().docs };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -8318,7 +8139,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), crate::Error> {
-    let mut ctx = crate::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = crate::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, Field_Attrs::__tdp_info())
   }
 
@@ -8326,7 +8147,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field_Attrs::__HAZZER_deprecated.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { Field_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -8341,7 +8162,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        Field_Attrs::__HAZZER_deprecated,
+        Field_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -8350,7 +8171,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Field_Attrs::__HAZZER_docs.has(self.ptr.as_ptr()) } { return crate::Slice::default() }
+    if !unsafe { Field_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().docs };
       crate::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -8361,7 +8182,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   }
   pub fn docs_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Field_Attrs::__HAZZER_docs.init(self.ptr.as_ptr(), self.arena);
+      Field_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       crate::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
         self.arena,
@@ -8408,37 +8229,52 @@ mod __priv_Field_Attrs {
     pub(crate) docs: crate::__z::AVec<(*mut u8, usize)>,
   }
 
-  pub static TDP_INFO: crate::__z::tdp::TypeAndFields<{2 + 1}> =
-    crate::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: crate::__z::tdp::Type {
+  pub static TDP_INFO: crate::__z::tdp::DescStorage<{2 + 1}> =
+    crate::__z::tdp::DescStorage::<{2 + 1}> {
+      header: crate::__z::tdp::DescHeader {
         size: {
           let size = Field_Attrs::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const crate::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> crate::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: crate::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: crate::__z::tdp::DescKind::Message,
       },
       fields: [
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 1,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: Field_Attrs::__OFFSET_deprecated,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            0 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field_Attrs::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().deprecated as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        crate::__z::tdp::Field {
+        crate::__z::tdp::FieldStorage {
           number: 100,
-          flags: (crate::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
-          offset: Field_Attrs::__OFFSET_docs,
-          ty: 0,
+          flags:
+            crate::__z::tdp::Kind::Str.raw() << crate::__z::tdp::Field::KIND_SHIFT |
+            1 << crate::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = Field_Attrs::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().docs as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        crate::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        crate::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 

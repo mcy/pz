@@ -12,6 +12,13 @@ pub struct TestAll {
   arena: __rt::__z::RawArena,
 }
 
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_TestAll::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
+
 impl TestAll {
   pub const DEFAULT: __rt::View<'static, Self> = unsafe {
     const VALUE: __priv_TestAll::Storage = __priv_TestAll::Storage {
@@ -84,7 +91,7 @@ impl TestAll {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(&self) -> Option<__rt::View<'_, i32>> {
-    if !unsafe { TestAll::__HAZZER_opt_i32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().opt_i32 }) })
   }
   pub fn opt_i32_mut(&mut self) -> __rt::Mut<'_, i32> {
@@ -95,7 +102,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_i32,
+        TestAll::__tdp_info().field(0),
       )
     }
   }
@@ -107,7 +114,7 @@ impl TestAll {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(&self) -> Option<__rt::View<'_, i64>> {
-    if !unsafe { TestAll::__HAZZER_opt_i64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().opt_i64 }) })
   }
   pub fn opt_i64_mut(&mut self) -> __rt::Mut<'_, i64> {
@@ -118,7 +125,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_i64,
+        TestAll::__tdp_info().field(1),
       )
     }
   }
@@ -130,7 +137,7 @@ impl TestAll {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(&self) -> Option<__rt::View<'_, u32>> {
-    if !unsafe { TestAll::__HAZZER_opt_u32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().opt_u32 }) })
   }
   pub fn opt_u32_mut(&mut self) -> __rt::Mut<'_, u32> {
@@ -141,7 +148,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_u32,
+        TestAll::__tdp_info().field(2),
       )
     }
   }
@@ -153,7 +160,7 @@ impl TestAll {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(&self) -> Option<__rt::View<'_, u64>> {
-    if !unsafe { TestAll::__HAZZER_opt_u64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().opt_u64 }) })
   }
   pub fn opt_u64_mut(&mut self) -> __rt::Mut<'_, u64> {
@@ -164,7 +171,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_u64,
+        TestAll::__tdp_info().field(3),
       )
     }
   }
@@ -176,7 +183,7 @@ impl TestAll {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(&self) -> Option<__rt::View<'_, f32>> {
-    if !unsafe { TestAll::__HAZZER_opt_f32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().opt_f32 }) })
   }
   pub fn opt_f32_mut(&mut self) -> __rt::Mut<'_, f32> {
@@ -187,7 +194,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_f32,
+        TestAll::__tdp_info().field(4),
       )
     }
   }
@@ -199,7 +206,7 @@ impl TestAll {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(&self) -> Option<__rt::View<'_, f64>> {
-    if !unsafe { TestAll::__HAZZER_opt_f64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().opt_f64 }) })
   }
   pub fn opt_f64_mut(&mut self) -> __rt::Mut<'_, f64> {
@@ -210,7 +217,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_f64,
+        TestAll::__tdp_info().field(5),
       )
     }
   }
@@ -222,7 +229,7 @@ impl TestAll {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(&self) -> Option<__rt::View<'_, __rt::Str>> {
-    if !unsafe { TestAll::__HAZZER_opt_str.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().opt_str };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -237,7 +244,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_str,
+        TestAll::__tdp_info().field(6),
       )
     }
   }
@@ -249,7 +256,7 @@ impl TestAll {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(&self) -> Option<__rt::View<'_, bool>> {
-    if !unsafe { TestAll::__HAZZER_opt_bool.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().opt_bool }) })
   }
   pub fn opt_bool_mut(&mut self) -> __rt::Mut<'_, bool> {
@@ -260,7 +267,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_bool,
+        TestAll::__tdp_info().field(7),
       )
     }
   }
@@ -272,7 +279,7 @@ impl TestAll {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(&self) -> Option<__rt::View<'_, TestAll>> {
-    if !unsafe { TestAll::__HAZZER_opt_recursive.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_recursive } as *mut _ as *mut u8)) }
   }
   pub fn opt_recursive_mut(&mut self) -> __rt::Mut<'_, TestAll> {
@@ -283,7 +290,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_recursive,
+        TestAll::__tdp_info().field(8),
       )
     }
   }
@@ -292,7 +299,7 @@ impl TestAll {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(&self) -> Option<__rt::View<'_, TestAll_Nested>> {
-    if !unsafe { TestAll::__HAZZER_opt_nested.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_nested } as *mut _ as *mut u8)) }
   }
   pub fn opt_nested_mut(&mut self) -> __rt::Mut<'_, TestAll_Nested> {
@@ -303,7 +310,7 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_nested,
+        TestAll::__tdp_info().field(9),
       )
     }
   }
@@ -312,7 +319,7 @@ impl TestAll {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(&self) -> Option<__rt::View<'_, TestAll2>> {
-    if !unsafe { TestAll::__HAZZER_opt_choice.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_choice } as *mut _ as *mut u8)) }
   }
   pub fn opt_choice_mut(&mut self) -> __rt::Mut<'_, TestAll2> {
@@ -323,13 +330,13 @@ impl TestAll {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_choice,
+        TestAll::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(&self) -> __rt::Slice<'_, i32> {
-    if !unsafe { TestAll::__HAZZER_rep_i32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_i32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -340,7 +347,7 @@ impl TestAll {
   }
   pub fn rep_i32_mut(&mut self) -> __rt::Repeated<'_, i32> {
     unsafe {
-      TestAll::__HAZZER_rep_i32.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_i32 } as *mut _ as *mut u8,
         self.arena,
@@ -349,7 +356,7 @@ impl TestAll {
   }
 
   pub fn rep_i64(&self) -> __rt::Slice<'_, i64> {
-    if !unsafe { TestAll::__HAZZER_rep_i64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_i64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -360,7 +367,7 @@ impl TestAll {
   }
   pub fn rep_i64_mut(&mut self) -> __rt::Repeated<'_, i64> {
     unsafe {
-      TestAll::__HAZZER_rep_i64.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_i64 } as *mut _ as *mut u8,
         self.arena,
@@ -369,7 +376,7 @@ impl TestAll {
   }
 
   pub fn rep_u32(&self) -> __rt::Slice<'_, u32> {
-    if !unsafe { TestAll::__HAZZER_rep_u32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_u32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -380,7 +387,7 @@ impl TestAll {
   }
   pub fn rep_u32_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      TestAll::__HAZZER_rep_u32.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_u32 } as *mut _ as *mut u8,
         self.arena,
@@ -389,7 +396,7 @@ impl TestAll {
   }
 
   pub fn rep_u64(&self) -> __rt::Slice<'_, u64> {
-    if !unsafe { TestAll::__HAZZER_rep_u64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_u64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -400,7 +407,7 @@ impl TestAll {
   }
   pub fn rep_u64_mut(&mut self) -> __rt::Repeated<'_, u64> {
     unsafe {
-      TestAll::__HAZZER_rep_u64.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_u64 } as *mut _ as *mut u8,
         self.arena,
@@ -409,7 +416,7 @@ impl TestAll {
   }
 
   pub fn rep_f32(&self) -> __rt::Slice<'_, f32> {
-    if !unsafe { TestAll::__HAZZER_rep_f32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_f32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -420,7 +427,7 @@ impl TestAll {
   }
   pub fn rep_f32_mut(&mut self) -> __rt::Repeated<'_, f32> {
     unsafe {
-      TestAll::__HAZZER_rep_f32.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_f32 } as *mut _ as *mut u8,
         self.arena,
@@ -429,7 +436,7 @@ impl TestAll {
   }
 
   pub fn rep_f64(&self) -> __rt::Slice<'_, f64> {
-    if !unsafe { TestAll::__HAZZER_rep_f64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_f64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -440,7 +447,7 @@ impl TestAll {
   }
   pub fn rep_f64_mut(&mut self) -> __rt::Repeated<'_, f64> {
     unsafe {
-      TestAll::__HAZZER_rep_f64.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_f64 } as *mut _ as *mut u8,
         self.arena,
@@ -449,7 +456,7 @@ impl TestAll {
   }
 
   pub fn rep_str(&self) -> __rt::Slice<'_, __rt::Str> {
-    if !unsafe { TestAll::__HAZZER_rep_str.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_str };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -460,7 +467,7 @@ impl TestAll {
   }
   pub fn rep_str_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      TestAll::__HAZZER_rep_str.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_str } as *mut _ as *mut u8,
         self.arena,
@@ -469,7 +476,7 @@ impl TestAll {
   }
 
   pub fn rep_bool(&self) -> __rt::Slice<'_, bool> {
-    if !unsafe { TestAll::__HAZZER_rep_bool.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_bool };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -480,7 +487,7 @@ impl TestAll {
   }
   pub fn rep_bool_mut(&mut self) -> __rt::Repeated<'_, bool> {
     unsafe {
-      TestAll::__HAZZER_rep_bool.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_bool } as *mut _ as *mut u8,
         self.arena,
@@ -489,7 +496,7 @@ impl TestAll {
   }
 
   pub fn rep_recursive(&self) -> __rt::Slice<'_, TestAll> {
-    if !unsafe { TestAll::__HAZZER_rep_recursive.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_recursive };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -500,7 +507,7 @@ impl TestAll {
   }
   pub fn rep_recursive_mut(&mut self) -> __rt::Repeated<'_, TestAll> {
     unsafe {
-      TestAll::__HAZZER_rep_recursive.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_recursive } as *mut _ as *mut u8,
         self.arena,
@@ -509,7 +516,7 @@ impl TestAll {
   }
 
   pub fn rep_nested(&self) -> __rt::Slice<'_, TestAll_Nested> {
-    if !unsafe { TestAll::__HAZZER_rep_nested.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_nested };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -520,7 +527,7 @@ impl TestAll {
   }
   pub fn rep_nested_mut(&mut self) -> __rt::Repeated<'_, TestAll_Nested> {
     unsafe {
-      TestAll::__HAZZER_rep_nested.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_nested } as *mut _ as *mut u8,
         self.arena,
@@ -529,7 +536,7 @@ impl TestAll {
   }
 
   pub fn rep_choice(&self) -> __rt::Slice<'_, TestAll2> {
-    if !unsafe { TestAll::__HAZZER_rep_choice.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_choice };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -540,7 +547,7 @@ impl TestAll {
   }
   pub fn rep_choice_mut(&mut self) -> __rt::Repeated<'_, TestAll2> {
     unsafe {
-      TestAll::__HAZZER_rep_choice.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_choice } as *mut _ as *mut u8,
         self.arena,
@@ -555,299 +562,13 @@ impl TestAll {
     (&mut *raw.cast::<__priv_TestAll::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const __rt::__z::tdp::Type {
-    &__priv_TestAll::TDP_INFO as *const _ as *const __rt::__z::tdp::Type
+  pub fn __tdp_info() -> __rt::__z::tdp::Desc {
+    unsafe { __priv_TestAll::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_opt_i32: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_i32 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_i32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_opt_i32,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_i64: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_i64 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_i64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 1,
-    offset: Self::__OFFSET_opt_i64,
-    size: 8,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_u32: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_u32 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_u32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 2,
-    offset: Self::__OFFSET_opt_u32,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_u64: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_u64 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_u64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 3,
-    offset: Self::__OFFSET_opt_u64,
-    size: 8,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_f32: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_f32 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_f32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 4,
-    offset: Self::__OFFSET_opt_f32,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_f64: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_f64 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_f64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 5,
-    offset: Self::__OFFSET_opt_f64,
-    size: 8,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_str: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_str as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_str: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 6,
-    offset: Self::__OFFSET_opt_str,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_bool: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_bool as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_bool: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 7,
-    offset: Self::__OFFSET_opt_bool,
-    size: 1,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_recursive: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_recursive as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_recursive: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 8,
-    offset: Self::__OFFSET_opt_recursive,
-    size: -(TestAll::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_nested: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_nested as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_nested: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 9,
-    offset: Self::__OFFSET_opt_nested,
-    size: -(TestAll_Nested::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_choice: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().opt_choice as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_opt_choice: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 10,
-    offset: Self::__OFFSET_opt_choice,
-    size: -(TestAll2::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_i32: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_i32 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_i32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_i32,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_i64: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_i64 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_i64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_i64,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_u32: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_u32 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_u32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_u32,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_u64: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_u64 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_u64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_u64,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_f32: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_f32 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_f32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_f32,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_f64: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_f64 as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_f64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_f64,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_str: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_str as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_str: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_str,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_bool: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_bool as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_bool: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_bool,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_recursive: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_recursive as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_recursive: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_recursive,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_nested: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_nested as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_nested: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_nested,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_choice: u32 = unsafe {
-    let msg = TestAll::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().rep_choice as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_rep_choice: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_rep_choice,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for TestAll {
@@ -892,7 +613,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll::__HAZZER_opt_i32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().opt_i32 }) })
   }
 
@@ -900,7 +621,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll::__HAZZER_opt_i64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().opt_i64 }) })
   }
 
@@ -908,7 +629,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll::__HAZZER_opt_u32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().opt_u32 }) })
   }
 
@@ -916,7 +637,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll::__HAZZER_opt_u64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().opt_u64 }) })
   }
 
@@ -924,7 +645,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll::__HAZZER_opt_f32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().opt_f32 }) })
   }
 
@@ -932,7 +653,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll::__HAZZER_opt_f64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().opt_f64 }) })
   }
 
@@ -940,7 +661,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll::__HAZZER_opt_str.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().opt_str };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -952,7 +673,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll::__HAZZER_opt_bool.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().opt_bool }) })
   }
 
@@ -960,7 +681,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll::__HAZZER_opt_recursive.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_recursive } as *mut _ as *mut u8)) }
   }
 
@@ -968,7 +689,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll::__HAZZER_opt_nested.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_nested } as *mut _ as *mut u8)) }
   }
 
@@ -976,12 +697,12 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll::__HAZZER_opt_choice.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_choice } as *mut _ as *mut u8)) }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll::__HAZZER_rep_i32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_i32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -992,7 +713,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll::__HAZZER_rep_i64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_i64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1003,7 +724,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll::__HAZZER_rep_u32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_u32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1014,7 +735,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll::__HAZZER_rep_u64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_u64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1025,7 +746,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll::__HAZZER_rep_f32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_f32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1036,7 +757,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll::__HAZZER_rep_f64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_f64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1047,7 +768,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll::__HAZZER_rep_str.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_str };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1058,7 +779,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll::__HAZZER_rep_bool.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_bool };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1069,7 +790,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll::__HAZZER_rep_recursive.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_recursive };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1080,7 +801,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll::__HAZZER_rep_nested.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_nested };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1091,7 +812,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll::__HAZZER_rep_choice.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_choice };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1269,7 +990,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), __rt::Error> {
-    let mut ctx = __rt::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = __rt::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll::__tdp_info())
   }
 
@@ -1277,7 +998,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll::__HAZZER_opt_i32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().opt_i32 }) })
   }
   pub fn opt_i32_mut(self) -> __rt::Mut<'proto, i32> {
@@ -1288,7 +1009,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_i32,
+        TestAll::__tdp_info().field(0),
       )
     }
   }
@@ -1300,7 +1021,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll::__HAZZER_opt_i64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().opt_i64 }) })
   }
   pub fn opt_i64_mut(self) -> __rt::Mut<'proto, i64> {
@@ -1311,7 +1032,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_i64,
+        TestAll::__tdp_info().field(1),
       )
     }
   }
@@ -1323,7 +1044,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll::__HAZZER_opt_u32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().opt_u32 }) })
   }
   pub fn opt_u32_mut(self) -> __rt::Mut<'proto, u32> {
@@ -1334,7 +1055,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_u32,
+        TestAll::__tdp_info().field(2),
       )
     }
   }
@@ -1346,7 +1067,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll::__HAZZER_opt_u64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().opt_u64 }) })
   }
   pub fn opt_u64_mut(self) -> __rt::Mut<'proto, u64> {
@@ -1357,7 +1078,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_u64,
+        TestAll::__tdp_info().field(3),
       )
     }
   }
@@ -1369,7 +1090,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll::__HAZZER_opt_f32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().opt_f32 }) })
   }
   pub fn opt_f32_mut(self) -> __rt::Mut<'proto, f32> {
@@ -1380,7 +1101,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_f32,
+        TestAll::__tdp_info().field(4),
       )
     }
   }
@@ -1392,7 +1113,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll::__HAZZER_opt_f64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().opt_f64 }) })
   }
   pub fn opt_f64_mut(self) -> __rt::Mut<'proto, f64> {
@@ -1403,7 +1124,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_f64,
+        TestAll::__tdp_info().field(5),
       )
     }
   }
@@ -1415,7 +1136,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll::__HAZZER_opt_str.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().opt_str };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -1430,7 +1151,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_str,
+        TestAll::__tdp_info().field(6),
       )
     }
   }
@@ -1442,7 +1163,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll::__HAZZER_opt_bool.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().opt_bool }) })
   }
   pub fn opt_bool_mut(self) -> __rt::Mut<'proto, bool> {
@@ -1453,7 +1174,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_bool,
+        TestAll::__tdp_info().field(7),
       )
     }
   }
@@ -1465,7 +1186,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll::__HAZZER_opt_recursive.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_recursive } as *mut _ as *mut u8)) }
   }
   pub fn opt_recursive_mut(self) -> __rt::Mut<'proto, TestAll> {
@@ -1476,7 +1197,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_recursive,
+        TestAll::__tdp_info().field(8),
       )
     }
   }
@@ -1485,7 +1206,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll::__HAZZER_opt_nested.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_nested } as *mut _ as *mut u8)) }
   }
   pub fn opt_nested_mut(self) -> __rt::Mut<'proto, TestAll_Nested> {
@@ -1496,7 +1217,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_nested,
+        TestAll::__tdp_info().field(9),
       )
     }
   }
@@ -1505,7 +1226,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll::__HAZZER_opt_choice.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_choice } as *mut _ as *mut u8)) }
   }
   pub fn opt_choice_mut(self) -> __rt::Mut<'proto, TestAll2> {
@@ -1516,13 +1237,13 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll::__HAZZER_opt_choice,
+        TestAll::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll::__HAZZER_rep_i32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_i32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1533,7 +1254,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_i32_mut(self) -> __rt::Repeated<'proto, i32> {
     unsafe {
-      TestAll::__HAZZER_rep_i32.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_i32 } as *mut _ as *mut u8,
         self.arena,
@@ -1542,7 +1263,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll::__HAZZER_rep_i64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_i64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1553,7 +1274,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_i64_mut(self) -> __rt::Repeated<'proto, i64> {
     unsafe {
-      TestAll::__HAZZER_rep_i64.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_i64 } as *mut _ as *mut u8,
         self.arena,
@@ -1562,7 +1283,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll::__HAZZER_rep_u32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_u32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1573,7 +1294,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_u32_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      TestAll::__HAZZER_rep_u32.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_u32 } as *mut _ as *mut u8,
         self.arena,
@@ -1582,7 +1303,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll::__HAZZER_rep_u64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_u64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1593,7 +1314,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_u64_mut(self) -> __rt::Repeated<'proto, u64> {
     unsafe {
-      TestAll::__HAZZER_rep_u64.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_u64 } as *mut _ as *mut u8,
         self.arena,
@@ -1602,7 +1323,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll::__HAZZER_rep_f32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_f32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1613,7 +1334,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_f32_mut(self) -> __rt::Repeated<'proto, f32> {
     unsafe {
-      TestAll::__HAZZER_rep_f32.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_f32 } as *mut _ as *mut u8,
         self.arena,
@@ -1622,7 +1343,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll::__HAZZER_rep_f64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_f64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1633,7 +1354,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_f64_mut(self) -> __rt::Repeated<'proto, f64> {
     unsafe {
-      TestAll::__HAZZER_rep_f64.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_f64 } as *mut _ as *mut u8,
         self.arena,
@@ -1642,7 +1363,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll::__HAZZER_rep_str.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_str };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1653,7 +1374,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_str_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      TestAll::__HAZZER_rep_str.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_str } as *mut _ as *mut u8,
         self.arena,
@@ -1662,7 +1383,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll::__HAZZER_rep_bool.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_bool };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -1673,7 +1394,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_bool_mut(self) -> __rt::Repeated<'proto, bool> {
     unsafe {
-      TestAll::__HAZZER_rep_bool.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_bool } as *mut _ as *mut u8,
         self.arena,
@@ -1682,7 +1403,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll::__HAZZER_rep_recursive.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_recursive };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1693,7 +1414,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_recursive_mut(self) -> __rt::Repeated<'proto, TestAll> {
     unsafe {
-      TestAll::__HAZZER_rep_recursive.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_recursive } as *mut _ as *mut u8,
         self.arena,
@@ -1702,7 +1423,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll::__HAZZER_rep_nested.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_nested };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1713,7 +1434,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_nested_mut(self) -> __rt::Repeated<'proto, TestAll_Nested> {
     unsafe {
-      TestAll::__HAZZER_rep_nested.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_nested } as *mut _ as *mut u8,
         self.arena,
@@ -1722,7 +1443,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll::__HAZZER_rep_choice.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().rep_choice };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -1733,7 +1454,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_choice_mut(self) -> __rt::Repeated<'proto, TestAll2> {
     unsafe {
-      TestAll::__HAZZER_rep_choice.init(self.ptr.as_ptr(), self.arena);
+      TestAll::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().rep_choice } as *mut _ as *mut u8,
         self.arena,
@@ -1800,180 +1521,335 @@ mod __priv_TestAll {
     pub(in super) rep_choice: __rt::__z::AVec<*mut u8>,
   }
 
-  pub static TDP_INFO: __rt::__z::tdp::TypeAndFields<{22 + 1}> =
-    __rt::__z::tdp::TypeAndFields::<{22 + 1}> {
-      msg: __rt::__z::tdp::Type {
+  pub static TDP_INFO: __rt::__z::tdp::DescStorage<{22 + 1}> =
+    __rt::__z::tdp::DescStorage::<{22 + 1}> {
+      header: __rt::__z::tdp::DescHeader {
         size: {
           let size = TestAll::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const __rt::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> __rt::__z::tdp::Desc] = &[
             TestAll::__tdp_info,
             TestAll_Nested::__tdp_info,
             TestAll2::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: __rt::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: __rt::__z::tdp::DescKind::Message,
       },
       fields: [
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 1,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_i32,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_i32 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 2,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_i64,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_i64 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 3,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_u32,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_u32 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 2,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 4,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_u64,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_u64 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 3,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 5,
-          flags: (__rt::__z::tdp::Kind::F32 as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_f32,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::F32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_f32 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 4,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 6,
-          flags: (__rt::__z::tdp::Kind::F64 as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_f64,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::F64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_f64 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 5,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 7,
-          flags: (__rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_str,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::Str.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_str as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 6,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 8,
-          flags: (__rt::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_bool,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::Bool.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_bool as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 7,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 10,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_recursive,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_recursive as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 8,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 11,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_nested,
-          ty: 1,
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_nested as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 1,
           hasbit: 9,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 12,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
-          offset: TestAll::__OFFSET_opt_choice,
-          ty: 2,
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().opt_choice as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 2,
           hasbit: 10,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 21,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_i32,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_i32 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 22,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_i64,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_i64 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 23,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_u32,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_u32 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 24,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_u64,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_u64 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 25,
-          flags: (__rt::__z::tdp::Kind::F32 as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_f32,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::F32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_f32 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 26,
-          flags: (__rt::__z::tdp::Kind::F64 as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_f64,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::F64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_f64 as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 27,
-          flags: (__rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_str,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::Str.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_str as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 28,
-          flags: (__rt::__z::tdp::Kind::Bool as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_bool,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::Bool.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_bool as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 30,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_recursive,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_recursive as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 31,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_nested,
-          ty: 1,
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_nested as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 1,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 32,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
-          offset: TestAll::__OFFSET_rep_choice,
-          ty: 2,
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().rep_choice as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 2,
           hasbit: 11,
         },
-        __rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        __rt::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -2017,6 +1893,13 @@ pub struct TestAll_Nested {
   ptr: __rt::__z::ABox<__priv_TestAll_Nested::Storage>,
   arena: __rt::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_TestAll_Nested::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl TestAll_Nested {
   pub const DEFAULT: __rt::View<'static, Self> = unsafe {
@@ -2070,7 +1953,7 @@ impl TestAll_Nested {
     self.a_or().unwrap_or_default()
   }
   pub fn a_or(&self) -> Option<__rt::View<'_, i32>> {
-    if !unsafe { TestAll_Nested::__HAZZER_a.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll_Nested::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().a }) })
   }
   pub fn a_mut(&mut self) -> __rt::Mut<'_, i32> {
@@ -2081,7 +1964,7 @@ impl TestAll_Nested {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll_Nested::__HAZZER_a,
+        TestAll_Nested::__tdp_info().field(0),
       )
     }
   }
@@ -2090,7 +1973,7 @@ impl TestAll_Nested {
   }
 
   pub fn b(&self) -> __rt::Slice<'_, __rt::Str> {
-    if !unsafe { TestAll_Nested::__HAZZER_b.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll_Nested::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().b };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2101,7 +1984,7 @@ impl TestAll_Nested {
   }
   pub fn b_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      TestAll_Nested::__HAZZER_b.init(self.ptr.as_ptr(), self.arena);
+      TestAll_Nested::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().b } as *mut _ as *mut u8,
         self.arena,
@@ -2116,39 +1999,13 @@ impl TestAll_Nested {
     (&mut *raw.cast::<__priv_TestAll_Nested::Storage>()).__hasbits = [0; 1];
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const __rt::__z::tdp::Type {
-    &__priv_TestAll_Nested::TDP_INFO as *const _ as *const __rt::__z::tdp::Type
+  pub fn __tdp_info() -> __rt::__z::tdp::Desc {
+    unsafe { __priv_TestAll_Nested::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_a: u32 = unsafe {
-    let msg = TestAll_Nested::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().a as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_a: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: 0,
-    offset: Self::__OFFSET_a,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_b: u32 = unsafe {
-    let msg = TestAll_Nested::DEFAULT;
-    let top = msg.ptr.as_ptr().cast::<u8>();
-    let field = &msg.ptr.as_ref().b as *const _ as *const u8;
-    field.offset_from(top) as u32
-  };
-  #[doc(hidden)]
-  pub const __HAZZER_b: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2147483648,
-    offset: Self::__OFFSET_b,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 impl Default for TestAll_Nested {
@@ -2193,12 +2050,12 @@ impl<'proto> __priv_TestAll_Nested::View<'proto> {
     self.a_or().unwrap_or_default()
   }
   pub fn a_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll_Nested::__HAZZER_a.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll_Nested::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().a }) })
   }
 
   pub fn b(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll_Nested::__HAZZER_b.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll_Nested::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().b };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2256,7 +2113,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), __rt::Error> {
-    let mut ctx = __rt::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = __rt::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll_Nested::__tdp_info())
   }
 
@@ -2264,7 +2121,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
     self.a_or().unwrap_or_default()
   }
   pub fn a_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll_Nested::__HAZZER_a.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll_Nested::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().a }) })
   }
   pub fn a_mut(self) -> __rt::Mut<'proto, i32> {
@@ -2275,7 +2132,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll_Nested::__HAZZER_a,
+        TestAll_Nested::__tdp_info().field(0),
       )
     }
   }
@@ -2284,7 +2141,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   }
 
   pub fn b(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll_Nested::__HAZZER_b.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll_Nested::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().b };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2295,7 +2152,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   }
   pub fn b_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      TestAll_Nested::__HAZZER_b.init(self.ptr.as_ptr(), self.arena);
+      TestAll_Nested::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().b } as *mut _ as *mut u8,
         self.arena,
@@ -2342,37 +2199,52 @@ mod __priv_TestAll_Nested {
     pub(crate) b: __rt::__z::AVec<(*mut u8, usize)>,
   }
 
-  pub static TDP_INFO: __rt::__z::tdp::TypeAndFields<{2 + 1}> =
-    __rt::__z::tdp::TypeAndFields::<{2 + 1}> {
-      msg: __rt::__z::tdp::Type {
+  pub static TDP_INFO: __rt::__z::tdp::DescStorage<{2 + 1}> =
+    __rt::__z::tdp::DescStorage::<{2 + 1}> {
+      header: __rt::__z::tdp::DescHeader {
         size: {
           let size = TestAll_Nested::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const __rt::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> __rt::__z::tdp::Desc] = &[
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: __rt::__z::tdp::TyKind::Msg,
+        num_hasbit_words: 1,
+        kind: __rt::__z::tdp::DescKind::Message,
       },
       fields: [
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 1,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
-          offset: TestAll_Nested::__OFFSET_a,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll_Nested::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().a as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 2,
-          flags: (__rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
-          offset: TestAll_Nested::__OFFSET_b,
-          ty: 0,
+          flags:
+            __rt::__z::tdp::Kind::Str.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
+          offset: unsafe {
+            let msg = TestAll_Nested::DEFAULT;
+            let top = msg.ptr.as_ptr().cast::<u8>();
+            let field = &msg.ptr.as_ref().b as *const _ as *const u8;
+            field.offset_from(top) as u32
+          },
+          desc: 0,
           hasbit: 1,
         },
-        __rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        __rt::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 
@@ -2416,6 +2288,13 @@ pub struct TestAll2 {
   ptr: __rt::__z::ABox<__priv_TestAll2::Storage>,
   arena: __rt::__z::RawArena,
 }
+
+const _: () = {
+  assert!(
+    std::mem::size_of::<__priv_TestAll2::Storage>() < (u32::MAX as usize),
+    "storage size excees 4GB",
+  );
+};
 
 impl TestAll2 {
   pub const DEFAULT: __rt::View<'static, Self> = unsafe {
@@ -2476,7 +2355,7 @@ impl TestAll2 {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(&self) -> Option<__rt::View<'_, i32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_i32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().union.opt_i32 }) })
   }
   pub fn opt_i32_mut(&mut self) -> __rt::Mut<'_, i32> {
@@ -2487,7 +2366,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_i32,
+        TestAll2::__tdp_info().field(0),
       )
     }
   }
@@ -2499,7 +2378,7 @@ impl TestAll2 {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(&self) -> Option<__rt::View<'_, i64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_i64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().union.opt_i64 }) })
   }
   pub fn opt_i64_mut(&mut self) -> __rt::Mut<'_, i64> {
@@ -2510,7 +2389,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_i64,
+        TestAll2::__tdp_info().field(1),
       )
     }
   }
@@ -2522,7 +2401,7 @@ impl TestAll2 {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(&self) -> Option<__rt::View<'_, u32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_u32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().union.opt_u32 }) })
   }
   pub fn opt_u32_mut(&mut self) -> __rt::Mut<'_, u32> {
@@ -2533,7 +2412,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_u32,
+        TestAll2::__tdp_info().field(2),
       )
     }
   }
@@ -2545,7 +2424,7 @@ impl TestAll2 {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(&self) -> Option<__rt::View<'_, u64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_u64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().union.opt_u64 }) })
   }
   pub fn opt_u64_mut(&mut self) -> __rt::Mut<'_, u64> {
@@ -2556,7 +2435,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_u64,
+        TestAll2::__tdp_info().field(3),
       )
     }
   }
@@ -2568,7 +2447,7 @@ impl TestAll2 {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(&self) -> Option<__rt::View<'_, f32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_f32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().union.opt_f32 }) })
   }
   pub fn opt_f32_mut(&mut self) -> __rt::Mut<'_, f32> {
@@ -2579,7 +2458,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_f32,
+        TestAll2::__tdp_info().field(4),
       )
     }
   }
@@ -2591,7 +2470,7 @@ impl TestAll2 {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(&self) -> Option<__rt::View<'_, f64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_f64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().union.opt_f64 }) })
   }
   pub fn opt_f64_mut(&mut self) -> __rt::Mut<'_, f64> {
@@ -2602,7 +2481,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_f64,
+        TestAll2::__tdp_info().field(5),
       )
     }
   }
@@ -2614,7 +2493,7 @@ impl TestAll2 {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(&self) -> Option<__rt::View<'_, __rt::Str>> {
-    if !unsafe { TestAll2::__HAZZER_opt_str.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().union.opt_str };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -2629,7 +2508,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_str,
+        TestAll2::__tdp_info().field(6),
       )
     }
   }
@@ -2641,7 +2520,7 @@ impl TestAll2 {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(&self) -> Option<__rt::View<'_, bool>> {
-    if !unsafe { TestAll2::__HAZZER_opt_bool.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().union.opt_bool }) })
   }
   pub fn opt_bool_mut(&mut self) -> __rt::Mut<'_, bool> {
@@ -2652,7 +2531,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_bool,
+        TestAll2::__tdp_info().field(7),
       )
     }
   }
@@ -2664,7 +2543,7 @@ impl TestAll2 {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(&self) -> Option<__rt::View<'_, TestAll>> {
-    if !unsafe { TestAll2::__HAZZER_opt_recursive.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_recursive } as *mut _ as *mut u8)) }
   }
   pub fn opt_recursive_mut(&mut self) -> __rt::Mut<'_, TestAll> {
@@ -2675,7 +2554,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_recursive,
+        TestAll2::__tdp_info().field(8),
       )
     }
   }
@@ -2684,7 +2563,7 @@ impl TestAll2 {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(&self) -> Option<__rt::View<'_, TestAll_Nested>> {
-    if !unsafe { TestAll2::__HAZZER_opt_nested.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_nested } as *mut _ as *mut u8)) }
   }
   pub fn opt_nested_mut(&mut self) -> __rt::Mut<'_, TestAll_Nested> {
@@ -2695,7 +2574,7 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_nested,
+        TestAll2::__tdp_info().field(9),
       )
     }
   }
@@ -2704,7 +2583,7 @@ impl TestAll2 {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(&self) -> Option<__rt::View<'_, TestAll2>> {
-    if !unsafe { TestAll2::__HAZZER_opt_choice.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_choice } as *mut _ as *mut u8)) }
   }
   pub fn opt_choice_mut(&mut self) -> __rt::Mut<'_, TestAll2> {
@@ -2715,13 +2594,13 @@ impl TestAll2 {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_choice,
+        TestAll2::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(&self) -> __rt::Slice<'_, i32> {
-    if !unsafe { TestAll2::__HAZZER_rep_i32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_i32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2732,7 +2611,7 @@ impl TestAll2 {
   }
   pub fn rep_i32_mut(&mut self) -> __rt::Repeated<'_, i32> {
     unsafe {
-      TestAll2::__HAZZER_rep_i32.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_i32 } as *mut _ as *mut u8,
         self.arena,
@@ -2741,7 +2620,7 @@ impl TestAll2 {
   }
 
   pub fn rep_i64(&self) -> __rt::Slice<'_, i64> {
-    if !unsafe { TestAll2::__HAZZER_rep_i64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_i64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2752,7 +2631,7 @@ impl TestAll2 {
   }
   pub fn rep_i64_mut(&mut self) -> __rt::Repeated<'_, i64> {
     unsafe {
-      TestAll2::__HAZZER_rep_i64.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_i64 } as *mut _ as *mut u8,
         self.arena,
@@ -2761,7 +2640,7 @@ impl TestAll2 {
   }
 
   pub fn rep_u32(&self) -> __rt::Slice<'_, u32> {
-    if !unsafe { TestAll2::__HAZZER_rep_u32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_u32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2772,7 +2651,7 @@ impl TestAll2 {
   }
   pub fn rep_u32_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      TestAll2::__HAZZER_rep_u32.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_u32 } as *mut _ as *mut u8,
         self.arena,
@@ -2781,7 +2660,7 @@ impl TestAll2 {
   }
 
   pub fn rep_u64(&self) -> __rt::Slice<'_, u64> {
-    if !unsafe { TestAll2::__HAZZER_rep_u64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_u64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2792,7 +2671,7 @@ impl TestAll2 {
   }
   pub fn rep_u64_mut(&mut self) -> __rt::Repeated<'_, u64> {
     unsafe {
-      TestAll2::__HAZZER_rep_u64.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_u64 } as *mut _ as *mut u8,
         self.arena,
@@ -2801,7 +2680,7 @@ impl TestAll2 {
   }
 
   pub fn rep_f32(&self) -> __rt::Slice<'_, f32> {
-    if !unsafe { TestAll2::__HAZZER_rep_f32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_f32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2812,7 +2691,7 @@ impl TestAll2 {
   }
   pub fn rep_f32_mut(&mut self) -> __rt::Repeated<'_, f32> {
     unsafe {
-      TestAll2::__HAZZER_rep_f32.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_f32 } as *mut _ as *mut u8,
         self.arena,
@@ -2821,7 +2700,7 @@ impl TestAll2 {
   }
 
   pub fn rep_f64(&self) -> __rt::Slice<'_, f64> {
-    if !unsafe { TestAll2::__HAZZER_rep_f64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_f64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2832,7 +2711,7 @@ impl TestAll2 {
   }
   pub fn rep_f64_mut(&mut self) -> __rt::Repeated<'_, f64> {
     unsafe {
-      TestAll2::__HAZZER_rep_f64.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_f64 } as *mut _ as *mut u8,
         self.arena,
@@ -2841,7 +2720,7 @@ impl TestAll2 {
   }
 
   pub fn rep_str(&self) -> __rt::Slice<'_, __rt::Str> {
-    if !unsafe { TestAll2::__HAZZER_rep_str.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_str };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2852,7 +2731,7 @@ impl TestAll2 {
   }
   pub fn rep_str_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      TestAll2::__HAZZER_rep_str.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_str } as *mut _ as *mut u8,
         self.arena,
@@ -2861,7 +2740,7 @@ impl TestAll2 {
   }
 
   pub fn rep_bool(&self) -> __rt::Slice<'_, bool> {
-    if !unsafe { TestAll2::__HAZZER_rep_bool.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_bool };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -2872,7 +2751,7 @@ impl TestAll2 {
   }
   pub fn rep_bool_mut(&mut self) -> __rt::Repeated<'_, bool> {
     unsafe {
-      TestAll2::__HAZZER_rep_bool.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_bool } as *mut _ as *mut u8,
         self.arena,
@@ -2881,7 +2760,7 @@ impl TestAll2 {
   }
 
   pub fn rep_recursive(&self) -> __rt::Slice<'_, TestAll> {
-    if !unsafe { TestAll2::__HAZZER_rep_recursive.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_recursive };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2892,7 +2771,7 @@ impl TestAll2 {
   }
   pub fn rep_recursive_mut(&mut self) -> __rt::Repeated<'_, TestAll> {
     unsafe {
-      TestAll2::__HAZZER_rep_recursive.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_recursive } as *mut _ as *mut u8,
         self.arena,
@@ -2901,7 +2780,7 @@ impl TestAll2 {
   }
 
   pub fn rep_nested(&self) -> __rt::Slice<'_, TestAll_Nested> {
-    if !unsafe { TestAll2::__HAZZER_rep_nested.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_nested };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2912,7 +2791,7 @@ impl TestAll2 {
   }
   pub fn rep_nested_mut(&mut self) -> __rt::Repeated<'_, TestAll_Nested> {
     unsafe {
-      TestAll2::__HAZZER_rep_nested.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_nested } as *mut _ as *mut u8,
         self.arena,
@@ -2921,7 +2800,7 @@ impl TestAll2 {
   }
 
   pub fn rep_choice(&self) -> __rt::Slice<'_, TestAll2> {
-    if !unsafe { TestAll2::__HAZZER_rep_choice.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_choice };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -2932,7 +2811,7 @@ impl TestAll2 {
   }
   pub fn rep_choice_mut(&mut self) -> __rt::Repeated<'_, TestAll2> {
     unsafe {
-      TestAll2::__HAZZER_rep_choice.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_choice } as *mut _ as *mut u8,
         self.arena,
@@ -2947,189 +2826,13 @@ impl TestAll2 {
     (&mut *raw.cast::<__priv_TestAll2::Storage>()).which = 0;
   }
   #[doc(hidden)]
-  pub fn __tdp_info() -> *const __rt::__z::tdp::Type {
-    &__priv_TestAll2::TDP_INFO as *const _ as *const __rt::__z::tdp::Type
+  pub fn __tdp_info() -> __rt::__z::tdp::Desc {
+    unsafe { __priv_TestAll2::TDP_INFO.get() }
   }
   #[doc(hidden)]
   pub unsafe fn __raw_data(&self) -> &[u8] {
     std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
   }
-  #[doc(hidden)]
-  pub const __OFFSET_opt_i32: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_i32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -1,
-    offset: Self::__OFFSET_opt_i32,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_i64: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_i64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -2,
-    offset: Self::__OFFSET_opt_i64,
-    size: 8,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_u32: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_u32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -3,
-    offset: Self::__OFFSET_opt_u32,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_u64: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_u64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -4,
-    offset: Self::__OFFSET_opt_u64,
-    size: 8,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_f32: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_f32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -5,
-    offset: Self::__OFFSET_opt_f32,
-    size: 4,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_f64: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_f64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -6,
-    offset: Self::__OFFSET_opt_f64,
-    size: 8,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_str: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_str: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -7,
-    offset: Self::__OFFSET_opt_str,
-    size: (usize::BITS / 8 * 2) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_bool: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_bool: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -8,
-    offset: Self::__OFFSET_opt_bool,
-    size: 1,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_recursive: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_recursive: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -10,
-    offset: Self::__OFFSET_opt_recursive,
-    size: -(TestAll::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_nested: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_nested: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -11,
-    offset: Self::__OFFSET_opt_nested,
-    size: -(TestAll_Nested::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_opt_choice: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_opt_choice: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -12,
-    offset: Self::__OFFSET_opt_choice,
-    size: -(TestAll2::__LAYOUT.size() as i32),
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_i32: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_i32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -21,
-    offset: Self::__OFFSET_rep_i32,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_i64: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_i64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -22,
-    offset: Self::__OFFSET_rep_i64,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_u32: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_u32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -23,
-    offset: Self::__OFFSET_rep_u32,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_u64: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_u64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -24,
-    offset: Self::__OFFSET_rep_u64,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_f32: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_f32: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -25,
-    offset: Self::__OFFSET_rep_f32,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_f64: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_f64: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -26,
-    offset: Self::__OFFSET_rep_f64,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_str: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_str: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -27,
-    offset: Self::__OFFSET_rep_str,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_bool: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_bool: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -28,
-    offset: Self::__OFFSET_rep_bool,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_recursive: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_recursive: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -30,
-    offset: Self::__OFFSET_rep_recursive,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_nested: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_nested: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -31,
-    offset: Self::__OFFSET_rep_nested,
-    size: (usize::BITS / 8) as i32,
-  };
-  #[doc(hidden)]
-  pub const __OFFSET_rep_choice: u32 = __priv_TestAll2::UNION_OFFSET as u32;
-  #[doc(hidden)]
-  pub const __HAZZER_rep_choice: &__rt::__z::Hazzer = &__rt::__z::Hazzer {
-    hasbit_or_number: -32,
-    offset: Self::__OFFSET_rep_choice,
-    size: (usize::BITS / 8) as i32,
-  };
 }
 
 pub enum TestAll2Cases<'proto, Which: __rt::ptr::select::Select> {
@@ -3211,7 +2914,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_i32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().union.opt_i32 }) })
   }
 
@@ -3219,7 +2922,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_i64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().union.opt_i64 }) })
   }
 
@@ -3227,7 +2930,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_u32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().union.opt_u32 }) })
   }
 
@@ -3235,7 +2938,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_u64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().union.opt_u64 }) })
   }
 
@@ -3243,7 +2946,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_f32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().union.opt_f32 }) })
   }
 
@@ -3251,7 +2954,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_f64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().union.opt_f64 }) })
   }
 
@@ -3259,7 +2962,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll2::__HAZZER_opt_str.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().union.opt_str };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3271,7 +2974,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll2::__HAZZER_opt_bool.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().union.opt_bool }) })
   }
 
@@ -3279,7 +2982,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll2::__HAZZER_opt_recursive.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_recursive } as *mut _ as *mut u8)) }
   }
 
@@ -3287,7 +2990,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll2::__HAZZER_opt_nested.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_nested } as *mut _ as *mut u8)) }
   }
 
@@ -3295,12 +2998,12 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll2::__HAZZER_opt_choice.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_choice } as *mut _ as *mut u8)) }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll2::__HAZZER_rep_i32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_i32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3311,7 +3014,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll2::__HAZZER_rep_i64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_i64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3322,7 +3025,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll2::__HAZZER_rep_u32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_u32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3333,7 +3036,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll2::__HAZZER_rep_u64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_u64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3344,7 +3047,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll2::__HAZZER_rep_f32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_f32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3355,7 +3058,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll2::__HAZZER_rep_f64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_f64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3366,7 +3069,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll2::__HAZZER_rep_str.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_str };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3377,7 +3080,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll2::__HAZZER_rep_bool.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_bool };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3388,7 +3091,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll2::__HAZZER_rep_recursive.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_recursive };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3399,7 +3102,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll2::__HAZZER_rep_nested.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_nested };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3410,7 +3113,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll2::__HAZZER_rep_choice.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_choice };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -3625,7 +3328,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), __rt::Error> {
-    let mut ctx = __rt::__z::tdp::ParseCtx::new(input, self.arena);
+    let mut ctx = __rt::__z::tdp::parse::Context::new(input, self.arena);
     ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll2::__tdp_info())
   }
 
@@ -3633,7 +3336,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_i32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().union.opt_i32 }) })
   }
   pub fn opt_i32_mut(self) -> __rt::Mut<'proto, i32> {
@@ -3644,7 +3347,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_i32,
+        TestAll2::__tdp_info().field(0),
       )
     }
   }
@@ -3656,7 +3359,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_i64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().union.opt_i64 }) })
   }
   pub fn opt_i64_mut(self) -> __rt::Mut<'proto, i64> {
@@ -3667,7 +3370,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_i64,
+        TestAll2::__tdp_info().field(1),
       )
     }
   }
@@ -3679,7 +3382,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_u32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().union.opt_u32 }) })
   }
   pub fn opt_u32_mut(self) -> __rt::Mut<'proto, u32> {
@@ -3690,7 +3393,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_u32,
+        TestAll2::__tdp_info().field(2),
       )
     }
   }
@@ -3702,7 +3405,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_u64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().union.opt_u64 }) })
   }
   pub fn opt_u64_mut(self) -> __rt::Mut<'proto, u64> {
@@ -3713,7 +3416,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_u64,
+        TestAll2::__tdp_info().field(3),
       )
     }
   }
@@ -3725,7 +3428,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll2::__HAZZER_opt_f32.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().union.opt_f32 }) })
   }
   pub fn opt_f32_mut(self) -> __rt::Mut<'proto, f32> {
@@ -3736,7 +3439,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_f32,
+        TestAll2::__tdp_info().field(4),
       )
     }
   }
@@ -3748,7 +3451,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll2::__HAZZER_opt_f64.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().union.opt_f64 }) })
   }
   pub fn opt_f64_mut(self) -> __rt::Mut<'proto, f64> {
@@ -3759,7 +3462,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_f64,
+        TestAll2::__tdp_info().field(5),
       )
     }
   }
@@ -3771,7 +3474,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll2::__HAZZER_opt_str.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
       let (mut ptr, len) = *unsafe { &self.ptr.as_ref().union.opt_str };
       if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -3786,7 +3489,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_str,
+        TestAll2::__tdp_info().field(6),
       )
     }
   }
@@ -3798,7 +3501,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll2::__HAZZER_opt_bool.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().union.opt_bool }) })
   }
   pub fn opt_bool_mut(self) -> __rt::Mut<'proto, bool> {
@@ -3809,7 +3512,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_bool,
+        TestAll2::__tdp_info().field(7),
       )
     }
   }
@@ -3821,7 +3524,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll2::__HAZZER_opt_recursive.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_recursive } as *mut _ as *mut u8)) }
   }
   pub fn opt_recursive_mut(self) -> __rt::Mut<'proto, TestAll> {
@@ -3832,7 +3535,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_recursive,
+        TestAll2::__tdp_info().field(8),
       )
     }
   }
@@ -3841,7 +3544,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll2::__HAZZER_opt_nested.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_nested } as *mut _ as *mut u8)) }
   }
   pub fn opt_nested_mut(self) -> __rt::Mut<'proto, TestAll_Nested> {
@@ -3852,7 +3555,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_nested,
+        TestAll2::__tdp_info().field(9),
       )
     }
   }
@@ -3861,7 +3564,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll2::__HAZZER_opt_choice.has(self.ptr.as_ptr()) } { return None }
+    if !unsafe { TestAll2::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
     unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_choice } as *mut _ as *mut u8)) }
   }
   pub fn opt_choice_mut(self) -> __rt::Mut<'proto, TestAll2> {
@@ -3872,13 +3575,13 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       __rt::value::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        TestAll2::__HAZZER_opt_choice,
+        TestAll2::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll2::__HAZZER_rep_i32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_i32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3889,7 +3592,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_i32_mut(self) -> __rt::Repeated<'proto, i32> {
     unsafe {
-      TestAll2::__HAZZER_rep_i32.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_i32 } as *mut _ as *mut u8,
         self.arena,
@@ -3898,7 +3601,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll2::__HAZZER_rep_i64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_i64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3909,7 +3612,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_i64_mut(self) -> __rt::Repeated<'proto, i64> {
     unsafe {
-      TestAll2::__HAZZER_rep_i64.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_i64 } as *mut _ as *mut u8,
         self.arena,
@@ -3918,7 +3621,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll2::__HAZZER_rep_u32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_u32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3929,7 +3632,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_u32_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      TestAll2::__HAZZER_rep_u32.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_u32 } as *mut _ as *mut u8,
         self.arena,
@@ -3938,7 +3641,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll2::__HAZZER_rep_u64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_u64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3949,7 +3652,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_u64_mut(self) -> __rt::Repeated<'proto, u64> {
     unsafe {
-      TestAll2::__HAZZER_rep_u64.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_u64 } as *mut _ as *mut u8,
         self.arena,
@@ -3958,7 +3661,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll2::__HAZZER_rep_f32.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_f32 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3969,7 +3672,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_f32_mut(self) -> __rt::Repeated<'proto, f32> {
     unsafe {
-      TestAll2::__HAZZER_rep_f32.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_f32 } as *mut _ as *mut u8,
         self.arena,
@@ -3978,7 +3681,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll2::__HAZZER_rep_f64.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_f64 };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -3989,7 +3692,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_f64_mut(self) -> __rt::Repeated<'proto, f64> {
     unsafe {
-      TestAll2::__HAZZER_rep_f64.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_f64 } as *mut _ as *mut u8,
         self.arena,
@@ -3998,7 +3701,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll2::__HAZZER_rep_str.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_str };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4009,7 +3712,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_str_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      TestAll2::__HAZZER_rep_str.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_str } as *mut _ as *mut u8,
         self.arena,
@@ -4018,7 +3721,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll2::__HAZZER_rep_bool.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_bool };
       __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -4029,7 +3732,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_bool_mut(self) -> __rt::Repeated<'proto, bool> {
     unsafe {
-      TestAll2::__HAZZER_rep_bool.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_bool } as *mut _ as *mut u8,
         self.arena,
@@ -4038,7 +3741,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll2::__HAZZER_rep_recursive.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_recursive };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4049,7 +3752,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_recursive_mut(self) -> __rt::Repeated<'proto, TestAll> {
     unsafe {
-      TestAll2::__HAZZER_rep_recursive.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_recursive } as *mut _ as *mut u8,
         self.arena,
@@ -4058,7 +3761,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll2::__HAZZER_rep_nested.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_nested };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4069,7 +3772,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_nested_mut(self) -> __rt::Repeated<'proto, TestAll_Nested> {
     unsafe {
-      TestAll2::__HAZZER_rep_nested.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_nested } as *mut _ as *mut u8,
         self.arena,
@@ -4078,7 +3781,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll2::__HAZZER_rep_choice.has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
+    if !unsafe { TestAll2::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
       let vec = unsafe { &self.ptr.as_ref().union.rep_choice };
       __rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -4089,7 +3792,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_choice_mut(self) -> __rt::Repeated<'proto, TestAll2> {
     unsafe {
-      TestAll2::__HAZZER_rep_choice.init(self.ptr.as_ptr(), self.arena);
+      TestAll2::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
       __rt::Repeated::__wrap(
         unsafe { &mut self.ptr.as_mut().union.rep_choice } as *mut _ as *mut u8,
         self.arena,
@@ -4189,180 +3892,225 @@ mod __priv_TestAll2 {
     if align < 4 { 4 } else { align }
   };
 
-  pub static TDP_INFO: __rt::__z::tdp::TypeAndFields<{22 + 1}> =
-    __rt::__z::tdp::TypeAndFields::<{22 + 1}> {
-      msg: __rt::__z::tdp::Type {
+  pub static TDP_INFO: __rt::__z::tdp::DescStorage<{22 + 1}> =
+    __rt::__z::tdp::DescStorage::<{22 + 1}> {
+      header: __rt::__z::tdp::DescHeader {
         size: {
           let size = TestAll2::__LAYOUT.size();
           assert!(size <= (u32::MAX as usize));
           size as u32
         },
-        tys: {
-          const TYS: &[fn() -> *const __rt::__z::tdp::Type] = &[
+        descs: {
+          const DESCS: &[fn() -> __rt::__z::tdp::Desc] = &[
             TestAll::__tdp_info,
             TestAll_Nested::__tdp_info,
             TestAll2::__tdp_info,
           ];
-          TYS.as_ptr()
+          DESCS.as_ptr()
         },
-        kind: __rt::__z::tdp::TyKind::Choice,
+        num_hasbit_words: 0,
+        kind: __rt::__z::tdp::DescKind::Choice,
       },
       fields: [
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 1,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 2,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 3,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 4,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 5,
-          flags: (__rt::__z::tdp::Kind::F32 as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::F32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 6,
-          flags: (__rt::__z::tdp::Kind::F64 as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::F64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 7,
-          flags: (__rt::__z::tdp::Kind::Str as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Str.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 8,
-          flags: (__rt::__z::tdp::Kind::Bool as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Bool.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 10,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 11,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 1,
+          desc: 1,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 12,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (0 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            0 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 2,
+          desc: 2,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 21,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 22,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 23,
-          flags: (__rt::__z::tdp::Kind::I32 as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 24,
-          flags: (__rt::__z::tdp::Kind::I64 as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::I64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 25,
-          flags: (__rt::__z::tdp::Kind::F32 as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::F32.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 26,
-          flags: (__rt::__z::tdp::Kind::F64 as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::F64.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 27,
-          flags: (__rt::__z::tdp::Kind::Str as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Str.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 28,
-          flags: (__rt::__z::tdp::Kind::Bool as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Bool.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 30,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 0,
+          desc: 0,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 31,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 1,
+          desc: 1,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field {
+        __rt::__z::tdp::FieldStorage {
           number: 32,
-          flags: (__rt::__z::tdp::Kind::Type as u8 as u32) | (1 << 4),
+          flags:
+            __rt::__z::tdp::Kind::Type.raw() << __rt::__z::tdp::Field::KIND_SHIFT |
+            1 << __rt::__z::tdp::Field::REP_SHIFT,
           offset: __priv_TestAll2::UNION_OFFSET as u32,
-          ty: 2,
+          desc: 2,
           hasbit: 0,
         },
-        __rt::__z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+        __rt::__z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
       ],
     };
 

@@ -3,10 +3,10 @@
 use std::marker::PhantomData;
 
 use crate::arena::AVec;
-use crate::arena::Hazzer;
 use crate::arena::RawArena;
 use crate::ptr::Proxied;
 use crate::ptr::ScalarMut;
+use crate::tdp;
 use crate::Mut;
 use crate::Str;
 use crate::StrBuf;
@@ -67,7 +67,7 @@ impl Type for Str {
 pub struct OptMut<'a, T: Type + ?Sized> {
   ptr: *mut u8,
   arena: RawArena,
-  hazzer: &'static Hazzer,
+  field: tdp::Field,
   _ph: PhantomData<&'a mut T>,
 }
 
@@ -76,39 +76,43 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   pub unsafe fn __wrap(
     ptr: *mut u8,
     arena: RawArena,
-    hazzer: &'static Hazzer,
+    field: tdp::Field,
   ) -> Self {
     Self {
       ptr,
       arena,
-      hazzer,
+      field,
       _ph: PhantomData,
     }
   }
 
   /// Returns whether this value is present.
+  #[inline(always)]
   pub fn has(&self) -> bool {
-    unsafe { self.hazzer.has(self.ptr) }
+    unsafe { self.field.has(self.ptr) }
   }
 
   /// Initializes the field, if it isn't already.
+  #[inline(always)]
   pub fn init(&mut self) {
-    unsafe { self.hazzer.init(self.ptr, self.arena) }
+    unsafe { self.field.init(self.ptr, self.arena) }
   }
 
   /// Clears the field.
+  #[inline(always)]
   pub fn clear(&mut self) {
-    unsafe { self.hazzer.clear(self.ptr) }
+    unsafe { self.field.clear(self.ptr) }
   }
 
   /// Converts this mutator into a view, returning a view of the default value
   /// if the view it isn't present.
+  #[inline(always)]
   pub fn as_view(&self) -> View<T> {
     if !self.has() {
       todo!()
     }
 
-    unsafe { T::__make_view(self.ptr.add(self.hazzer.offset as usize)) }
+    unsafe { T::__make_view(self.ptr.add(self.field.offset())) }
   }
 
   /// Converts this mutator into a view, returning a view of the default value
@@ -116,21 +120,21 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   ///
   /// This version consumes the mutator to make the returned view's lifetime as
   /// long as possible.
+  #[inline(always)]
   pub fn into_view(self) -> View<'a, T> {
     if !self.has() {
       todo!()
     }
 
-    unsafe { T::__make_view(self.ptr.add(self.hazzer.offset as usize)) }
+    unsafe { T::__make_view(self.ptr.add(self.field.offset())) }
   }
 
   /// Converts this mutator into a mutator of the underlying type, initializing
   /// the field if it isn't already.
+  #[inline(always)]
   pub fn as_mut(&mut self) -> Mut<T> {
     self.init();
-    unsafe {
-      T::__make_mut(self.ptr.add(self.hazzer.offset as usize), self.arena)
-    }
+    unsafe { T::__make_mut(self.ptr.add(self.field.offset()), self.arena) }
   }
 
   /// Converts this mutator into a mutator of the underlying type, initializing
@@ -138,24 +142,21 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   ///
   /// This version consumes the mutator to make the returned mutator's lifetime
   /// as long as possible.
+  #[inline(always)]
   pub fn into_mut(mut self) -> Mut<'a, T> {
     self.init();
-    unsafe {
-      T::__make_mut(self.ptr.add(self.hazzer.offset as usize), self.arena)
-    }
+    unsafe { T::__make_mut(self.ptr.add(self.field.offset()), self.arena) }
   }
 
   /// Converts this mutator into a mutator of the underlying type, or returns
   /// `None` if it isn't present.
+  #[inline(always)]
   pub fn as_mut_or(&mut self) -> Option<Mut<T>> {
     if !self.has() {
       return None;
     }
     unsafe {
-      Some(T::__make_mut(
-        self.ptr.add(self.hazzer.offset as usize),
-        self.arena,
-      ))
+      Some(T::__make_mut(self.ptr.add(self.field.offset()), self.arena))
     }
   }
 
@@ -164,24 +165,23 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   ///
   /// This version consumes the mutator to make the returned mutator's lifetime
   /// as long as possible.
+  #[inline(always)]
   pub fn into_mut_or(self) -> Option<Mut<'a, T>> {
     if !self.has() {
       return None;
     }
     unsafe {
-      Some(T::__make_mut(
-        self.ptr.add(self.hazzer.offset as usize),
-        self.arena,
-      ))
+      Some(T::__make_mut(self.ptr.add(self.field.offset()), self.arena))
     }
   }
 
   /// Reborrows this mutator with a shorter lifetime.
+  #[inline(always)]
   pub fn reborrow(&mut self) -> OptMut<T> {
     OptMut {
       ptr: self.ptr,
       arena: self.arena,
-      hazzer: self.hazzer,
+      field: self.field,
       _ph: PhantomData,
     }
   }

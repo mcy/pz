@@ -47,54 +47,6 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       "Type::debug": |w| for field in &gen.fields {
         field.in_debug(w);
       },
-      "Type::tables": |w| for gen in &gen.fields {
-        w.emit(
-          vars! {
-            hasbit: gen.hasbit.map(|x| x as i32).unwrap_or(i32::MIN),
-            name: ident(gen.field.name()),
-            raw_name: gen.field.name(),
-            size: |w| {
-              if gen.field.is_repeated() {
-                // This will clear only the FIRST pointer in the AVec that backs
-                // this repeated field. This will set the length, which is
-                // intentionally the first field, to zero.
-                w.write("(usize::BITS / 8) as i32");
-                return;
-              }
-
-              match gen.field.ty() {
-                (TypeEnum::I32 | TypeEnum::U32 | TypeEnum::F32, _) => w.write("4"),
-                (TypeEnum::I64 | TypeEnum::U64 | TypeEnum::F64, _) => w.write("8"),
-                (TypeEnum::Bool, _) => w.write("1"),
-                (TypeEnum::String, _) => w.write("(usize::BITS / 8 * 2) as i32"),
-                (TypeEnum::Type, Some(ty)) => match ty.kind() {
-                    Kind::Enum => w.write("4"),
-                    _ => w.emit(
-                      vars! { Type: type_name(ty) },
-                      "-($Type::__LAYOUT.size() as i32)",
-                    ),
-                },
-                _ => unreachable!(),
-              }
-            }
-          },
-          "
-            #[doc(hidden)]
-            pub const __OFFSET_${raw_name}: u32 = unsafe {
-              let msg = $Type::DEFAULT;
-              let top = msg.ptr.as_ptr().cast::<u8>();
-              let field = &msg.ptr.as_ref().$name as *const _ as *const u8;
-              field.offset_from(top) as u32
-            };
-            #[doc(hidden)]
-            pub const __HAZZER_$raw_name: &$z::Hazzer = &$z::Hazzer {
-              hasbit_or_number: $hasbit,
-              offset: Self::__OFFSET_${raw_name},
-              size: $size,
-            };
-          "
-        )
-      },
       "View::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::ViewImpl, w);
         w.new_line();
@@ -104,7 +56,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         field.in_mut_methods(Where::MutImpl, w);
         w.new_line();
       },
-      tdp_tys: |w| for &ty in &ty_ptrs {
+      tdp_descs: |w| for &ty in &ty_ptrs {
         w.emit(
           vars!{ Submsg: type_name(ty) },
           "
@@ -149,11 +101,18 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               repeated: field.is_repeated() as u32,
             },
             "
-              $z::tdp::Field {
+              $z::tdp::FieldStorage {
                 number: $number,
-                flags: ($z::tdp::Kind::$tdp_kind as u8 as u32) | ($repeated << 4),
-                offset: $Type::__OFFSET_${raw_name},
-                ty: $ty_idx,
+                flags: 
+                  $z::tdp::Kind::$tdp_kind.raw() << $z::tdp::Field::KIND_SHIFT |
+                  $repeated << $z::tdp::Field::REP_SHIFT,
+                offset: unsafe {
+                  let msg = $Type::DEFAULT;
+                  let top = msg.ptr.as_ptr().cast::<u8>();
+                  let field = &msg.ptr.as_ref().$name as *const _ as *const u8;
+                  field.offset_from(top) as u32
+                },
+                desc: $ty_idx,
                 hasbit: $hasbit_index,
               },
             "
@@ -171,6 +130,13 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         ptr: $z::ABox<$priv::Storage>,
         arena: $z::RawArena,
       }
+
+      const _: () = {
+        assert!(
+          std::mem::size_of::<$priv::Storage>() < (u32::MAX as usize),
+          "storage size excees 4GB",
+        );
+      };
 
       impl $Type {
         pub const DEFAULT: $rt::View<'static, Self> = unsafe {
@@ -228,14 +194,13 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           (&mut *raw.cast::<$priv::Storage>()).__hasbits = [0; $hasbit_words];
         }
         #[doc(hidden)]
-        pub fn __tdp_info() -> *const $z::tdp::Type {
-          &$priv::TDP_INFO as *const _ as *const $z::tdp::Type
+        pub fn __tdp_info() -> $z::tdp::Desc {
+          unsafe { $priv::TDP_INFO.get() }
         }
         #[doc(hidden)]
         pub unsafe fn __raw_data(&self) -> &[u8] {
           std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
         }
-        ${Type::tables}
       }
 
       impl Default for $Type {
@@ -315,7 +280,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
 
         pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
-          let mut ctx = $z::tdp::ParseCtx::new(input, self.arena);
+          let mut ctx = $z::tdp::parse::Context::new(input, self.arena);
           ctx.parse(self.ptr.as_ptr() as *mut u8, $Type::__tdp_info())
         }
 
@@ -358,25 +323,26 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           ${Type::fields}    
         }
        
-        pub static TDP_INFO: $z::tdp::TypeAndFields<{$NUM_FIELDS + 1}> =
-          $z::tdp::TypeAndFields::<{$NUM_FIELDS + 1}> {
-            msg: $z::tdp::Type {
+        pub static TDP_INFO: $z::tdp::DescStorage<{$NUM_FIELDS + 1}> =
+          $z::tdp::DescStorage::<{$NUM_FIELDS + 1}> {
+            header: $z::tdp::DescHeader {
               size: {
                 let size = $Type::__LAYOUT.size();
                 assert!(size <= (u32::MAX as usize));
                 size as u32
               },
-              tys: {
-                const TYS: &[fn() -> *const $z::tdp::Type] = &[
-                  $tdp_tys
+              descs: {
+                const DESCS: &[fn() -> $z::tdp::Desc] = &[
+                  $tdp_descs
                 ];
-                TYS.as_ptr()
+                DESCS.as_ptr()
               },
-              kind: $z::tdp::TyKind::Msg,
+              num_hasbit_words: $hasbit_words,
+              kind: $z::tdp::DescKind::Message,
             },
             fields: [
               $tdp_fields
-              $z::tdp::Field { number: 0, flags: 0, offset: 0, ty: 0, hasbit: 0, },
+              $z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
             ],
           };
 

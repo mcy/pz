@@ -35,6 +35,7 @@ impl<'ccx> GenField<'ccx> {
       vars! {
         name: ident(self.field.name()),
         Name: ident(heck::AsPascalCase(self.field.name())),
+        idx: self.field.index(),
         raw_name: self.field.name(),
         field: |w| {
           if self.field.parent().kind() == Kind::Choice {
@@ -232,7 +233,7 @@ impl GenFieldImpl for SingularScalar {
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Scalar>> {
-          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
+          if !unsafe { $Type::__tdp_info().field($idx).has(self.ptr.as_ptr()) } { return None }
           Some(unsafe { $transmute::<$Storage, $Scalar>(*$field) })
         }
       ",
@@ -257,7 +258,7 @@ impl GenFieldImpl for SingularScalar {
             $rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Type::__HAZZER_$raw_name,
+              $Type::__tdp_info().field($idx),
             )
           }
         }
@@ -324,7 +325,7 @@ impl GenFieldImpl for RepeatedScalar {
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $Scalar> {
-          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
+          if !unsafe { $Type::__tdp_info().field($idx).has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
             let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
@@ -350,7 +351,7 @@ impl GenFieldImpl for RepeatedScalar {
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Scalar> {
           unsafe {
-            $Type::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
+            $Type::__tdp_info().field($idx).init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
               $field_mut as *mut _ as *mut u8,
               self.arena,
@@ -419,7 +420,7 @@ impl GenFieldImpl for SingularString {
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $rt::Str>> {
-          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
+          if !unsafe { $Type::__tdp_info().field($idx).has(self.ptr.as_ptr()) } { return None }
           Some(unsafe {
             let (mut ptr, len) = *$field;
             if ptr.is_null() { ptr = 1 as *mut u8; }
@@ -448,7 +449,7 @@ impl GenFieldImpl for SingularString {
             $rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Type::__HAZZER_$raw_name,
+              $Type::__tdp_info().field($idx),
             )
           }
         }
@@ -513,7 +514,7 @@ impl GenFieldImpl for RepeatedString {
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $rt::Str> {
-          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
+          if !unsafe { $Type::__tdp_info().field($idx).has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
             let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -537,7 +538,7 @@ impl GenFieldImpl for RepeatedString {
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $rt::Str> {
           unsafe {
-            $Type::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
+            $Type::__tdp_info().field($idx).init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
               $field_mut as *mut _ as *mut u8,
               self.arena,
@@ -612,7 +613,7 @@ impl GenFieldImpl for SingularMessage<'_> {
         }
         $deprecated
         pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Submsg>> {
-          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return None }
+          if !unsafe { $Type::__tdp_info().field($idx).has(self.ptr.as_ptr()) } { return None }
           unsafe { Some(<$Submsg as $rt::value::Type>::__make_view($field_mut as *mut _ as *mut u8)) }
         }
       ",
@@ -637,7 +638,7 @@ impl GenFieldImpl for SingularMessage<'_> {
             $rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Type::__HAZZER_$raw_name,
+              $Type::__tdp_info().field($idx),
             )
           }
         }
@@ -702,7 +703,7 @@ impl GenFieldImpl for RepeatedMessage<'_> {
       r"
         $deprecated
         pub fn $name($self) -> $rt::Slice<'$lt, $Submsg> {
-          if !unsafe { $Type::__HAZZER_$raw_name.has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
+          if !unsafe { $Type::__tdp_info().field($idx).has(self.ptr.as_ptr()) } { return $rt::Slice::default() }
           unsafe {
             let vec = $field;
             $rt::Slice::__wrap(vec.as_ptr(), vec.len())
@@ -727,7 +728,7 @@ impl GenFieldImpl for RepeatedMessage<'_> {
         $deprecated
         pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Submsg> {
           unsafe {
-            $Type::__HAZZER_$raw_name.init(self.ptr.as_ptr(), self.arena);
+            $Type::__tdp_info().field($idx).init(self.ptr.as_ptr(), self.arena);
             $rt::Repeated::__wrap(
               $field_mut as *mut _ as *mut u8,
               self.arena,

@@ -28,4 +28,14 @@ pub mod __z {
   pub use super::debug::Debug;
 }
 
-pub use tdp::Error;
+pub use tdp::parse::Error;
+
+pub fn public() {
+  extern "Rust" {
+    fn new() -> &'static mut proto::z::Field;
+  }
+
+  use std::hint::black_box as bb;
+  let field = unsafe { new() };
+  bb(field.number_set(42));
+}

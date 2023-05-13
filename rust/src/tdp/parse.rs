@@ -1,4 +1,4 @@
-//! Table-driven codec support.
+//! TDP parser.
 
 use core::slice;
 use std::alloc::Layout;
@@ -9,6 +9,8 @@ use std::ops::Shl;
 
 use crate::arena::AVec;
 use crate::arena::RawArena;
+use crate::tdp::Desc;
+use crate::tdp::Kind;
 
 pub type Result<T = ()> = std::result::Result<T, Error>;
 
@@ -28,58 +30,6 @@ impl From<io::Error> for Error {
   fn from(e: io::Error) -> Self {
     Self::Io(e)
   }
-}
-
-#[derive(Debug)]
-pub struct Type {
-  pub size: u32,
-  pub tys: *const fn() -> *const Type,
-  pub kind: TyKind,
-}
-
-#[repr(u8)]
-#[derive(Debug, Copy, Clone)]
-pub enum TyKind {
-  Msg = 0,
-  Choice = 1,
-}
-
-#[derive(Debug)]
-pub struct Field {
-  pub number: u32,
-  pub flags: u32,
-  pub offset: u32,
-  pub ty: u16,
-  pub hasbit: u16,
-}
-
-impl Field {
-  unsafe fn kind(&self) -> Kind {
-    mem::transmute((self.flags & 0b1111) as u8)
-  }
-
-  unsafe fn is_repeated(&self) -> bool {
-    self.flags & 0b1_0000 != 0
-  }
-}
-
-#[repr(C)]
-#[derive(Debug)]
-pub struct TypeAndFields<const FIELDS: usize> {
-  pub msg: Type,
-  pub fields: [Field; FIELDS],
-}
-unsafe impl<const FIELDS: usize> Sync for TypeAndFields<FIELDS> {}
-
-#[repr(u8)]
-pub enum Kind {
-  I32 = 0,
-  I64 = 1,
-  F32 = 2,
-  F64 = 3,
-  Bool = 4,
-  Str = 5,
-  Type = 6,
 }
 
 struct WireFormat<'r> {
@@ -299,7 +249,7 @@ impl<'r> WireFormat<'r> {
   }
 }
 
-pub struct ParseCtx<'r> {
+pub struct Context<'r> {
   input: WireFormat<'r>,
   arena: RawArena,
 
@@ -313,7 +263,7 @@ pub enum Limit {
   Group(u32),
 }
 
-impl<'r> ParseCtx<'r> {
+impl<'r> Context<'r> {
   pub fn new(input: &'r mut dyn io::Read, arena: RawArena) -> Self {
     Self {
       input: WireFormat::new(input),
@@ -326,10 +276,9 @@ impl<'r> ParseCtx<'r> {
     self.group_stack.last().copied().unwrap_or(0) != 0
   }
 
-  pub fn parse(&mut self, raw: *mut u8, msg: *const Type) -> Result {
-    let mut ty_stack = vec![(raw, msg, unsafe { msg.add(1).cast::<Field>() })];
-
-    'parse: while let Some((raw, msg, field)) = ty_stack.last_mut() {
+  pub fn parse(&mut self, raw: *mut u8, desc: Desc) -> Result {
+    let mut ty_stack = vec![(raw, desc.first_field())];
+    'parse: while let Some((raw, field)) = ty_stack.last_mut() {
       if !self.in_group() && self.input.pop_limit() {
         ty_stack.pop();
         self.group_stack.pop();
@@ -343,14 +292,17 @@ impl<'r> ParseCtx<'r> {
         return eof();
       }
 
-      let tag = self.input.tag()?;
-      if tag.number == 0 {
-        if tag.wire_type == 0 && ty_stack.len() == 1 {
+      if self.input.buf().starts_with(&[0]) {
+        if ty_stack.len() == 1 {
           break;
+        } else {
+          let tag = self.input.tag()?;
+          self.skip(tag)?;
+          continue;
         }
-        return Err(Error::BadTag);
       }
 
+      let tag = self.input.tag()?;
       if tag.wire_type == WireFormat::EGROUP
         && self.group_stack.last().copied().unwrap_or(0) == tag.number
       {
@@ -358,66 +310,33 @@ impl<'r> ParseCtx<'r> {
         continue;
       }
 
+      let Some(field) = field.as_mut() else {
+        self.skip(tag)?;
+        continue;
+      };
+
       let start = *field;
       loop {
-        let number = unsafe { &**field }.number;
+        let number = field.number();
         if number == tag.number {
           break;
         }
 
-        if number == 0 {
-          *field = unsafe { msg.add(1).cast::<Field>() }
-        } else {
-          *field = unsafe { field.add(1) };
-        }
+        *field = field.next();
 
         if *field == start {
           self.skip(tag)?;
           continue 'parse;
         }
       }
-      let field = unsafe { &**field };
 
-      let is_repeated = unsafe { field.is_repeated() };
-      if matches!(unsafe { (&**msg).kind }, TyKind::Choice) {
-        let which = unsafe { &mut *raw.cast::<u32>() };
-        if *which != field.number {
-          *which = field.number;
-          let value = unsafe { raw.add(field.offset as usize) };
-          if is_repeated {
-            unsafe {
-              // We need to vaporize the *whole* AVec, since we don't know a
-              // priori if it had a compatible layout.
-              value.write_bytes(0, 3 * mem::size_of::<usize>());
-            }
-          } else {
-            unsafe {
-              // We need to zero out any pointers, so that we don't misinterpret
-              // some other data as a pointer inappropriately.
-              match field.kind() {
-                Kind::Str => {
-                  value.write_bytes(0, mem::size_of::<(*mut u8, usize)>())
-                }
-                Kind::Type => value.write_bytes(0, mem::size_of::<*mut u8>()),
-                _ => {} // Non-pointer types.
-              }
-            }
-          }
-        }
-      } else if !is_repeated {
-        let hasbit_index = field.hasbit as usize / 32;
-        let hasbit_mask = 1u32 << (field.hasbit % 32);
-
-        unsafe {
-          // NOTE: The hasbits are always the first thing in the message
-          // right now.
-          *raw.cast::<u32>().add(hasbit_index) |= hasbit_mask;
-        }
+      unsafe {
+        field.init(*raw, self.arena);
       }
 
       // Here, `field` now points to the field corresponding to the current
       // message.
-      match unsafe { field.kind() } {
+      match field.kind() {
         k @ (Kind::I32 | Kind::I64 | Kind::F32 | Kind::F64 | Kind::Bool) => {
           if matches!(k, Kind::F32) && tag.wire_type != WireFormat::I32 {
             self.skip(tag)?;
@@ -438,40 +357,40 @@ impl<'r> ParseCtx<'r> {
               continue;
             }
           };
-          match (k, is_repeated) {
+          match (k, field.is_repeated()) {
             (Kind::I32 | Kind::F32, false) => unsafe {
               // Singular i32.
-              let ptr = raw.add(field.offset as usize);
+              let ptr = raw.add(field.offset());
               ptr.cast::<u32>().write(v as u32);
             },
             (Kind::I64 | Kind::F64, false) => unsafe {
               // Singular i64.
-              let ptr = raw.add(field.offset as usize);
+              let ptr = raw.add(field.offset());
               ptr.cast::<u64>().write(v);
             },
             (Kind::Bool, false) => unsafe {
               // Singular bool.
-              let ptr = raw.add(field.offset as usize);
+              let ptr = raw.add(field.offset());
               ptr.cast::<bool>().write(v != 0);
             },
 
             (Kind::I32 | Kind::F32, true) => unsafe {
               // Repeated i32.
-              let ptr = raw.add(field.offset as usize);
+              let ptr = raw.add(field.offset());
               let vec = &mut *ptr.cast::<AVec<u32>>();
               vec.resize(vec.len() + 1, self.arena);
               *vec.as_mut_slice().last_mut().unwrap_unchecked() = v as u32;
             },
             (Kind::I64 | Kind::F64, true) => unsafe {
               // Repeated i64.
-              let ptr = raw.add(field.offset as usize);
+              let ptr = raw.add(field.offset());
               let vec = &mut *ptr.cast::<AVec<u64>>();
               vec.resize(vec.len() + 1, self.arena);
               *vec.as_mut_slice().last_mut().unwrap_unchecked() = v;
             },
             (Kind::Bool, true) => unsafe {
               // Repeated bool.
-              let ptr = raw.add(field.offset as usize);
+              let ptr = raw.add(field.offset());
               let vec = &mut *ptr.cast::<AVec<bool>>();
               vec.resize(vec.len() + 1, self.arena);
               *vec.as_mut_slice().last_mut().unwrap_unchecked() = v != 0;
@@ -486,26 +405,27 @@ impl<'r> ParseCtx<'r> {
           }
 
           let len = self.input.varint32()? as usize;
-          let (slice_ptr, slice_len): &mut (*mut u8, usize) = if !is_repeated {
-            // Singular str.
-            unsafe {
-              let ptr = raw.add(field.offset as usize);
-              &mut *ptr.cast::<(*mut u8, usize)>()
-            }
-          } else {
-            // Repeated str.
-            unsafe {
-              let ptr = raw.add(field.offset as usize);
-              let vec = &mut *ptr.cast::<AVec<(*mut u8, usize)>>();
-              vec.resize(vec.len() + 1, self.arena);
-              vec.as_mut_slice().last_mut().unwrap_unchecked()
-            }
-          };
-
-          unsafe {
-            if len == 0 {
-              *slice_len = 0;
+          let (slice_ptr, slice_len): &mut (*mut u8, usize) =
+            if !field.is_repeated() {
+              // Singular str.
+              unsafe {
+                let ptr = raw.add(field.offset());
+                &mut *ptr.cast::<(*mut u8, usize)>()
+              }
             } else {
+              // Repeated str.
+              unsafe {
+                let ptr = raw.add(field.offset());
+                let vec = &mut *ptr.cast::<AVec<(*mut u8, usize)>>();
+                vec.resize(vec.len() + 1, self.arena);
+                vec.as_mut_slice().last_mut().unwrap_unchecked()
+              }
+            };
+
+          if len == 0 {
+            *slice_len = 0;
+          } else {
+            unsafe {
               if *slice_len < len {
                 *slice_ptr = self
                   .arena
@@ -536,20 +456,16 @@ impl<'r> ParseCtx<'r> {
             }
           }
 
-          let submsg_ptr = unsafe { *(&**msg).tys.add(field.ty as usize) }();
-          let submsg = unsafe { &*submsg_ptr };
-          let layout = unsafe {
-            Layout::from_size_align_unchecked(submsg.size as usize, 8)
-          };
-
-          let raw_ptr: *mut u8 = if !is_repeated {
+          let desc = unsafe { field.desc() };
+          let layout = desc.layout();
+          let raw_ptr: *mut u8 = if !field.is_repeated() {
             // Singular msg.
             unsafe {
-              let ptr = raw.add(field.offset as usize).cast::<*mut u8>();
+              let ptr = raw.add(field.offset()).cast::<*mut u8>();
               let mut sub = ptr.read();
               if sub.is_null() {
                 sub = self.arena.alloc(layout).as_ptr();
-                sub.write_bytes(0, submsg.size as usize);
+                sub.write_bytes(0, layout.size());
                 ptr.write(sub);
               }
               sub
@@ -557,7 +473,7 @@ impl<'r> ParseCtx<'r> {
           } else {
             // Repeated msg.
             unsafe {
-              let ptr = raw.add(field.offset as usize);
+              let ptr = raw.add(field.offset());
               let vec = &mut *ptr.cast::<AVec<*mut u8>>();
 
               vec.resize_msg(vec.len() + 1, self.arena, layout);
@@ -565,8 +481,7 @@ impl<'r> ParseCtx<'r> {
             }
           };
 
-          ty_stack
-            .push((raw_ptr, submsg_ptr, unsafe { submsg_ptr.add(1).cast() }));
+          ty_stack.push((raw_ptr, desc.first_field()));
         }
       }
     }
