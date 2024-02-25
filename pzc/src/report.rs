@@ -254,7 +254,7 @@ impl Report {
             // Normalize the range so that it is never just one space long.
             // If this would cause range.1 to go past the end of the input length,
             // we swap them around instead.
-            if end as usize == slice.source.len() {
+            if end == slice.source.len() {
               start = end - 1;
             } else {
               end = start + 1;
@@ -262,7 +262,7 @@ impl Report {
           }
 
           slice.annotations.push(snippet::SourceAnnotation {
-            range: (start as usize, end as usize),
+            range: (start, end),
             label: text,
             annotation_type: if *is_remark {
               snippet::AnnotationType::Info
@@ -323,7 +323,7 @@ impl Report {
       }
 
       if i != 0 {
-        writeln!(sink, "")?;
+        writeln!(sink)?;
       }
       writeln!(sink, "{}", DisplayList::from(snippet))?;
     }
@@ -333,7 +333,7 @@ impl Report {
       return Ok(false);
     }
 
-    writeln!(sink, "")?;
+    writeln!(sink)?;
     let message = match errors {
       1 => "aborted due to previous error".into(),
       n => format!("aborted due to {n} errors"),
@@ -354,4 +354,10 @@ impl Report {
 
     Ok(true)
   }
+}
+
+impl Default for Report {
+    fn default() -> Self {
+        Self::new()
+    }
 }

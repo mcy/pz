@@ -136,7 +136,7 @@ fn main() {
     break;
   }
 
-  let plugin = match plugin_name.as_deref() {
+  let plugin = match plugin_name {
     plugin @ (None | Some("bundle") | Some("rust")) => {
       env::set_var("_PZ_SELF_EXEC", plugin.unwrap_or("bundle"));
       env::current_exe().unwrap()

@@ -34,7 +34,7 @@ fn parse_path(lexer: &mut Lexer) -> Result<syn::Path> {
     }
   }
 
-  while let Some(_) = lexer.take_exact(".")? {
+  while lexer.take_exact(".")?.is_some() {
     match lexer.expect(&[Kind::Ident])? {
       Token::Ident(id) => components.push(id),
       _ => break,
@@ -51,7 +51,7 @@ fn parse_ident(lexer: &mut Lexer) -> Result<syn::Ident> {
   // We go through parse_path to catch a path where we wanted a single
   // identifier.
   let idents = parse_path(lexer)?;
-  if idents.components.len() == 0 {
+  if idents.components.is_empty() {
     return Ok(syn::Ident(lexer.zero_width_span()));
   }
 
@@ -326,7 +326,7 @@ fn parse_item(
           if inside == Container::Struct {
             lexer
               .error(format_args!("{inside} fields cannot have numbers"))
-              .saying(&n, "remove this number")
+              .saying(n, "remove this number")
               .remark(
                 outer_name,
                 format_args!("declared within this {inside}"),
@@ -353,7 +353,7 @@ fn parse_item(
         }
 
         let mut ty = None;
-        if let Some(_) = lexer.take_exact(":")? {
+        if lexer.take_exact(":")?.is_some() {
           let typ = parse_type(lexer)?;
           last = Some(typ.span());
           if inside == Container::Enum {

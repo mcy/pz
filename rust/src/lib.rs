@@ -37,5 +37,6 @@ pub fn public() {
 
   use std::hint::black_box as bb;
   let field = unsafe { new() };
-  bb(field.number_set(42));
+  field.number_set(42);
+  bb(field);
 }

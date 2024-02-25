@@ -87,7 +87,7 @@ impl Str {
   where
     Range: SliceIndex<[u8], Output = [u8]>,
   {
-    self.as_bytes().get(idx).map(|bytes| Str::new(bytes))
+    self.as_bytes().get(idx).map(Str::new)
   }
 
   /// Gets a mutable substring given by an range.
@@ -173,8 +173,7 @@ impl Str {
   pub fn chars(&self) -> impl Iterator<Item = char> + '_ {
     self
       .utf8_chunks()
-      .map(|chunk| chunk.unwrap_or("\u{fffd}").chars())
-      .flatten()
+      .flat_map(|chunk| chunk.unwrap_or("\u{fffd}").chars())
   }
 }
 
@@ -384,7 +383,7 @@ impl Ord for Str {
 
 impl PartialOrd<Str> for Str {
   fn partial_cmp(&self, other: &Str) -> Option<std::cmp::Ordering> {
-    self.as_bytes().partial_cmp(other.as_bytes())
+    Some(self.cmp(other))
   }
 }
 

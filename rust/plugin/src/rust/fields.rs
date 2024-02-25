@@ -13,6 +13,7 @@ use crate::Field;
 use crate::Type;
 
 #[derive(Copy, Clone, PartialEq, Eq)]
+#[allow(clippy::enum_variant_names)]
 pub enum Where {
   TypeImpl,
   ViewImpl,
@@ -148,7 +149,7 @@ impl<'ccx> FieldGenerators<'ccx> {
 
 struct SingularScalar;
 
-fn scalar_storage_type<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
+fn scalar_storage_type(field: Field) -> impl fmt::Display + '_ {
   emit::display(move |f| match field.ty() {
     (TypeEnum::I32, _) => f.write_str("u32"),
     (TypeEnum::U32, _) => f.write_str("u32"),
@@ -162,7 +163,7 @@ fn scalar_storage_type<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
   })
 }
 
-fn scalar_type<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
+fn scalar_type(field: Field) -> impl fmt::Display + '_ {
   emit::display(move |f| match field.ty() {
     (TypeEnum::I32, _) => f.write_str("i32"),
     (TypeEnum::U32, _) => f.write_str("u32"),
@@ -176,7 +177,7 @@ fn scalar_type<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
   })
 }
 
-fn scalar_default<'ccx>(field: Field<'ccx>) -> impl fmt::Display + 'ccx {
+fn scalar_default(field: Field) -> impl fmt::Display + '_ {
   emit::display(move |f| match field.ty() {
     (TypeEnum::I32, _) => f.write_str("0"),
     (TypeEnum::U32, _) => f.write_str("0"),

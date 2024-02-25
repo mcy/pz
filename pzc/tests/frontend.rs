@@ -178,7 +178,7 @@ fn run_pz(filesystem: &[(&str, &[u8])], cli: &[&str]) -> PzExit {
   }
 
   PzExit {
-    bundle: fs::read(&tmpdir.join("bundle.pb")).unwrap(),
+    bundle: fs::read(tmpdir.join("bundle.pb")).unwrap(),
     stderr,
     exit_code: 0,
   }

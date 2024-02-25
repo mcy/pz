@@ -1,7 +1,10 @@
 //! Arena support.
 
+#![allow(clippy::missing_safety_doc)]
+
 use std::alloc::Layout;
 use std::mem;
+use std::ptr;
 use std::ptr::NonNull;
 use std::slice;
 
@@ -11,6 +14,7 @@ pub struct RawArena {
 }
 
 impl RawArena {
+  #[allow(clippy::new_without_default)]
   pub fn new() -> Self {
     Self {
       bump: Box::leak(Box::new(bumpalo::Bump::new())),
@@ -18,7 +22,9 @@ impl RawArena {
   }
 
   pub fn null() -> Self {
-    Self { bump: 0 as *mut _ }
+    Self {
+      bump: ptr::null_mut(),
+    }
   }
 
   pub fn alloc(&self, layout: Layout) -> NonNull<u8> {
@@ -95,6 +101,7 @@ impl<T> AVec<T> {
     self.ptr
   }
 
+  #[allow(clippy::len_without_is_empty)]
   pub fn len(&self) -> usize {
     self.len
   }

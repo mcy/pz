@@ -38,7 +38,7 @@ where
   }
 
   unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: RawArena) {
-    (&mut *ptr.cast::<AVec<T>>()).resize(new_len, arena)
+    (*ptr.cast::<AVec<T>>()).resize(new_len, arena)
   }
 }
 
@@ -60,7 +60,7 @@ impl Type for Str {
   }
 
   unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: RawArena) {
-    (&mut *ptr.cast::<AVec<(*mut u8, usize)>>()).resize(new_len, arena)
+    (*ptr.cast::<AVec<(*mut u8, usize)>>()).resize(new_len, arena)
   }
 }
 

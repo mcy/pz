@@ -3,7 +3,6 @@
 use core::slice;
 use std::alloc::Layout;
 use std::io;
-use std::mem;
 use std::ops::BitOr;
 use std::ops::Shl;
 

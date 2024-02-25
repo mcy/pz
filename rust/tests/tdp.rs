@@ -91,7 +91,7 @@ fn smoke() {
   assert_eq!(proto.opt_f32(), 777.77);
   assert_eq!(proto.opt_f64(), -f64::INFINITY);
   assert_eq!(proto.opt_str(), "a normal-looking string");
-  assert_eq!(proto.opt_bool(), false);
+  assert!(!proto.opt_bool());
   assert_eq!(proto.opt_recursive().opt_str(), b"a nasty str\xffing");
   assert!(proto.opt_recursive().opt_recursive_or().is_some());
   assert_eq!(proto.opt_nested().a(), -1);

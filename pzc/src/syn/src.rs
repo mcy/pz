@@ -19,12 +19,12 @@ pub struct File(u32);
 
 impl File {
   /// Returns the path of this file.
-  pub fn path<'scx>(self, scx: &'scx SourceCtx) -> &'scx str {
+  pub fn path(self, scx: &SourceCtx) -> &str {
     &scx.files[self.0 as usize].0
   }
 
   /// Returns the fill text of this file.
-  pub fn text<'scx>(self, scx: &'scx SourceCtx) -> &'scx str {
+  pub fn text(self, scx: &SourceCtx) -> &str {
     &scx.files[self.0 as usize].1
   }
 }
@@ -85,17 +85,17 @@ impl Span {
   }
 
   /// Returns the file this span points into.
-  pub fn file<'scx>(self, scx: &'scx SourceCtx) -> File {
+  pub fn file(self, scx: &SourceCtx) -> File {
     scx.spans[self.0 as usize].file
   }
 
   /// Returns the text this span was parsed from.
-  pub fn text<'scx>(self, scx: &'scx SourceCtx) -> &'scx str {
+  pub fn text(self, scx: &SourceCtx) -> &str {
     &self.file(scx).text(scx)[self.range(scx)]
   }
 
   /// Returns ancillary information attached to this span.
-  pub fn info<'scx>(self, scx: &'scx SourceCtx) -> &'scx SpanInfo {
+  pub fn info(self, scx: &SourceCtx) -> &SpanInfo {
     let SpanOffsets { info, .. } = scx.spans[self.0 as usize];
     if info == !0 {
       const EMPTY: &SpanInfo = &SpanInfo {
@@ -109,7 +109,7 @@ impl Span {
 
   /// Returns a mutable reference to ancillary information attached to this
   /// span.
-  pub fn info_mut<'scx>(self, scx: &'scx mut SourceCtx) -> &'scx mut SpanInfo {
+  pub fn info_mut(self, scx: &mut SourceCtx) -> &mut SpanInfo {
     let SpanOffsets { info, .. } = &mut scx.spans[self.0 as usize];
     if *info == !0 {
       scx.span_info.push(Default::default());
@@ -258,4 +258,10 @@ impl SourceCtx {
     });
     span
   }
+}
+
+impl Default for SourceCtx {
+    fn default() -> Self {
+        Self::new()
+    }
 }

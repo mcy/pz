@@ -29,13 +29,13 @@ pub fn ident(name: impl fmt::Display) -> impl fmt::Display {
   })
 }
 
-pub fn type_name<'ccx>(ty: Type<'ccx>) -> impl fmt::Display + 'ccx {
+pub fn type_name(ty: Type) -> impl fmt::Display + '_ {
   emit::display(move |f| {
-    fmt::Display::fmt(&ident(&ty.name().replace(".", "_")), f)
+    fmt::Display::fmt(&ident(&ty.name().replace('.', "_")), f)
   })
 }
 
-pub fn deprecated<'a>(reason: Option<&'a str>) -> impl fmt::Display + 'a {
+pub fn deprecated(reason: Option<&str>) -> impl fmt::Display + '_ {
   emit::display(move |f| match reason {
     Some(value) => write!(f, "#[deprecated = {value:?}]"),
     _ => Ok(()),

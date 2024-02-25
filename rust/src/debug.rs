@@ -77,9 +77,8 @@ impl<'a, 'b> Debug<'a, 'b> {
       for (i, v) in iter.enumerate() {
         if i != 0 {
           self.fmt.write_str(", ")?;
-        } else {
         }
-        v.fmt(&mut self.fmt)?;
+        v.fmt(self.fmt)?;
       }
       self.fmt.write_char(']')?;
       return Ok(());
@@ -94,7 +93,7 @@ impl<'a, 'b> Debug<'a, 'b> {
       } else {
         self.new_line(true)?;
       }
-      v.fmt(&mut self.fmt)?;
+      v.fmt(self.fmt)?;
     }
     self.comma(true)?;
     self.indent -= 2;

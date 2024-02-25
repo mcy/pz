@@ -52,7 +52,7 @@ impl fmt::Display for Kind<'_> {
 }
 
 impl Token {
-  fn display<'a>(self, scx: &'a SourceCtx) -> impl fmt::Display + 'a {
+  fn display(self, scx: &SourceCtx) -> impl fmt::Display + '_ {
     struct Display<'a>(&'a SourceCtx, Token);
     impl fmt::Display for Display<'_> {
       fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -176,11 +176,11 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
   }
 
   pub fn scx(&self) -> &SourceCtx {
-    &self.scx
+    self.scx
   }
 
   pub fn scx_mut(&mut self) -> &mut SourceCtx {
-    &mut self.scx
+    self.scx
   }
 
   pub fn error(&mut self, msg: impl fmt::Display) -> &mut report::Diagnostic {
@@ -228,7 +228,7 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
       Some('/') => {
         // Doc comment. Simply take everything until the next newline.
         let start = self.cursor();
-        let len = self.rest().find("\n").unwrap_or(self.rest().len());
+        let len = self.rest().find('\n').unwrap_or(self.rest().len());
         self.advance(len as u32);
         Token::Doc(self.span(start))
       }
@@ -254,7 +254,7 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
     };
 
     if !self.unprocessed_comments.is_empty() {
-      tok.span().info_mut(&mut self.scx).comments =
+      tok.span().info_mut(self.scx).comments =
         mem::take(&mut self.unprocessed_comments);
     }
 
@@ -266,7 +266,7 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
 
   #[track_caller]
   pub fn expect(&mut self, kinds: &[Kind]) -> Result<Token> {
-    Ok(self.next()?.expect(&mut self.scx, self.report, kinds))
+    Ok(self.next()?.expect(self.scx, self.report, kinds))
   }
 
   #[track_caller]
@@ -289,13 +289,13 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
   fn cursor(&self) -> u32 {
     self
       .cursor
-      .unwrap_or(self.file.text(&self.scx).len() as u32)
+      .unwrap_or(self.file.text(self.scx).len() as u32)
   }
 
   fn advance(&mut self, value: u32) {
     self.cursor = self.cursor.and_then(|c| {
       let c = c.checked_add(value)?;
-      if c as usize >= self.file.text(&self.scx).len() {
+      if c as usize >= self.file.text(self.scx).len() {
         return None;
       }
 
@@ -312,7 +312,7 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
   }
 
   fn rest(&self) -> &str {
-    &self.file.text(&self.scx)[self.cursor() as usize..]
+    &self.file.text(self.scx)[self.cursor() as usize..]
   }
 
   fn starts_with(&self, pat: &str) -> bool {
@@ -448,7 +448,7 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
     let open = self.take_str("\"").unwrap();
 
     while let Some(next) = self.next_char() {
-      if let Some(_) = self.take_str("\\\"") {
+      if self.take_str("\\\"").is_some() {
         continue;
       }
 
@@ -456,7 +456,7 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
       if next == '"' {
         let lit = StrLit(self.span(start));
         // Work around `new_span` requiring an &mut self.
-        let text = unsafe { mem::transmute::<&str, &str>(lit.text(&self.scx)) };
+        let text = unsafe { mem::transmute::<&str, &str>(lit.text(self.scx)) };
         let _ = unquote(text, &mut io::sink(), |start, end, msg| {
           let span = self.scx.new_span(self.file, start, end);
           self.report.error(msg).at(span);
@@ -492,7 +492,7 @@ impl<'scx, 'report> Lexer<'scx, 'report> {
     }
     let span = self.span(start);
     let digits =
-      &self.file.text(&self.scx)[digits_start as usize..self.cursor() as usize];
+      &self.file.text(self.scx)[digits_start as usize..self.cursor() as usize];
 
     // Don't bother checking for overflow; other code can complain this is out
     // of range elsewhere.
@@ -531,7 +531,8 @@ pub fn unquote(
       '\\' => b'\\',
       '"' => b'"',
       'x' => {
-        let Some(digits) = quoted.get(offset as usize..offset as usize + 2) else {
+        let Some(digits) = quoted.get(offset as usize..offset as usize + 2)
+        else {
           error(offset - 2, offset, &"unterminated escape sequence");
           break;
         };

@@ -73,7 +73,7 @@ impl<'syn, 'rcx> Type<'syn, 'rcx> {
     index: usize,
     body: impl FnOnce(&Field<'syn, 'rcx>) -> R,
   ) -> Option<R> {
-    self.fields.borrow().get(index).map(|x| body(&x))
+    self.fields.borrow().get(index).map(body)
   }
 
   pub fn fields<R>(&self, body: impl FnOnce(&[Field<'syn, 'rcx>]) -> R) -> R {
@@ -85,7 +85,7 @@ impl<'syn, 'rcx> Type<'syn, 'rcx> {
     index: usize,
     body: impl FnOnce(&Type<'syn, 'rcx>) -> R,
   ) -> Option<R> {
-    self.nesteds.borrow().get(index).map(|x| body(&x))
+    self.nesteds.borrow().get(index).map(|x| body(x))
   }
 
   pub fn nesteds<R>(

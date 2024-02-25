@@ -32,9 +32,7 @@ impl CodegenCtx {
   }
 
   /// Returns an iterator over types that we need to generate.
-  pub fn types_to_generate<'ccx>(
-    &'ccx self,
-  ) -> impl Iterator<Item = Type<'ccx>> + 'ccx {
+  pub fn types_to_generate(&self) -> impl Iterator<Item = Type> + '_ {
     self.req.requested_indices.iter().map(|&idx| Type {
       ctx: self,
       bundle: self.bundle(),
@@ -286,7 +284,7 @@ pub fn exec_plugin(
   }
 
   io::stdout()
-    .write(&resp.encode_to_vec())
+    .write_all(&resp.encode_to_vec())
     .expect("failed to write response proto");
 
   std::process::exit(0);

@@ -476,7 +476,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
         let mut numbers = HashMap::<i32, syn::Span>::new();
         for field in &decl.items {
           let syn::Item::Field(field) = field else { continue };
-          let field_ty = field.ty.as_ref().and_then(|t| {
+          let field_ty = field.ty.as_ref().map(|t| {
             let kind = match &t.kind {
               syn::TypeKind::I32 => ir::FieldTypeKind::I32,
               syn::TypeKind::U32 => ir::FieldTypeKind::U32,
@@ -488,7 +488,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
               syn::TypeKind::String => ir::FieldTypeKind::String,
 
               syn::TypeKind::Path(path) => 'name_resolve: {
-                assert!(path.components.len() > 0);
+                assert!(!path.components.is_empty());
 
                 // Two cases:
                 // - A single-element path referring to an item in this or a
@@ -501,7 +501,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
                   loop {
                     let resolved = search_in.nesteds(|tys| {
                       for ty in tys {
-                        let suffix = ty.name().name.split(".").last().unwrap();
+                        let suffix = ty.name().name.split('.').last().unwrap();
                         if suffix == name {
                           // Rust tries to infer an over-short lifetime here?
                           let ty: &'rcx ir::Type<'src, 'rcx> = ty;
@@ -535,10 +535,10 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
               }
             };
 
-            Some(ir::FieldType {
+            ir::FieldType {
               is_repeated: t.repeated.is_some(),
               kind,
-            })
+            }
           });
 
           let field_number = field.number.and_then(|lit| {
@@ -661,8 +661,8 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
     }
   }
 
-  fn type_attrs<'rcx>(
-    &'rcx self,
+  fn type_attrs(
+    &self,
     decl: &syn::Decl,
     report: &mut Report,
   ) -> proto::r#type::Attrs {
@@ -670,12 +670,12 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
     for attr in &decl.attrs {
       match &attr.kind {
         syn::AttrKind::Doc => {
-          let text = attr.span().text(&self.scx);
+          let text = attr.span().text(self.scx);
           let doc = text.trim_start_matches("///").trim();
           attrs.docs.push(doc.to_string());
         }
         syn::AttrKind::At(path) => {
-          if path.is_exactly(&self.scx, &["deprecated"]) {
+          if path.is_exactly(self.scx, &["deprecated"]) {
             if attrs.deprecated.is_some() {
               report
                 .error("cannot specify `@deprecated` multiple times")
@@ -685,7 +685,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
             attrs.deprecated = match &attr.value {
               syn::AttrValue::None => Some(String::new()),
               syn::AttrValue::Str(str) => {
-                Some(str.unescape_utf8(&self.scx, report))
+                Some(str.unescape_utf8(self.scx, report))
               }
               _ => {
                 report
@@ -698,7 +698,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
             report
               .error(format_args!(
                 "unknown attribute `{}`",
-                path.join(&self.scx)
+                path.join(self.scx)
               ))
               .at(attr);
           }
@@ -709,8 +709,8 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
     attrs
   }
 
-  fn field_attrs<'rcx>(
-    &'rcx self,
+  fn field_attrs(
+    &self,
     field: &syn::Field,
     report: &mut Report,
   ) -> proto::field::Attrs {
@@ -718,12 +718,12 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
     for attr in &field.attrs {
       match &attr.kind {
         syn::AttrKind::Doc => {
-          let text = attr.span().text(&self.scx);
+          let text = attr.span().text(self.scx);
           let doc = text.trim_start_matches("///").trim();
           attrs.docs.push(doc.to_string());
         }
         syn::AttrKind::At(path) => {
-          if path.is_exactly(&self.scx, &["deprecated"]) {
+          if path.is_exactly(self.scx, &["deprecated"]) {
             if attrs.deprecated.is_some() {
               report
                 .error("cannot specify `@deprecated` multiple times")
@@ -733,7 +733,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
             attrs.deprecated = match &attr.value {
               syn::AttrValue::None => Some(String::new()),
               syn::AttrValue::Str(str) => {
-                Some(str.unescape_utf8(&self.scx, report))
+                Some(str.unescape_utf8(self.scx, report))
               }
               _ => {
                 report
@@ -746,7 +746,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
             report
               .error(format_args!(
                 "unknown attribute `{}`",
-                path.join(&self.scx)
+                path.join(self.scx)
               ))
               .at(attr);
           }

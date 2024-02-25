@@ -166,6 +166,10 @@ impl Field {
   }
 
   /// Checks whether this field is set in a raw allocated value.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must point to a valid, allocated value of this type.
   pub unsafe fn has(&self, raw: *mut u8) -> bool {
     if self.parent().is_choice() {
       return raw.cast::<u32>().read() == self.number();
@@ -179,6 +183,10 @@ impl Field {
   }
 
   /// Initializes this field in a raw allocated value.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must point to a valid, allocated value of this type.
   #[inline(always)]
   pub unsafe fn init(&self, raw: *mut u8, arena: RawArena) {
     let value = raw.add(self.offset());
@@ -233,6 +241,11 @@ impl Field {
     value.write_bytes(0, to_overwrite);
   }
 
+  /// Clears this value.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must point to a valid, allocated value of this type.
   pub unsafe fn clear(&self, raw: *mut u8) {
     if self.parent().is_choice() {
       raw.cast::<u32>().write(0);

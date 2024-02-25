@@ -207,7 +207,7 @@ impl fmt::Display for SourceWriter {
         for _ in 0..*indent {
           f.write_char(' ')?;
         }
-        f.write_str(&data)?;
+        f.write_str(data)?;
         f.write_char('\n')?;
 
         last_was_empty = false;
@@ -235,14 +235,14 @@ enum Token<'tpl> {
 
 impl<'tpl> Template<'tpl> {
   fn parse(tpl: &'tpl str, _opts: &Options) -> Template<'tpl> {
-    let (tpl, indent) = match tpl.strip_prefix("\n") {
+    let (tpl, indent) = match tpl.strip_prefix('\n') {
       Some(tpl) => {
         let indent = tpl.find(|c| c != ' ').unwrap_or(tpl.len());
         (tpl, indent)
       }
       None => {
         assert!(
-          !tpl.contains("\n"),
+          !tpl.contains('\n'),
           "non-multiline templates must not contain newlines"
         );
         (tpl, 0)
@@ -250,7 +250,7 @@ impl<'tpl> Template<'tpl> {
     };
 
     let mut tokens = Vec::new();
-    for (i, mut line) in tpl.split("\n").enumerate() {
+    for (i, mut line) in tpl.split('\n').enumerate() {
       let indent = line
         .find(|c| c != ' ')
         .unwrap_or(line.len())
@@ -307,6 +307,6 @@ impl<'tpl> Template<'tpl> {
       }
     }
 
-    Template { tokens: tokens }
+    Template { tokens }
   }
 }

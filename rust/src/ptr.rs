@@ -199,7 +199,7 @@ where
   }
 
   fn as_mut(&mut self) -> Mut<T> {
-    ScalarMut { ptr: &mut self.ptr }
+    ScalarMut { ptr: self.ptr }
   }
 }
 

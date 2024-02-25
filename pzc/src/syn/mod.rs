@@ -248,7 +248,7 @@ impl Ident {
   /// Returns the name of this identifier (i.e., the text with an optional
   /// leading `#` stripped).
   pub fn name<'scx>(&self, scx: &'scx SourceCtx) -> &'scx str {
-    self.text(scx).trim_start_matches("#")
+    self.text(scx).trim_start_matches('#')
   }
 
   /// Returns whether this is a "hard" keyword, which is not allowed in some
