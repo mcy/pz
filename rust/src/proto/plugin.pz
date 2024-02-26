@@ -115,8 +115,8 @@ message Diagnostic {
     /// An optional message to display in the snippet (e.g. next to the
     /// underline portion of the code).
     ///
-    /// It should be in the same style as Diagnostic.msg.
-    2. msg: str
+    /// It should be in the same style as Diagnostic.message.
+    2. message: str
     
     /// Whether this is a "remark", which is additional information related to
     /// a problem that isn't the direct cause. This is rendered slightly
@@ -126,6 +126,6 @@ message Diagnostic {
 
   /// A list of notes to append at the end of the diagnostic after the snippets.
   ///
-  /// They should be in the same style as Diagnostic.msg.
+  /// They should be in the same style as Diagnostic.message.
   4. notes: repeated str
 }

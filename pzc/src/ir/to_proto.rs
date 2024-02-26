@@ -2,12 +2,19 @@
 
 use std::collections::HashMap;
 
+use ilex::Spanned;
 use pz::proto;
 
 use crate::ir;
 use crate::syn;
 
-pub fn to_proto(bundle: &ir::Bundle) -> proto::Bundle {
+pub fn to_proto(
+  bundle: &ir::Bundle,
+  icx: &ilex::Context,
+) -> (proto::Bundle, HashMap<u32, ilex::Span>) {
+  let mut num2span = HashMap::new();
+  let mut counter = 0;
+
   let mut proto = proto::Bundle::default();
 
   let mut pkg_to_idx = HashMap::new();
@@ -32,7 +39,7 @@ pub fn to_proto(bundle: &ir::Bundle) -> proto::Bundle {
         syn::DeclKind::Choice => Some(proto::r#type::Kind::Choice as i32),
         syn::DeclKind::Enum => Some(proto::r#type::Kind::Enum as i32),
       },
-      span: ty.decl().map(|t| t.span.id()),
+      span: Some(0),
       attrs: Some(ty.attrs.clone()),
 
       ..Default::default()
@@ -101,12 +108,17 @@ pub fn to_proto(bundle: &ir::Bundle) -> proto::Bundle {
           is_repeated: field.ty().map(|t| t.is_repeated()),
           r#type: kind,
           type_index,
-          span: field.decl().map(|f| f.span.id()),
+          span: field.decl().map(|f| {
+            let next = counter;
+            counter += 1;
+            num2span.insert(next, f.span(icx));
+            next
+          }),
           attrs: Some(field.attrs.clone()),
         })
       }
     });
   }
 
-  proto
+  (proto, num2span)
 }

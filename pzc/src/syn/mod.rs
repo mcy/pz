@@ -1,43 +1,34 @@
 //! Syntax trees for pz.
 
-mod lex;
 mod parse;
-mod src;
 
-use std::fmt;
+use ilex::token;
+use ilex::Span;
+use ilex::Spanned;
+use ilex::Token;
 
-pub use src::File;
-pub use src::SourceCtx;
-pub use src::Span;
-pub use src::Spanned;
-
-use crate::report::Report;
-
-const PUNCTUATION: &[&str] = &[";", ".", "=", "{", "}", ":", "/", ",", "@"];
-
-const HARD_KEYWORDS: &[&str] = &["message", "enum", "struct", "choice"];
-
-const KEYWORDS: &[&str] = &[
-  "edition", "package", "message", "enum", "struct", "choice", "i32", "u32",
-  "f32", "i64", "u64", "f64", "str", "bool", "where", "as",
-];
+pub fn lex<'t>(
+  file: ilex::File<'t>,
+  report: &ilex::Report,
+) -> Result<token::Stream<'t>, ilex::Fatal> {
+  parse::lex(file, report)
+}
 
 /// A single `.pz` file.
 #[derive(Debug)]
-pub struct PzFile {
-  pub attrs: Vec<Attr>,
-  pub package: Package,
-  pub imports: Vec<Import>,
-  pub items: Vec<Item>,
+pub struct PzFile<'ast> {
+  pub attrs: Vec<Attr<'ast>>,
+  pub package: Package<'ast>,
+  pub imports: Vec<Import<'ast>>,
+  pub items: Vec<Item<'ast>>,
 }
 
-impl PzFile {
+impl<'ast> PzFile<'ast> {
   pub fn parse(
-    file: File,
-    scx: &mut SourceCtx,
-    report: &mut Report,
-  ) -> Option<Self> {
-    parse::parse(file, scx, report)
+    stream: &'ast token::Stream<'ast>,
+    report: &ilex::Report,
+  ) -> Result<Self, ilex::Fatal> {
+    parse::parse(stream, report)
   }
 }
 
@@ -45,14 +36,14 @@ impl PzFile {
 ///
 /// This is the first thing in the file.
 #[derive(Debug)]
-pub struct Package {
-  pub span: Span,
-  pub path: Path,
+pub struct Package<'ast> {
+  pub package: token::Keyword<'ast>,
+  pub path: Path<'ast>,
 }
 
-impl Spanned for Package {
-  fn span(&self) -> Span {
-    self.span
+impl Spanned for Package<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    Span::union([self.package.span(icx), self.path.span(icx)])
   }
 }
 
@@ -60,125 +51,149 @@ impl Spanned for Package {
 ///
 /// This is the first thing in the file.
 #[derive(Debug)]
-pub struct Import {
-  pub span: Span,
-  pub attrs: Vec<Attr>,
-  pub package: Path,
+pub struct Import<'ast> {
+  pub import: token::Keyword<'ast>,
+  pub attrs: Vec<Attr<'ast>>,
+  pub package: Path<'ast>,
 
   /// Pairs of imported paths, and an optional rename.
-  pub symbols: Vec<(Path, Option<Ident>)>,
+  pub braces: token::Bracket<'ast>,
+  pub symbols: Vec<ImportedSymbol<'ast>>,
 }
 
-impl Spanned for Import {
-  fn span(&self) -> Span {
-    self.span
+#[derive(Debug)]
+pub struct ImportedSymbol<'ast> {
+  pub symbol: Path<'ast>,
+  pub rename: Option<(token::Keyword<'ast>, token::Ident<'ast>)>,
+}
+
+impl Spanned for Import<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    Span::union([self.import.span(icx), self.braces.span(icx)])
   }
 }
 
 /// A period-delimited path, e.g. `foo.bar.Msg`.
 #[derive(Debug)]
-pub struct Path {
-  pub span: Span,
-  pub components: Vec<Ident>,
+pub struct Path<'ast> {
+  /// List of components and the dots that follow them, if any.
+  pub components: Vec<(token::Ident<'ast>, Option<token::Keyword<'ast>>)>,
 }
 
-impl Path {
-  pub fn join(&self, scx: &SourceCtx) -> String {
+impl<'ast> Path<'ast> {
+  pub fn last(&self) -> token::Ident<'ast> {
+    self.components.last().unwrap().0
+  }
+
+  pub fn join(&self) -> String {
     let mut name = String::new();
-    for (i, id) in self.components.iter().enumerate() {
-      if i != 0 {
+    for (id, dot) in &self.components {
+      name.push_str(id.name().text(id.context()));
+      if dot.is_some() {
         name.push('.');
       }
-      name.push_str(id.name(scx));
     }
 
     name
   }
 
-  pub fn is_exactly(&self, scx: &SourceCtx, path: &[&str]) -> bool {
-    if self.components.len() != path.len() {
-      return false;
-    }
-
+  pub fn is_exactly<'a>(
+    &self,
+    path: impl IntoIterator<Item = &'a str>,
+  ) -> bool {
     self
       .components
       .iter()
       .zip(path)
-      .map(|(a, b)| &a.name(scx) == b)
+      .map(|((a, _), b)| a.name().text(a.context()) == b)
       .all(|x| x)
   }
 }
 
-impl Spanned for Path {
-  fn span(&self) -> Span {
-    self.span
+impl Spanned for Path<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    Span::union([
+      self.components.first().unwrap().0.span(icx),
+      self.components.last().unwrap().0.span(icx),
+    ])
   }
 }
 
 /// Any kind of delcaration.
 #[derive(Debug)]
-pub enum Item {
-  Decl(Decl),
-  Field(Field),
+pub enum Item<'ast> {
+  Decl(Decl<'ast>),
+  Field(Field<'ast>),
 }
 
-impl Spanned for Item {
-  fn span(&self) -> Span {
+impl Spanned for Item<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
     match self {
-      Self::Decl(x) => x.span,
-      Self::Field(x) => x.span,
+      Self::Decl(x) => x.span(icx),
+      Self::Field(x) => x.span(icx),
     }
   }
 }
 
 /// An attribute on something, e.g. `@deprecated`.
 #[derive(Debug)]
-pub struct Attr {
-  pub span: Span,
-  pub kind: AttrKind,
-  pub value: AttrValue,
+pub enum Attr<'ast> {
+  At {
+    at: Option<token::Keyword<'ast>>,
+    name: Path<'ast>,
+    value: Option<(token::Keyword<'ast>, AttrValue<'ast>)>,
+  },
+  Doc(token::Quoted<'ast>),
 }
 
-impl Spanned for Attr {
-  fn span(&self) -> Span {
-    self.span
+impl Spanned for Attr<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    match self {
+      Attr::At { at, name, value } => {
+        let start = at.map(|s| s.span(icx)).unwrap_or_else(|| name.span(icx));
+        let end = value
+          .as_ref()
+          .map(|(_, v)| v.span(icx))
+          .unwrap_or_else(|| name.span(icx));
+        Span::union([start, end])
+      }
+      Attr::Doc(doc) => doc.span(icx),
+    }
   }
 }
 
-/// A kind of attribute.
-#[derive(Debug)]
-pub enum AttrKind {
-  At(Path),
-  Doc,
-}
 /// An attribute value.
 #[derive(Debug)]
-pub enum AttrValue {
-  None,
-  Ident(Ident),
-  Int(IntLit),
-  Str(StrLit),
+pub enum AttrValue<'ast> {
+  Path(Path<'ast>),
+  Int(token::Digital<'ast>),
+  Str(token::Quoted<'ast>),
 }
 
-impl AttrValue {
-  pub fn is_none(&self) -> bool {
-    matches!(self, Self::None)
+impl Spanned for AttrValue<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    match self {
+      AttrValue::Path(p) => p.span(icx),
+      AttrValue::Int(i) => i.span(icx),
+      AttrValue::Str(s) => s.span(icx),
+    }
   }
 }
 
 /// A declaration. This is anything of the form `keyword Name { items }`.
 #[derive(Debug)]
-pub struct Decl {
-  pub span: Span,
+pub struct Decl<'ast> {
+  pub kw: token::Keyword<'ast>,
+  pub braces: token::Bracket<'ast>,
   pub kind: DeclKind,
-  pub name: Ident,
-  pub items: Vec<Item>,
-  pub attrs: Vec<Attr>,
+  pub name: token::Ident<'ast>,
+  pub items: Vec<Item<'ast>>,
+  pub attrs: Vec<Attr<'ast>>,
 }
 
-impl Spanned for Decl {
-  fn span(&self) -> Span {
-    self.span
+impl Spanned for Decl<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    Span::union([self.kw.span(icx), self.braces.span(icx)])
   }
 }
 
@@ -196,131 +211,53 @@ pub enum DeclKind {
 /// All declarations use the same field production, except that some might
 /// not use a number and some might not use a type.
 #[derive(Debug)]
-pub struct Field {
-  pub span: Span,
-  pub name: Ident,
-  pub ty: Option<Type>,
-  pub number: Option<IntLit>,
-  pub attrs: Vec<Attr>,
+pub struct Field<'ast> {
+  pub number: Option<token::Digital<'ast>>,
+  pub name: token::Ident<'ast>,
+  pub ty: Option<Type<'ast>>,
+  pub attrs: Vec<Attr<'ast>>,
 }
 
-impl Spanned for Field {
-  fn span(&self) -> Span {
-    self.span
+impl Spanned for Field<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    let start = self
+      .number
+      .map(|n| n.span(icx))
+      .unwrap_or_else(|| self.name.span(icx));
+    let end = self
+      .ty
+      .as_ref()
+      .map(|n| n.span(icx))
+      .unwrap_or_else(|| self.name.span(icx));
+    Span::union([start, end])
   }
 }
 
 /// A type, such as on a field declaration.
 #[derive(Debug)]
-pub struct Type {
-  pub span: Span,
-  pub repeated: Option<Span>,
-  pub kind: TypeKind,
+pub enum Type<'ast> {
+  Repeated {
+    repeated: token::Keyword<'ast>,
+    element: Box<Type<'ast>>,
+  },
+  Path(Path<'ast>),
 }
 
-impl Spanned for Type {
-  fn span(&self) -> Span {
-    self.span
-  }
-}
-
-/// A type kind. See [`Type`].
-#[derive(Debug)]
-pub enum TypeKind {
-  Path(Path),
-  I32,
-  U32,
-  F32,
-  I64,
-  U64,
-  F64,
-  String,
-  Bool,
-}
-
-/// An identifier.
-///
-/// Keywords may not be used as identifiers directly; instead, they must be
-/// prefixed with a `#`, e.g. `#package`.
-#[derive(Copy, Clone)]
-pub struct Ident(Span);
-impl Ident {
-  /// Returns the name of this identifier (i.e., the text with an optional
-  /// leading `#` stripped).
-  pub fn name<'scx>(&self, scx: &'scx SourceCtx) -> &'scx str {
-    self.text(scx).trim_start_matches('#')
-  }
-
-  /// Returns whether this is a "hard" keyword, which is not allowed in some
-  /// contexts for ambiguity reasons.
-  pub fn is_hard_keyword(&self, scx: &SourceCtx) -> bool {
-    HARD_KEYWORDS.contains(&self.text(scx))
-  }
-}
-
-impl Spanned for Ident {
-  fn span(&self) -> Span {
-    self.0
-  }
-}
-
-impl fmt::Debug for Ident {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    fmt::Debug::fmt(&self.0, f)
-  }
-}
-
-/// A quoted string literal.
-#[derive(Copy, Clone)]
-pub struct StrLit(Span);
-
-impl StrLit {
-  pub fn unescape(&self, scx: &SourceCtx) -> Vec<u8> {
-    let mut vec = Vec::new();
-    let _ = lex::unquote(self.text(scx), &mut vec, |_, _, _| unreachable!());
-    vec
-  }
-
-  pub fn unescape_utf8(self, scx: &SourceCtx, report: &mut Report) -> String {
-    match String::from_utf8(self.unescape(scx)) {
-      Ok(s) => s,
-      Err(_) => {
-        // TODO(mcyoung): attempt to produce a more detailed error?
-        report.error("expected Unicode string").at(self);
-        String::new()
+impl Spanned for Type<'_> {
+  fn span(&self, icx: &ilex::Context) -> Span {
+    match self {
+      Type::Repeated { repeated, element } => {
+        Span::union([repeated.span(icx), element.span(icx)])
       }
+      Type::Path(path) => path.span(icx),
     }
   }
 }
 
-impl Spanned for StrLit {
-  fn span(&self) -> Span {
-    self.0
-  }
-}
-
-impl fmt::Debug for StrLit {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    fmt::Debug::fmt(&self.0, f)
-  }
-}
-
-/// An integer literal.
-#[derive(Copy, Clone, Debug)]
-pub struct IntLit {
-  span: Span,
-  // A missing value indicates out-of-range-ness.
-  value: Option<i128>,
-}
-
-impl IntLit {
-  pub fn value(self) -> Option<i128> {
-    self.value
-  }
-}
-
-impl Spanned for IntLit {
-  fn span(&self) -> Span {
-    self.span
-  }
+pub fn unescape(str: token::Quoted) -> String {
+  str.to_utf8(|esc, _, out| match esc.text(str.context()) {
+    "\\\"" => out.push('"'),
+    "\\\\" => out.push('\\'),
+    _ => unreachable!(),
+  })
 }

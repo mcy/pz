@@ -8,100 +8,93 @@ use std::fmt;
 use std::marker::PhantomData;
 use std::mem;
 
+use ilex::Spanned;
 use pz::proto;
 use pz::proto::field::Type as TypeEnum;
 use pz::proto::r#type::Kind;
 
 use crate::ir;
-use crate::report::Report;
 use crate::syn;
-use crate::syn::Spanned;
 
 use bumpalo::collections::String as AString;
 use bumpalo::collections::Vec as AVec;
 
 use super::TypeName;
 
-pub struct ResolveCtx<'src, 'scx> {
+pub struct ResolveCtx<'ast> {
   arena: bumpalo::Bump,
-  scx: &'scx syn::SourceCtx,
+  icx: &'ast ilex::Context,
+  report: &'ast ilex::Report,
 
   types: RefCell<
     // Let 'rcx represent the lifetime of `arena`. Then, the "real" type of this
-    // map is `HashMap<String, &'rcx Type<'src, 'rcx>>`. We're forced to erase
-    // both lifetimes, because ir::Type requires 'src: 'rcx, because there are
-    // 'rcx references that point to 'src references.
-    HashMap<
-      ir::TypeName<'static>,
-      (*const ir::Type<'static, 'static>, Option<syn::Span>),
-    >,
+    // map is `HashMap<String, &'rcx Type<'ast, 'rcx>>`. We're forced to erase
+    // both lifetimes, because ir::Type requires 'ast: 'rcx, because there are
+    // 'rcx references that point to 'ast references.
+    HashMap<ir::TypeName<'static>, *const ir::Type<'static, 'static>>,
   >,
   bundles_by_package:
-    RefCell<HashMap<&'src str, (&'src str, &'src proto::Bundle)>>,
-  _ph: PhantomData<&'src syn::PzFile>,
+    RefCell<HashMap<&'ast str, (&'ast str, &'ast proto::Bundle)>>,
+  _ph: PhantomData<&'ast syn::PzFile<'ast>>,
 }
 
-fn redef_error(
-  report: &mut Report,
-  ty: impl fmt::Display,
-  at: Option<syn::Span>,
-  orig: Option<syn::Span>,
-) {
-  let diagnostic = report.error(format_args!("symbol `{ty}` already exists"));
-
-  if let Some(span) = at {
-    diagnostic.saying(span, "symbol already exists with this name");
-  }
-  if let Some(span) = orig {
-    diagnostic.remark(span, "previous definition is here");
-  }
-}
-
-impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
-  pub fn new(scx: &'scx syn::SourceCtx) -> Self {
+impl<'ast> ResolveCtx<'ast> {
+  pub fn new(icx: &'ast ilex::Context, report: &'ast ilex::Report) -> Self {
     Self {
+      icx,
+      report,
       arena: bumpalo::Bump::new(),
-      scx,
       types: Default::default(),
       bundles_by_package: Default::default(),
       _ph: PhantomData,
     }
   }
 
-  pub fn type_by_name(
+  fn redef_error(
     &self,
-    name: ir::TypeName,
-  ) -> Option<&ir::Type<'src, '_>> {
-    let (ptr, _) = self.types.borrow().get(&name).copied()?;
-    unsafe {
-      // SAFETY: this pointer is allocated on `self.arena`.
-      Some(&*ptr.cast::<ir::Type<'src, '_>>())
+    ty: impl fmt::Display,
+    at: Option<impl ilex::Spanned>,
+    orig: Option<impl ilex::Spanned>,
+  ) {
+    let mut d = self
+      .report
+      .error(format_args!("symbol `{ty}` already exists"));
+
+    if let Some(span) = at {
+      d = d.saying(span, "symbol already exists with this name");
+    }
+    if let Some(span) = orig {
+      d.remark(span, "previous definition is here");
     }
   }
 
-  fn register_type<'rcx>(
-    &'rcx self,
-    ty: &'rcx ir::Type<'src, 'rcx>,
-    report: &mut Report,
-  ) {
+  pub fn type_by_name(
+    &self,
+    name: ir::TypeName,
+  ) -> Option<&ir::Type<'ast, '_>> {
+    let ptr = self.types.borrow().get(&name).copied()?;
+    unsafe {
+      // SAFETY: this pointer is allocated on `self.arena`.
+      Some(&*ptr.cast::<ir::Type<'ast, '_>>())
+    }
+  }
+
+  fn register_type<'rcx>(&'rcx self, ty: &'rcx ir::Type<'ast, 'rcx>) {
     // Register the type in our big table of types. We need to extend some
     // lifetimes, since they refer to the arena (or data borrowed by the
     // ResolveCtx that outlives it).
-    let value = (ty as *const ir::Type).cast::<ir::Type>();
+    let value = (ty as *const ir::Type).cast::<ir::Type<'static, 'static>>();
     let mut types = self.types.borrow_mut();
     match types.entry(unsafe {
       mem::transmute::<ir::TypeName<'_>, ir::TypeName<'static>>(ty.name())
     }) {
       Entry::Occupied(e) => {
-        redef_error(
-          report,
-          ty.name(),
-          ty.decl().map(|d| d.name.span()),
-          e.get().1,
-        );
+        self.redef_error(ty.name(), ty.decl().map(|d| d.name), unsafe {
+          (**e.get()).decl().map(|d| d.name)
+        });
       }
       Entry::Vacant(e) => {
-        e.insert((value, ty.decl().map(|d| d.name.span())));
+        e.insert(value);
       }
     }
   }
@@ -124,10 +117,9 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
 
   pub fn resolve<'rcx>(
     &'rcx self,
-    bundles: &'src [(String, proto::Bundle)],
-    files: &'src [syn::PzFile],
-    report: &mut Report,
-  ) -> Option<ir::Bundle<'src, 'rcx>> {
+    bundles: &'ast [(String, proto::Bundle)],
+    files: &'ast [syn::PzFile<'ast>],
+  ) -> Result<ir::Bundle<'ast, 'rcx>, ilex::Fatal> {
     // First, start by loading all of the dependency bundles.
     let mut packages = self.bundles_by_package.borrow_mut();
     let mut all_bundle_tys = Vec::new();
@@ -136,13 +128,13 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
       for package in &bundle.packages {
         match packages.entry(package) {
           Entry::Occupied(e) => {
-            report.error(format_args!(
+            self.report.error(format_args!(
               "package `{package}` defined by both {} and {}",
               path,
               e.get().0,
             ));
 
-            return None;
+            return self.report.fatal();
           }
           Entry::Vacant(e) => {
             e.insert((path, bundle));
@@ -153,13 +145,17 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
       // Create objects for all the types. We need to do this before we try
       // to resolve anything within the bundle protos.
       for ty_proto in &bundle.types {
-        let Some(package) = bundle.packages.get(ty_proto.package() as usize) else {
-          report.error(format_args!(
-            "type `<unknown>.{}` had an invalid package pointer",
-            ty_proto.name(),
-          )).note(format_args!("defined in {path}"));
+        let Some(package) = bundle.packages.get(ty_proto.package() as usize)
+        else {
+          self
+            .report
+            .error(format_args!(
+              "type `<unknown>.{}` had an invalid package pointer",
+              ty_proto.name(),
+            ))
+            .note(format_args!("defined in {path}"));
 
-          return None;
+          return self.report.fatal();
         };
 
         let ty: &_ = self.arena.alloc(ir::Type {
@@ -182,18 +178,14 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
           attrs: ty_proto.attrs.as_ref().cloned().unwrap_or_default(),
         });
         tys_in_this_bundle.push((ty_proto, ty));
-        self.register_type(ty, report);
+        self.register_type(ty);
       }
       all_bundle_tys.push((path.as_str(), bundle, tys_in_this_bundle));
     }
     drop(packages);
 
-    if report.has_errors() {
-      return None;
-    }
-
     // Now resolve all the deps' fields and types. We do not require acyclicity;
-    // we assume each bundle was constructed by a previous pz invokation, which
+    // we assume each bundle was constructed by a previous pz invocation, which
     // does require that the input fields depend only on the input bundles and
     // not vice-versa. Under this assumption, the input bundles are acyclic by
     // construction.
@@ -201,25 +193,33 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
       for (ty_proto, ty) in bundle_tys {
         if let Some(parent) = ty_proto.declared_in {
           let Some((_, parent)) = bundle_tys.get(parent as usize) else {
-            report.error(format_args!(
-              "type `{}` had an invalid parent pointer", ty.name()
-            )).note(format_args!("defined in {path}"));
-            return None;
+            self
+              .report
+              .error(format_args!(
+                "type `{}` had an invalid parent pointer",
+                ty.name()
+              ))
+              .note(format_args!("defined in {path}"));
+            return self.report.fatal();
           };
           ty.parent.set(Some(parent));
         }
 
         for &nested in &ty_proto.nesteds {
           let Some((_, nested)) = bundle_tys.get(nested as usize) else {
-            report.error(format_args!(
-              "type `{}` had an invalid nested pointer", ty.name(),
-            )).note(format_args!("defined in {path}"));
-            return None;
+            self
+              .report
+              .error(format_args!(
+                "type `{}` had an invalid nested pointer",
+                ty.name(),
+              ))
+              .note(format_args!("defined in {path}"));
+            return self.report.fatal();
           };
           ty.nesteds.borrow_mut().push(nested);
         }
 
-        for field_proto in &ty_proto.fields {
+        'fields: for field_proto in &ty_proto.fields {
           let (needs_number, needs_type) = match ty.kind() {
             syn::DeclKind::Message => (true, true),
             syn::DeclKind::Struct => (false, true),
@@ -228,24 +228,24 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
           };
 
           if needs_number != field_proto.number.is_some() {
-            report
+            self
+              .report
               .error(format_args!(
                 "field `{}.{}` is missing its number",
                 ty.name(),
                 field_proto.name()
               ))
               .note(format_args!("defined in {path}"));
-            return None;
           }
 
           let field_ty = match field_proto.r#type() {
             TypeEnum::None if needs_type => {
-              report.error(format_args!(
+              self.report.error(format_args!(
                 "field `{}.{}` is missing its type",
                 ty.name(),
                 field_proto.name()
               ));
-              return None;
+              continue 'fields;
             }
             TypeEnum::None => None,
 
@@ -260,33 +260,41 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
 
             TypeEnum::Type => {
               let Some((_, ty)) =
-                bundle_tys.get(field_proto.type_index() as usize) else {
-                  report
+                bundle_tys.get(field_proto.type_index() as usize)
+              else {
+                self
+                  .report
                   .error(format_args!(
                     "field `{}.{}` had an invalid type pointer",
                     ty.name(),
                     field_proto.name()
                   ))
                   .note(format_args!("defined in {path}"));
-                return None;
+                continue;
               };
               Some(ir::FieldTypeKind::Type(ty))
             }
 
             TypeEnum::Foreign => {
-              let Some(key) =
-                bundle_proto.foreign_types.get(field_proto.type_index() as usize) else {
-                  report
+              let Some(key) = bundle_proto
+                .foreign_types
+                .get(field_proto.type_index() as usize)
+              else {
+                self
+                  .report
                   .error(format_args!(
                     "field `{}.{}` had an invalid type pointer",
                     ty.name(),
                     field_proto.name()
                   ))
                   .note(format_args!("defined in {path}"));
-                return None;
+                continue 'fields;
               };
 
-              let Some(package) = bundle_proto.packages.get(key.package() as usize) else {
+              let Some(package) =
+                bundle_proto.packages.get(key.package() as usize)
+              else {
+                self.
                 report.error(format_args!(
                   "field `{}.{}`'s type `<unknown>.{}` had an invalid package pointer",
                   ty.name(),
@@ -294,7 +302,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
                   ty_proto.name(),
                 )).note(format_args!("defined in {path}"));
 
-                return None;
+                continue 'fields;
               };
 
               let key = TypeName {
@@ -305,6 +313,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
               match self.type_by_name(key) {
                 Some(ty) => Some(ir::FieldTypeKind::Type(ty)),
                 None => {
+                  self.
                   report
                     .error(format_args!(
                     "field `{}.{}` refers to a type `{key}` that does not exist",
@@ -312,7 +321,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
                     field_proto.name()
                   ))
                     .note(format_args!("defined in {path}"));
-                  return None;
+                  continue 'fields;
                 }
               }
             }
@@ -334,10 +343,6 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
       }
     }
 
-    if report.has_errors() {
-      return None;
-    }
-
     // At this point, we've loaded all of the bundles, so we can proceed with
     // creating the new "resolved" bundle.
 
@@ -348,13 +353,12 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
 
     let insert_symbol = |symbols: &mut HashMap<_, _>,
                          key: &str,
-                         ty: &'rcx ir::Type<'src, 'rcx>,
-                         span: syn::Span,
-                         report: &mut Report| {
+                         ty: &'rcx ir::Type<'ast, 'rcx>,
+                         span: ilex::Span| {
       match symbols.entry(key.to_string()) {
         Entry::Occupied(e) => {
           let (_, orig) = e.get();
-          redef_error(report, ty.name(), Some(span), Some(*orig));
+          self.redef_error(ty.name(), Some(span), Some(*orig));
         }
         Entry::Vacant(e) => {
           e.insert((ty, span));
@@ -364,12 +368,11 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
 
     for file in files {
       let mut package = AString::new_in(&self.arena);
-      for (i, name) in file.package.path.components.iter().enumerate() {
-        let text = name.name(self.scx);
-        if i != 0 {
+      for (name, dot) in &file.package.path.components {
+        package.push_str(name.name().text(self.icx));
+        if dot.is_some() {
           package.push('.');
         }
-        package.push_str(text);
       }
       let package = package.into_bump_str();
 
@@ -380,9 +383,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
       for item in &file.items {
         match item {
           syn::Item::Decl(decl) => {
-            self.extract_types(
-              &mut types, package, None, decl, &mut roots, report,
-            );
+            self.extract_types(&mut types, package, None, decl, &mut roots);
           }
           _ => unreachable!(),
         }
@@ -393,8 +394,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
           &mut symbols,
           root.name().name,
           root,
-          root.decl().unwrap().name.span(),
-          report,
+          root.decl().unwrap().name.span(self.icx),
         );
       }
 
@@ -403,8 +403,7 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
           &mut symbols,
           &ty.name().to_string(),
           ty,
-          ty.decl().unwrap().name.span(),
-          report,
+          ty.decl().unwrap().name.span(self.icx),
         );
       }
 
@@ -413,48 +412,48 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
 
     for (file, _, symbols) in &mut all_symbols {
       for import in &file.imports {
-        let package = import.package.join(self.scx);
-        for (name, rename) in &import.symbols {
+        let package = import.package.join();
+        for syn::ImportedSymbol { symbol, rename } in &import.symbols {
           let key = TypeName {
             package: &package,
-            name: &name.join(self.scx),
+            name: &symbol.join(),
           };
           match self.type_by_name(key) {
             Some(ty) => {
-              insert_symbol(symbols, &key.to_string(), ty, name.span(), report);
+              insert_symbol(
+                symbols,
+                &key.to_string(),
+                ty,
+                symbol.span(self.icx),
+              );
               match rename {
-                Some(id) => insert_symbol(
+                Some((_, id)) => insert_symbol(
                   symbols,
-                  id.name(self.scx),
+                  id.name().text(self.icx),
                   ty,
-                  name.span(),
-                  report,
+                  symbol.span(self.icx),
                 ),
                 None => insert_symbol(
                   symbols,
-                  name.components.last().unwrap().name(self.scx),
+                  symbol.last().name().text(self.icx),
                   ty,
-                  name.span(),
-                  report,
+                  symbol.span(self.icx),
                 ),
               }
             }
             None => {
-              report
+              self
+                .report
                 .error(format_args!("cannot find imported symbol {key}"))
                 .saying(&import.package, "package specified here")
-                .saying(name, "symbol specified here");
+                .saying(symbol, "symbol specified here");
             }
           }
         }
       }
     }
 
-    if report.has_errors() {
-      return None;
-    }
-
-    let bundle = ir::Bundle::<'src, 'rcx> {
+    let bundle = ir::Bundle::<'ast, 'rcx> {
       types: Vec::new().into(),
     };
 
@@ -473,145 +472,143 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
         let mut fields = ty.fields.borrow_mut();
         fields.reserve(field_count);
 
-        let mut numbers = HashMap::<i32, syn::Span>::new();
+        let mut numbers = HashMap::<i32, ilex::Span>::new();
         for field in &decl.items {
-          let syn::Item::Field(field) = field else { continue };
-          let field_ty = field.ty.as_ref().map(|t| {
-            let kind = match &t.kind {
-              syn::TypeKind::I32 => ir::FieldTypeKind::I32,
-              syn::TypeKind::U32 => ir::FieldTypeKind::U32,
-              syn::TypeKind::F32 => ir::FieldTypeKind::F32,
-              syn::TypeKind::I64 => ir::FieldTypeKind::I64,
-              syn::TypeKind::U64 => ir::FieldTypeKind::U64,
-              syn::TypeKind::F64 => ir::FieldTypeKind::F64,
-              syn::TypeKind::Bool => ir::FieldTypeKind::Bool,
-              syn::TypeKind::String => ir::FieldTypeKind::String,
-
-              syn::TypeKind::Path(path) => 'name_resolve: {
-                assert!(!path.components.is_empty());
-
-                // Two cases:
-                // - A single-element path referring to an item in this or a
-                //   parent's body.
-                // - A path that refers to a top-level element (either an import,
-                //   a fully-qualified type, or a top-levle type.)
-                if let [name] = path.components.as_slice() {
-                  let name = name.name(self.scx);
-                  let mut search_in = ty;
-                  loop {
-                    let resolved = search_in.nesteds(|tys| {
-                      for ty in tys {
-                        let suffix = ty.name().name.split('.').last().unwrap();
-                        if suffix == name {
-                          // Rust tries to infer an over-short lifetime here?
-                          let ty: &'rcx ir::Type<'src, 'rcx> = ty;
-                          return Some(ty);
-                        }
-                      }
-
-                      None
-                    });
-
-                    match (resolved, search_in.parent()) {
-                      (Some(ty), _) => {
-                        break 'name_resolve ir::FieldTypeKind::Type(ty)
-                      }
-                      (None, Some(parent)) => search_in = parent,
-                      (None, None) => break,
-                    }
-                  }
+          let syn::Item::Field(field) = field else {
+            continue;
+          };
+          let field_ty = field.ty.as_ref().and_then(|t| {
+            let path = match t {
+              syn::Type::Repeated { element, .. } => match &**element {
+                syn::Type::Path(path) => path,
+                other => {
+                  self
+                    .report
+                    .error("repeated repeated is not supported yet, sorry")
+                    .saying(other, "expected a path here");
+                  return None;
                 }
-
-                let name = path.join(self.scx);
-                match top_level_symbols.get(&name) {
-                  Some((ty, _)) => ir::FieldTypeKind::Type(ty),
-                  None => {
-                    report
-                      .error(format_args!("cannot resolve type `{name}`"))
-                      .at(path);
-                    ir::FieldTypeKind::I32
-                  }
-                }
-              }
+              },
+              syn::Type::Path(path) => path,
             };
 
-            ir::FieldType {
-              is_repeated: t.repeated.is_some(),
-              kind,
-            }
-          });
+            let kind = 'name_resolve: {
+              assert!(!path.components.is_empty());
 
-          let field_number = field.number.and_then(|lit| {
-          let number: Option<i32> = lit.value().and_then(|v| v.try_into().ok());
+              // Two cases:
+              // - A single-element path referring to an item in this or a
+              //   parent's body.
+              // - A path that refers to a top-level element (either an import,
+              //   a fully-qualified type, or a top-level type.)
+              if let [(id, _)] = path.components.as_slice() {
+                let name = id.name().text(self.icx);
+                let mut search_in = ty;
+                loop {
+                  let resolved = search_in.nesteds(|tys| {
+                    for ty in tys {
+                      let suffix = ty.name().name.split('.').last().unwrap();
+                      if suffix == name {
+                        // Rust tries to infer an over-short lifetime here?
+                        let ty: &'rcx ir::Type<'ast, 'rcx> = ty;
+                        return Some(ty);
+                      }
+                    }
 
-          if decl.kind == syn::DeclKind::Enum {
-            if number.is_none() {
-              report.error("enum value out of range").at(lit).note(
-                format_args!(
-                  "enum values signed, 32-bit integers ({} to {}, inclusive)",
-                  i32::MIN,
-                  i32::MAX
-                ),
-              );
-            }
+                    None
+                  });
 
-            return number;
-          }
-
-          match number {
-            Some(n) if n > 0 && n < 1 << 29 => {
-              match numbers.entry(n) {
-                Entry::Occupied(e) => {
-                  report
-                    .error(format_args!("field number `{n}` used twice"))
-                    .saying(lit, "re-used here")
-                    .remark(e.get(), "previously used here")
-                    .note("all field numbers must be unique");
-                }
-                Entry::Vacant(e) => {
-                  e.insert(lit.span());
+                  match (resolved, search_in.parent()) {
+                    (Some(ty), _) => {
+                      break 'name_resolve ir::FieldTypeKind::Type(ty)
+                    }
+                    (None, Some(parent)) => search_in = parent,
+                    (None, None) => break,
+                  }
                 }
               }
 
-              Some(n)
+              let name = path.join();
+              if let Some((ty, _)) = top_level_symbols.get(&name) {
+                break 'name_resolve ir::FieldTypeKind::Type(ty);
+              }
+
+              let builtins = &[
+                ("i32", ir::FieldTypeKind::I32),
+                ("u32", ir::FieldTypeKind::U32),
+                ("f32", ir::FieldTypeKind::F32),
+                ("i64", ir::FieldTypeKind::I64),
+                ("u64", ir::FieldTypeKind::U64),
+                ("f64", ir::FieldTypeKind::F64),
+                ("bool", ir::FieldTypeKind::Bool),
+                ("str", ir::FieldTypeKind::String),
+              ];
+
+              for &(builtin, ty) in builtins {
+                if name == builtin {
+                  break 'name_resolve ty;
+                }
+              }
+
+              self
+                .report
+                .error(format_args!("cannot resolve type `{name}`"))
+                .at(path);
+              return None;
+            };
+
+            Some(ir::FieldType {
+              is_repeated: matches!(t, syn::Type::Repeated { .. }),
+              kind,
+            })
+          });
+
+          let field_number = field.number.map(|lit| {
+            let number = match decl.kind {
+              syn::DeclKind::Enum => lit.to_int::<i32>(.., self.report),
+              _ => lit.to_int::<i32>(1..1 << 29, self.report),
+            };
+
+            match numbers.entry(number) {
+              Entry::Occupied(e) => {
+                self
+                  .report
+                  .error(format_args!("field number `{number}` used twice"))
+                  .saying(lit, "re-used here")
+                  .remark(e.get(), "previously used here")
+                  .note("all field numbers must be unique");
+              }
+              Entry::Vacant(e) => {
+                e.insert(lit.span(self.icx));
+              }
             }
-            _ => {
-              report.error("field number out of range").at(lit).note(
-                format_args!(
-                  "field numbers are positive, 29-bit integers (1 to {}, inclusive)",
-                  (1 << 29) - 1,
-                ),
-              );
-              None
-            }
-          }
-        });
+
+            number
+          });
 
           fields.push(ir::Field {
-            name: field.name.name(self.scx).into(),
+            name: field.name.name().text(self.icx).into(),
             parent: ty,
             decl: Some(field),
             ty: field_ty.into(),
             number: field_number.into(),
-            attrs: self.field_attrs(field, report),
+            attrs: self.field_attrs(field),
           });
         }
       }
     }
 
-    Some(bundle)
+    Ok(bundle)
   }
 
   fn extract_types<'rcx>(
     &'rcx self,
-    types: &mut Vec<&'rcx ir::Type<'src, 'rcx>>,
+    types: &mut Vec<&'rcx ir::Type<'ast, 'rcx>>,
     package: &'rcx str,
-    parent: Option<&'rcx ir::Type<'src, 'rcx>>,
-    decl: &'src syn::Decl,
-    types_out: &mut AVec<&'rcx ir::Type<'src, 'rcx>>,
-    report: &mut Report,
+    parent: Option<&'rcx ir::Type<'ast, 'rcx>>,
+    decl: &'ast syn::Decl,
+    types_out: &mut AVec<&'rcx ir::Type<'ast, 'rcx>>,
   ) {
-    let declared_name = decl.name.name(self.scx);
+    let declared_name = decl.name.name().text(self.icx);
     let name = match parent {
       Some(parent) => {
         let mut name = AString::with_capacity_in(
@@ -642,64 +639,58 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
       fields: AVec::with_capacity_in(fields_count, &self.arena).into(),
       nesteds: AVec::with_capacity_in(decls_count, &self.arena).into(),
       parent: parent.into(),
-      attrs: self.type_attrs(decl, report),
+      attrs: self.type_attrs(decl),
     });
     types.push(ty);
     types_out.push(ty);
-    self.register_type(ty, report);
+    self.register_type(ty);
 
     for item in &decl.items {
-      let syn::Item::Decl(decl) = item else { continue };
+      let syn::Item::Decl(decl) = item else {
+        continue;
+      };
       self.extract_types(
         types,
         package,
         Some(ty),
         decl,
         &mut ty.nesteds.borrow_mut(),
-        report,
       );
     }
   }
 
-  fn type_attrs(
-    &self,
-    decl: &syn::Decl,
-    report: &mut Report,
-  ) -> proto::r#type::Attrs {
+  fn type_attrs(&self, decl: &syn::Decl) -> proto::r#type::Attrs {
     let mut attrs = proto::r#type::Attrs::default();
     for attr in &decl.attrs {
-      match &attr.kind {
-        syn::AttrKind::Doc => {
-          let text = attr.span().text(self.scx);
-          let doc = text.trim_start_matches("///").trim();
+      match attr {
+        syn::Attr::Doc(doc) => {
+          let doc = doc.text(self.icx).trim_start_matches("///").trim();
           attrs.docs.push(doc.to_string());
         }
-        syn::AttrKind::At(path) => {
-          if path.is_exactly(self.scx, &["deprecated"]) {
+        syn::Attr::At { name, value, .. } => {
+          if name.is_exactly(["deprecated"]) {
             if attrs.deprecated.is_some() {
-              report
+              self
+                .report
                 .error("cannot specify `@deprecated` multiple times")
                 .at(attr);
             }
 
-            attrs.deprecated = match &attr.value {
-              syn::AttrValue::None => Some(String::new()),
-              syn::AttrValue::Str(str) => {
-                Some(str.unescape_utf8(self.scx, report))
-              }
+            attrs.deprecated = match &value {
+              None => Some(String::new()),
+              Some((_, syn::AttrValue::Str(str))) => Some(syn::unescape(*str)),
               _ => {
-                report
+                self
+                  .report
                   .error("`@deprecated` expects a string value")
                   .at(attr);
                 None
               }
             };
           } else {
-            report
-              .error(format_args!(
-                "unknown attribute `{}`",
-                path.join(self.scx)
-              ))
+            self
+              .report
+              .error(format_args!("unknown attribute `{}`", name.join()))
               .at(attr);
           }
         }
@@ -709,45 +700,38 @@ impl<'src, 'scx: 'src> ResolveCtx<'src, 'scx> {
     attrs
   }
 
-  fn field_attrs(
-    &self,
-    field: &syn::Field,
-    report: &mut Report,
-  ) -> proto::field::Attrs {
+  fn field_attrs(&self, field: &syn::Field) -> proto::field::Attrs {
     let mut attrs = proto::field::Attrs::default();
     for attr in &field.attrs {
-      match &attr.kind {
-        syn::AttrKind::Doc => {
-          let text = attr.span().text(self.scx);
-          let doc = text.trim_start_matches("///").trim();
+      match attr {
+        syn::Attr::Doc(doc) => {
+          let doc = doc.text(self.icx).trim_start_matches("///").trim();
           attrs.docs.push(doc.to_string());
         }
-        syn::AttrKind::At(path) => {
-          if path.is_exactly(self.scx, &["deprecated"]) {
+        syn::Attr::At { name, value, .. } => {
+          if name.is_exactly(["deprecated"]) {
             if attrs.deprecated.is_some() {
-              report
+              self
+                .report
                 .error("cannot specify `@deprecated` multiple times")
                 .at(attr);
             }
 
-            attrs.deprecated = match &attr.value {
-              syn::AttrValue::None => Some(String::new()),
-              syn::AttrValue::Str(str) => {
-                Some(str.unescape_utf8(self.scx, report))
-              }
+            attrs.deprecated = match value {
+              None => Some(String::new()),
+              Some((_, syn::AttrValue::Str(str))) => Some(syn::unescape(*str)),
               _ => {
-                report
+                self
+                  .report
                   .error("`@deprecated` expects a string value")
                   .at(attr);
                 None
               }
             };
           } else {
-            report
-              .error(format_args!(
-                "unknown attribute `{}`",
-                path.join(self.scx)
-              ))
+            self
+              .report
+              .error(format_args!("unknown attribute `{}`", name.join()))
               .at(attr);
           }
         }

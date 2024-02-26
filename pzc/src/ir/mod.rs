@@ -2,6 +2,7 @@
 
 use std::cell::Cell;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::fmt;
 
 use bumpalo::collections::Vec as AVec;
@@ -15,13 +16,16 @@ mod to_proto;
 
 pub use resolve::ResolveCtx;
 
-pub struct Bundle<'syn, 'rcx> {
-  types: RefCell<Vec<&'rcx Type<'syn, 'rcx>>>,
+pub struct Bundle<'ast, 'rcx> {
+  types: RefCell<Vec<&'rcx Type<'ast, 'rcx>>>,
 }
 
 impl Bundle<'_, '_> {
-  pub fn to_proto(&self) -> proto::Bundle {
-    to_proto::to_proto(self)
+  pub fn to_proto(
+    &self,
+    icx: &ilex::Context,
+  ) -> (proto::Bundle, HashMap<u32, ilex::Span>) {
+    to_proto::to_proto(self, icx)
   }
 }
 
@@ -41,17 +45,17 @@ impl fmt::Display for TypeName<'_> {
   }
 }
 
-pub struct Type<'syn, 'rcx> {
+pub struct Type<'ast, 'rcx> {
   name: Cell<TypeName<'rcx>>,
   kind: Cell<syn::DeclKind>,
-  decl: Option<&'syn syn::Decl>,
-  fields: RefCell<AVec<'rcx, Field<'syn, 'rcx>>>,
-  nesteds: RefCell<AVec<'rcx, &'rcx Type<'syn, 'rcx>>>,
-  parent: Cell<Option<&'rcx Type<'syn, 'rcx>>>,
+  decl: Option<&'ast syn::Decl<'ast>>,
+  fields: RefCell<AVec<'rcx, Field<'ast, 'rcx>>>,
+  nesteds: RefCell<AVec<'rcx, &'rcx Type<'ast, 'rcx>>>,
+  parent: Cell<Option<&'rcx Type<'ast, 'rcx>>>,
   attrs: proto::r#type::Attrs,
 }
 
-impl<'syn, 'rcx> Type<'syn, 'rcx> {
+impl<'ast, 'rcx> Type<'ast, 'rcx> {
   pub fn name(&self) -> TypeName<'rcx> {
     self.name.get()
   }
@@ -60,62 +64,62 @@ impl<'syn, 'rcx> Type<'syn, 'rcx> {
     self.kind.get()
   }
 
-  pub fn decl(&self) -> Option<&'syn syn::Decl> {
+  pub fn decl(&self) -> Option<&'ast syn::Decl<'ast>> {
     self.decl
   }
 
-  pub fn parent(&self) -> Option<&'rcx Type<'syn, 'rcx>> {
+  pub fn parent(&self) -> Option<&'rcx Type<'ast, 'rcx>> {
     self.parent.get()
   }
 
   pub fn field<R>(
     &self,
     index: usize,
-    body: impl FnOnce(&Field<'syn, 'rcx>) -> R,
+    body: impl FnOnce(&Field<'ast, 'rcx>) -> R,
   ) -> Option<R> {
     self.fields.borrow().get(index).map(body)
   }
 
-  pub fn fields<R>(&self, body: impl FnOnce(&[Field<'syn, 'rcx>]) -> R) -> R {
+  pub fn fields<R>(&self, body: impl FnOnce(&[Field<'ast, 'rcx>]) -> R) -> R {
     body(&self.fields.borrow())
   }
 
   pub fn nested<R>(
     &self,
     index: usize,
-    body: impl FnOnce(&Type<'syn, 'rcx>) -> R,
+    body: impl FnOnce(&'rcx Type<'ast, 'rcx>) -> R,
   ) -> Option<R> {
     self.nesteds.borrow().get(index).map(|x| body(x))
   }
 
   pub fn nesteds<R>(
     &self,
-    body: impl FnOnce(&[&'rcx Type<'syn, 'rcx>]) -> R,
+    body: impl FnOnce(&[&'rcx Type<'ast, 'rcx>]) -> R,
   ) -> R {
     body(&self.nesteds.borrow())
   }
 }
 
-pub struct Field<'syn, 'rcx> {
+pub struct Field<'ast, 'rcx> {
   name: Cell<&'rcx str>,
-  parent: &'rcx Type<'syn, 'rcx>,
+  parent: &'rcx Type<'ast, 'rcx>,
 
-  decl: Option<&'syn syn::Field>,
-  ty: Cell<Option<FieldType<'syn, 'rcx>>>,
+  decl: Option<&'ast syn::Field<'ast>>,
+  ty: Cell<Option<FieldType<'ast, 'rcx>>>,
   number: Cell<Option<i32>>,
   attrs: proto::field::Attrs,
 }
 
-impl<'syn, 'rcx> Field<'syn, 'rcx> {
+impl<'ast, 'rcx> Field<'ast, 'rcx> {
   pub fn name(&self) -> &'rcx str {
     self.name.get()
   }
 
-  pub fn decl(&self) -> Option<&'syn syn::Field> {
+  pub fn decl(&self) -> Option<&'ast syn::Field<'ast>> {
     self.decl
   }
 
-  pub fn ty(&self) -> Option<FieldType<'syn, 'rcx>> {
+  pub fn ty(&self) -> Option<FieldType<'ast, 'rcx>> {
     self.ty.get()
   }
 
@@ -123,29 +127,29 @@ impl<'syn, 'rcx> Field<'syn, 'rcx> {
     self.number.get()
   }
 
-  pub fn parent(&self) -> &'rcx Type<'syn, 'rcx> {
+  pub fn parent(&self) -> &'rcx Type<'ast, 'rcx> {
     self.parent
   }
 }
 
 #[derive(Copy, Clone)]
-pub struct FieldType<'syn, 'rcx> {
+pub struct FieldType<'ast, 'rcx> {
   is_repeated: bool,
-  kind: FieldTypeKind<'syn, 'rcx>,
+  kind: FieldTypeKind<'ast, 'rcx>,
 }
 
-impl<'syn, 'rcx> FieldType<'syn, 'rcx> {
+impl<'ast, 'rcx> FieldType<'ast, 'rcx> {
   pub fn is_repeated(&self) -> bool {
     self.is_repeated
   }
 
-  pub fn kind(&self) -> FieldTypeKind<'syn, 'rcx> {
+  pub fn kind(&self) -> FieldTypeKind<'ast, 'rcx> {
     self.kind
   }
 }
 
 #[derive(Copy, Clone)]
-pub enum FieldTypeKind<'syn, 'rcx> {
+pub enum FieldTypeKind<'ast, 'rcx> {
   I32,
   U32,
   F32,
@@ -154,5 +158,5 @@ pub enum FieldTypeKind<'syn, 'rcx> {
   F64,
   Bool,
   String,
-  Type(&'rcx Type<'syn, 'rcx>),
+  Type(&'rcx Type<'ast, 'rcx>),
 }

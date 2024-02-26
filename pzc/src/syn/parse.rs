@@ -1,426 +1,463 @@
 //! The parser.
 
-use std::fmt;
 use std::mem;
 
-use crate::report::Report;
 use crate::syn;
-use crate::syn::lex::Kind;
-use crate::syn::lex::Lexer;
-use crate::syn::lex::Result;
-use crate::syn::lex::Token;
-use crate::syn::File;
-use crate::syn::SourceCtx;
-use crate::syn::Span;
-use crate::syn::Spanned;
+use crate::syn::ImportedSymbol;
 
-fn parse_path(lexer: &mut Lexer) -> Result<syn::Path> {
-  let mut components = Vec::new();
-  match lexer.expect(&[Kind::Ident])? {
-    Token::Ident(id) => {
-      if id.is_hard_keyword(lexer.scx()) {
-        let kw = id.text(lexer.scx()).to_string();
-        lexer
-          .error(format_args!("expected identifier, got `{kw}`"))
-          .at(id);
-      }
-      components.push(id)
-    }
-    _ => {
-      return Ok(syn::Path {
-        span: lexer.zero_width_span(),
-        components: Vec::new(),
-      })
-    }
-  }
+use ilex::rule;
+use ilex::token;
+use ilex::token::Cursor;
+use ilex::Lexeme;
+use ilex::Report;
+use ilex::Span;
+use ilex::Spanned;
+use ilex::Token;
 
-  while lexer.take_exact(".")?.is_some() {
-    match lexer.expect(&[Kind::Ident])? {
-      Token::Ident(id) => components.push(id),
-      _ => break,
-    }
-  }
+#[ilex::spec]
+struct Pz {
+  #[named("line comment")]
+  #[rule("//")]
+  line_comment: Lexeme<rule::Comment>,
 
-  let span = components[0]
-    .span()
-    .with_end(components.last().unwrap().span(), lexer.scx_mut());
-  Ok(syn::Path { span, components })
+  #[named("doc comment")]
+  #[rule(rule::Quoted::from(rule::Bracket::paired("///", "\n")))]
+  doc_comment: Lexeme<rule::Quoted>,
+
+  #[named("block comment")]
+  #[rule("/*", "*/")]
+  block_comment: Lexeme<rule::Comment>,
+
+  #[rule("{", "}")]
+  braces: Lexeme<rule::Bracket>,
+
+  #[rule(";")]
+  semi: Lexeme<rule::Keyword>,
+  #[rule(".")]
+  dot: Lexeme<rule::Keyword>,
+  #[rule("=")]
+  equal: Lexeme<rule::Keyword>,
+  #[rule(":")]
+  colon: Lexeme<rule::Keyword>,
+  #[rule("/")]
+  slash: Lexeme<rule::Keyword>,
+  #[rule(",")]
+  comma: Lexeme<rule::Keyword>,
+  #[rule("@")]
+  at: Lexeme<rule::Keyword>,
+
+  #[rule("enum")]
+  enum_: Lexeme<rule::Keyword>,
+  #[rule("struct")]
+  struct_: Lexeme<rule::Keyword>,
+  #[rule("where")]
+  where_: Lexeme<rule::Keyword>,
+  #[rule("as")]
+  as_: Lexeme<rule::Keyword>,
+
+  message: Lexeme<rule::Keyword>,
+  choice: Lexeme<rule::Keyword>,
+  package: Lexeme<rule::Keyword>,
+  repeated: Lexeme<rule::Keyword>,
+  import: Lexeme<rule::Keyword>,
+
+  #[named("identifier")]
+  #[rule(rule::Ident::new().ascii_only().prefixes(["", "#"]))]
+  ident: Lexeme<rule::Ident>,
+
+  #[named("integer")]
+  #[rule(rule::Digital::new(10).separator("_").minus())]
+  int: Lexeme<rule::Digital>,
+
+  #[named("binary integer")]
+  #[rule(rule::Digital::new(2).separator("_").minus().prefix("0b"))]
+  bin: Lexeme<rule::Digital>,
+
+  #[named("hexadecimal integer")]
+  #[rule(rule::Digital::new(16).separator("_").minus().prefix("0x"))]
+  hex: Lexeme<rule::Digital>,
+
+  #[named("string literal")]
+  #[rule(rule::Quoted::new('"').invalid_escape(r"\").escapes(["\\\"", r"\\"]))]
+  str: Lexeme<rule::Quoted>,
 }
 
-fn parse_ident(lexer: &mut Lexer) -> Result<syn::Ident> {
+fn parse_path<'t>(
+  pz: &Pz,
+  toks: &mut Cursor<'t>,
+  report: &Report,
+) -> Option<syn::Path<'t>> {
+  let mut path = syn::Path {
+    components: vec![(toks.take(pz.ident, report)?, None)],
+  };
+
+  while let Some(dot) = toks.try_take(pz.dot) {
+    path.components.last_mut().unwrap().1 = Some(dot);
+    path.components.push((toks.take(pz.ident, report)?, None));
+  }
+
+  Some(path)
+}
+
+fn parse_ident<'t>(
+  pz: &Pz,
+  toks: &mut Cursor<'t>,
+  report: &Report,
+) -> Option<token::Ident<'t>> {
   // We go through parse_path to catch a path where we wanted a single
   // identifier.
-  let idents = parse_path(lexer)?;
-  if idents.components.is_empty() {
-    return Ok(syn::Ident(lexer.zero_width_span()));
-  }
+  let idents = parse_path(pz, toks, report)?;
 
   if idents.components.len() > 1 {
-    lexer.error("expected identifier, got path").at(&idents);
+    report.error("expected identifier, got path").at(&idents);
   }
 
-  Ok(idents.components[0])
+  Some(idents.components[0].0)
 }
 
-fn parse_package(lexer: &mut Lexer) -> Result<(Vec<syn::Attr>, syn::Package)> {
+fn parse_package<'t>(
+  pz: &Pz,
+  toks: &mut Cursor<'t>,
+  report: &Report,
+) -> Option<(Vec<syn::Attr<'t>>, syn::Package<'t>)> {
   let mut attrs = Vec::new();
   loop {
-    let kw =
-      lexer.expect(&[Kind::Doc, Kind::Exact("@"), Kind::Exact("package")])?;
+    let result = token::switch()
+      .case(pz.doc_comment, |doc, _| Err(Some(syn::Attr::Doc(doc))))
+      .case(pz.at, |at, toks| {
+        Err(parse_attr_kv(Some(at), pz, toks, report))
+      })
+      .case(pz.package, |package, toks| {
+        Ok(
+          parse_path(pz, toks, report)
+            .map(|path| syn::Package { package, path }),
+        )
+      })
+      .take(toks, report)?;
 
-    match kw.text(lexer.scx()) {
-      "@" => {
-        attrs.push(parse_attr_kv(Some(kw.span()), lexer)?);
-        continue;
-      }
-      comment if comment.starts_with("///") => {
-        attrs.push(syn::Attr {
-          span: kw.span(),
-          kind: syn::AttrKind::Doc,
-          value: syn::AttrValue::None,
-        });
-        continue;
-      }
-      _ => {
-        let path = match lexer.peek()? {
-          Token::Ident(id) if !id.is_hard_keyword(lexer.scx()) => {
-            parse_path(lexer)?
-          }
-          _ => syn::Path {
-            span: lexer.zero_width_span(),
-            components: Vec::new(),
-          },
-        };
-
-        return Ok((
-          attrs,
-          syn::Package {
-            span: kw.span().with_end(path.span(), lexer.scx_mut()),
-            path,
-          },
-        ));
-      }
+    match result {
+      Ok(pkg) => return Some((attrs, pkg?)),
+      Err(attr) => attrs.push(attr?),
     }
   }
 }
 
-fn parse_type(lexer: &mut Lexer) -> Result<syn::Type> {
-  let repeated = lexer.take_exact("repeated")?.map(|s| s.span());
-  let name = lexer.expect(&[
-    Kind::Exact("i32"),
-    Kind::Exact("u32"),
-    Kind::Exact("f32"),
-    Kind::Exact("i64"),
-    Kind::Exact("u64"),
-    Kind::Exact("f64"),
-    Kind::Exact("bool"),
-    Kind::Exact("str"),
-    Kind::Ident,
-  ])?;
-
-  let kind = match name.text(lexer.scx()) {
-    "i32" => syn::TypeKind::I32,
-    "u32" => syn::TypeKind::U32,
-    "f32" => syn::TypeKind::F32,
-    "i64" => syn::TypeKind::I64,
-    "u64" => syn::TypeKind::U64,
-    "f64" => syn::TypeKind::F64,
-    "bool" => syn::TypeKind::Bool,
-    "str" => syn::TypeKind::String,
-    _ => {
-      // Unlex the identifier token so that the path function finds it.
-      lexer.unlex(1);
-      syn::TypeKind::Path(parse_path(lexer)?)
-    }
+fn parse_type<'t>(
+  pz: &Pz,
+  toks: &mut Cursor<'t>,
+  report: &Report,
+) -> Option<syn::Type<'t>> {
+  if let Some(repeated) = toks.try_take(pz.repeated) {
+    return Some(syn::Type::Repeated {
+      repeated,
+      element: Box::new(parse_type(pz, toks, report)?),
+    });
   };
 
-  let span = repeated
-    .unwrap_or(name.span())
-    .with_end(name.span(), lexer.scx_mut());
-  Ok(syn::Type {
-    span,
-    repeated,
-    kind,
-  })
+  Some(syn::Type::Path(parse_path(pz, toks, report)?))
 }
 
-#[derive(Copy, Clone, PartialEq, Eq)]
-enum Container {
-  File,
-  Message,
-  Enum,
-  Struct,
-  Choice,
-}
+fn parse_attr_kv<'t>(
+  at: Option<token::Keyword<'t>>,
+  pz: &Pz,
+  toks: &mut Cursor<'t>,
+  report: &Report,
+) -> Option<syn::Attr<'t>> {
+  let name = parse_path(pz, toks, report);
+  let value = toks.try_take(pz.equal).and_then(|eq| {
+    let value = token::switch()
+      .case(pz.ident, |_, toks| {
+        toks.back_up(1);
+        parse_path(pz, toks, report).map(syn::AttrValue::Path)
+      })
+      .case(pz.str, |q, _| Some(syn::AttrValue::Str(q)))
+      .cases([pz.int, pz.bin, pz.hex], |d, _| {
+        Some(syn::AttrValue::Int(d))
+      })
+      .take(toks, report)
+      .flatten();
+    value.map(|v| (eq, v))
+  });
 
-impl fmt::Display for Container {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    match self {
-      Self::File => write!(f, "file"),
-      Self::Message => write!(f, "message"),
-      Self::Enum => write!(f, "enum"),
-      Self::Struct => write!(f, "struct"),
-      Self::Choice => write!(f, "choice"),
-    }
-  }
-}
-
-fn parse_attr_kv(start: Option<Span>, lexer: &mut Lexer) -> Result<syn::Attr> {
-  let name = parse_path(lexer)?;
-  let mut end = name.span();
-  let value = if lexer.peek()?.text(lexer.scx()) == "=" {
-    lexer.keyword("=")?;
-    let tok = lexer.expect(&[Kind::Ident, Kind::Int, Kind::Str])?;
-    end = tok.span();
-    match tok {
-      Token::Ident(x) => syn::AttrValue::Ident(x),
-      Token::Int(x) => syn::AttrValue::Int(x),
-      Token::Str(x) => syn::AttrValue::Str(x),
-      _ => unreachable!(),
-    }
-  } else {
-    syn::AttrValue::None
-  };
-
-  let span = start
-    .unwrap_or(name.span())
-    .span()
-    .with_end(end, lexer.scx_mut());
-  Ok(syn::Attr {
-    span,
-    kind: syn::AttrKind::At(name),
+  Some(syn::Attr::At {
+    at,
+    name: name?,
     value,
   })
 }
 
-fn parse_wheres(lexer: &mut Lexer, attrs: &mut Vec<syn::Attr>) -> Result<()> {
-  while lexer.take_exact("where")?.is_some() {
-    if lexer.take_exact("{")?.is_some() {
-      while lexer.take_exact("}")?.is_none() {}
-      lexer.keyword("}")?;
-    } else {
-      attrs.push(parse_attr_kv(None, lexer)?);
+fn parse_wheres<'t>(
+  pz: &Pz,
+  toks: &mut Cursor<'t>,
+  report: &Report,
+  attrs: &mut Vec<syn::Attr<'t>>,
+) {
+  while let Some(_where_) = toks.try_take(pz.where_) {
+    if let Some(attr) = parse_attr_kv(None, pz, toks, report) {
+      attrs.push(attr);
     }
   }
-  Ok(())
 }
 
-fn parse_item(
-  lexer: &mut Lexer,
-  mut imports: Option<&mut Vec<syn::Import>>,
-  inside: Container,
-  outer_name: Span,
-) -> Result<syn::Item> {
+fn parse_item<'t>(
+  pz: &Pz,
+  toks: &mut Cursor<'t>,
+  report: &Report,
+  mut imports: Option<&mut Vec<syn::Import<'t>>>,
+  inside: Option<syn::DeclKind>,
+  outer_name: Option<token::Ident<'t>>,
+) -> Option<syn::Item<'t>> {
   let mut attrs = Vec::new();
+  let inside_of = match inside {
+    Some(syn::DeclKind::Message) => "message",
+    Some(syn::DeclKind::Enum) => "enum",
+    Some(syn::DeclKind::Struct) => "struct",
+    Some(syn::DeclKind::Choice) => "choice",
+    None => "file",
+  };
+
   loop {
-    let kw = lexer.expect(&[
-      Kind::Ident,
-      Kind::Int,
-      Kind::Doc,
-      Kind::Exact("@"),
-      Kind::Exact("import"),
-      Kind::Exact("message"),
-      Kind::Exact("enum"),
-      Kind::Exact("struct"),
-      Kind::Exact("choice"),
-    ])?;
+    enum What<'t> {
+      Attr(syn::Attr<'t>),
+      Import(syn::Import<'t>),
+      Decl(syn::Decl<'t>),
+      Field(syn::Field<'t>),
+    }
 
-    break match kw.text(lexer.scx()) {
-      "@" => {
-        attrs.push(parse_attr_kv(Some(kw.span()), lexer)?);
-        continue;
-      }
-      comment if comment.starts_with("///") => {
-        attrs.push(syn::Attr {
-          span: kw.span(),
-          kind: syn::AttrKind::Doc,
-          value: syn::AttrValue::None,
-        });
-        continue;
-      }
-      "import" => {
-        let path = parse_path(lexer)?;
-        lexer.keyword("{")?;
-        parse_wheres(lexer, &mut attrs)?;
+    let done = token::switch()
+      .case(pz.at, |at, toks| {
+        Some(What::Attr(parse_attr_kv(Some(at), pz, toks, report)?))
+      })
+      .case(pz.doc_comment, |doc, _| {
+        Some(What::Attr(syn::Attr::Doc(doc)))
+      })
+      .case(pz.import, |import, toks| {
+        let package = parse_path(pz, toks, report);
+        let braces = toks.take(pz.braces, report);
 
-        let mut pairs = Vec::new();
-        while !lexer.at_eof()? && lexer.peek()?.text(lexer.scx()) != "}" {
-          let path = parse_path(lexer)?;
-          if lexer.peek()?.text(lexer.scx()) == "as" {
-            lexer.next()?;
-            pairs.push((path, Some(parse_ident(lexer)?)));
-          } else {
-            pairs.push((path, None));
-          }
-
-          lexer.take_exact(",")?;
+        let mut symbols = Vec::new();
+        if let Some(braces) = braces {
+          symbols.extend(
+            braces
+              .contents()
+              .delimited(pz.comma, |toks| {
+                let symbol = parse_path(pz, toks, report);
+                let rename = toks
+                  .try_take(pz.as_)
+                  .and_then(|as_| Some((as_, parse_ident(pz, toks, report)?)));
+                Some(ImportedSymbol {
+                  symbol: symbol?,
+                  rename,
+                })
+              })
+              .map(|(i, _)| i),
+          );
         }
-        lexer.keyword("}")?;
 
-        let span = kw.span().with_end(path.span(), lexer.scx_mut());
-        if let Some(ref mut imports) = imports {
-          imports.push(syn::Import {
-            span,
-            attrs: mem::take(&mut attrs),
-            package: path,
-            symbols: pairs,
-          })
+        Some(What::Import(syn::Import {
+          import,
+          attrs: Vec::new(),
+          package: package?,
+          braces: braces?,
+          symbols,
+        }))
+      })
+      .cases([pz.message, pz.enum_, pz.struct_, pz.choice], |kw, toks| {
+        let kind = if kw.lexeme() == pz.message {
+          syn::DeclKind::Message
+        } else if kw.lexeme() == pz.enum_ {
+          syn::DeclKind::Enum
+        } else if kw.lexeme() == pz.struct_ {
+          syn::DeclKind::Struct
         } else {
-          lexer
-            .error("imports are only permitted at the top of the file")
-            .at(span);
-        }
-
-        continue;
-      }
-      kind @ ("message" | "enum" | "struct" | "choice") => {
-        let (kind, container) = match kind {
-          "message" => (syn::DeclKind::Message, Container::Message),
-          "enum" => (syn::DeclKind::Enum, Container::Enum),
-          "struct" => (syn::DeclKind::Struct, Container::Struct),
-          "choice" => (syn::DeclKind::Choice, Container::Choice),
-          _ => unreachable!(),
+          syn::DeclKind::Choice
         };
 
-        let name = parse_ident(lexer)?;
-        let span = kw.span().with_end(name.span(), lexer.scx_mut());
+        let name = parse_ident(pz, toks, report);
+        let body = toks.take(pz.braces, report);
 
-        if inside == Container::Enum {
-          lexer
-            .error("declarations not permitted inside an `enum`")
-            .at(span)
-            .remark(outer_name, "declared within this  enum");
+        let outer_span = body.map(|body| {
+          Span::union([kw.span(toks.context()), body.span(toks.context())])
+        });
+
+        if inside == Some(syn::DeclKind::Enum) {
+          let mut d =
+            report.error("declarations not permitted inside an `enum`");
+          if let Some(span) = outer_span {
+            d = d.saying(span, "this declaration");
+          }
+          if let Some(outer) = outer_name {
+            d.remark(outer, "declared within this enum");
+          }
         }
-
-        lexer.keyword("{")?;
-
-        parse_wheres(lexer, &mut attrs)?;
 
         let mut items = Vec::new();
-        while !lexer.at_eof()? {
-          if lexer.peek()?.text(lexer.scx()) == "}" {
-            break;
+        if let Some(body) = body {
+          let mut toks = body.contents();
+          while !toks.is_empty() {
+            if let Some(item) =
+              parse_item(pz, &mut toks, report, None, Some(kind), name)
+            {
+              items.push(item);
+            }
           }
-
-          items.push(parse_item(lexer, None, container, span)?);
         }
-        lexer.keyword("}")?;
 
-        Ok(syn::Item::Decl(syn::Decl {
-          span,
+        Some(What::Decl(syn::Decl {
+          kw,
+          braces: body?,
           kind,
-          name,
+          name: name?,
           items,
-          attrs,
+          attrs: Vec::new(),
         }))
-      }
+      })
+      .cases(
+        [pz.ident.any(), pz.int.any(), pz.hex.any(), pz.bin.any()],
+        |tok, toks| {
+          let number = tok.digital().ok();
+          if let Some(n) = number {
+            if inside == Some(syn::DeclKind::Struct) {
+              let d = report
+                .error(format_args!("struct fields cannot have numbers"))
+                .saying(n, "remove this number");
 
-      _ => {
-        lexer.unlex(1);
-        let mut first = None;
-        let mut last;
+              if let Some(outer) = outer_name {
+                d.remark(outer, format_args!("declared within this struct"));
+              }
+            }
 
-        let mut number = None;
-        if let Token::Int(n) = kw {
-          lexer.next()?;
-          if inside == Container::Struct {
-            lexer
-              .error(format_args!("{inside} fields cannot have numbers"))
-              .saying(n, "remove this number")
-              .remark(
-                outer_name,
-                format_args!("declared within this {inside}"),
-              );
+            toks.take(pz.dot, report);
+          } else {
+            toks.back_up(1);
+          };
+
+          let name = parse_ident(pz, toks, report);
+
+          // This needs to be here so we can moor the diagnostic onto the `name`.
+          // (This may be a sign I should move where these diagnostics are
+          // generated...)
+          if number.is_none() && inside != Some(syn::DeclKind::Struct) {
+            let mut d = report
+              .error(format_args!("{inside_of} fields must have numbers"));
+            if let Some(name) = name {
+              d = d.saying(name, "expected number")
+            }
+            if let Some(outer) = outer_name {
+              d.remark(outer, format_args!("declared within this {inside_of}"));
+            }
           }
 
-          first = Some(n.span());
-          number = Some(n);
-          lexer.keyword(".")?;
-        }
-
-        let name = parse_ident(lexer)?;
-        first.get_or_insert(name.span());
-        last = Some(name.span());
-
-        // This needs to be here so we can moor the diagnostic onto the `name`.
-        // (This may be a sign I should move where these diagnostics are
-        // generated...)
-        if number.is_none() && inside != Container::Struct {
-          lexer
-            .error(format_args!("{inside} fields must have numbers"))
-            .saying(name, "expected number")
-            .remark(outer_name, format_args!("declared within this {inside}"));
-        }
-
-        let mut ty = None;
-        if lexer.take_exact(":")?.is_some() {
-          let typ = parse_type(lexer)?;
-          last = Some(typ.span());
-          if inside == Container::Enum {
-            lexer
-              .error(format_args!("{inside} fields cannot have types"))
-              .saying(&typ, "remove this type")
-              .remark(
-                outer_name,
-                format_args!("declared within this {inside}"),
-              );
+          let mut ty = None;
+          if let Some(_colon) = toks.try_take(pz.colon) {
+            ty = parse_type(pz, toks, report);
+            if inside == Some(syn::DeclKind::Enum) {
+              let mut d = report
+                .error(format_args!("{inside_of} fields cannot have types"));
+              if let Some(ty) = &ty {
+                d = d.saying(ty, "remove this type")
+              }
+              if let Some(outer) = outer_name {
+                d.remark(
+                  outer,
+                  format_args!("declared within this {inside_of}"),
+                );
+              }
+            }
+          } else if inside.is_some_and(|k| k != syn::DeclKind::Enum) {
+            let mut d =
+              report.error(format_args!("{inside_of} fields must have types"));
+            if let Some(name) = name {
+              d = d.saying(name, "expected type")
+            }
+            if let Some(outer) = outer_name {
+              d.remark(outer, format_args!("declared within this {inside_of}"));
+            }
           }
 
-          ty = Some(typ);
-        } else if inside != Container::Enum {
-          lexer
-            .error(format_args!("{inside} fields must have types"))
-            .saying(name, "expected type")
-            .remark(outer_name, format_args!("declared within this {inside}"));
+          parse_wheres(pz, toks, report, &mut attrs);
+
+          if inside.is_none() {
+            report
+              .error("bare fields are not permitted at the file level")
+              .at(name?);
+          }
+
+          Some(What::Field(syn::Field {
+            name: name?,
+            number,
+            ty,
+            attrs: Vec::new(),
+          }))
+        },
+      )
+      .case(Lexeme::eof(), |_, _| {
+        // TODO: handle unmoored attributes?
+        None
+      })
+      .take(toks, report)??;
+
+    match done {
+      What::Attr(attr) => attrs.push(attr),
+      What::Import(mut import) => {
+        import.attrs = mem::take(&mut attrs);
+        match &mut imports {
+          Some(imports) => imports.push(import),
+          None => {
+            report
+              .error("imports are only permitted at the top of the file")
+              .at(&import);
+          }
         }
-
-        parse_wheres(lexer, &mut attrs)?;
-
-        let span = first.unwrap().with_end(last.unwrap(), lexer.scx_mut());
-        if inside == Container::File {
-          lexer
-            .error("bare fields are not permitted at the file level")
-            .at(span);
-        }
-
-        lexer.take_exact(",")?;
-
-        Ok(syn::Item::Field(syn::Field {
-          span,
-          name,
-          number,
-          ty,
-          attrs,
-        }))
       }
-    };
+      What::Decl(mut decl) => {
+        decl.attrs = attrs;
+        return Some(syn::Item::Decl(decl));
+      }
+      What::Field(mut field) => {
+        field.attrs = attrs;
+        return Some(syn::Item::Field(field));
+      }
+    }
   }
 }
 
-pub fn parse(
-  file: File,
-  scx: &mut SourceCtx,
-  report: &mut Report,
-) -> Option<syn::PzFile> {
-  let mut lexer = Lexer::new(file, scx, report);
-  let (attrs, package) = parse_package(&mut lexer).ok()?;
+pub fn lex<'t>(
+  file: ilex::File<'t>,
+  report: &ilex::Report,
+) -> Result<token::Stream<'t>, ilex::Fatal> {
+  file.lex(Pz::get().spec(), report)
+}
+
+pub fn parse<'t>(
+  stream: &'t token::Stream<'t>,
+  report: &ilex::Report,
+) -> Result<syn::PzFile<'t>, ilex::Fatal> {
+  let _u = stream.context().use_for_debugging_spans();
+  let mut cursor = stream.cursor();
+
+  let pz = Pz::get();
+  let pkg = parse_package(pz, &mut cursor, report);
 
   let mut imports = Vec::new();
   let mut items = Vec::new();
-  while !lexer.at_eof().ok()? {
-    items.push(
-      parse_item(
-        &mut lexer,
-        // Only parse imports before we parse any other kind of item.
-        items.is_empty().then_some(&mut imports),
-        Container::File,
-        package.span(),
-      )
-      .ok()?,
+  while !cursor.is_empty() {
+    let item = parse_item(
+      pz,
+      &mut cursor,
+      report,
+      // Only parse imports before we parse any other kind of item.
+      items.is_empty().then_some(&mut imports),
+      None,
+      None,
     );
+    if let Some(item) = item {
+      items.push(item);
+    }
   }
 
-  Some(syn::PzFile {
+  let (attrs, package) = pkg.unwrap();
+  Ok(syn::PzFile {
     attrs,
     package,
     imports,

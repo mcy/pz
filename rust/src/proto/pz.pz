@@ -18,7 +18,7 @@ message Bundle {
     1. name: str
 
     /// An index into `Bundle.packages`.
-    2. package: u32
+    2. #package: u32
   }
 }
 
@@ -31,7 +31,7 @@ message Type {
   /// The package this type belongs to.
   ///
   /// This is an index into `Bundle.types`.
-  2. package: u32
+  2. #package: u32
 
   
   /// The kind of declaration this is. 

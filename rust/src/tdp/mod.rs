@@ -201,7 +201,7 @@ impl Field {
         // priori if whatever used to be here had a compatible layout.
         value.write_bytes(0, 3 * mem::size_of::<usize>());
       }
-    } else {
+    } else if !self.is_repeated() {
       // NOTE: The hasbits are always the first thing in the message
       // right now.
       let word = raw.cast::<u32>().add(self.hasbit_word());
@@ -210,6 +210,11 @@ impl Field {
       }
 
       *word |= self.hasbit_mask();
+    }
+
+    // No need to do anything for repeated fields!
+    if self.is_repeated() {
+      return;
     }
 
     // We need to make sure to clear the *values* now, because the actual

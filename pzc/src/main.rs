@@ -14,12 +14,12 @@ use clap::Arg;
 use clap::ArgAction;
 use clap::CommandFactory;
 use clap::FromArgMatches;
+use ilex::report::Report;
 use prost::Message;
 
 use pz::proto::plugin;
 
 use pzc::ir;
-use pzc::report::Report;
 use pzc::syn;
 
 #[derive(clap::Parser, Debug)]
@@ -47,29 +47,29 @@ struct Pzc {
   bundles: Vec<PathBuf>,
 
   /// The `.pz` files to pass to the plugin.
-  files: Vec<PathBuf>,
+  files: Vec<String>,
 }
 
 fn expect<T, E: fmt::Display>(
-  scx: &syn::SourceCtx,
-  report: &mut Report,
+  report: &Report,
   msg: impl fmt::Display,
   res: Result<T, E>,
-) -> T {
+) -> Result<T, ilex::Fatal> {
   match res {
-    Ok(x) => x,
-    Err(e) => report.fatal(scx, 2, format_args!("{msg}: {e}")),
+    Ok(x) => Ok(x),
+    Err(e) => {
+      report.error(format_args!("{msg}: {e}"));
+      report.fatal()
+    }
   }
 }
 
 fn run_plugin(
   plugin: &Path,
   req: &plugin::Request,
-  scx: &syn::SourceCtx,
-  report: &mut Report,
-) -> plugin::Response {
+  report: &Report,
+) -> Result<plugin::Response, ilex::Fatal> {
   let mut child = expect(
-    scx,
     report,
     format_args!("could not spawn plugin {}", plugin.display()),
     Command::new(plugin)
@@ -78,32 +78,29 @@ fn run_plugin(
       .stderr(Stdio::inherit())
       .env("RUST_BACKTRACE", "1")
       .spawn(),
-  );
+  )?;
 
   expect(
-    scx,
     report,
     "could not send request to plugin",
     child.stdin.take().unwrap().write_all(&req.encode_to_vec()),
-  );
+  )?;
 
   let exit = expect(
-    scx,
     report,
     "plugin did not exit successfully",
     child.wait_with_output(),
-  );
+  )?;
 
   if exit.status.code() != Some(0) {
-    report.fatal(
-      scx,
-      2,
-      format_args!("plugin returned abnormally: $? = {:?}", exit.status),
-    );
+    expect(
+      report,
+      "plugin returned abnormally",
+      Err(format_args!("$? = {:?}", exit.status)),
+    )?;
   }
 
   expect(
-    scx,
     report,
     "plugin returned malformed response",
     plugin::Response::decode(exit.stdout.as_slice()),
@@ -117,8 +114,29 @@ fn main() {
     _ => {}
   }
 
-  let mut report = Report::new();
-  let mut scx = syn::SourceCtx::new();
+  let mut ctx = ilex::Context::new();
+  let report = ctx.new_report();
+  let options = ilex::ice::Options {
+    show_backtrace: env::var_os("PZ_BRACKTRACE").map(|val| val != "0"),
+    what_panicked: Some("the compiler".into()),
+    report_bugs_at: Some("https://github.com/mcy/pz/issues".into()),
+    extra_notes: Vec::new(),
+  };
+
+  let result = ilex::ice::handle(&mut ctx, &report, options, |ctx| pzc(ctx, &report));
+  if let Err(e) = result {
+    e.terminate();
+  }
+}
+
+fn pzc(icx: &ilex::Context, report: &Report) -> Result<(), ilex::Fatal> {
+  let _dbg = icx.use_for_debugging_spans();
+
+  match env::var("_PZ_SELF_EXEC").as_deref() {
+    Ok("bundle") => pz_plugins::bundle_plugin(),
+    Ok("rust") => pz_plugins::rust_plugin(),
+    _ => {}
+  }
 
   let args = env::args_os().collect::<Vec<_>>();
   let mut plugin_name = None;
@@ -147,18 +165,14 @@ fn main() {
   let req = plugin::Request {
     value: Some(plugin::request::Value::About(plugin::AboutRequest {})),
   };
-  let resp = run_plugin(&plugin, &req, &scx, &mut report)
-    .value
-    .and_then(|v| match v {
-      plugin::response::Value::About(a) => Some(a),
-      _ => None,
-    });
-  let resp = expect(
-    &scx,
-    &mut report,
-    "plugin returned malformed response",
-    resp.ok_or("expected AboutResponse"),
-  );
+  let resp = match run_plugin(&plugin, &req, report)?.value {
+    Some(plugin::response::Value::About(a)) => a,
+    _ => {
+      report
+        .error("plugin returned malformed response: expected AboutResponse");
+      return report.fatal();
+    }
+  };
 
   let mut plugin_command = Pzc::command().help_template(format!(
     "\
@@ -203,13 +217,14 @@ Options:
       let message =
         message[..message.find("Usage: pz").unwrap_or(message.len())].trim();
 
-      report.fatal(&scx, 2, message);
+      report.error(message);
+      return report.fatal();
     }
   };
 
   if opts.help {
     plugin_command.print_help().unwrap();
-    return;
+    return Ok(());
   }
 
   if opts.version {
@@ -219,7 +234,7 @@ Options:
       resp.name(),
       resp.version()
     );
-    return;
+    return Ok(());
   }
 
   let mut options = HashMap::new();
@@ -231,14 +246,16 @@ Options:
   }
 
   if opts.files.is_empty() {
-    report.fatal(&scx, 2, "missing input filename");
+    report.error("missing input filename");
+    return report.fatal();
   }
 
   let contents = opts
     .files
     .iter()
-    .filter_map(|path| scx.open_file(path, &mut report))
+    .filter_map(|path| icx.open_file(path, report).ok())
     .collect::<Vec<_>>();
+  report.fatal_or(())?;
 
   let bundles = opts
     .bundles
@@ -259,20 +276,25 @@ Options:
       }
     })
     .collect::<Vec<_>>();
+  report.fatal_or(())?;
 
-  report.dump_and_die(&scx, 2);
-
-  let files = contents
+  let tokens = contents
     .iter()
-    .filter_map(|file| syn::PzFile::parse(*file, &mut scx, &mut report))
+    .filter_map(|file| syn::lex(*file, report).ok())
     .collect::<Vec<_>>();
-  report.dump_and_die(&scx, 2);
+  report.fatal_or(())?;
 
-  let rcx = ir::ResolveCtx::new(&scx);
-  let bundle = rcx.resolve(&bundles, &files, &mut report);
-  report.dump_and_die(&scx, 2);
+  let files = tokens
+    .iter()
+    .filter_map(|file| syn::PzFile::parse(file, report).ok())
+    .collect::<Vec<_>>();
+  report.fatal_or(())?;
 
-  let bundle_proto = bundle.unwrap().to_proto();
+  let rcx = ir::ResolveCtx::new(icx, report);
+  let bundle = rcx.resolve(&bundles, &files);
+  report.fatal_or(())?;
+
+  let (bundle_proto, spans) = bundle.unwrap().to_proto(icx);
   let req = plugin::Request {
     value: Some(plugin::request::Value::Codegen(plugin::CodegenRequest {
       requested_indices: (0..bundle_proto.types.len() as u32).collect(),
@@ -282,24 +304,32 @@ Options:
     })),
   };
 
-  let resp = run_plugin(&plugin, &req, &scx, &mut report)
-    .value
-    .and_then(|v| match v {
-      plugin::response::Value::Codegen(a) => Some(a),
-      _ => None,
-    });
-  let resp = expect(
-    &scx,
-    &mut report,
-    "plugin returned malformed response",
-    resp.ok_or("expected CodegenResponse"),
-  );
+  let resp = match run_plugin(&plugin, &req, report)?.value {
+    Some(plugin::response::Value::Codegen(a)) => a,
+    _ => {
+      report
+        .error("plugin returned malformed response: expected CodegenResponse");
+      return report.fatal();
+    }
+  };
 
   for diagnostic in &resp.report {
-    report.from_proto(diagnostic);
+    let mut d = match diagnostic.kind() {
+      plugin::diagnostic::Kind::Error => report.error(diagnostic.message()),
+      plugin::diagnostic::Kind::Warning => report.warn(diagnostic.message()),
+    };
+    for snippet in &diagnostic.snippets {
+      if snippet.is_remark() {
+        d = d.remark(spans[&snippet.span()], snippet.message());
+      } else {
+        d = d.saying(spans[&snippet.span()], snippet.message());
+      }
+    }
+    for note in &diagnostic.notes {
+      d = d.note(note);
+    }
   }
-
-  report.dump_and_die(&scx, 2);
+  report.fatal_or(())?;
 
   for file in &resp.files {
     let mut path = opts.output_dir.clone().unwrap_or(PathBuf::new());
@@ -313,5 +343,5 @@ Options:
     }
   }
 
-  report.dump_and_die(&scx, 2);
+  report.fatal_or(())
 }
