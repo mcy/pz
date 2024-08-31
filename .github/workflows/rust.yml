@@ -1,0 +1,76 @@
+name: Rust
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  NIGHTLY: 'nightly-2024-08-30'
+
+jobs:
+  bootstrap:
+    name: Check Bootstrap
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install protoc
+      uses: arduino/setup-protoc@v3
+
+    - name: Run bootstrap
+      run: ./bootstrap.sh
+
+    - name: Check for diffs
+      run: git --no-pager diff --exit-code
+
+  lint:
+    name: Check Linting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install protoc
+      uses: arduino/setup-protoc@v3
+
+    - name: Check format
+      run: cargo fmt -- --check --files-with-diff
+
+    - name: Check clippy lints
+      run: cargo clippy --all-targets --verbose
+
+  build_and_test:
+    name: Build and Test (Rust)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install protoc
+      uses: arduino/setup-protoc@v3
+
+    - name: Build with default settings
+      run: |
+        cargo build -v
+        cargo build --release -v
+
+    - name: Build docs
+      run: cargo doc --verbose
+
+    - name: Run tests
+      run: cargo test --verbose
+
+  miri:
+    name: Build and Test (MIRI)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install protoc
+      uses: arduino/setup-protoc@v3
+    
+    - name: Install Miri
+      run: rustup +$NIGHTLY component add miri
+
+    - name: Run tests under Miri
+      run: cargo +$NIGHTLY miri test -p pz

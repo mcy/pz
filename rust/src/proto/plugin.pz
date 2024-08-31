@@ -78,7 +78,10 @@ message CodegenResponse {
   ///
   /// The driver will output these files relative to the output directory.
   1. files: repeated File
-  message File { 1. path: str, 2. content: str }
+  message File {
+    1. path: str
+    2. content: str
+  }
 
   /// Diagnostics that the driver should render.
   2. report: repeated Diagnostic
@@ -116,7 +119,7 @@ message Diagnostic {
     /// underline portion of the code).
     ///
     /// It should be in the same style as Diagnostic.message.
-    2. message: str
+    2. #message: str
     
     /// Whether this is a "remark", which is additional information related to
     /// a problem that isn't the direct cause. This is rendered slightly

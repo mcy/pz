@@ -67,6 +67,7 @@ pub struct SourceWriter {
 }
 
 pub struct Options {
+  #[allow(unused)]
   pub comment_start: &'static str,
 }
 
@@ -121,7 +122,10 @@ impl SourceWriter {
   ) {
     let map: HashMap<&str, Sub> = vars.into();
     unsafe {
-      self.frames.push(mem::transmute(map));
+      self.frames.push(mem::transmute::<
+        HashMap<&str, Sub>,
+        HashMap<&'static str, Sub<'static>>,
+      >(map));
     }
 
     // This assert-unwind-safe is actually safe, because all we do

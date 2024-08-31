@@ -47,10 +47,7 @@ impl<'a, T: Type + ?Sized> Slice<'a, T> {
   /// Gets a subslice of this slice (or a single element).
   ///
   /// Returns `None` if the range is out of bounds.
-  pub fn get<Range: RepIndex>(self, idx: Range) -> Option<Range::View<'a, T>>
-  where
-    Range: RepIndex,
-  {
+  pub fn get<Range: RepIndex>(self, idx: Range) -> Option<Range::View<'a, T>> {
     unsafe { idx.__get(self.ptr, self.len) }
   }
 
@@ -159,20 +156,17 @@ impl<'a, T: Type + ?Sized> SliceMut<'a, T> {
   /// Gets a subslice of this slice (or a single element).
   ///
   /// Returns `None` if the range is out of bounds.
-  pub fn get<Range: RepIndex>(self, idx: Range) -> Option<Range::View<'a, T>>
-  where
-    Range: RepIndex,
-  {
+  pub fn get<Range: RepIndex>(self, idx: Range) -> Option<Range::View<'a, T>> {
     self.into_view().get(idx)
   }
 
   /// Gets a mutable subslice of this slice (or a single element).
   ///
   /// Returns `None` if the range is out of bounds.
-  pub fn get_mut<Range: RepIndex>(self, idx: Range) -> Option<Range::Mut<'a, T>>
-  where
-    Range: RepIndex,
-  {
+  pub fn get_mut<Range: RepIndex>(
+    self,
+    idx: Range,
+  ) -> Option<Range::Mut<'a, T>> {
     unsafe { idx.__get_mut(self.ptr, self.len, self.arena) }
   }
 
@@ -320,20 +314,17 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   /// Gets a subslice of this slice (or a single element).
   ///
   /// Returns `None` if the range is out of bounds.
-  pub fn get<Range: RepIndex>(self, idx: Range) -> Option<Range::View<'a, T>>
-  where
-    Range: RepIndex,
-  {
+  pub fn get<Range: RepIndex>(self, idx: Range) -> Option<Range::View<'a, T>> {
     self.into_view().get(idx)
   }
 
   /// Gets a mutable subslice of this slice (or a single element).
   ///
   /// Returns `None` if the range is out of bounds.
-  pub fn get_mut<Range: RepIndex>(self, idx: Range) -> Option<Range::Mut<'a, T>>
-  where
-    Range: RepIndex,
-  {
+  pub fn get_mut<Range: RepIndex>(
+    self,
+    idx: Range,
+  ) -> Option<Range::Mut<'a, T>> {
     self.into_mut().get_mut(idx)
   }
 

@@ -84,6 +84,12 @@ impl<T> Clone for AVec<T> {
   }
 }
 
+impl<T> Default for AVec<T> {
+  fn default() -> Self {
+    Self::new()
+  }
+}
+
 impl<T> AVec<T> {
   pub const fn new() -> AVec<T> {
     Self {

@@ -123,7 +123,8 @@ fn main() {
     extra_notes: Vec::new(),
   };
 
-  let result = ilex::ice::handle(&mut ctx, &report, options, |ctx| pzc(ctx, &report));
+  let result =
+    ilex::ice::handle(&mut ctx, &report, options, |ctx| pzc(ctx, &report));
   if let Err(e) = result {
     e.terminate();
   }

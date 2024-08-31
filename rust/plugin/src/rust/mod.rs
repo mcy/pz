@@ -31,10 +31,21 @@ pub fn rust_plugin() -> ! {
         r"
         // ! ! ! GENERATED CODE, DO NOT EDIT ! ! !
         #![cfg_attr(rustfmt, rustfmt_skip)]
+        
         #![allow(non_camel_case_types)]
         #![allow(non_upper_case_globals)]
         #![allow(non_snake_case)]
         #![allow(unused)]
+
+        #![allow(clippy::derivable_impls)]
+        #![allow(clippy::identity_op)]
+        #![allow(clippy::needless_borrow)]
+        #![allow(clippy::transmute_float_to_int)]
+        #![allow(clippy::transmute_int_to_float)]
+        #![allow(clippy::useless_transmute)]
+        #![allow(clippy::unnecessary_cast)]
+        #![allow(clippy::wrong_self_convention)]
+        
       ",
       );
 
