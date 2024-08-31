@@ -118,6 +118,8 @@ dependencies = [
 [[package]]
 name = "buf-trait"
 version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "21eaafc770e8c073d6c3facafe7617e774305d4954aa6351b9c452eb37ee17b4"
 dependencies = [
  "zerocopy",
 ]
@@ -143,6 +145,8 @@ checksum = "89b2fd2a0dcf38d7971e2194b6b6eebab45ae01067456a7fd93d5547a61b70be"
 [[package]]
 name = "byteyarn"
 version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b93e51d26468a15ea59f8525e0c13dc405db43e644a0b1e6d44346c72cf4cf7b"
 dependencies = [
  "buf-trait",
 ]
@@ -314,7 +318,9 @@ checksum = "fed44880c466736ef9a5c5b5facefb5ed0785676d0c02d612db14e54f0d84286"
 
 [[package]]
 name = "ilex"
-version = "0.5.0"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8ecf93d1b4b5ca1d0f3b3bccd5f0f1247a8b27872b790b42bf2502dcfc7cbbb6"
 dependencies = [
  "annotate-snippets 0.10.1",
  "byteyarn",
@@ -332,6 +338,8 @@ dependencies = [
 [[package]]
 name = "ilex-attr"
 version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be33d2c7f14c5ae4d87c622ac23c6d43065838dea530f08cba8f6a576f628585"
 
 [[package]]
 name = "indexmap"
@@ -710,6 +718,8 @@ dependencies = [
 [[package]]
 name = "twie"
 version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5928af1522a47c88a7afa4f61ed574ba4a513491e5aa4abb325b39b962f4143e"
 dependencies = [
  "boxy",
  "buf-trait",

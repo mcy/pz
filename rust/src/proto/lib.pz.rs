@@ -4421,7 +4421,7 @@ impl Diagnostic_Snippet {
     const VALUE: __priv_Diagnostic_Snippet::Storage = __priv_Diagnostic_Snippet::Storage {
       __hasbits: [0; 1],
       span: 0,
-      msg: (0 as *mut u8, 0),
+      message: (0 as *mut u8, 0),
       is_remark: false,
     };
     crate::View::<Self> {
@@ -4488,21 +4488,21 @@ impl Diagnostic_Snippet {
     self.span_mut().set(value);
   }
 
-  pub fn msg(&self) -> crate::View<'_, crate::Str> {
-    self.msg_or().unwrap_or_default()
+  pub fn message(&self) -> crate::View<'_, crate::Str> {
+    self.message_or().unwrap_or_default()
   }
-  pub fn msg_or(&self) -> Option<crate::View<'_, crate::Str>> {
+  pub fn message_or(&self) -> Option<crate::View<'_, crate::Str>> {
     if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
+      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().message };
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn msg_mut(&mut self) -> crate::Mut<'_, crate::Str> {
-    self.msg_mut_or().into_mut()
+  pub fn message_mut(&mut self) -> crate::Mut<'_, crate::Str> {
+    self.message_mut_or().into_mut()
   }
-  pub fn msg_mut_or(&mut self) -> crate::value::OptMut<'_, crate::Str> {
+  pub fn message_mut_or(&mut self) -> crate::value::OptMut<'_, crate::Str> {
     unsafe {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
@@ -4511,8 +4511,8 @@ impl Diagnostic_Snippet {
       )
     }
   }
-  pub fn msg_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
-    self.msg_mut().set(value);
+  pub fn message_set(&mut self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.message_mut().set(value);
   }
 
   pub fn is_remark(&self) -> crate::View<'_, bool> {
@@ -4600,13 +4600,13 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
     Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
   }
 
-  pub fn msg(self) -> crate::View<'proto, crate::Str> {
-    self.msg_or().unwrap_or_default()
+  pub fn message(self) -> crate::View<'proto, crate::Str> {
+    self.message_or().unwrap_or_default()
   }
-  pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
+  pub fn message_or(self) -> Option<crate::View<'proto, crate::Str>> {
     if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
+      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().message };
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::Str::from_raw_parts(ptr, len)
     })
@@ -4630,9 +4630,9 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
       debug.write_debug(value);
       count += 1;
     }
-    if let Some(value) = self.msg_or() {
+    if let Some(value) = self.message_or() {
       if count != 0 { debug.comma(false)?; }
-      debug.field("msg")?;
+      debug.field("message")?;
       debug.write_debug(value);
       count += 1;
     }
@@ -4701,21 +4701,21 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
     self.span_mut().set(value);
   }
 
-  pub fn msg(self) -> crate::View<'proto, crate::Str> {
-    self.msg_or().unwrap_or_default()
+  pub fn message(self) -> crate::View<'proto, crate::Str> {
+    self.message_or().unwrap_or_default()
   }
-  pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
+  pub fn message_or(self) -> Option<crate::View<'proto, crate::Str>> {
     if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
     Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
+      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().message };
       if ptr.is_null() { ptr = 1 as *mut u8; }
       crate::Str::from_raw_parts(ptr, len)
     })
   }
-  pub fn msg_mut(self) -> crate::Mut<'proto, crate::Str> {
-    self.msg_mut_or().into_mut()
+  pub fn message_mut(self) -> crate::Mut<'proto, crate::Str> {
+    self.message_mut_or().into_mut()
   }
-  pub fn msg_mut_or(self) -> crate::value::OptMut<'proto, crate::Str> {
+  pub fn message_mut_or(self) -> crate::value::OptMut<'proto, crate::Str> {
     unsafe {
       crate::value::OptMut::__wrap(
         self.ptr.as_ptr(),
@@ -4724,8 +4724,8 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
       )
     }
   }
-  pub fn msg_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
-    self.msg_mut().set(value);
+  pub fn message_set(self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+    self.message_mut().set(value);
   }
 
   pub fn is_remark(self) -> crate::View<'proto, bool> {
@@ -4787,7 +4787,7 @@ mod __priv_Diagnostic_Snippet {
   pub struct Storage {
     pub(crate) __hasbits: [u32; 1],
     pub(in super) span: u32,
-    pub(in super) msg: (*mut u8, usize),
+    pub(in super) message: (*mut u8, usize),
     pub(in super) is_remark: bool,
   }
 
@@ -4830,7 +4830,7 @@ mod __priv_Diagnostic_Snippet {
           offset: unsafe {
             let msg = Diagnostic_Snippet::DEFAULT;
             let top = msg.ptr.as_ptr().cast::<u8>();
-            let field = &msg.ptr.as_ref().msg as *const _ as *const u8;
+            let field = &msg.ptr.as_ref().message as *const _ as *const u8;
             field.offset_from(top) as u32
           },
           desc: 0,
