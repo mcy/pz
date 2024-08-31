@@ -3,7 +3,6 @@
 use std::alloc::Layout;
 use std::mem;
 use std::ptr::NonNull;
-use std::usize;
 
 use crate::arena::RawArena;
 

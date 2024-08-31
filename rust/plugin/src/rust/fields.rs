@@ -23,6 +23,7 @@ pub enum Where {
 pub struct GenField<'ccx> {
   gen: Box<dyn GenFieldImpl + 'ccx>,
   pub field: Field<'ccx>,
+  #[allow(unused)]
   pub hasbit: Option<u32>,
 }
 
@@ -77,7 +78,7 @@ impl<'ccx> GenField<'ccx> {
   }
 }
 
-#[allow(unused_variables)]
+#[allow(unused)]
 trait GenFieldImpl {
   fn in_storage(&self, field: Field, w: &mut SourceWriter) {}
   fn in_variants(&self, field: Field, w: &mut SourceWriter) {}
