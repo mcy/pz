@@ -87,8 +87,11 @@ impl Request {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(&self) -> Option<crate::View<'_, AboutRequest>> {
-    if !unsafe { Request::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<AboutRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Request::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<AboutRequest>(self.ptr.as_ptr()))
+    }
   }
   pub fn about_mut(&mut self) -> crate::Mut<'_, AboutRequest> {
     self.about_mut_or().into_mut()
@@ -107,8 +110,11 @@ impl Request {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(&self) -> Option<crate::View<'_, CodegenRequest>> {
-    if !unsafe { Request::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<CodegenRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Request::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<CodegenRequest>(self.ptr.as_ptr()))
+    }
   }
   pub fn codegen_mut(&mut self) -> crate::Mut<'_, CodegenRequest> {
     self.codegen_mut_or().into_mut()
@@ -164,11 +170,10 @@ impl<'proto> __priv_Request::View<'proto> {
   pub fn cases(self) -> RequestCases<'proto, crate::ptr::select::View> {
     unsafe {
       let number = self.ptr.as_ptr().cast::<u32>().read();
-      let raw = self.ptr.as_ptr().add(__priv_Request::UNION_OFFSET);
       match number {
         0 => RequestCases::Unset(std::marker::PhantomData),
-        1 => RequestCases::About(<AboutRequest as crate::value::Type>::__make_view(raw)),
-        2 => RequestCases::Codegen(<CodegenRequest as crate::value::Type>::__make_view(raw)),
+        1 => RequestCases::About(Request::__tdp_info().field(0).make_view::<AboutRequest>(self.ptr.as_ptr())),
+        2 => RequestCases::Codegen(Request::__tdp_info().field(1).make_view::<CodegenRequest>(self.ptr.as_ptr())),
         _ => unreachable!(),
       }
     }
@@ -178,16 +183,22 @@ impl<'proto> __priv_Request::View<'proto> {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutRequest>> {
-    if !unsafe { Request::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<AboutRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Request::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<AboutRequest>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn codegen(self) -> crate::View<'proto, CodegenRequest> {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenRequest>> {
-    if !unsafe { Request::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<CodegenRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Request::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<CodegenRequest>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -240,11 +251,10 @@ impl<'proto> __priv_Request::Mut<'proto>  {
   pub fn cases_mut(self) -> RequestCases<'proto, crate::ptr::select::Mut> {
     unsafe {
       let number = self.ptr.as_ptr().cast::<u32>().read();
-      let raw = self.ptr.as_ptr().add(__priv_Request::UNION_OFFSET);
       match number {
         0 => RequestCases::Unset(std::marker::PhantomData),
-        1 => RequestCases::About(<AboutRequest as crate::value::Type>::__make_mut(raw, self.arena)),
-        2 => RequestCases::Codegen(<CodegenRequest as crate::value::Type>::__make_mut(raw, self.arena)),
+        1 => RequestCases::About(Request::__tdp_info().field(0).make_mut::<AboutRequest>(self.ptr.as_ptr(), self.arena)),
+        2 => RequestCases::Codegen(Request::__tdp_info().field(1).make_mut::<CodegenRequest>(self.ptr.as_ptr(), self.arena)),
         _ => unreachable!(),
       }
     }
@@ -263,8 +273,11 @@ impl<'proto> __priv_Request::Mut<'proto>  {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutRequest>> {
-    if !unsafe { Request::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<AboutRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Request::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<AboutRequest>(self.ptr.as_ptr()))
+    }
   }
   pub fn about_mut(self) -> crate::Mut<'proto, AboutRequest> {
     self.about_mut_or().into_mut()
@@ -283,8 +296,11 @@ impl<'proto> __priv_Request::Mut<'proto>  {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenRequest>> {
-    if !unsafe { Request::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<CodegenRequest as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Request::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<CodegenRequest>(self.ptr.as_ptr()))
+    }
   }
   pub fn codegen_mut(self) -> crate::Mut<'proto, CodegenRequest> {
     self.codegen_mut_or().into_mut()
@@ -331,22 +347,22 @@ impl std::fmt::Debug for Request {
 impl crate::value::Type for Request {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Request::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Request::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -519,8 +535,11 @@ impl Response {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(&self) -> Option<crate::View<'_, AboutResponse>> {
-    if !unsafe { Response::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<AboutResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Response::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<AboutResponse>(self.ptr.as_ptr()))
+    }
   }
   pub fn about_mut(&mut self) -> crate::Mut<'_, AboutResponse> {
     self.about_mut_or().into_mut()
@@ -539,8 +558,11 @@ impl Response {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(&self) -> Option<crate::View<'_, CodegenResponse>> {
-    if !unsafe { Response::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<CodegenResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Response::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<CodegenResponse>(self.ptr.as_ptr()))
+    }
   }
   pub fn codegen_mut(&mut self) -> crate::Mut<'_, CodegenResponse> {
     self.codegen_mut_or().into_mut()
@@ -596,11 +618,10 @@ impl<'proto> __priv_Response::View<'proto> {
   pub fn cases(self) -> ResponseCases<'proto, crate::ptr::select::View> {
     unsafe {
       let number = self.ptr.as_ptr().cast::<u32>().read();
-      let raw = self.ptr.as_ptr().add(__priv_Response::UNION_OFFSET);
       match number {
         0 => ResponseCases::Unset(std::marker::PhantomData),
-        1 => ResponseCases::About(<AboutResponse as crate::value::Type>::__make_view(raw)),
-        2 => ResponseCases::Codegen(<CodegenResponse as crate::value::Type>::__make_view(raw)),
+        1 => ResponseCases::About(Response::__tdp_info().field(0).make_view::<AboutResponse>(self.ptr.as_ptr())),
+        2 => ResponseCases::Codegen(Response::__tdp_info().field(1).make_view::<CodegenResponse>(self.ptr.as_ptr())),
         _ => unreachable!(),
       }
     }
@@ -610,16 +631,22 @@ impl<'proto> __priv_Response::View<'proto> {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutResponse>> {
-    if !unsafe { Response::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<AboutResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Response::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<AboutResponse>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn codegen(self) -> crate::View<'proto, CodegenResponse> {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenResponse>> {
-    if !unsafe { Response::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<CodegenResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Response::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<CodegenResponse>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -672,11 +699,10 @@ impl<'proto> __priv_Response::Mut<'proto>  {
   pub fn cases_mut(self) -> ResponseCases<'proto, crate::ptr::select::Mut> {
     unsafe {
       let number = self.ptr.as_ptr().cast::<u32>().read();
-      let raw = self.ptr.as_ptr().add(__priv_Response::UNION_OFFSET);
       match number {
         0 => ResponseCases::Unset(std::marker::PhantomData),
-        1 => ResponseCases::About(<AboutResponse as crate::value::Type>::__make_mut(raw, self.arena)),
-        2 => ResponseCases::Codegen(<CodegenResponse as crate::value::Type>::__make_mut(raw, self.arena)),
+        1 => ResponseCases::About(Response::__tdp_info().field(0).make_mut::<AboutResponse>(self.ptr.as_ptr(), self.arena)),
+        2 => ResponseCases::Codegen(Response::__tdp_info().field(1).make_mut::<CodegenResponse>(self.ptr.as_ptr(), self.arena)),
         _ => unreachable!(),
       }
     }
@@ -695,8 +721,11 @@ impl<'proto> __priv_Response::Mut<'proto>  {
     self.about_or().unwrap_or_default()
   }
   pub fn about_or(self) -> Option<crate::View<'proto, AboutResponse>> {
-    if !unsafe { Response::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<AboutResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.about } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Response::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<AboutResponse>(self.ptr.as_ptr()))
+    }
   }
   pub fn about_mut(self) -> crate::Mut<'proto, AboutResponse> {
     self.about_mut_or().into_mut()
@@ -715,8 +744,11 @@ impl<'proto> __priv_Response::Mut<'proto>  {
     self.codegen_or().unwrap_or_default()
   }
   pub fn codegen_or(self) -> Option<crate::View<'proto, CodegenResponse>> {
-    if !unsafe { Response::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<CodegenResponse as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.codegen } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Response::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<CodegenResponse>(self.ptr.as_ptr()))
+    }
   }
   pub fn codegen_mut(self) -> crate::Mut<'proto, CodegenResponse> {
     self.codegen_mut_or().into_mut()
@@ -763,22 +795,22 @@ impl std::fmt::Debug for Response {
 impl crate::value::Type for Response {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Response::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Response::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -968,22 +1000,22 @@ impl crate::ptr::Proxied for AboutRequest {
 impl crate::value::Type for AboutRequest {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_AboutRequest::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_AboutRequest::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -1191,12 +1223,11 @@ impl AboutResponse {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.name_mut_or().into_mut()
@@ -1218,12 +1249,11 @@ impl AboutResponse {
     self.version_or().unwrap_or_default()
   }
   pub fn version_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().version };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn version_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.version_mut_or().into_mut()
@@ -1242,10 +1272,10 @@ impl AboutResponse {
   }
 
   pub fn options(&self) -> crate::Slice<'_, AboutResponse_Option> {
-    if !unsafe { AboutResponse::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().options };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = AboutResponse::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<AboutResponse_Option>(self.ptr.as_ptr())
     }
   }
   pub fn options_at(&self, idx: usize) -> crate::View<'_, AboutResponse_Option> {
@@ -1253,11 +1283,9 @@ impl AboutResponse {
   }
   pub fn options_mut(&mut self) -> crate::Repeated<'_, AboutResponse_Option> {
     unsafe {
-      AboutResponse::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = AboutResponse::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<AboutResponse_Option>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -1291,22 +1319,22 @@ impl crate::ptr::Proxied for AboutResponse {
 impl crate::value::Type for AboutResponse {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_AboutResponse::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_AboutResponse::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -1319,31 +1347,29 @@ impl<'proto> __priv_AboutResponse::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn version(self) -> crate::View<'proto, crate::Str> {
     self.version_or().unwrap_or_default()
   }
   pub fn version_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().version };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn options(self) -> crate::Slice<'proto, AboutResponse_Option> {
-    if !unsafe { AboutResponse::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().options };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = AboutResponse::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<AboutResponse_Option>(self.ptr.as_ptr())
     }
   }
   pub fn options_at(self, idx: usize) -> crate::View<'proto, AboutResponse_Option> {
@@ -1412,12 +1438,11 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.name_mut_or().into_mut()
@@ -1439,12 +1464,11 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
     self.version_or().unwrap_or_default()
   }
   pub fn version_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().version };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn version_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.version_mut_or().into_mut()
@@ -1463,10 +1487,10 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
 
   pub fn options(self) -> crate::Slice<'proto, AboutResponse_Option> {
-    if !unsafe { AboutResponse::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().options };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = AboutResponse::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<AboutResponse_Option>(self.ptr.as_ptr())
     }
   }
   pub fn options_at(self, idx: usize) -> crate::View<'proto, AboutResponse_Option> {
@@ -1474,11 +1498,9 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
   pub fn options_mut(self) -> crate::Repeated<'proto, AboutResponse_Option> {
     unsafe {
-      AboutResponse::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = AboutResponse::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<AboutResponse_Option>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -1686,12 +1708,11 @@ impl AboutResponse_Option {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse_Option::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.name_mut_or().into_mut()
@@ -1713,12 +1734,11 @@ impl AboutResponse_Option {
     self.help_or().unwrap_or_default()
   }
   pub fn help_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().help };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse_Option::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn help_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.help_mut_or().into_mut()
@@ -1766,22 +1786,22 @@ impl crate::ptr::Proxied for AboutResponse_Option {
 impl crate::value::Type for AboutResponse_Option {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_AboutResponse_Option::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_AboutResponse_Option::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -1794,24 +1814,22 @@ impl<'proto> __priv_AboutResponse_Option::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse_Option::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn help(self) -> crate::View<'proto, crate::Str> {
     self.help_or().unwrap_or_default()
   }
   pub fn help_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().help };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse_Option::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -1870,12 +1888,11 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse_Option::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.name_mut_or().into_mut()
@@ -1897,12 +1914,11 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
     self.help_or().unwrap_or_default()
   }
   pub fn help_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { AboutResponse_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().help };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = AboutResponse_Option::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn help_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.help_mut_or().into_mut()
@@ -2110,8 +2126,11 @@ impl CodegenRequest {
     self.bundle_or().unwrap_or_default()
   }
   pub fn bundle_or(&self) -> Option<crate::View<'_, Bundle>> {
-    if !unsafe { CodegenRequest::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Bundle as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().bundle } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = CodegenRequest::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Bundle>(self.ptr.as_ptr()))
+    }
   }
   pub fn bundle_mut(&mut self) -> crate::Mut<'_, Bundle> {
     self.bundle_mut_or().into_mut()
@@ -2127,10 +2146,10 @@ impl CodegenRequest {
   }
 
   pub fn requested_indices(&self) -> crate::Slice<'_, u32> {
-    if !unsafe { CodegenRequest::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().requested_indices };
-      crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = CodegenRequest::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn requested_indices_at(&self, idx: usize) -> crate::View<'_, u32> {
@@ -2138,19 +2157,17 @@ impl CodegenRequest {
   }
   pub fn requested_indices_mut(&mut self) -> crate::Repeated<'_, u32> {
     unsafe {
-      CodegenRequest::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().requested_indices } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenRequest::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn options(&self) -> crate::Slice<'_, CodegenRequest_Option> {
-    if !unsafe { CodegenRequest::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().options };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenRequest::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<CodegenRequest_Option>(self.ptr.as_ptr())
     }
   }
   pub fn options_at(&self, idx: usize) -> crate::View<'_, CodegenRequest_Option> {
@@ -2158,11 +2175,9 @@ impl CodegenRequest {
   }
   pub fn options_mut(&mut self) -> crate::Repeated<'_, CodegenRequest_Option> {
     unsafe {
-      CodegenRequest::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenRequest::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<CodegenRequest_Option>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -2170,8 +2185,11 @@ impl CodegenRequest {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(&self) -> Option<crate::View<'_, bool>> {
-    if !unsafe { CodegenRequest::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().debug }) })
+    unsafe {
+      let field = CodegenRequest::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn debug_mut(&mut self) -> crate::Mut<'_, bool> {
     self.debug_mut_or().into_mut()
@@ -2219,22 +2237,22 @@ impl crate::ptr::Proxied for CodegenRequest {
 impl crate::value::Type for CodegenRequest {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_CodegenRequest::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_CodegenRequest::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -2247,15 +2265,18 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
     self.bundle_or().unwrap_or_default()
   }
   pub fn bundle_or(self) -> Option<crate::View<'proto, Bundle>> {
-    if !unsafe { CodegenRequest::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Bundle as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().bundle } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = CodegenRequest::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Bundle>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn requested_indices(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { CodegenRequest::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().requested_indices };
-      crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = CodegenRequest::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn requested_indices_at(self, idx: usize) -> crate::View<'proto, u32> {
@@ -2263,10 +2284,10 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
   }
 
   pub fn options(self) -> crate::Slice<'proto, CodegenRequest_Option> {
-    if !unsafe { CodegenRequest::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().options };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenRequest::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<CodegenRequest_Option>(self.ptr.as_ptr())
     }
   }
   pub fn options_at(self, idx: usize) -> crate::View<'proto, CodegenRequest_Option> {
@@ -2277,8 +2298,11 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { CodegenRequest::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().debug }) })
+    unsafe {
+      let field = CodegenRequest::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -2349,8 +2373,11 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
     self.bundle_or().unwrap_or_default()
   }
   pub fn bundle_or(self) -> Option<crate::View<'proto, Bundle>> {
-    if !unsafe { CodegenRequest::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Bundle as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().bundle } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = CodegenRequest::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Bundle>(self.ptr.as_ptr()))
+    }
   }
   pub fn bundle_mut(self) -> crate::Mut<'proto, Bundle> {
     self.bundle_mut_or().into_mut()
@@ -2366,10 +2393,10 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
 
   pub fn requested_indices(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { CodegenRequest::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().requested_indices };
-      crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = CodegenRequest::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn requested_indices_at(self, idx: usize) -> crate::View<'proto, u32> {
@@ -2377,19 +2404,17 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn requested_indices_mut(self) -> crate::Repeated<'proto, u32> {
     unsafe {
-      CodegenRequest::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().requested_indices } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenRequest::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn options(self) -> crate::Slice<'proto, CodegenRequest_Option> {
-    if !unsafe { CodegenRequest::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().options };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenRequest::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<CodegenRequest_Option>(self.ptr.as_ptr())
     }
   }
   pub fn options_at(self, idx: usize) -> crate::View<'proto, CodegenRequest_Option> {
@@ -2397,11 +2422,9 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn options_mut(self) -> crate::Repeated<'proto, CodegenRequest_Option> {
     unsafe {
-      CodegenRequest::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().options } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenRequest::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<CodegenRequest_Option>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -2409,8 +2432,11 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
     self.debug_or().unwrap_or_default()
   }
   pub fn debug_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { CodegenRequest::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().debug }) })
+    unsafe {
+      let field = CodegenRequest::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn debug_mut(self) -> crate::Mut<'proto, bool> {
     self.debug_mut_or().into_mut()
@@ -2648,12 +2674,11 @@ impl CodegenRequest_Option {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenRequest_Option::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.name_mut_or().into_mut()
@@ -2675,12 +2700,11 @@ impl CodegenRequest_Option {
     self.value_or().unwrap_or_default()
   }
   pub fn value_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().value };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenRequest_Option::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn value_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.value_mut_or().into_mut()
@@ -2728,22 +2752,22 @@ impl crate::ptr::Proxied for CodegenRequest_Option {
 impl crate::value::Type for CodegenRequest_Option {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_CodegenRequest_Option::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_CodegenRequest_Option::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -2756,24 +2780,22 @@ impl<'proto> __priv_CodegenRequest_Option::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenRequest_Option::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn value(self) -> crate::View<'proto, crate::Str> {
     self.value_or().unwrap_or_default()
   }
   pub fn value_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().value };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenRequest_Option::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -2832,12 +2854,11 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenRequest_Option::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.name_mut_or().into_mut()
@@ -2859,12 +2880,11 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
     self.value_or().unwrap_or_default()
   }
   pub fn value_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenRequest_Option::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().value };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenRequest_Option::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn value_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.value_mut_or().into_mut()
@@ -3067,10 +3087,10 @@ impl CodegenResponse {
   }
 
   pub fn files(&self) -> crate::Slice<'_, CodegenResponse_File> {
-    if !unsafe { CodegenResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().files };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenResponse::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<CodegenResponse_File>(self.ptr.as_ptr())
     }
   }
   pub fn files_at(&self, idx: usize) -> crate::View<'_, CodegenResponse_File> {
@@ -3078,19 +3098,17 @@ impl CodegenResponse {
   }
   pub fn files_mut(&mut self) -> crate::Repeated<'_, CodegenResponse_File> {
     unsafe {
-      CodegenResponse::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().files } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenResponse::__tdp_info().field(0);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<CodegenResponse_File>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn report(&self) -> crate::Slice<'_, Diagnostic> {
-    if !unsafe { CodegenResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().report };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenResponse::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Diagnostic>(self.ptr.as_ptr())
     }
   }
   pub fn report_at(&self, idx: usize) -> crate::View<'_, Diagnostic> {
@@ -3098,11 +3116,9 @@ impl CodegenResponse {
   }
   pub fn report_mut(&mut self) -> crate::Repeated<'_, Diagnostic> {
     unsafe {
-      CodegenResponse::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().report } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenResponse::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Diagnostic>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -3136,22 +3152,22 @@ impl crate::ptr::Proxied for CodegenResponse {
 impl crate::value::Type for CodegenResponse {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_CodegenResponse::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_CodegenResponse::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -3161,10 +3177,10 @@ impl<'proto> __priv_CodegenResponse::View<'proto> {
   }
 
   pub fn files(self) -> crate::Slice<'proto, CodegenResponse_File> {
-    if !unsafe { CodegenResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().files };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenResponse::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<CodegenResponse_File>(self.ptr.as_ptr())
     }
   }
   pub fn files_at(self, idx: usize) -> crate::View<'proto, CodegenResponse_File> {
@@ -3172,10 +3188,10 @@ impl<'proto> __priv_CodegenResponse::View<'proto> {
   }
 
   pub fn report(self) -> crate::Slice<'proto, Diagnostic> {
-    if !unsafe { CodegenResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().report };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenResponse::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Diagnostic>(self.ptr.as_ptr())
     }
   }
   pub fn report_at(self, idx: usize) -> crate::View<'proto, Diagnostic> {
@@ -3235,10 +3251,10 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
 
   pub fn files(self) -> crate::Slice<'proto, CodegenResponse_File> {
-    if !unsafe { CodegenResponse::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().files };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenResponse::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<CodegenResponse_File>(self.ptr.as_ptr())
     }
   }
   pub fn files_at(self, idx: usize) -> crate::View<'proto, CodegenResponse_File> {
@@ -3246,19 +3262,17 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
   pub fn files_mut(self) -> crate::Repeated<'proto, CodegenResponse_File> {
     unsafe {
-      CodegenResponse::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().files } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenResponse::__tdp_info().field(0);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<CodegenResponse_File>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn report(self) -> crate::Slice<'proto, Diagnostic> {
-    if !unsafe { CodegenResponse::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().report };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = CodegenResponse::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Diagnostic>(self.ptr.as_ptr())
     }
   }
   pub fn report_at(self, idx: usize) -> crate::View<'proto, Diagnostic> {
@@ -3266,11 +3280,9 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
   pub fn report_mut(self) -> crate::Repeated<'proto, Diagnostic> {
     unsafe {
-      CodegenResponse::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().report } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = CodegenResponse::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Diagnostic>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -3464,12 +3476,11 @@ impl CodegenResponse_File {
     self.path_or().unwrap_or_default()
   }
   pub fn path_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().path };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenResponse_File::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn path_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.path_mut_or().into_mut()
@@ -3491,12 +3502,11 @@ impl CodegenResponse_File {
     self.content_or().unwrap_or_default()
   }
   pub fn content_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().content };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenResponse_File::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn content_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.content_mut_or().into_mut()
@@ -3544,22 +3554,22 @@ impl crate::ptr::Proxied for CodegenResponse_File {
 impl crate::value::Type for CodegenResponse_File {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_CodegenResponse_File::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_CodegenResponse_File::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -3572,24 +3582,22 @@ impl<'proto> __priv_CodegenResponse_File::View<'proto> {
     self.path_or().unwrap_or_default()
   }
   pub fn path_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().path };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenResponse_File::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn content(self) -> crate::View<'proto, crate::Str> {
     self.content_or().unwrap_or_default()
   }
   pub fn content_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().content };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenResponse_File::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -3648,12 +3656,11 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
     self.path_or().unwrap_or_default()
   }
   pub fn path_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().path };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenResponse_File::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn path_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.path_mut_or().into_mut()
@@ -3675,12 +3682,11 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
     self.content_or().unwrap_or_default()
   }
   pub fn content_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { CodegenResponse_File::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().content };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = CodegenResponse_File::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn content_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.content_mut_or().into_mut()
@@ -3888,8 +3894,11 @@ impl Diagnostic {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(&self) -> Option<crate::View<'_, Diagnostic_Kind>> {
-    if !unsafe { Diagnostic::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
+    unsafe {
+      let field = Diagnostic::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Diagnostic_Kind>(self.ptr.as_ptr()))
+    }
   }
   pub fn kind_mut(&mut self) -> crate::Mut<'_, Diagnostic_Kind> {
     self.kind_mut_or().into_mut()
@@ -3911,12 +3920,11 @@ impl Diagnostic {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Diagnostic::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Diagnostic::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn msg_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.msg_mut_or().into_mut()
@@ -3935,10 +3943,10 @@ impl Diagnostic {
   }
 
   pub fn snippets(&self) -> crate::Slice<'_, Diagnostic_Snippet> {
-    if !unsafe { Diagnostic::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().snippets };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Diagnostic::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Diagnostic_Snippet>(self.ptr.as_ptr())
     }
   }
   pub fn snippets_at(&self, idx: usize) -> crate::View<'_, Diagnostic_Snippet> {
@@ -3946,19 +3954,17 @@ impl Diagnostic {
   }
   pub fn snippets_mut(&mut self) -> crate::Repeated<'_, Diagnostic_Snippet> {
     unsafe {
-      Diagnostic::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().snippets } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Diagnostic::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Diagnostic_Snippet>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn notes(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Diagnostic::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().notes };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Diagnostic::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn notes_at(&self, idx: usize) -> crate::View<'_, crate::Str> {
@@ -3966,11 +3972,9 @@ impl Diagnostic {
   }
   pub fn notes_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Diagnostic::__tdp_info().field(3).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().notes } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Diagnostic::__tdp_info().field(3);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -4004,22 +4008,22 @@ impl crate::ptr::Proxied for Diagnostic {
 impl crate::value::Type for Diagnostic {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Diagnostic::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Diagnostic::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -4032,27 +4036,29 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Diagnostic_Kind>> {
-    if !unsafe { Diagnostic::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
+    unsafe {
+      let field = Diagnostic::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Diagnostic_Kind>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn msg(self) -> crate::View<'proto, crate::Str> {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Diagnostic::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn snippets(self) -> crate::Slice<'proto, Diagnostic_Snippet> {
-    if !unsafe { Diagnostic::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().snippets };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Diagnostic::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Diagnostic_Snippet>(self.ptr.as_ptr())
     }
   }
   pub fn snippets_at(self, idx: usize) -> crate::View<'proto, Diagnostic_Snippet> {
@@ -4060,10 +4066,10 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
   }
 
   pub fn notes(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Diagnostic::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().notes };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Diagnostic::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn notes_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -4138,8 +4144,11 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Diagnostic_Kind>> {
-    if !unsafe { Diagnostic::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Diagnostic_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
+    unsafe {
+      let field = Diagnostic::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Diagnostic_Kind>(self.ptr.as_ptr()))
+    }
   }
   pub fn kind_mut(self) -> crate::Mut<'proto, Diagnostic_Kind> {
     self.kind_mut_or().into_mut()
@@ -4161,12 +4170,11 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
     self.msg_or().unwrap_or_default()
   }
   pub fn msg_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().msg };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Diagnostic::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn msg_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.msg_mut_or().into_mut()
@@ -4185,10 +4193,10 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
 
   pub fn snippets(self) -> crate::Slice<'proto, Diagnostic_Snippet> {
-    if !unsafe { Diagnostic::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().snippets };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Diagnostic::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Diagnostic_Snippet>(self.ptr.as_ptr())
     }
   }
   pub fn snippets_at(self, idx: usize) -> crate::View<'proto, Diagnostic_Snippet> {
@@ -4196,19 +4204,17 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn snippets_mut(self) -> crate::Repeated<'proto, Diagnostic_Snippet> {
     unsafe {
-      Diagnostic::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().snippets } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Diagnostic::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Diagnostic_Snippet>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn notes(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Diagnostic::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().notes };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Diagnostic::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn notes_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -4216,11 +4222,9 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn notes_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Diagnostic::__tdp_info().field(3).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().notes } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Diagnostic::__tdp_info().field(3);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -4479,8 +4483,11 @@ impl Diagnostic_Snippet {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn span_mut(&mut self) -> crate::Mut<'_, u32> {
     self.span_mut_or().into_mut()
@@ -4502,12 +4509,11 @@ impl Diagnostic_Snippet {
     self.message_or().unwrap_or_default()
   }
   pub fn message_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().message };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn message_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.message_mut_or().into_mut()
@@ -4529,8 +4535,11 @@ impl Diagnostic_Snippet {
     self.is_remark_or().unwrap_or_default()
   }
   pub fn is_remark_or(&self) -> Option<crate::View<'_, bool>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_remark }) })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn is_remark_mut(&mut self) -> crate::Mut<'_, bool> {
     self.is_remark_mut_or().into_mut()
@@ -4578,22 +4587,22 @@ impl crate::ptr::Proxied for Diagnostic_Snippet {
 impl crate::value::Type for Diagnostic_Snippet {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Diagnostic_Snippet::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Diagnostic_Snippet::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -4606,28 +4615,33 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn message(self) -> crate::View<'proto, crate::Str> {
     self.message_or().unwrap_or_default()
   }
   pub fn message_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().message };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn is_remark(self) -> crate::View<'proto, bool> {
     self.is_remark_or().unwrap_or_default()
   }
   pub fn is_remark_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_remark }) })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -4692,8 +4706,11 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn span_mut(self) -> crate::Mut<'proto, u32> {
     self.span_mut_or().into_mut()
@@ -4715,12 +4732,11 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
     self.message_or().unwrap_or_default()
   }
   pub fn message_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().message };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn message_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.message_mut_or().into_mut()
@@ -4742,8 +4758,11 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
     self.is_remark_or().unwrap_or_default()
   }
   pub fn is_remark_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Diagnostic_Snippet::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_remark }) })
+    unsafe {
+      let field = Diagnostic_Snippet::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn is_remark_mut(self) -> crate::Mut<'proto, bool> {
     self.is_remark_mut_or().into_mut()
@@ -4962,10 +4981,10 @@ impl Bundle {
   }
 
   pub fn types(&self) -> crate::Slice<'_, Type> {
-    if !unsafe { Bundle::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().types };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Type>(self.ptr.as_ptr())
     }
   }
   pub fn types_at(&self, idx: usize) -> crate::View<'_, Type> {
@@ -4973,19 +4992,17 @@ impl Bundle {
   }
   pub fn types_mut(&mut self) -> crate::Repeated<'_, Type> {
     unsafe {
-      Bundle::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().types } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Bundle::__tdp_info().field(0);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Type>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn packages(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Bundle::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().packages };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn packages_at(&self, idx: usize) -> crate::View<'_, crate::Str> {
@@ -4993,19 +5010,17 @@ impl Bundle {
   }
   pub fn packages_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Bundle::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().packages } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Bundle::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn foreign_types(&self) -> crate::Slice<'_, Bundle_ForeignType> {
-    if !unsafe { Bundle::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().foreign_types };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Bundle_ForeignType>(self.ptr.as_ptr())
     }
   }
   pub fn foreign_types_at(&self, idx: usize) -> crate::View<'_, Bundle_ForeignType> {
@@ -5013,11 +5028,9 @@ impl Bundle {
   }
   pub fn foreign_types_mut(&mut self) -> crate::Repeated<'_, Bundle_ForeignType> {
     unsafe {
-      Bundle::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().foreign_types } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Bundle::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Bundle_ForeignType>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -5051,22 +5064,22 @@ impl crate::ptr::Proxied for Bundle {
 impl crate::value::Type for Bundle {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Bundle::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Bundle::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -5076,10 +5089,10 @@ impl<'proto> __priv_Bundle::View<'proto> {
   }
 
   pub fn types(self) -> crate::Slice<'proto, Type> {
-    if !unsafe { Bundle::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().types };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Type>(self.ptr.as_ptr())
     }
   }
   pub fn types_at(self, idx: usize) -> crate::View<'proto, Type> {
@@ -5087,10 +5100,10 @@ impl<'proto> __priv_Bundle::View<'proto> {
   }
 
   pub fn packages(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Bundle::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().packages };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn packages_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -5098,10 +5111,10 @@ impl<'proto> __priv_Bundle::View<'proto> {
   }
 
   pub fn foreign_types(self) -> crate::Slice<'proto, Bundle_ForeignType> {
-    if !unsafe { Bundle::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().foreign_types };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Bundle_ForeignType>(self.ptr.as_ptr())
     }
   }
   pub fn foreign_types_at(self, idx: usize) -> crate::View<'proto, Bundle_ForeignType> {
@@ -5167,10 +5180,10 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
 
   pub fn types(self) -> crate::Slice<'proto, Type> {
-    if !unsafe { Bundle::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().types };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Type>(self.ptr.as_ptr())
     }
   }
   pub fn types_at(self, idx: usize) -> crate::View<'proto, Type> {
@@ -5178,19 +5191,17 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn types_mut(self) -> crate::Repeated<'proto, Type> {
     unsafe {
-      Bundle::__tdp_info().field(0).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().types } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Bundle::__tdp_info().field(0);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Type>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn packages(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Bundle::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().packages };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn packages_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -5198,19 +5209,17 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn packages_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Bundle::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().packages } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Bundle::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn foreign_types(self) -> crate::Slice<'proto, Bundle_ForeignType> {
-    if !unsafe { Bundle::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().foreign_types };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Bundle::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Bundle_ForeignType>(self.ptr.as_ptr())
     }
   }
   pub fn foreign_types_at(self, idx: usize) -> crate::View<'proto, Bundle_ForeignType> {
@@ -5218,11 +5227,9 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn foreign_types_mut(self) -> crate::Repeated<'proto, Bundle_ForeignType> {
     unsafe {
-      Bundle::__tdp_info().field(2).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().foreign_types } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Bundle::__tdp_info().field(2);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Bundle_ForeignType>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -5431,12 +5438,11 @@ impl Bundle_ForeignType {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Bundle_ForeignType::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Bundle_ForeignType::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.name_mut_or().into_mut()
@@ -5458,8 +5464,11 @@ impl Bundle_ForeignType {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Bundle_ForeignType::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
+    unsafe {
+      let field = Bundle_ForeignType::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn package_mut(&mut self) -> crate::Mut<'_, u32> {
     self.package_mut_or().into_mut()
@@ -5507,22 +5516,22 @@ impl crate::ptr::Proxied for Bundle_ForeignType {
 impl crate::value::Type for Bundle_ForeignType {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Bundle_ForeignType::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Bundle_ForeignType::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -5535,20 +5544,22 @@ impl<'proto> __priv_Bundle_ForeignType::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Bundle_ForeignType::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Bundle_ForeignType::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn package(self) -> crate::View<'proto, u32> {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Bundle_ForeignType::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
+    unsafe {
+      let field = Bundle_ForeignType::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -5607,12 +5618,11 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Bundle_ForeignType::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Bundle_ForeignType::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.name_mut_or().into_mut()
@@ -5634,8 +5644,11 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Bundle_ForeignType::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
+    unsafe {
+      let field = Bundle_ForeignType::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn package_mut(self) -> crate::Mut<'proto, u32> {
     self.package_mut_or().into_mut()
@@ -5847,12 +5860,11 @@ impl Type {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Type::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Type::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.name_mut_or().into_mut()
@@ -5874,8 +5886,11 @@ impl Type {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Type::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
+    unsafe {
+      let field = Type::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn package_mut(&mut self) -> crate::Mut<'_, u32> {
     self.package_mut_or().into_mut()
@@ -5897,8 +5912,11 @@ impl Type {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(&self) -> Option<crate::View<'_, Type_Kind>> {
-    if !unsafe { Type::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Type_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
+    unsafe {
+      let field = Type::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Type_Kind>(self.ptr.as_ptr()))
+    }
   }
   pub fn kind_mut(&mut self) -> crate::Mut<'_, Type_Kind> {
     self.kind_mut_or().into_mut()
@@ -5920,8 +5938,11 @@ impl Type {
     self.declared_in_or().unwrap_or_default()
   }
   pub fn declared_in_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Type::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().declared_in }) })
+    unsafe {
+      let field = Type::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn declared_in_mut(&mut self) -> crate::Mut<'_, u32> {
     self.declared_in_mut_or().into_mut()
@@ -5940,10 +5961,10 @@ impl Type {
   }
 
   pub fn fields(&self) -> crate::Slice<'_, Field> {
-    if !unsafe { Type::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().fields };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Type::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Field>(self.ptr.as_ptr())
     }
   }
   pub fn fields_at(&self, idx: usize) -> crate::View<'_, Field> {
@@ -5951,19 +5972,17 @@ impl Type {
   }
   pub fn fields_mut(&mut self) -> crate::Repeated<'_, Field> {
     unsafe {
-      Type::__tdp_info().field(4).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().fields } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Type::__tdp_info().field(4);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Field>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn nesteds(&self) -> crate::Slice<'_, u32> {
-    if !unsafe { Type::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().nesteds };
-      crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = Type::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn nesteds_at(&self, idx: usize) -> crate::View<'_, u32> {
@@ -5971,11 +5990,9 @@ impl Type {
   }
   pub fn nesteds_mut(&mut self) -> crate::Repeated<'_, u32> {
     unsafe {
-      Type::__tdp_info().field(5).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().nesteds } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Type::__tdp_info().field(5);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -5983,8 +6000,11 @@ impl Type {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(&self) -> Option<crate::View<'_, Type_Attrs>> {
-    if !unsafe { Type::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Type_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Type::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Type_Attrs>(self.ptr.as_ptr()))
+    }
   }
   pub fn attrs_mut(&mut self) -> crate::Mut<'_, Type_Attrs> {
     self.attrs_mut_or().into_mut()
@@ -6003,8 +6023,11 @@ impl Type {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Type::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Type::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn span_mut(&mut self) -> crate::Mut<'_, u32> {
     self.span_mut_or().into_mut()
@@ -6052,22 +6075,22 @@ impl crate::ptr::Proxied for Type {
 impl crate::value::Type for Type {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Type::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Type::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -6080,43 +6103,51 @@ impl<'proto> __priv_Type::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Type::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn package(self) -> crate::View<'proto, u32> {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
+    unsafe {
+      let field = Type::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn kind(self) -> crate::View<'proto, Type_Kind> {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Type_Kind>> {
-    if !unsafe { Type::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Type_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
+    unsafe {
+      let field = Type::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Type_Kind>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn declared_in(self) -> crate::View<'proto, u32> {
     self.declared_in_or().unwrap_or_default()
   }
   pub fn declared_in_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().declared_in }) })
+    unsafe {
+      let field = Type::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn fields(self) -> crate::Slice<'proto, Field> {
-    if !unsafe { Type::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().fields };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Type::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Field>(self.ptr.as_ptr())
     }
   }
   pub fn fields_at(self, idx: usize) -> crate::View<'proto, Field> {
@@ -6124,10 +6155,10 @@ impl<'proto> __priv_Type::View<'proto> {
   }
 
   pub fn nesteds(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { Type::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().nesteds };
-      crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = Type::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn nesteds_at(self, idx: usize) -> crate::View<'proto, u32> {
@@ -6138,16 +6169,22 @@ impl<'proto> __priv_Type::View<'proto> {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Type_Attrs>> {
-    if !unsafe { Type::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Type_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Type::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Type_Attrs>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn span(self) -> crate::View<'proto, u32> {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Type::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -6242,12 +6279,11 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Type::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.name_mut_or().into_mut()
@@ -6269,8 +6305,11 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.package_or().unwrap_or_default()
   }
   pub fn package_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().package }) })
+    unsafe {
+      let field = Type::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn package_mut(self) -> crate::Mut<'proto, u32> {
     self.package_mut_or().into_mut()
@@ -6292,8 +6331,11 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.kind_or().unwrap_or_default()
   }
   pub fn kind_or(self) -> Option<crate::View<'proto, Type_Kind>> {
-    if !unsafe { Type::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Type_Kind>(*unsafe { &self.ptr.as_ref().kind }) })
+    unsafe {
+      let field = Type::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Type_Kind>(self.ptr.as_ptr()))
+    }
   }
   pub fn kind_mut(self) -> crate::Mut<'proto, Type_Kind> {
     self.kind_mut_or().into_mut()
@@ -6315,8 +6357,11 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.declared_in_or().unwrap_or_default()
   }
   pub fn declared_in_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().declared_in }) })
+    unsafe {
+      let field = Type::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn declared_in_mut(self) -> crate::Mut<'proto, u32> {
     self.declared_in_mut_or().into_mut()
@@ -6335,10 +6380,10 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
 
   pub fn fields(self) -> crate::Slice<'proto, Field> {
-    if !unsafe { Type::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().fields };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Type::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<Field>(self.ptr.as_ptr())
     }
   }
   pub fn fields_at(self, idx: usize) -> crate::View<'proto, Field> {
@@ -6346,19 +6391,17 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn fields_mut(self) -> crate::Repeated<'proto, Field> {
     unsafe {
-      Type::__tdp_info().field(4).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().fields } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Type::__tdp_info().field(4);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<Field>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn nesteds(self) -> crate::Slice<'proto, u32> {
-    if !unsafe { Type::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().nesteds };
-      crate::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = Type::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn nesteds_at(self, idx: usize) -> crate::View<'proto, u32> {
@@ -6366,11 +6409,9 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn nesteds_mut(self) -> crate::Repeated<'proto, u32> {
     unsafe {
-      Type::__tdp_info().field(5).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().nesteds } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Type::__tdp_info().field(5);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -6378,8 +6419,11 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Type_Attrs>> {
-    if !unsafe { Type::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Type_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Type::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Type_Attrs>(self.ptr.as_ptr()))
+    }
   }
   pub fn attrs_mut(self) -> crate::Mut<'proto, Type_Attrs> {
     self.attrs_mut_or().into_mut()
@@ -6398,8 +6442,11 @@ impl<'proto> __priv_Type::Mut<'proto>  {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Type::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Type::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn span_mut(self) -> crate::Mut<'proto, u32> {
     self.span_mut_or().into_mut()
@@ -6736,12 +6783,11 @@ impl Type_Attrs {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Type_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Type_Attrs::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn deprecated_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.deprecated_mut_or().into_mut()
@@ -6760,10 +6806,10 @@ impl Type_Attrs {
   }
 
   pub fn docs(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Type_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().docs };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Type_Attrs::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn docs_at(&self, idx: usize) -> crate::View<'_, crate::Str> {
@@ -6771,11 +6817,9 @@ impl Type_Attrs {
   }
   pub fn docs_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Type_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Type_Attrs::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -6809,22 +6853,22 @@ impl crate::ptr::Proxied for Type_Attrs {
 impl crate::value::Type for Type_Attrs {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Type_Attrs::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Type_Attrs::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -6837,19 +6881,18 @@ impl<'proto> __priv_Type_Attrs::View<'proto> {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Type_Attrs::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Type_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().docs };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Type_Attrs::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn docs_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -6912,12 +6955,11 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Type_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Type_Attrs::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn deprecated_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.deprecated_mut_or().into_mut()
@@ -6936,10 +6978,10 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Type_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().docs };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Type_Attrs::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn docs_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -6947,11 +6989,9 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   }
   pub fn docs_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Type_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Type_Attrs::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -7148,12 +7188,11 @@ impl Field {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Field::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Field::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.name_mut_or().into_mut()
@@ -7175,8 +7214,11 @@ impl Field {
     self.number_or().unwrap_or_default()
   }
   pub fn number_or(&self) -> Option<crate::View<'_, i32>> {
-    if !unsafe { Field::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().number }) })
+    unsafe {
+      let field = Field::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn number_mut(&mut self) -> crate::Mut<'_, i32> {
     self.number_mut_or().into_mut()
@@ -7198,8 +7240,11 @@ impl Field {
     self.is_repeated_or().unwrap_or_default()
   }
   pub fn is_repeated_or(&self) -> Option<crate::View<'_, bool>> {
-    if !unsafe { Field::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_repeated }) })
+    unsafe {
+      let field = Field::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn is_repeated_mut(&mut self) -> crate::Mut<'_, bool> {
     self.is_repeated_mut_or().into_mut()
@@ -7221,8 +7266,11 @@ impl Field {
     self.r#type_or().unwrap_or_default()
   }
   pub fn r#type_or(&self) -> Option<crate::View<'_, Field_Type>> {
-    if !unsafe { Field::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Field_Type>(*unsafe { &self.ptr.as_ref().r#type }) })
+    unsafe {
+      let field = Field::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Field_Type>(self.ptr.as_ptr()))
+    }
   }
   pub fn r#type_mut(&mut self) -> crate::Mut<'_, Field_Type> {
     self.r#type_mut_or().into_mut()
@@ -7244,8 +7292,11 @@ impl Field {
     self.type_index_or().unwrap_or_default()
   }
   pub fn type_index_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Field::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().type_index }) })
+    unsafe {
+      let field = Field::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn type_index_mut(&mut self) -> crate::Mut<'_, u32> {
     self.type_index_mut_or().into_mut()
@@ -7267,8 +7318,11 @@ impl Field {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(&self) -> Option<crate::View<'_, Field_Attrs>> {
-    if !unsafe { Field::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Field_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Field::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Field_Attrs>(self.ptr.as_ptr()))
+    }
   }
   pub fn attrs_mut(&mut self) -> crate::Mut<'_, Field_Attrs> {
     self.attrs_mut_or().into_mut()
@@ -7287,8 +7341,11 @@ impl Field {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(&self) -> Option<crate::View<'_, u32>> {
-    if !unsafe { Field::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Field::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn span_mut(&mut self) -> crate::Mut<'_, u32> {
     self.span_mut_or().into_mut()
@@ -7336,22 +7393,22 @@ impl crate::ptr::Proxied for Field {
 impl crate::value::Type for Field {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Field::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Field::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -7364,60 +7421,77 @@ impl<'proto> __priv_Field::View<'proto> {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Field::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn number(self) -> crate::View<'proto, i32> {
     self.number_or().unwrap_or_default()
   }
   pub fn number_or(self) -> Option<crate::View<'proto, i32>> {
-    if !unsafe { Field::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().number }) })
+    unsafe {
+      let field = Field::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn is_repeated(self) -> crate::View<'proto, bool> {
     self.is_repeated_or().unwrap_or_default()
   }
   pub fn is_repeated_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Field::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_repeated }) })
+    unsafe {
+      let field = Field::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn r#type(self) -> crate::View<'proto, Field_Type> {
     self.r#type_or().unwrap_or_default()
   }
   pub fn r#type_or(self) -> Option<crate::View<'proto, Field_Type>> {
-    if !unsafe { Field::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Field_Type>(*unsafe { &self.ptr.as_ref().r#type }) })
+    unsafe {
+      let field = Field::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Field_Type>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn type_index(self) -> crate::View<'proto, u32> {
     self.type_index_or().unwrap_or_default()
   }
   pub fn type_index_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().type_index }) })
+    unsafe {
+      let field = Field::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn attrs(self) -> crate::View<'proto, Field_Attrs> {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Field_Attrs>> {
-    if !unsafe { Field::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Field_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Field::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Field_Attrs>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn span(self) -> crate::View<'proto, u32> {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Field::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   #[doc(hidden)]
@@ -7506,12 +7580,11 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.name_or().unwrap_or_default()
   }
   pub fn name_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().name };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Field::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn name_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.name_mut_or().into_mut()
@@ -7533,8 +7606,11 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.number_or().unwrap_or_default()
   }
   pub fn number_or(self) -> Option<crate::View<'proto, i32>> {
-    if !unsafe { Field::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().number }) })
+    unsafe {
+      let field = Field::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn number_mut(self) -> crate::Mut<'proto, i32> {
     self.number_mut_or().into_mut()
@@ -7556,8 +7632,11 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.is_repeated_or().unwrap_or_default()
   }
   pub fn is_repeated_or(self) -> Option<crate::View<'proto, bool>> {
-    if !unsafe { Field::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().is_repeated }) })
+    unsafe {
+      let field = Field::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn is_repeated_mut(self) -> crate::Mut<'proto, bool> {
     self.is_repeated_mut_or().into_mut()
@@ -7579,8 +7658,11 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.r#type_or().unwrap_or_default()
   }
   pub fn r#type_or(self) -> Option<crate::View<'proto, Field_Type>> {
-    if !unsafe { Field::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, Field_Type>(*unsafe { &self.ptr.as_ref().r#type }) })
+    unsafe {
+      let field = Field::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Field_Type>(self.ptr.as_ptr()))
+    }
   }
   pub fn r#type_mut(self) -> crate::Mut<'proto, Field_Type> {
     self.r#type_mut_or().into_mut()
@@ -7602,8 +7684,11 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.type_index_or().unwrap_or_default()
   }
   pub fn type_index_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().type_index }) })
+    unsafe {
+      let field = Field::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn type_index_mut(self) -> crate::Mut<'proto, u32> {
     self.type_index_mut_or().into_mut()
@@ -7625,8 +7710,11 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.attrs_or().unwrap_or_default()
   }
   pub fn attrs_or(self) -> Option<crate::View<'proto, Field_Attrs>> {
-    if !unsafe { Field::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<Field_Attrs as crate::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().attrs } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = Field::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<Field_Attrs>(self.ptr.as_ptr()))
+    }
   }
   pub fn attrs_mut(self) -> crate::Mut<'proto, Field_Attrs> {
     self.attrs_mut_or().into_mut()
@@ -7645,8 +7733,11 @@ impl<'proto> __priv_Field::Mut<'proto>  {
     self.span_or().unwrap_or_default()
   }
   pub fn span_or(self) -> Option<crate::View<'proto, u32>> {
-    if !unsafe { Field::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().span }) })
+    unsafe {
+      let field = Field::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn span_mut(self) -> crate::Mut<'proto, u32> {
     self.span_mut_or().into_mut()
@@ -7981,12 +8072,11 @@ impl Field_Attrs {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(&self) -> Option<crate::View<'_, crate::Str>> {
-    if !unsafe { Field_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Field_Attrs::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn deprecated_mut(&mut self) -> crate::Mut<'_, crate::Str> {
     self.deprecated_mut_or().into_mut()
@@ -8005,10 +8095,10 @@ impl Field_Attrs {
   }
 
   pub fn docs(&self) -> crate::Slice<'_, crate::Str> {
-    if !unsafe { Field_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().docs };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Field_Attrs::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn docs_at(&self, idx: usize) -> crate::View<'_, crate::Str> {
@@ -8016,11 +8106,9 @@ impl Field_Attrs {
   }
   pub fn docs_mut(&mut self) -> crate::Repeated<'_, crate::Str> {
     unsafe {
-      Field_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Field_Attrs::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -8054,22 +8142,22 @@ impl crate::ptr::Proxied for Field_Attrs {
 impl crate::value::Type for Field_Attrs {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> crate::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> crate::View<'a, Self> {
     __priv_Field_Attrs::View {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: crate::__z::RawArena) -> crate::Mut<'a, Self> {
     __priv_Field_Attrs::Mut {
-      ptr: crate::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: crate::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: crate::__z::RawArena) {
-    (&mut *ptr.cast::<crate::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut crate::__z::AVec<*mut u8>, new_len: usize, arena: crate::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -8082,19 +8170,18 @@ impl<'proto> __priv_Field_Attrs::View<'proto> {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Field_Attrs::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Field_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().docs };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Field_Attrs::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn docs_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -8157,12 +8244,11 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
     self.deprecated_or().unwrap_or_default()
   }
   pub fn deprecated_or(self) -> Option<crate::View<'proto, crate::Str>> {
-    if !unsafe { Field_Attrs::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().deprecated };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      crate::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = Field_Attrs::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<crate::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn deprecated_mut(self) -> crate::Mut<'proto, crate::Str> {
     self.deprecated_mut_or().into_mut()
@@ -8181,10 +8267,10 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   }
 
   pub fn docs(self) -> crate::Slice<'proto, crate::Str> {
-    if !unsafe { Field_Attrs::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return crate::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().docs };
-      crate::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = Field_Attrs::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return crate::Slice::default() }
+      field.make_slice::<crate::Str>(self.ptr.as_ptr())
     }
   }
   pub fn docs_at(self, idx: usize) -> crate::View<'proto, crate::Str> {
@@ -8192,11 +8278,9 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   }
   pub fn docs_mut(self) -> crate::Repeated<'proto, crate::Str> {
     unsafe {
-      Field_Attrs::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      crate::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().docs } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = Field_Attrs::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<crate::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 

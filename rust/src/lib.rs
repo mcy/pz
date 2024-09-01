@@ -1,42 +1,44 @@
-//! Runtime support for Rust gencode.
+//! `pz` Runtime
+//!
+//! This crate provides runtime support for generated Rust code from `.pz`
+//! files.
 
 mod arena;
 mod debug;
 mod tdp;
 
 pub mod ptr;
+#[doc(hidden)]
 pub mod rep;
+#[doc(hidden)]
 pub mod str;
+#[doc(hidden)]
 pub mod value;
 
 pub mod proto;
 
-pub use self::ptr::Mut;
-pub use self::ptr::View;
-pub use self::rep::Repeated;
-pub use self::rep::Slice;
-pub use self::rep::SliceMut;
-pub use self::str::Str;
-pub use self::str::StrBuf;
+pub use crate::ptr::Mut;
+pub use crate::ptr::Proxied;
+pub use crate::ptr::View;
+
+pub use crate::rep::Repeated;
+pub use crate::rep::Slice;
+pub use crate::rep::SliceMut;
+
+pub use crate::str::Str;
+pub use crate::str::StrBuf;
+
+pub use crate::value::OptMut;
+pub use crate::value::Type;
+
+pub use crate::tdp::parse::Error;
 
 #[doc(hidden)]
 pub mod __z {
   pub mod tdp {
-    pub use super::super::tdp::*;
+    pub use crate::tdp::*;
   }
-  pub use super::arena::*;
-  pub use super::debug::Debug;
-}
-
-pub use tdp::parse::Error;
-
-pub fn public() {
-  extern "Rust" {
-    fn new() -> &'static mut proto::z::Field;
-  }
-
-  use std::hint::black_box as bb;
-  let field = unsafe { new() };
-  field.number_set(42);
-  bb(field);
+  pub use crate::arena::*;
+  pub use crate::debug::Debug;
+  pub use crate::str::private::Storage as RawStr;
 }

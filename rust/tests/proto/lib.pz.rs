@@ -102,8 +102,11 @@ impl TestAll {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(&self) -> Option<__rt::View<'_, i32>> {
-    if !unsafe { TestAll::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().opt_i32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i32_mut(&mut self) -> __rt::Mut<'_, i32> {
     self.opt_i32_mut_or().into_mut()
@@ -125,8 +128,11 @@ impl TestAll {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(&self) -> Option<__rt::View<'_, i64>> {
-    if !unsafe { TestAll::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().opt_i64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i64_mut(&mut self) -> __rt::Mut<'_, i64> {
     self.opt_i64_mut_or().into_mut()
@@ -148,8 +154,11 @@ impl TestAll {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(&self) -> Option<__rt::View<'_, u32>> {
-    if !unsafe { TestAll::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().opt_u32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u32_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.opt_u32_mut_or().into_mut()
@@ -171,8 +180,11 @@ impl TestAll {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(&self) -> Option<__rt::View<'_, u64>> {
-    if !unsafe { TestAll::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().opt_u64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u64_mut(&mut self) -> __rt::Mut<'_, u64> {
     self.opt_u64_mut_or().into_mut()
@@ -194,8 +206,11 @@ impl TestAll {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(&self) -> Option<__rt::View<'_, f32>> {
-    if !unsafe { TestAll::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().opt_f32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f32_mut(&mut self) -> __rt::Mut<'_, f32> {
     self.opt_f32_mut_or().into_mut()
@@ -217,8 +232,11 @@ impl TestAll {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(&self) -> Option<__rt::View<'_, f64>> {
-    if !unsafe { TestAll::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().opt_f64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f64_mut(&mut self) -> __rt::Mut<'_, f64> {
     self.opt_f64_mut_or().into_mut()
@@ -240,12 +258,11 @@ impl TestAll {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(&self) -> Option<__rt::View<'_, __rt::Str>> {
-    if !unsafe { TestAll::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().opt_str };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      __rt::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = TestAll::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_str_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.opt_str_mut_or().into_mut()
@@ -267,8 +284,11 @@ impl TestAll {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(&self) -> Option<__rt::View<'_, bool>> {
-    if !unsafe { TestAll::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().opt_bool }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_bool_mut(&mut self) -> __rt::Mut<'_, bool> {
     self.opt_bool_mut_or().into_mut()
@@ -290,8 +310,11 @@ impl TestAll {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(&self) -> Option<__rt::View<'_, TestAll>> {
-    if !unsafe { TestAll::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_recursive } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(8);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_recursive_mut(&mut self) -> __rt::Mut<'_, TestAll> {
     self.opt_recursive_mut_or().into_mut()
@@ -310,8 +333,11 @@ impl TestAll {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(&self) -> Option<__rt::View<'_, TestAll_Nested>> {
-    if !unsafe { TestAll::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_nested } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(9);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll_Nested>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_nested_mut(&mut self) -> __rt::Mut<'_, TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
@@ -330,8 +356,11 @@ impl TestAll {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(&self) -> Option<__rt::View<'_, TestAll2>> {
-    if !unsafe { TestAll::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_choice } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(10);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll2>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_choice_mut(&mut self) -> __rt::Mut<'_, TestAll2> {
     self.opt_choice_mut_or().into_mut()
@@ -347,10 +376,10 @@ impl TestAll {
   }
 
   pub fn rep_i32(&self) -> __rt::Slice<'_, i32> {
-    if !unsafe { TestAll::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_i32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(11);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i32_at(&self, idx: usize) -> __rt::View<'_, i32> {
@@ -358,19 +387,17 @@ impl TestAll {
   }
   pub fn rep_i32_mut(&mut self) -> __rt::Repeated<'_, i32> {
     unsafe {
-      TestAll::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_i32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(11);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_i64(&self) -> __rt::Slice<'_, i64> {
-    if !unsafe { TestAll::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_i64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(12);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i64_at(&self, idx: usize) -> __rt::View<'_, i64> {
@@ -378,19 +405,17 @@ impl TestAll {
   }
   pub fn rep_i64_mut(&mut self) -> __rt::Repeated<'_, i64> {
     unsafe {
-      TestAll::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_i64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(12);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u32(&self) -> __rt::Slice<'_, u32> {
-    if !unsafe { TestAll::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_u32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(13);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u32_at(&self, idx: usize) -> __rt::View<'_, u32> {
@@ -398,19 +423,17 @@ impl TestAll {
   }
   pub fn rep_u32_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      TestAll::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_u32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(13);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u64(&self) -> __rt::Slice<'_, u64> {
-    if !unsafe { TestAll::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_u64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(14);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u64_at(&self, idx: usize) -> __rt::View<'_, u64> {
@@ -418,19 +441,17 @@ impl TestAll {
   }
   pub fn rep_u64_mut(&mut self) -> __rt::Repeated<'_, u64> {
     unsafe {
-      TestAll::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_u64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(14);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f32(&self) -> __rt::Slice<'_, f32> {
-    if !unsafe { TestAll::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_f32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(15);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f32_at(&self, idx: usize) -> __rt::View<'_, f32> {
@@ -438,19 +459,17 @@ impl TestAll {
   }
   pub fn rep_f32_mut(&mut self) -> __rt::Repeated<'_, f32> {
     unsafe {
-      TestAll::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_f32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(15);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f64(&self) -> __rt::Slice<'_, f64> {
-    if !unsafe { TestAll::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_f64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(16);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f64_at(&self, idx: usize) -> __rt::View<'_, f64> {
@@ -458,19 +477,17 @@ impl TestAll {
   }
   pub fn rep_f64_mut(&mut self) -> __rt::Repeated<'_, f64> {
     unsafe {
-      TestAll::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_f64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(16);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_str(&self) -> __rt::Slice<'_, __rt::Str> {
-    if !unsafe { TestAll::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_str };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(17);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn rep_str_at(&self, idx: usize) -> __rt::View<'_, __rt::Str> {
@@ -478,19 +495,17 @@ impl TestAll {
   }
   pub fn rep_str_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      TestAll::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_str } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(17);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_bool(&self) -> __rt::Slice<'_, bool> {
-    if !unsafe { TestAll::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_bool };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(18);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<bool>(self.ptr.as_ptr())
     }
   }
   pub fn rep_bool_at(&self, idx: usize) -> __rt::View<'_, bool> {
@@ -498,19 +513,17 @@ impl TestAll {
   }
   pub fn rep_bool_mut(&mut self) -> __rt::Repeated<'_, bool> {
     unsafe {
-      TestAll::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_bool } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(18);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_recursive(&self) -> __rt::Slice<'_, TestAll> {
-    if !unsafe { TestAll::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_recursive };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(19);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll>(self.ptr.as_ptr())
     }
   }
   pub fn rep_recursive_at(&self, idx: usize) -> __rt::View<'_, TestAll> {
@@ -518,19 +531,17 @@ impl TestAll {
   }
   pub fn rep_recursive_mut(&mut self) -> __rt::Repeated<'_, TestAll> {
     unsafe {
-      TestAll::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_recursive } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(19);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_nested(&self) -> __rt::Slice<'_, TestAll_Nested> {
-    if !unsafe { TestAll::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_nested };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(20);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll_Nested>(self.ptr.as_ptr())
     }
   }
   pub fn rep_nested_at(&self, idx: usize) -> __rt::View<'_, TestAll_Nested> {
@@ -538,19 +549,17 @@ impl TestAll {
   }
   pub fn rep_nested_mut(&mut self) -> __rt::Repeated<'_, TestAll_Nested> {
     unsafe {
-      TestAll::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_nested } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(20);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_choice(&self) -> __rt::Slice<'_, TestAll2> {
-    if !unsafe { TestAll::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_choice };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(21);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll2>(self.ptr.as_ptr())
     }
   }
   pub fn rep_choice_at(&self, idx: usize) -> __rt::View<'_, TestAll2> {
@@ -558,11 +567,9 @@ impl TestAll {
   }
   pub fn rep_choice_mut(&mut self) -> __rt::Repeated<'_, TestAll2> {
     unsafe {
-      TestAll::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_choice } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(21);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll2>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -596,22 +603,22 @@ impl __rt::ptr::Proxied for TestAll {
 impl __rt::value::Type for TestAll {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> __rt::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
     __priv_TestAll::View {
-      ptr: __rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: __rt::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: __rt::__z::RawArena) -> __rt::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __rt::__z::RawArena) -> __rt::Mut<'a, Self> {
     __priv_TestAll::Mut {
-      ptr: __rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: __rt::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: __rt::__z::RawArena) {
-    (&mut *ptr.cast::<__rt::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut __rt::__z::AVec<*mut u8>, new_len: usize, arena: __rt::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -624,99 +631,128 @@ impl<'proto> __priv_TestAll::View<'proto> {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().opt_i32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_i64(self) -> __rt::View<'proto, i64> {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().opt_i64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i64>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_u32(self) -> __rt::View<'proto, u32> {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().opt_u32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_u64(self) -> __rt::View<'proto, u64> {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().opt_u64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u64>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_f32(self) -> __rt::View<'proto, f32> {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().opt_f32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_f64(self) -> __rt::View<'proto, f64> {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().opt_f64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f64>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_str(self) -> __rt::View<'proto, __rt::Str> {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().opt_str };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      __rt::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = TestAll::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_bool(self) -> __rt::View<'proto, bool> {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().opt_bool }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_recursive(self) -> __rt::View<'proto, TestAll> {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_recursive } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(8);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_nested(self) -> __rt::View<'proto, TestAll_Nested> {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_nested } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(9);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll_Nested>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_choice(self) -> __rt::View<'proto, TestAll2> {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_choice } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(10);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll2>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_i32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(11);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i32_at(self, idx: usize) -> __rt::View<'proto, i32> {
@@ -724,10 +760,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_i64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(12);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i64_at(self, idx: usize) -> __rt::View<'proto, i64> {
@@ -735,10 +771,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_u32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(13);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u32_at(self, idx: usize) -> __rt::View<'proto, u32> {
@@ -746,10 +782,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_u64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(14);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u64_at(self, idx: usize) -> __rt::View<'proto, u64> {
@@ -757,10 +793,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_f32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(15);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f32_at(self, idx: usize) -> __rt::View<'proto, f32> {
@@ -768,10 +804,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_f64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(16);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f64_at(self, idx: usize) -> __rt::View<'proto, f64> {
@@ -779,10 +815,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_str };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(17);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn rep_str_at(self, idx: usize) -> __rt::View<'proto, __rt::Str> {
@@ -790,10 +826,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_bool };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(18);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<bool>(self.ptr.as_ptr())
     }
   }
   pub fn rep_bool_at(self, idx: usize) -> __rt::View<'proto, bool> {
@@ -801,10 +837,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_recursive };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(19);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll>(self.ptr.as_ptr())
     }
   }
   pub fn rep_recursive_at(self, idx: usize) -> __rt::View<'proto, TestAll> {
@@ -812,10 +848,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_nested };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(20);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll_Nested>(self.ptr.as_ptr())
     }
   }
   pub fn rep_nested_at(self, idx: usize) -> __rt::View<'proto, TestAll_Nested> {
@@ -823,10 +859,10 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_choice };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(21);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll2>(self.ptr.as_ptr())
     }
   }
   pub fn rep_choice_at(self, idx: usize) -> __rt::View<'proto, TestAll2> {
@@ -1009,8 +1045,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().opt_i32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i32_mut(self) -> __rt::Mut<'proto, i32> {
     self.opt_i32_mut_or().into_mut()
@@ -1032,8 +1071,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().opt_i64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i64_mut(self) -> __rt::Mut<'proto, i64> {
     self.opt_i64_mut_or().into_mut()
@@ -1055,8 +1097,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().opt_u32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u32_mut(self) -> __rt::Mut<'proto, u32> {
     self.opt_u32_mut_or().into_mut()
@@ -1078,8 +1123,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().opt_u64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u64_mut(self) -> __rt::Mut<'proto, u64> {
     self.opt_u64_mut_or().into_mut()
@@ -1101,8 +1149,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().opt_f32 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f32_mut(self) -> __rt::Mut<'proto, f32> {
     self.opt_f32_mut_or().into_mut()
@@ -1124,8 +1175,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().opt_f64 }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f64_mut(self) -> __rt::Mut<'proto, f64> {
     self.opt_f64_mut_or().into_mut()
@@ -1147,12 +1201,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().opt_str };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      __rt::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = TestAll::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_str_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.opt_str_mut_or().into_mut()
@@ -1174,8 +1227,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().opt_bool }) })
+    unsafe {
+      let field = TestAll::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_bool_mut(self) -> __rt::Mut<'proto, bool> {
     self.opt_bool_mut_or().into_mut()
@@ -1197,8 +1253,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_recursive } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(8);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_recursive_mut(self) -> __rt::Mut<'proto, TestAll> {
     self.opt_recursive_mut_or().into_mut()
@@ -1217,8 +1276,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_nested } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(9);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll_Nested>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_nested_mut(self) -> __rt::Mut<'proto, TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
@@ -1237,8 +1299,11 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().opt_choice } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll::__tdp_info().field(10);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll2>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_choice_mut(self) -> __rt::Mut<'proto, TestAll2> {
     self.opt_choice_mut_or().into_mut()
@@ -1254,10 +1319,10 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_i32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(11);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i32_at(self, idx: usize) -> __rt::View<'proto, i32> {
@@ -1265,19 +1330,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_i32_mut(self) -> __rt::Repeated<'proto, i32> {
     unsafe {
-      TestAll::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_i32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(11);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_i64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(12);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i64_at(self, idx: usize) -> __rt::View<'proto, i64> {
@@ -1285,19 +1348,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_i64_mut(self) -> __rt::Repeated<'proto, i64> {
     unsafe {
-      TestAll::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_i64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(12);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_u32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(13);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u32_at(self, idx: usize) -> __rt::View<'proto, u32> {
@@ -1305,19 +1366,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_u32_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      TestAll::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_u32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(13);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_u64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(14);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u64_at(self, idx: usize) -> __rt::View<'proto, u64> {
@@ -1325,19 +1384,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_u64_mut(self) -> __rt::Repeated<'proto, u64> {
     unsafe {
-      TestAll::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_u64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(14);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_f32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(15);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f32_at(self, idx: usize) -> __rt::View<'proto, f32> {
@@ -1345,19 +1402,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_f32_mut(self) -> __rt::Repeated<'proto, f32> {
     unsafe {
-      TestAll::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_f32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(15);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_f64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(16);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f64_at(self, idx: usize) -> __rt::View<'proto, f64> {
@@ -1365,19 +1420,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_f64_mut(self) -> __rt::Repeated<'proto, f64> {
     unsafe {
-      TestAll::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_f64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(16);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_str };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(17);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn rep_str_at(self, idx: usize) -> __rt::View<'proto, __rt::Str> {
@@ -1385,19 +1438,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_str_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      TestAll::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_str } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(17);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_bool };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll::__tdp_info().field(18);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<bool>(self.ptr.as_ptr())
     }
   }
   pub fn rep_bool_at(self, idx: usize) -> __rt::View<'proto, bool> {
@@ -1405,19 +1456,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_bool_mut(self) -> __rt::Repeated<'proto, bool> {
     unsafe {
-      TestAll::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_bool } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(18);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_recursive };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(19);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll>(self.ptr.as_ptr())
     }
   }
   pub fn rep_recursive_at(self, idx: usize) -> __rt::View<'proto, TestAll> {
@@ -1425,19 +1474,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_recursive_mut(self) -> __rt::Repeated<'proto, TestAll> {
     unsafe {
-      TestAll::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_recursive } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(19);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_nested };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(20);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll_Nested>(self.ptr.as_ptr())
     }
   }
   pub fn rep_nested_at(self, idx: usize) -> __rt::View<'proto, TestAll_Nested> {
@@ -1445,19 +1492,17 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_nested_mut(self) -> __rt::Repeated<'proto, TestAll_Nested> {
     unsafe {
-      TestAll::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_nested } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(20);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().rep_choice };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll::__tdp_info().field(21);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll2>(self.ptr.as_ptr())
     }
   }
   pub fn rep_choice_at(self, idx: usize) -> __rt::View<'proto, TestAll2> {
@@ -1465,11 +1510,9 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_choice_mut(self) -> __rt::Repeated<'proto, TestAll2> {
     unsafe {
-      TestAll::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().rep_choice } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll::__tdp_info().field(21);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll2>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -1964,8 +2007,11 @@ impl TestAll_Nested {
     self.a_or().unwrap_or_default()
   }
   pub fn a_or(&self) -> Option<__rt::View<'_, i32>> {
-    if !unsafe { TestAll_Nested::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().a }) })
+    unsafe {
+      let field = TestAll_Nested::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn a_mut(&mut self) -> __rt::Mut<'_, i32> {
     self.a_mut_or().into_mut()
@@ -1984,10 +2030,10 @@ impl TestAll_Nested {
   }
 
   pub fn b(&self) -> __rt::Slice<'_, __rt::Str> {
-    if !unsafe { TestAll_Nested::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().b };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll_Nested::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn b_at(&self, idx: usize) -> __rt::View<'_, __rt::Str> {
@@ -1995,11 +2041,9 @@ impl TestAll_Nested {
   }
   pub fn b_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      TestAll_Nested::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().b } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll_Nested::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -2033,22 +2077,22 @@ impl __rt::ptr::Proxied for TestAll_Nested {
 impl __rt::value::Type for TestAll_Nested {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> __rt::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
     __priv_TestAll_Nested::View {
-      ptr: __rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: __rt::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: __rt::__z::RawArena) -> __rt::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __rt::__z::RawArena) -> __rt::Mut<'a, Self> {
     __priv_TestAll_Nested::Mut {
-      ptr: __rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: __rt::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: __rt::__z::RawArena) {
-    (&mut *ptr.cast::<__rt::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut __rt::__z::AVec<*mut u8>, new_len: usize, arena: __rt::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 
@@ -2061,15 +2105,18 @@ impl<'proto> __priv_TestAll_Nested::View<'proto> {
     self.a_or().unwrap_or_default()
   }
   pub fn a_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll_Nested::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().a }) })
+    unsafe {
+      let field = TestAll_Nested::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn b(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll_Nested::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().b };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll_Nested::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn b_at(self, idx: usize) -> __rt::View<'proto, __rt::Str> {
@@ -2132,8 +2179,11 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
     self.a_or().unwrap_or_default()
   }
   pub fn a_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll_Nested::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().a }) })
+    unsafe {
+      let field = TestAll_Nested::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn a_mut(self) -> __rt::Mut<'proto, i32> {
     self.a_mut_or().into_mut()
@@ -2152,10 +2202,10 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   }
 
   pub fn b(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll_Nested::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().b };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll_Nested::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn b_at(self, idx: usize) -> __rt::View<'proto, __rt::Str> {
@@ -2163,11 +2213,9 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   }
   pub fn b_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      TestAll_Nested::__tdp_info().field(1).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().b } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll_Nested::__tdp_info().field(1);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -2366,8 +2414,11 @@ impl TestAll2 {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(&self) -> Option<__rt::View<'_, i32>> {
-    if !unsafe { TestAll2::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().union.opt_i32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i32_mut(&mut self) -> __rt::Mut<'_, i32> {
     self.opt_i32_mut_or().into_mut()
@@ -2389,8 +2440,11 @@ impl TestAll2 {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(&self) -> Option<__rt::View<'_, i64>> {
-    if !unsafe { TestAll2::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().union.opt_i64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i64_mut(&mut self) -> __rt::Mut<'_, i64> {
     self.opt_i64_mut_or().into_mut()
@@ -2412,8 +2466,11 @@ impl TestAll2 {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(&self) -> Option<__rt::View<'_, u32>> {
-    if !unsafe { TestAll2::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().union.opt_u32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u32_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.opt_u32_mut_or().into_mut()
@@ -2435,8 +2492,11 @@ impl TestAll2 {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(&self) -> Option<__rt::View<'_, u64>> {
-    if !unsafe { TestAll2::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().union.opt_u64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u64_mut(&mut self) -> __rt::Mut<'_, u64> {
     self.opt_u64_mut_or().into_mut()
@@ -2458,8 +2518,11 @@ impl TestAll2 {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(&self) -> Option<__rt::View<'_, f32>> {
-    if !unsafe { TestAll2::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().union.opt_f32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f32_mut(&mut self) -> __rt::Mut<'_, f32> {
     self.opt_f32_mut_or().into_mut()
@@ -2481,8 +2544,11 @@ impl TestAll2 {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(&self) -> Option<__rt::View<'_, f64>> {
-    if !unsafe { TestAll2::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().union.opt_f64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f64_mut(&mut self) -> __rt::Mut<'_, f64> {
     self.opt_f64_mut_or().into_mut()
@@ -2504,12 +2570,11 @@ impl TestAll2 {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(&self) -> Option<__rt::View<'_, __rt::Str>> {
-    if !unsafe { TestAll2::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().union.opt_str };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      __rt::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_str_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.opt_str_mut_or().into_mut()
@@ -2531,8 +2596,11 @@ impl TestAll2 {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(&self) -> Option<__rt::View<'_, bool>> {
-    if !unsafe { TestAll2::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().union.opt_bool }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_bool_mut(&mut self) -> __rt::Mut<'_, bool> {
     self.opt_bool_mut_or().into_mut()
@@ -2554,8 +2622,11 @@ impl TestAll2 {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(&self) -> Option<__rt::View<'_, TestAll>> {
-    if !unsafe { TestAll2::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_recursive } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(8);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_recursive_mut(&mut self) -> __rt::Mut<'_, TestAll> {
     self.opt_recursive_mut_or().into_mut()
@@ -2574,8 +2645,11 @@ impl TestAll2 {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(&self) -> Option<__rt::View<'_, TestAll_Nested>> {
-    if !unsafe { TestAll2::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_nested } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(9);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll_Nested>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_nested_mut(&mut self) -> __rt::Mut<'_, TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
@@ -2594,8 +2668,11 @@ impl TestAll2 {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(&self) -> Option<__rt::View<'_, TestAll2>> {
-    if !unsafe { TestAll2::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_choice } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(10);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll2>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_choice_mut(&mut self) -> __rt::Mut<'_, TestAll2> {
     self.opt_choice_mut_or().into_mut()
@@ -2611,10 +2688,10 @@ impl TestAll2 {
   }
 
   pub fn rep_i32(&self) -> __rt::Slice<'_, i32> {
-    if !unsafe { TestAll2::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_i32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(11);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i32_at(&self, idx: usize) -> __rt::View<'_, i32> {
@@ -2622,19 +2699,17 @@ impl TestAll2 {
   }
   pub fn rep_i32_mut(&mut self) -> __rt::Repeated<'_, i32> {
     unsafe {
-      TestAll2::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_i32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(11);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_i64(&self) -> __rt::Slice<'_, i64> {
-    if !unsafe { TestAll2::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_i64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(12);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i64_at(&self, idx: usize) -> __rt::View<'_, i64> {
@@ -2642,19 +2717,17 @@ impl TestAll2 {
   }
   pub fn rep_i64_mut(&mut self) -> __rt::Repeated<'_, i64> {
     unsafe {
-      TestAll2::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_i64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(12);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u32(&self) -> __rt::Slice<'_, u32> {
-    if !unsafe { TestAll2::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_u32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(13);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u32_at(&self, idx: usize) -> __rt::View<'_, u32> {
@@ -2662,19 +2735,17 @@ impl TestAll2 {
   }
   pub fn rep_u32_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      TestAll2::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_u32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(13);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u64(&self) -> __rt::Slice<'_, u64> {
-    if !unsafe { TestAll2::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_u64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(14);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u64_at(&self, idx: usize) -> __rt::View<'_, u64> {
@@ -2682,19 +2753,17 @@ impl TestAll2 {
   }
   pub fn rep_u64_mut(&mut self) -> __rt::Repeated<'_, u64> {
     unsafe {
-      TestAll2::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_u64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(14);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f32(&self) -> __rt::Slice<'_, f32> {
-    if !unsafe { TestAll2::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_f32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(15);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f32_at(&self, idx: usize) -> __rt::View<'_, f32> {
@@ -2702,19 +2771,17 @@ impl TestAll2 {
   }
   pub fn rep_f32_mut(&mut self) -> __rt::Repeated<'_, f32> {
     unsafe {
-      TestAll2::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_f32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(15);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f64(&self) -> __rt::Slice<'_, f64> {
-    if !unsafe { TestAll2::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_f64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(16);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f64_at(&self, idx: usize) -> __rt::View<'_, f64> {
@@ -2722,19 +2789,17 @@ impl TestAll2 {
   }
   pub fn rep_f64_mut(&mut self) -> __rt::Repeated<'_, f64> {
     unsafe {
-      TestAll2::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_f64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(16);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_str(&self) -> __rt::Slice<'_, __rt::Str> {
-    if !unsafe { TestAll2::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_str };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(17);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn rep_str_at(&self, idx: usize) -> __rt::View<'_, __rt::Str> {
@@ -2742,19 +2807,17 @@ impl TestAll2 {
   }
   pub fn rep_str_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      TestAll2::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_str } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(17);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_bool(&self) -> __rt::Slice<'_, bool> {
-    if !unsafe { TestAll2::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_bool };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(18);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<bool>(self.ptr.as_ptr())
     }
   }
   pub fn rep_bool_at(&self, idx: usize) -> __rt::View<'_, bool> {
@@ -2762,19 +2825,17 @@ impl TestAll2 {
   }
   pub fn rep_bool_mut(&mut self) -> __rt::Repeated<'_, bool> {
     unsafe {
-      TestAll2::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_bool } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(18);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_recursive(&self) -> __rt::Slice<'_, TestAll> {
-    if !unsafe { TestAll2::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_recursive };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(19);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll>(self.ptr.as_ptr())
     }
   }
   pub fn rep_recursive_at(&self, idx: usize) -> __rt::View<'_, TestAll> {
@@ -2782,19 +2843,17 @@ impl TestAll2 {
   }
   pub fn rep_recursive_mut(&mut self) -> __rt::Repeated<'_, TestAll> {
     unsafe {
-      TestAll2::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_recursive } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(19);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_nested(&self) -> __rt::Slice<'_, TestAll_Nested> {
-    if !unsafe { TestAll2::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_nested };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(20);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll_Nested>(self.ptr.as_ptr())
     }
   }
   pub fn rep_nested_at(&self, idx: usize) -> __rt::View<'_, TestAll_Nested> {
@@ -2802,19 +2861,17 @@ impl TestAll2 {
   }
   pub fn rep_nested_mut(&mut self) -> __rt::Repeated<'_, TestAll_Nested> {
     unsafe {
-      TestAll2::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_nested } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(20);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_choice(&self) -> __rt::Slice<'_, TestAll2> {
-    if !unsafe { TestAll2::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_choice };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(21);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll2>(self.ptr.as_ptr())
     }
   }
   pub fn rep_choice_at(&self, idx: usize) -> __rt::View<'_, TestAll2> {
@@ -2822,11 +2879,9 @@ impl TestAll2 {
   }
   pub fn rep_choice_mut(&mut self) -> __rt::Repeated<'_, TestAll2> {
     unsafe {
-      TestAll2::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_choice } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(21);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll2>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -2891,31 +2946,30 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   pub fn cases(self) -> TestAll2Cases<'proto, __rt::ptr::select::View> {
     unsafe {
       let number = self.ptr.as_ptr().cast::<u32>().read();
-      let raw = self.ptr.as_ptr().add(__priv_TestAll2::UNION_OFFSET);
       match number {
         0 => TestAll2Cases::Unset(std::marker::PhantomData),
-        1 => TestAll2Cases::OptI32(<i32 as __rt::value::Type>::__make_view(raw)),
-        2 => TestAll2Cases::OptI64(<i64 as __rt::value::Type>::__make_view(raw)),
-        3 => TestAll2Cases::OptU32(<u32 as __rt::value::Type>::__make_view(raw)),
-        4 => TestAll2Cases::OptU64(<u64 as __rt::value::Type>::__make_view(raw)),
-        5 => TestAll2Cases::OptF32(<f32 as __rt::value::Type>::__make_view(raw)),
-        6 => TestAll2Cases::OptF64(<f64 as __rt::value::Type>::__make_view(raw)),
-        7 => TestAll2Cases::OptStr(<__rt::Str as __rt::value::Type>::__make_view(raw)),
-        8 => TestAll2Cases::OptBool(<bool as __rt::value::Type>::__make_view(raw)),
-        10 => TestAll2Cases::OptRecursive(<TestAll as __rt::value::Type>::__make_view(raw)),
-        11 => TestAll2Cases::OptNested(<TestAll_Nested as __rt::value::Type>::__make_view(raw)),
-        12 => TestAll2Cases::OptChoice(<TestAll2 as __rt::value::Type>::__make_view(raw)),
-        21 => TestAll2Cases::RepI32(__rt::Repeated::<i32>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        22 => TestAll2Cases::RepI64(__rt::Repeated::<i64>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        23 => TestAll2Cases::RepU32(__rt::Repeated::<u32>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        24 => TestAll2Cases::RepU64(__rt::Repeated::<u64>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        25 => TestAll2Cases::RepF32(__rt::Repeated::<f32>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        26 => TestAll2Cases::RepF64(__rt::Repeated::<f64>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        27 => TestAll2Cases::RepStr(__rt::Repeated::<__rt::Str>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        28 => TestAll2Cases::RepBool(__rt::Repeated::<bool>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        30 => TestAll2Cases::RepRecursive(__rt::Repeated::<TestAll>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        31 => TestAll2Cases::RepNested(__rt::Repeated::<TestAll_Nested>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
-        32 => TestAll2Cases::RepChoice(__rt::Repeated::<TestAll2>::__wrap(raw, __rt::__z::RawArena::null()).into_view()),
+        1 => TestAll2Cases::OptI32(TestAll2::__tdp_info().field(0).make_view::<i32>(self.ptr.as_ptr())),
+        2 => TestAll2Cases::OptI64(TestAll2::__tdp_info().field(1).make_view::<i64>(self.ptr.as_ptr())),
+        3 => TestAll2Cases::OptU32(TestAll2::__tdp_info().field(2).make_view::<u32>(self.ptr.as_ptr())),
+        4 => TestAll2Cases::OptU64(TestAll2::__tdp_info().field(3).make_view::<u64>(self.ptr.as_ptr())),
+        5 => TestAll2Cases::OptF32(TestAll2::__tdp_info().field(4).make_view::<f32>(self.ptr.as_ptr())),
+        6 => TestAll2Cases::OptF64(TestAll2::__tdp_info().field(5).make_view::<f64>(self.ptr.as_ptr())),
+        7 => TestAll2Cases::OptStr(TestAll2::__tdp_info().field(6).make_view::<__rt::Str>(self.ptr.as_ptr())),
+        8 => TestAll2Cases::OptBool(TestAll2::__tdp_info().field(7).make_view::<bool>(self.ptr.as_ptr())),
+        10 => TestAll2Cases::OptRecursive(TestAll2::__tdp_info().field(8).make_view::<TestAll>(self.ptr.as_ptr())),
+        11 => TestAll2Cases::OptNested(TestAll2::__tdp_info().field(9).make_view::<TestAll_Nested>(self.ptr.as_ptr())),
+        12 => TestAll2Cases::OptChoice(TestAll2::__tdp_info().field(10).make_view::<TestAll2>(self.ptr.as_ptr())),
+        21 => TestAll2Cases::RepI32(TestAll2::__tdp_info().field(11).make_slice::<i32>(self.ptr.as_ptr())),
+        22 => TestAll2Cases::RepI64(TestAll2::__tdp_info().field(12).make_slice::<i64>(self.ptr.as_ptr())),
+        23 => TestAll2Cases::RepU32(TestAll2::__tdp_info().field(13).make_slice::<u32>(self.ptr.as_ptr())),
+        24 => TestAll2Cases::RepU64(TestAll2::__tdp_info().field(14).make_slice::<u64>(self.ptr.as_ptr())),
+        25 => TestAll2Cases::RepF32(TestAll2::__tdp_info().field(15).make_slice::<f32>(self.ptr.as_ptr())),
+        26 => TestAll2Cases::RepF64(TestAll2::__tdp_info().field(16).make_slice::<f64>(self.ptr.as_ptr())),
+        27 => TestAll2Cases::RepStr(TestAll2::__tdp_info().field(17).make_slice::<__rt::Str>(self.ptr.as_ptr())),
+        28 => TestAll2Cases::RepBool(TestAll2::__tdp_info().field(18).make_slice::<bool>(self.ptr.as_ptr())),
+        30 => TestAll2Cases::RepRecursive(TestAll2::__tdp_info().field(19).make_slice::<TestAll>(self.ptr.as_ptr())),
+        31 => TestAll2Cases::RepNested(TestAll2::__tdp_info().field(20).make_slice::<TestAll_Nested>(self.ptr.as_ptr())),
+        32 => TestAll2Cases::RepChoice(TestAll2::__tdp_info().field(21).make_slice::<TestAll2>(self.ptr.as_ptr())),
         _ => unreachable!(),
       }
     }
@@ -2925,99 +2979,128 @@ impl<'proto> __priv_TestAll2::View<'proto> {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll2::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().union.opt_i32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_i64(self) -> __rt::View<'proto, i64> {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll2::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().union.opt_i64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i64>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_u32(self) -> __rt::View<'proto, u32> {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll2::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().union.opt_u32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_u64(self) -> __rt::View<'proto, u64> {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll2::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().union.opt_u64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u64>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_f32(self) -> __rt::View<'proto, f32> {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll2::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().union.opt_f32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f32>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_f64(self) -> __rt::View<'proto, f64> {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll2::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().union.opt_f64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f64>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_str(self) -> __rt::View<'proto, __rt::Str> {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll2::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().union.opt_str };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      __rt::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_bool(self) -> __rt::View<'proto, bool> {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll2::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().union.opt_bool }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_recursive(self) -> __rt::View<'proto, TestAll> {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll2::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_recursive } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(8);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_nested(self) -> __rt::View<'proto, TestAll_Nested> {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll2::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_nested } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(9);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll_Nested>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn opt_choice(self) -> __rt::View<'proto, TestAll2> {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll2::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_choice } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(10);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll2>(self.ptr.as_ptr()))
+    }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll2::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_i32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(11);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i32_at(self, idx: usize) -> __rt::View<'proto, i32> {
@@ -3025,10 +3108,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll2::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_i64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(12);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i64_at(self, idx: usize) -> __rt::View<'proto, i64> {
@@ -3036,10 +3119,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll2::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_u32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(13);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u32_at(self, idx: usize) -> __rt::View<'proto, u32> {
@@ -3047,10 +3130,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll2::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_u64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(14);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u64_at(self, idx: usize) -> __rt::View<'proto, u64> {
@@ -3058,10 +3141,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll2::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_f32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(15);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f32_at(self, idx: usize) -> __rt::View<'proto, f32> {
@@ -3069,10 +3152,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll2::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_f64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(16);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f64_at(self, idx: usize) -> __rt::View<'proto, f64> {
@@ -3080,10 +3163,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll2::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_str };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(17);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn rep_str_at(self, idx: usize) -> __rt::View<'proto, __rt::Str> {
@@ -3091,10 +3174,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll2::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_bool };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(18);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<bool>(self.ptr.as_ptr())
     }
   }
   pub fn rep_bool_at(self, idx: usize) -> __rt::View<'proto, bool> {
@@ -3102,10 +3185,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll2::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_recursive };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(19);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll>(self.ptr.as_ptr())
     }
   }
   pub fn rep_recursive_at(self, idx: usize) -> __rt::View<'proto, TestAll> {
@@ -3113,10 +3196,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll2::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_nested };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(20);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll_Nested>(self.ptr.as_ptr())
     }
   }
   pub fn rep_nested_at(self, idx: usize) -> __rt::View<'proto, TestAll_Nested> {
@@ -3124,10 +3207,10 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll2::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_choice };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(21);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll2>(self.ptr.as_ptr())
     }
   }
   pub fn rep_choice_at(self, idx: usize) -> __rt::View<'proto, TestAll2> {
@@ -3304,31 +3387,30 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn cases_mut(self) -> TestAll2Cases<'proto, __rt::ptr::select::Mut> {
     unsafe {
       let number = self.ptr.as_ptr().cast::<u32>().read();
-      let raw = self.ptr.as_ptr().add(__priv_TestAll2::UNION_OFFSET);
       match number {
         0 => TestAll2Cases::Unset(std::marker::PhantomData),
-        1 => TestAll2Cases::OptI32(<i32 as __rt::value::Type>::__make_mut(raw, self.arena)),
-        2 => TestAll2Cases::OptI64(<i64 as __rt::value::Type>::__make_mut(raw, self.arena)),
-        3 => TestAll2Cases::OptU32(<u32 as __rt::value::Type>::__make_mut(raw, self.arena)),
-        4 => TestAll2Cases::OptU64(<u64 as __rt::value::Type>::__make_mut(raw, self.arena)),
-        5 => TestAll2Cases::OptF32(<f32 as __rt::value::Type>::__make_mut(raw, self.arena)),
-        6 => TestAll2Cases::OptF64(<f64 as __rt::value::Type>::__make_mut(raw, self.arena)),
-        7 => TestAll2Cases::OptStr(<__rt::Str as __rt::value::Type>::__make_mut(raw, self.arena)),
-        8 => TestAll2Cases::OptBool(<bool as __rt::value::Type>::__make_mut(raw, self.arena)),
-        10 => TestAll2Cases::OptRecursive(<TestAll as __rt::value::Type>::__make_mut(raw, self.arena)),
-        11 => TestAll2Cases::OptNested(<TestAll_Nested as __rt::value::Type>::__make_mut(raw, self.arena)),
-        12 => TestAll2Cases::OptChoice(<TestAll2 as __rt::value::Type>::__make_mut(raw, self.arena)),
-        21 => TestAll2Cases::RepI32(__rt::Repeated::<i32>::__wrap(raw, self.arena)),
-        22 => TestAll2Cases::RepI64(__rt::Repeated::<i64>::__wrap(raw, self.arena)),
-        23 => TestAll2Cases::RepU32(__rt::Repeated::<u32>::__wrap(raw, self.arena)),
-        24 => TestAll2Cases::RepU64(__rt::Repeated::<u64>::__wrap(raw, self.arena)),
-        25 => TestAll2Cases::RepF32(__rt::Repeated::<f32>::__wrap(raw, self.arena)),
-        26 => TestAll2Cases::RepF64(__rt::Repeated::<f64>::__wrap(raw, self.arena)),
-        27 => TestAll2Cases::RepStr(__rt::Repeated::<__rt::Str>::__wrap(raw, self.arena)),
-        28 => TestAll2Cases::RepBool(__rt::Repeated::<bool>::__wrap(raw, self.arena)),
-        30 => TestAll2Cases::RepRecursive(__rt::Repeated::<TestAll>::__wrap(raw, self.arena)),
-        31 => TestAll2Cases::RepNested(__rt::Repeated::<TestAll_Nested>::__wrap(raw, self.arena)),
-        32 => TestAll2Cases::RepChoice(__rt::Repeated::<TestAll2>::__wrap(raw, self.arena)),
+        1 => TestAll2Cases::OptI32(TestAll2::__tdp_info().field(0).make_mut::<i32>(self.ptr.as_ptr(), self.arena)),
+        2 => TestAll2Cases::OptI64(TestAll2::__tdp_info().field(1).make_mut::<i64>(self.ptr.as_ptr(), self.arena)),
+        3 => TestAll2Cases::OptU32(TestAll2::__tdp_info().field(2).make_mut::<u32>(self.ptr.as_ptr(), self.arena)),
+        4 => TestAll2Cases::OptU64(TestAll2::__tdp_info().field(3).make_mut::<u64>(self.ptr.as_ptr(), self.arena)),
+        5 => TestAll2Cases::OptF32(TestAll2::__tdp_info().field(4).make_mut::<f32>(self.ptr.as_ptr(), self.arena)),
+        6 => TestAll2Cases::OptF64(TestAll2::__tdp_info().field(5).make_mut::<f64>(self.ptr.as_ptr(), self.arena)),
+        7 => TestAll2Cases::OptStr(TestAll2::__tdp_info().field(6).make_mut::<__rt::Str>(self.ptr.as_ptr(), self.arena)),
+        8 => TestAll2Cases::OptBool(TestAll2::__tdp_info().field(7).make_mut::<bool>(self.ptr.as_ptr(), self.arena)),
+        10 => TestAll2Cases::OptRecursive(TestAll2::__tdp_info().field(8).make_mut::<TestAll>(self.ptr.as_ptr(), self.arena)),
+        11 => TestAll2Cases::OptNested(TestAll2::__tdp_info().field(9).make_mut::<TestAll_Nested>(self.ptr.as_ptr(), self.arena)),
+        12 => TestAll2Cases::OptChoice(TestAll2::__tdp_info().field(10).make_mut::<TestAll2>(self.ptr.as_ptr(), self.arena)),
+        21 => TestAll2Cases::RepI32(TestAll2::__tdp_info().field(11).make_rep::<i32>(self.ptr.as_ptr(), self.arena)),
+        22 => TestAll2Cases::RepI64(TestAll2::__tdp_info().field(12).make_rep::<i64>(self.ptr.as_ptr(), self.arena)),
+        23 => TestAll2Cases::RepU32(TestAll2::__tdp_info().field(13).make_rep::<u32>(self.ptr.as_ptr(), self.arena)),
+        24 => TestAll2Cases::RepU64(TestAll2::__tdp_info().field(14).make_rep::<u64>(self.ptr.as_ptr(), self.arena)),
+        25 => TestAll2Cases::RepF32(TestAll2::__tdp_info().field(15).make_rep::<f32>(self.ptr.as_ptr(), self.arena)),
+        26 => TestAll2Cases::RepF64(TestAll2::__tdp_info().field(16).make_rep::<f64>(self.ptr.as_ptr(), self.arena)),
+        27 => TestAll2Cases::RepStr(TestAll2::__tdp_info().field(17).make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)),
+        28 => TestAll2Cases::RepBool(TestAll2::__tdp_info().field(18).make_rep::<bool>(self.ptr.as_ptr(), self.arena)),
+        30 => TestAll2Cases::RepRecursive(TestAll2::__tdp_info().field(19).make_rep::<TestAll>(self.ptr.as_ptr(), self.arena)),
+        31 => TestAll2Cases::RepNested(TestAll2::__tdp_info().field(20).make_rep::<TestAll_Nested>(self.ptr.as_ptr(), self.arena)),
+        32 => TestAll2Cases::RepChoice(TestAll2::__tdp_info().field(21).make_rep::<TestAll2>(self.ptr.as_ptr(), self.arena)),
         _ => unreachable!(),
       }
     }
@@ -3347,8 +3429,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_i32_or().unwrap_or_default()
   }
   pub fn opt_i32_or(self) -> Option<__rt::View<'proto, i32>> {
-    if !unsafe { TestAll2::__tdp_info().field(0).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, i32>(*unsafe { &self.ptr.as_ref().union.opt_i32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(0);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i32_mut(self) -> __rt::Mut<'proto, i32> {
     self.opt_i32_mut_or().into_mut()
@@ -3370,8 +3455,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_i64_or().unwrap_or_default()
   }
   pub fn opt_i64_or(self) -> Option<__rt::View<'proto, i64>> {
-    if !unsafe { TestAll2::__tdp_info().field(1).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, i64>(*unsafe { &self.ptr.as_ref().union.opt_i64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(1);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<i64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_i64_mut(self) -> __rt::Mut<'proto, i64> {
     self.opt_i64_mut_or().into_mut()
@@ -3393,8 +3481,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_u32_or().unwrap_or_default()
   }
   pub fn opt_u32_or(self) -> Option<__rt::View<'proto, u32>> {
-    if !unsafe { TestAll2::__tdp_info().field(2).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, u32>(*unsafe { &self.ptr.as_ref().union.opt_u32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(2);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u32_mut(self) -> __rt::Mut<'proto, u32> {
     self.opt_u32_mut_or().into_mut()
@@ -3416,8 +3507,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_u64_or().unwrap_or_default()
   }
   pub fn opt_u64_or(self) -> Option<__rt::View<'proto, u64>> {
-    if !unsafe { TestAll2::__tdp_info().field(3).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, u64>(*unsafe { &self.ptr.as_ref().union.opt_u64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(3);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<u64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_u64_mut(self) -> __rt::Mut<'proto, u64> {
     self.opt_u64_mut_or().into_mut()
@@ -3439,8 +3533,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_f32_or().unwrap_or_default()
   }
   pub fn opt_f32_or(self) -> Option<__rt::View<'proto, f32>> {
-    if !unsafe { TestAll2::__tdp_info().field(4).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u32, f32>(*unsafe { &self.ptr.as_ref().union.opt_f32 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(4);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f32>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f32_mut(self) -> __rt::Mut<'proto, f32> {
     self.opt_f32_mut_or().into_mut()
@@ -3462,8 +3559,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_f64_or().unwrap_or_default()
   }
   pub fn opt_f64_or(self) -> Option<__rt::View<'proto, f64>> {
-    if !unsafe { TestAll2::__tdp_info().field(5).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<u64, f64>(*unsafe { &self.ptr.as_ref().union.opt_f64 }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(5);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<f64>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_f64_mut(self) -> __rt::Mut<'proto, f64> {
     self.opt_f64_mut_or().into_mut()
@@ -3485,12 +3585,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_str_or().unwrap_or_default()
   }
   pub fn opt_str_or(self) -> Option<__rt::View<'proto, __rt::Str>> {
-    if !unsafe { TestAll2::__tdp_info().field(6).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe {
-      let (mut ptr, len) = *unsafe { &self.ptr.as_ref().union.opt_str };
-      if ptr.is_null() { ptr = 1 as *mut u8; }
-      __rt::Str::from_raw_parts(ptr, len)
-    })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(6);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_str_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.opt_str_mut_or().into_mut()
@@ -3512,8 +3611,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_bool_or().unwrap_or_default()
   }
   pub fn opt_bool_or(self) -> Option<__rt::View<'proto, bool>> {
-    if !unsafe { TestAll2::__tdp_info().field(7).has(self.ptr.as_ptr()) } { return None }
-    Some(unsafe { std::mem::transmute::<bool, bool>(*unsafe { &self.ptr.as_ref().union.opt_bool }) })
+    unsafe {
+      let field = TestAll2::__tdp_info().field(7);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<bool>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_bool_mut(self) -> __rt::Mut<'proto, bool> {
     self.opt_bool_mut_or().into_mut()
@@ -3535,8 +3637,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_recursive_or().unwrap_or_default()
   }
   pub fn opt_recursive_or(self) -> Option<__rt::View<'proto, TestAll>> {
-    if !unsafe { TestAll2::__tdp_info().field(8).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_recursive } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(8);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_recursive_mut(self) -> __rt::Mut<'proto, TestAll> {
     self.opt_recursive_mut_or().into_mut()
@@ -3555,8 +3660,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_nested_or().unwrap_or_default()
   }
   pub fn opt_nested_or(self) -> Option<__rt::View<'proto, TestAll_Nested>> {
-    if !unsafe { TestAll2::__tdp_info().field(9).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll_Nested as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_nested } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(9);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll_Nested>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_nested_mut(self) -> __rt::Mut<'proto, TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
@@ -3575,8 +3683,11 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
     self.opt_choice_or().unwrap_or_default()
   }
   pub fn opt_choice_or(self) -> Option<__rt::View<'proto, TestAll2>> {
-    if !unsafe { TestAll2::__tdp_info().field(10).has(self.ptr.as_ptr()) } { return None }
-    unsafe { Some(<TestAll2 as __rt::value::Type>::__make_view(unsafe { &mut self.ptr.as_mut().union.opt_choice } as *mut _ as *mut u8)) }
+    unsafe {
+      let field = TestAll2::__tdp_info().field(10);
+      if field.has(self.ptr.as_ptr()) { return None }
+      Some(field.make_view::<TestAll2>(self.ptr.as_ptr()))
+    }
   }
   pub fn opt_choice_mut(self) -> __rt::Mut<'proto, TestAll2> {
     self.opt_choice_mut_or().into_mut()
@@ -3592,10 +3703,10 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
-    if !unsafe { TestAll2::__tdp_info().field(11).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_i32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(11);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i32_at(self, idx: usize) -> __rt::View<'proto, i32> {
@@ -3603,19 +3714,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_i32_mut(self) -> __rt::Repeated<'proto, i32> {
     unsafe {
-      TestAll2::__tdp_info().field(11).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_i32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(11);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
-    if !unsafe { TestAll2::__tdp_info().field(12).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_i64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(12);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<i64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_i64_at(self, idx: usize) -> __rt::View<'proto, i64> {
@@ -3623,19 +3732,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_i64_mut(self) -> __rt::Repeated<'proto, i64> {
     unsafe {
-      TestAll2::__tdp_info().field(12).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_i64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(12);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
-    if !unsafe { TestAll2::__tdp_info().field(13).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_u32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(13);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u32_at(self, idx: usize) -> __rt::View<'proto, u32> {
@@ -3643,19 +3750,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_u32_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      TestAll2::__tdp_info().field(13).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_u32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(13);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
-    if !unsafe { TestAll2::__tdp_info().field(14).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_u64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(14);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<u64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_u64_at(self, idx: usize) -> __rt::View<'proto, u64> {
@@ -3663,19 +3768,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_u64_mut(self) -> __rt::Repeated<'proto, u64> {
     unsafe {
-      TestAll2::__tdp_info().field(14).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_u64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(14);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
-    if !unsafe { TestAll2::__tdp_info().field(15).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_f32 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(15);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f32>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f32_at(self, idx: usize) -> __rt::View<'proto, f32> {
@@ -3683,19 +3786,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_f32_mut(self) -> __rt::Repeated<'proto, f32> {
     unsafe {
-      TestAll2::__tdp_info().field(15).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_f32 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(15);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
-    if !unsafe { TestAll2::__tdp_info().field(16).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_f64 };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(16);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<f64>(self.ptr.as_ptr())
     }
   }
   pub fn rep_f64_at(self, idx: usize) -> __rt::View<'proto, f64> {
@@ -3703,19 +3804,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_f64_mut(self) -> __rt::Repeated<'proto, f64> {
     unsafe {
-      TestAll2::__tdp_info().field(16).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_f64 } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(16);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
-    if !unsafe { TestAll2::__tdp_info().field(17).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_str };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(17);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
   }
   pub fn rep_str_at(self, idx: usize) -> __rt::View<'proto, __rt::Str> {
@@ -3723,19 +3822,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_str_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      TestAll2::__tdp_info().field(17).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_str } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(17);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
-    if !unsafe { TestAll2::__tdp_info().field(18).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_bool };
-      __rt::Slice::__wrap(vec.as_ptr() as *mut _, vec.len())
+      let field = TestAll2::__tdp_info().field(18);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<bool>(self.ptr.as_ptr())
     }
   }
   pub fn rep_bool_at(self, idx: usize) -> __rt::View<'proto, bool> {
@@ -3743,19 +3840,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_bool_mut(self) -> __rt::Repeated<'proto, bool> {
     unsafe {
-      TestAll2::__tdp_info().field(18).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_bool } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(18);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, TestAll> {
-    if !unsafe { TestAll2::__tdp_info().field(19).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_recursive };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(19);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll>(self.ptr.as_ptr())
     }
   }
   pub fn rep_recursive_at(self, idx: usize) -> __rt::View<'proto, TestAll> {
@@ -3763,19 +3858,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_recursive_mut(self) -> __rt::Repeated<'proto, TestAll> {
     unsafe {
-      TestAll2::__tdp_info().field(19).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_recursive } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(19);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, TestAll_Nested> {
-    if !unsafe { TestAll2::__tdp_info().field(20).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_nested };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(20);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll_Nested>(self.ptr.as_ptr())
     }
   }
   pub fn rep_nested_at(self, idx: usize) -> __rt::View<'proto, TestAll_Nested> {
@@ -3783,19 +3876,17 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_nested_mut(self) -> __rt::Repeated<'proto, TestAll_Nested> {
     unsafe {
-      TestAll2::__tdp_info().field(20).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_nested } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(20);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
   }
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, TestAll2> {
-    if !unsafe { TestAll2::__tdp_info().field(21).has(self.ptr.as_ptr()) } { return __rt::Slice::default() }
     unsafe {
-      let vec = unsafe { &self.ptr.as_ref().union.rep_choice };
-      __rt::Slice::__wrap(vec.as_ptr(), vec.len())
+      let field = TestAll2::__tdp_info().field(21);
+      if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+      field.make_slice::<TestAll2>(self.ptr.as_ptr())
     }
   }
   pub fn rep_choice_at(self, idx: usize) -> __rt::View<'proto, TestAll2> {
@@ -3803,11 +3894,9 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_choice_mut(self) -> __rt::Repeated<'proto, TestAll2> {
     unsafe {
-      TestAll2::__tdp_info().field(21).init(self.ptr.as_ptr(), self.arena);
-      __rt::Repeated::__wrap(
-        unsafe { &mut self.ptr.as_mut().union.rep_choice } as *mut _ as *mut u8,
-        self.arena,
-      )
+      let field = TestAll2::__tdp_info().field(21);
+      field.init(self.ptr.as_ptr(), self.arena);
+      field.make_rep::<TestAll2>(self.ptr.as_ptr(), self.arena)
     }
   }
 
@@ -3843,22 +3932,22 @@ impl std::fmt::Debug for TestAll2 {
 impl __rt::value::Type for TestAll2 {
   type __Storage = *mut u8;
 
-  unsafe fn __make_view<'a>(ptr: *mut u8) -> __rt::View<'a, Self> {
+  unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
     __priv_TestAll2::View {
-      ptr: __rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: __rt::__z::ABox::from_ptr(ptr.read()),
       _ph: std::marker::PhantomData,
     }
   }
-  unsafe fn __make_mut<'a>(ptr: *mut u8, arena: __rt::__z::RawArena) -> __rt::Mut<'a, Self> {
+  unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __rt::__z::RawArena) -> __rt::Mut<'a, Self> {
     __priv_TestAll2::Mut {
-      ptr: __rt::__z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+      ptr: __rt::__z::ABox::from_ptr(ptr.read()),
       arena,
       _ph: std::marker::PhantomData,
     }
   }
 
-  unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: __rt::__z::RawArena) {
-    (&mut *ptr.cast::<__rt::__z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+  unsafe fn __resize(vec: &mut __rt::__z::AVec<*mut u8>, new_len: usize, arena: __rt::__z::RawArena) {
+    vec.resize_msg(new_len, arena, Self::__LAYOUT)
   }
 }
 

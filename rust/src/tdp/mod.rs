@@ -5,6 +5,11 @@ use std::mem;
 use std::ptr::NonNull;
 
 use crate::arena::RawArena;
+use crate::Mut;
+use crate::Repeated;
+use crate::Slice;
+use crate::Type;
+use crate::View;
 
 pub mod parse;
 
@@ -259,6 +264,75 @@ impl Field {
     if !self.is_repeated() {
       *raw.cast::<u32>().add(self.hasbit_word()) &= !self.hasbit_mask();
     }
+  }
+
+  /// Casts `raw` to a `T`, offset by this field's offset.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must be a valid pointer to this field's message type, and `T` must
+  /// be the right type for that field.
+  #[inline(always)]
+  pub unsafe fn cast<T>(&self, raw: *mut u8) -> *mut T {
+    raw.add(self.offset()).cast()
+  }
+
+  /// Offsets `raw` to a `T`'s storage and dereferences it into a view.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must be a valid pointer to this field's message type, and `T` must
+  /// be the right type for that field.
+  #[inline(always)]
+  pub unsafe fn make_view<'a, T: Type + ?Sized>(
+    &self,
+    raw: *mut u8,
+  ) -> View<'a, T> {
+    T::__make_view(self.cast(raw))
+  }
+
+  /// Offsets `raw` to a `T`'s storage and dereferences it into a mutator.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must be a valid pointer to this field's message type, and `T` must
+  /// be the right type for that field.
+  #[inline(always)]
+  pub unsafe fn make_mut<'a, T: Type + ?Sized>(
+    &self,
+    raw: *mut u8,
+    arena: RawArena,
+  ) -> Mut<'a, T> {
+    T::__make_mut(self.cast(raw), arena)
+  }
+
+  /// Offsets `raw` to a `T` vector and dereferences it into a repeated field slice.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must be a valid pointer to this field's message type, and `T` must
+  /// be the right type for that field.
+  #[inline(always)]
+  pub unsafe fn make_slice<'a, T: Type + ?Sized>(
+    &self,
+    raw: *mut u8,
+  ) -> Slice<'a, T> {
+    Repeated::__wrap(&mut *self.cast(raw), RawArena::null()).into_view()
+  }
+
+  /// Offsets `raw` to a `T` vector and dereferences it into a repeated field.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must be a valid pointer to this field's message type, and `T` must
+  /// be the right type for that field.
+  #[inline(always)]
+  pub unsafe fn make_rep<'a, T: Type + ?Sized>(
+    &self,
+    raw: *mut u8,
+    arena: RawArena,
+  ) -> Repeated<'a, T> {
+    Repeated::__wrap(&mut *self.cast(raw), arena)
   }
 }
 

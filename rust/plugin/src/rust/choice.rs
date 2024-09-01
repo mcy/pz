@@ -70,34 +70,25 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         w.emit(
           vars! {
             number: field.number().unwrap(),
+            index: field.index,
             Name: ident(heck::AsPascalCase(field.name())),
+            Field: |w| {match field.ty() {
+              (TypeEnum::I32, _) => w.write("i32"),
+              (TypeEnum::I64, _) => w.write("i64"),
+              (TypeEnum::U32, _) => w.write("u32"),
+              (TypeEnum::U64, _) => w.write("u64"),
+              (TypeEnum::F32, _) => w.write("f32"),
+              (TypeEnum::F64, _) => w.write("f64"),
+              (TypeEnum::Bool, _) => w.write("bool"),
+              (TypeEnum::String, _) => w.write("$rt::Str"),
+              (TypeEnum::Type, Some(ty)) => w.write(&type_name(ty).to_string()),
+              _ => unreachable!(),
+            }},
             make_view: |w| {
-              match (field.ty(), field.is_repeated()) {
-                ((TypeEnum::I32, _), false) => w.write("<i32 as $rt::value::Type>::__make_view(raw)"),
-                ((TypeEnum::U32, _), false) => w.write("<u32 as $rt::value::Type>::__make_view(raw)"),
-                ((TypeEnum::F32, _), false) => w.write("<f32 as $rt::value::Type>::__make_view(raw)"),
-                ((TypeEnum::I64, _), false) => w.write("<i64 as $rt::value::Type>::__make_view(raw)"),
-                ((TypeEnum::U64, _), false) => w.write("<u64 as $rt::value::Type>::__make_view(raw)"),
-                ((TypeEnum::F64, _), false) => w.write("<f64 as $rt::value::Type>::__make_view(raw)"), 
-                ((TypeEnum::Bool, _), false) => w.write("<bool as $rt::value::Type>::__make_view(raw)"), 
-                ((TypeEnum::String, _), false) => w.write("<$rt::Str as $rt::value::Type>::__make_view(raw)"), 
-                ((TypeEnum::Type, Some(ty)), false) => w.emit(
-                  vars! { Type: type_name(ty), },
-                  "<$Type as $rt::value::Type>::__make_view(raw)",
-                ),
-                ((TypeEnum::I32, _), true) => w.write("$rt::Repeated::<i32>::__wrap(raw, $z::RawArena::null()).into_view()"),
-                ((TypeEnum::U32, _), true) => w.write("$rt::Repeated::<u32>::__wrap(raw, $z::RawArena::null()).into_view()"),
-                ((TypeEnum::F32, _), true) => w.write("$rt::Repeated::<f32>::__wrap(raw, $z::RawArena::null()).into_view()"),
-                ((TypeEnum::I64, _), true) => w.write("$rt::Repeated::<i64>::__wrap(raw, $z::RawArena::null()).into_view()"),
-                ((TypeEnum::U64, _), true) => w.write("$rt::Repeated::<u64>::__wrap(raw, $z::RawArena::null()).into_view()"),
-                ((TypeEnum::F64, _), true) => w.write("$rt::Repeated::<f64>::__wrap(raw, $z::RawArena::null()).into_view()"), 
-                ((TypeEnum::Bool, _), true) => w.write("$rt::Repeated::<bool>::__wrap(raw, $z::RawArena::null()).into_view()"), 
-                ((TypeEnum::String, _), true) => w.write("$rt::Repeated::<$rt::Str>::__wrap(raw, $z::RawArena::null()).into_view()"), 
-                ((TypeEnum::Type, Some(ty)), true) => w.emit(
-                  vars! { Type: type_name(ty), },
-                  "$rt::Repeated::<$Type>::__wrap(raw, $z::RawArena::null()).into_view()",
-                ),
-                _ => unreachable!(),
+              if !field.is_repeated() {
+                w.write("$Type::__tdp_info().field($index).make_view::<$Field>(self.ptr.as_ptr())");
+              } else {
+                w.write("$Type::__tdp_info().field($index).make_slice::<$Field>(self.ptr.as_ptr())");
               }
             },
           },
@@ -110,34 +101,25 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         w.emit(
           vars! {
             number: field.number().unwrap(),
+            index: field.index,
             Name: ident(heck::AsPascalCase(field.name())),
+            Field: |w| {match field.ty() {
+              (TypeEnum::I32, _) => w.write("i32"),
+              (TypeEnum::I64, _) => w.write("i64"),
+              (TypeEnum::U32, _) => w.write("u32"),
+              (TypeEnum::U64, _) => w.write("u64"),
+              (TypeEnum::F32, _) => w.write("f32"),
+              (TypeEnum::F64, _) => w.write("f64"),
+              (TypeEnum::Bool, _) => w.write("bool"),
+              (TypeEnum::String, _) => w.write("$rt::Str"),
+              (TypeEnum::Type, Some(ty)) => w.write(&type_name(ty).to_string()),
+              _ => unreachable!(),
+            }},
             make_view: |w| {
-              match (field.ty(), field.is_repeated()) {
-                ((TypeEnum::I32, _), false) => w.write("<i32 as $rt::value::Type>::__make_mut(raw, self.arena)"),
-                ((TypeEnum::U32, _), false) => w.write("<u32 as $rt::value::Type>::__make_mut(raw, self.arena)"),
-                ((TypeEnum::F32, _), false) => w.write("<f32 as $rt::value::Type>::__make_mut(raw, self.arena)"),
-                ((TypeEnum::I64, _), false) => w.write("<i64 as $rt::value::Type>::__make_mut(raw, self.arena)"),
-                ((TypeEnum::U64, _), false) => w.write("<u64 as $rt::value::Type>::__make_mut(raw, self.arena)"),
-                ((TypeEnum::F64, _), false) => w.write("<f64 as $rt::value::Type>::__make_mut(raw, self.arena)"), 
-                ((TypeEnum::Bool, _), false) => w.write("<bool as $rt::value::Type>::__make_mut(raw, self.arena)"), 
-                ((TypeEnum::String, _), false) => w.write("<$rt::Str as $rt::value::Type>::__make_mut(raw, self.arena)"), 
-                ((TypeEnum::Type, Some(ty)), false) => w.emit(
-                  vars! { Type: type_name(ty), },
-                  "<$Type as $rt::value::Type>::__make_mut(raw, self.arena)",
-                ),
-                ((TypeEnum::I32, _), true) => w.write("$rt::Repeated::<i32>::__wrap(raw, self.arena)"),
-                ((TypeEnum::U32, _), true) => w.write("$rt::Repeated::<u32>::__wrap(raw, self.arena)"),
-                ((TypeEnum::F32, _), true) => w.write("$rt::Repeated::<f32>::__wrap(raw, self.arena)"),
-                ((TypeEnum::I64, _), true) => w.write("$rt::Repeated::<i64>::__wrap(raw, self.arena)"),
-                ((TypeEnum::U64, _), true) => w.write("$rt::Repeated::<u64>::__wrap(raw, self.arena)"),
-                ((TypeEnum::F64, _), true) => w.write("$rt::Repeated::<f64>::__wrap(raw, self.arena)"), 
-                ((TypeEnum::Bool, _), true) => w.write("$rt::Repeated::<bool>::__wrap(raw, self.arena)"), 
-                ((TypeEnum::String, _), true) => w.write("$rt::Repeated::<$rt::Str>::__wrap(raw, self.arena)"), 
-                ((TypeEnum::Type, Some(ty)), true) => w.emit(
-                  vars! { Type: type_name(ty), },
-                  "$rt::Repeated::<$Type>::__wrap(raw, self.arena)",
-                ),
-                _ => unreachable!(),
+              if !field.is_repeated() {
+                w.write("$Type::__tdp_info().field($index).make_mut::<$Field>(self.ptr.as_ptr(), self.arena)");
+              } else {
+                w.write("$Type::__tdp_info().field($index).make_rep::<$Field>(self.ptr.as_ptr(), self.arena)");
               }
             },
           },
@@ -320,7 +302,6 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         pub fn cases(self) -> ${Type}Cases<'proto, $rt::ptr::select::View> {
           unsafe {
             let number = self.ptr.as_ptr().cast::<u32>().read();
-            let raw = self.ptr.as_ptr().add($priv::UNION_OFFSET);
             match number {
               0 => ${Type}Cases::Unset($PhantomData),
               $make_view_arms
@@ -370,7 +351,6 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         pub fn cases_mut(self) -> ${Type}Cases<'proto, $rt::ptr::select::Mut> {
           unsafe {
             let number = self.ptr.as_ptr().cast::<u32>().read();
-            let raw = self.ptr.as_ptr().add($priv::UNION_OFFSET);
             match number {
               0 => ${Type}Cases::Unset($PhantomData),
               $make_mut_arms
@@ -421,22 +401,22 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       impl $rt::value::Type for $Type {
         type __Storage = *mut u8;
 
-        unsafe fn __make_view<'a>(ptr: *mut u8) -> $rt::View<'a, Self> {
+        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> $rt::View<'a, Self> {
           $priv::View {
-            ptr: $z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+            ptr: $z::ABox::from_ptr(ptr.read()),
             _ph: $PhantomData,
           }
         }
-        unsafe fn __make_mut<'a>(ptr: *mut u8, arena: $z::RawArena) -> $rt::Mut<'a, Self> {
+        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: $z::RawArena) -> $rt::Mut<'a, Self> {
           $priv::Mut {
-            ptr: $z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+            ptr: $z::ABox::from_ptr(ptr.read()),
             arena,
             _ph: $PhantomData,
           }
         }
 
-        unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: $z::RawArena) {
-          (&mut *ptr.cast::<$z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+        unsafe fn __resize(vec: &mut $z::AVec<*mut u8>, new_len: usize, arena: $z::RawArena) {
+          vec.resize_msg(new_len, arena, Self::__LAYOUT)
         }
       }
 

@@ -217,22 +217,22 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       impl $rt::value::Type for $Type {
         type __Storage = *mut u8;
 
-        unsafe fn __make_view<'a>(ptr: *mut u8) -> $rt::View<'a, Self> {
+        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> $rt::View<'a, Self> {
           $priv::View {
-            ptr: $z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+            ptr: $z::ABox::from_ptr(ptr.read()),
             _ph: $PhantomData,
           }
         }
-        unsafe fn __make_mut<'a>(ptr: *mut u8, arena: $z::RawArena) -> $rt::Mut<'a, Self> {
+        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: $z::RawArena) -> $rt::Mut<'a, Self> {
           $priv::Mut {
-            ptr: $z::ABox::from_ptr(ptr.cast::<*mut u8>().read()),
+            ptr: $z::ABox::from_ptr(ptr.read()),
             arena,
             _ph: $PhantomData,
           }
         }
 
-        unsafe fn __resize(ptr: *mut u8, new_len: usize, arena: $z::RawArena) {
-          (&mut *ptr.cast::<$z::AVec<*mut u8>>()).resize_msg(new_len, arena, Self::__LAYOUT)
+        unsafe fn __resize(vec: &mut $z::AVec<*mut u8>, new_len: usize, arena: $z::RawArena) {
+          vec.resize_msg(new_len, arena, Self::__LAYOUT)
         }
       }
 
