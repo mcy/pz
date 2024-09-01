@@ -3,11 +3,11 @@
 use std::marker::PhantomData;
 
 use crate::arena::RawArena;
-use crate::value::Type;
 use crate::Mut;
 use crate::Repeated;
 use crate::Slice;
 use crate::SliceMut;
+use crate::Type;
 use crate::View;
 
 pub struct Iter<'a, T: Type + ?Sized> {

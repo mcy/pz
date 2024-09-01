@@ -7,15 +7,16 @@ mod arena;
 mod debug;
 mod tdp;
 
+mod opt;
 pub mod ptr;
 mod rep;
 mod str;
-mod value;
 
 pub mod proto;
 
 pub use crate::ptr::Mut;
 pub use crate::ptr::Proxied;
+pub use crate::ptr::Type;
 pub use crate::ptr::View;
 
 pub use crate::rep::Repeated;
@@ -25,8 +26,7 @@ pub use crate::rep::SliceMut;
 pub use crate::str::Str;
 pub use crate::str::StrBuf;
 
-pub use crate::value::OptMut;
-pub use crate::value::Type;
+pub use crate::opt::OptMut;
 
 pub use crate::tdp::parse::Error;
 

@@ -1,9 +1,9 @@
 //! Implementations of comparison traits. There's a lot of them.
 
-use crate::value::Type;
 use crate::Repeated;
 use crate::Slice;
 use crate::SliceMut;
+use crate::Type;
 use crate::View;
 
 // Reflexive Eq.

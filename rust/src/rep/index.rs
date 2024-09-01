@@ -4,10 +4,10 @@ use std::fmt;
 use std::ops;
 
 use crate::arena::RawArena;
-use crate::value::Type;
 use crate::Mut;
 use crate::Slice;
 use crate::SliceMut;
+use crate::Type;
 use crate::View;
 
 pub trait RepIndex: Clone + fmt::Debug {

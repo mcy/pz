@@ -402,6 +402,7 @@ impl PartialOrd<Vec<u8>> for Str {
 }
 
 /// Used by the generated API for setters.
+#[allow(unused)]
 pub trait IntoStrOpt<'a> {
   fn into_str_opt(self) -> Option<&'a Str>;
 }

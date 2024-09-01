@@ -6,8 +6,8 @@ use std::ptr::NonNull;
 
 use crate::arena::AVec;
 use crate::arena::RawArena;
-use crate::value::Type;
 use crate::Mut;
+use crate::Type;
 
 mod eq;
 mod index;
