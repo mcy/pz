@@ -3,11 +3,11 @@
 use std::marker::PhantomData;
 
 use crate::arena::RawArena;
-use crate::value::Type;
 use crate::Mut;
 use crate::Repeated;
 use crate::Slice;
 use crate::SliceMut;
+use crate::Type;
 use crate::View;
 
 pub struct Iter<'a, T: Type + ?Sized> {
@@ -26,7 +26,7 @@ impl<'a, T: Type + ?Sized> Iterator for Iter<'a, T> {
     let ptr = self.start;
     unsafe {
       self.start = ptr.add(1);
-      Some(T::__make_view(ptr as *mut u8))
+      Some(T::__make_view(ptr))
     }
   }
 
@@ -53,7 +53,7 @@ impl<'a, T: Type + ?Sized> Iterator for IterMut<'a, T> {
     let ptr = self.start;
     unsafe {
       self.start = ptr.add(1);
-      Some(T::__make_mut(ptr as *mut u8, self.arena))
+      Some(T::__make_mut(ptr, self.arena))
     }
   }
 

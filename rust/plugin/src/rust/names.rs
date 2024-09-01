@@ -31,7 +31,18 @@ pub fn ident(name: impl fmt::Display) -> impl fmt::Display {
 
 pub fn type_name(ty: Type) -> impl fmt::Display + '_ {
   emit::display(move |f| {
-    fmt::Display::fmt(&ident(&ty.name().replace('.', "_")), f)
+    f.write_str("__")?;
+    for component in ty.package().split(".") {
+      f.write_fmt(format_args!("::{}", ident(component)))?;
+    }
+
+    f.write_fmt(format_args!("::{}", ident(&ty.name().replace('.', "_"))))
+  })
+}
+
+pub fn type_ident(ty: Type) -> impl fmt::Display + '_ {
+  emit::display(move |f| {
+    f.write_fmt(format_args!("{}", ident(&ty.name().replace('.', "_"))))
   })
 }
 

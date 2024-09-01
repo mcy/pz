@@ -181,13 +181,13 @@ impl Str {
 ///
 /// This type provides a few additional methods over `Str`, which it derefs to.
 pub struct StrBuf<'a> {
-  data: &'a mut (*mut u8, usize),
+  data: &'a mut Storage,
   arena: RawArena,
 }
 
 impl<'a> StrBuf<'a> {
   #[doc(hidden)]
-  pub fn __wrap(data: &'a mut (*mut u8, usize), arena: RawArena) -> Self {
+  pub fn __wrap(data: &'a mut Storage, arena: RawArena) -> Self {
     Self { data, arena }
   }
 
@@ -207,7 +207,7 @@ impl<'a> StrBuf<'a> {
   ///
   /// If `len > self.len()`, the buffer is unaffected.
   pub fn truncate(&mut self, len: usize) {
-    self.data.1 = self.len().min(len);
+    self.data.len = self.len().min(len);
   }
 
   /// Sets the contents of the underlying buffer to `data`.
@@ -217,17 +217,17 @@ impl<'a> StrBuf<'a> {
   /// provide append or write features.
   pub fn set(&mut self, data: &(impl AsRef<[u8]> + ?Sized)) {
     let data = data.as_ref();
-    if data.len() > self.len() || self.data.0.is_null() {
-      self.data.0 = self.arena.alloc(Layout::for_value(data)).as_ptr();
+    if data.len() > self.len() || self.data.ptr.is_null() {
+      self.data.ptr = self.arena.alloc(Layout::for_value(data)).as_ptr();
     }
 
     unsafe {
       self
         .data
-        .0
+        .ptr
         .copy_from_nonoverlapping(data.as_ptr(), data.len());
     }
-    self.data.1 = data.len();
+    self.data.len = data.len();
   }
 }
 
@@ -235,23 +235,13 @@ impl Deref for StrBuf<'_> {
   type Target = Str;
 
   fn deref(&self) -> &Str {
-    let mut ptr = self.data.0;
-    if ptr.is_null() {
-      ptr = 1 as *mut u8;
-    }
-
-    unsafe { Str::from_raw_parts(ptr, self.data.1) }
+    Str::new(unsafe { self.data.as_slice() })
   }
 }
 
 impl DerefMut for StrBuf<'_> {
   fn deref_mut(&mut self) -> &mut Str {
-    let mut ptr = self.data.0;
-    if ptr.is_null() {
-      ptr = 1 as *mut u8;
-    }
-
-    unsafe { Str::from_raw_parts_mut(ptr, self.data.1) }
+    Str::new_mut(unsafe { self.data.as_mut_slice() })
   }
 }
 
@@ -299,7 +289,7 @@ impl<'a> From<&'a String> for &'a Str {
 
 impl<'a> From<StrBuf<'a>> for &'a Str {
   fn from(value: StrBuf<'a>) -> Self {
-    unsafe { Str::from_raw_parts_mut(value.data.0, value.data.1) }
+    Str::new(unsafe { value.data.as_slice() })
   }
 }
 
@@ -412,6 +402,7 @@ impl PartialOrd<Vec<u8>> for Str {
 }
 
 /// Used by the generated API for setters.
+#[allow(unused)]
 pub trait IntoStrOpt<'a> {
   fn into_str_opt(self) -> Option<&'a Str>;
 }
@@ -425,5 +416,62 @@ impl<'a, Bytes: AsRef<[u8]> + ?Sized> IntoStrOpt<'a> for &'a Bytes {
 impl<'a> IntoStrOpt<'a> for Option<&'a Str> {
   fn into_str_opt(self) -> Option<&'a Str> {
     self
+  }
+}
+
+pub(crate) use private::*;
+pub(crate) mod private {
+  use super::*;
+
+  /// Storage for a string field in a message.
+  ///
+  /// This is for all intents and purposes a `*mut [u8]` whose layout we
+  /// control.
+  #[repr(C)]
+  #[derive(Copy, Clone)]
+  pub struct Storage {
+    pub ptr: *mut u8,
+    pub len: usize,
+  }
+
+  impl Storage {
+    /// Return s a new empty raw string.
+    pub const fn new() -> Storage {
+      Storage {
+        ptr: 0 as *mut u8,
+        len: 0,
+      }
+    }
+
+    /// Dereferences this storage, producing an unbound reference. If the
+    /// pointer part is null, returns an empty slice.
+    ///
+    /// # Safety
+    ///
+    /// `self.ptr` must either be null or dereferenceable for `self.len` bytes.
+    pub unsafe fn as_slice<'a>(self) -> &'a [u8] {
+      if self.ptr.is_null() {
+        return &[];
+      }
+      return slice::from_raw_parts(self.ptr, self.len);
+    }
+    /// Dereferences this storage, producing an unbound reference. If the
+    /// pointer part is null, returns an empty slice.
+    ///
+    /// # Safety
+    ///
+    /// `self.ptr` must either be null or dereferenceable for `self.len` bytes.
+    pub unsafe fn as_mut_slice<'a>(self) -> &'a mut [u8] {
+      if self.ptr.is_null() {
+        return &mut [];
+      }
+      return slice::from_raw_parts_mut(self.ptr, self.len);
+    }
+  }
+
+  impl Default for Storage {
+    fn default() -> Self {
+      Self::new()
+    }
   }
 }

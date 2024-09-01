@@ -3,12 +3,102 @@
 use std::fmt;
 use std::marker::PhantomData;
 
-use crate::value::OptMut;
-use crate::value::Type;
+use crate::__z::AVec;
+use crate::__z::RawArena;
+use crate::str;
+use crate::OptMut;
 use crate::Repeated;
 use crate::Slice;
 use crate::Str;
 use crate::StrBuf;
+
+/// A field type.
+///
+/// This type is implemented by all `pz` generated types, as well as [`bool`],
+/// [`i32`], [`i64`], [`u32`], [`u64`], [`f32`], [`f64`], and [`Str`].
+///
+/// # Safety
+///
+/// This trait should not be implemented by users, only by the `pz` compiler.
+pub trait Type: Proxied {
+  /// The actual underlying storage type for this type. This is used in
+  /// the implementation of repeated fields.
+  #[doc(hidden)]
+  type __Storage;
+
+  /// Constructs a view out of a pointer to storage for this type.
+  ///
+  /// # Safety
+  ///
+  /// The pointer must be dereferenceable for this type.
+  #[doc(hidden)]
+  unsafe fn __make_view<'a>(ptr: *const Self::__Storage) -> View<'a, Self>;
+
+  /// Constructs a view out of a pointer to storage for this type.
+  ///
+  /// # Safety
+  ///
+  /// The pointer must be uniquely dereferenceable for this type.
+  #[doc(hidden)]
+  unsafe fn __make_mut<'a>(
+    ptr: *mut Self::__Storage,
+    arena: RawArena,
+  ) -> Mut<'a, Self>;
+
+  /// Resizes storage for a repeated field for this type.
+  ///
+  /// # Safety
+  ///
+  /// The arena vector must be dereferenceable and belong to the given arena.
+  #[doc(hidden)]
+  unsafe fn __resize(
+    vec: &mut AVec<Self::__Storage>,
+    new_len: usize,
+    arena: RawArena,
+  );
+}
+
+impl<T> Type for T
+where
+  T: Copy + for<'a> Proxied<View<'a> = T, Mut<'a> = ScalarMut<'a, T>>,
+{
+  type __Storage = T;
+
+  unsafe fn __make_view<'a>(ptr: *const T) -> View<'a, Self> {
+    ptr.read()
+  }
+
+  unsafe fn __make_mut<'a>(ptr: *mut T, _arena: RawArena) -> Mut<'a, Self> {
+    ScalarMut::__wrap(&mut *ptr)
+  }
+
+  unsafe fn __resize(vec: &mut AVec<T>, new_len: usize, arena: RawArena) {
+    vec.resize(new_len, arena)
+  }
+}
+
+impl Type for Str {
+  type __Storage = str::Storage;
+
+  unsafe fn __make_view<'a>(ptr: *const str::Storage) -> View<'a, Self> {
+    Str::new((*ptr).as_slice())
+  }
+
+  unsafe fn __make_mut<'a>(
+    ptr: *mut str::Storage,
+    arena: RawArena,
+  ) -> Mut<'a, Self> {
+    StrBuf::__wrap(&mut *ptr, arena)
+  }
+
+  unsafe fn __resize(
+    vec: &mut AVec<str::Storage>,
+    new_len: usize,
+    arena: RawArena,
+  ) {
+    vec.resize(new_len, arena)
+  }
+}
 
 /// A type that has associated "proxy references".
 ///

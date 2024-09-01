@@ -4,8 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-pz = { path = "../rust" }
+# pz = { path = "../rust" }
 pz_plugins = { path = "../rust/plugin" }
+
+# Use this to break dependency loops.
+pz = { git = "https://github.com/mcy/pz.git" }
 
 ilex = "0.6.0"
 heck = "0.4.1"

@@ -541,12 +541,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "pz"
+version = "0.1.0"
+source = "git+https://github.com/mcy/pz.git#9cba3cc54982bf76c15204801314622fd1f0d1b6"
+dependencies = [
+ "bumpalo",
+ "prost",
+ "prost-build",
+]
+
+[[package]]
 name = "pz_plugins"
 version = "0.1.0"
 dependencies = [
  "heck",
  "prost",
- "pz",
+ "pz 0.1.0 (git+https://github.com/mcy/pz.git)",
 ]
 
 [[package]]
@@ -561,7 +571,7 @@ dependencies = [
  "ilex",
  "prost",
  "prost-build",
- "pz",
+ "pz 0.1.0 (git+https://github.com/mcy/pz.git)",
  "pz_plugins",
  "unindent",
 ]

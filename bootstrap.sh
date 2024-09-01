@@ -10,14 +10,17 @@ build() {
   cp $out $out.bck
   
   set -e
-  cargo run -- \
+  cargo run -p pzc -- \
     --plugin=rust \
     --output-dir=$(dirname $out) \
     --rust.rt-crate $rt \
+    --rust.package-prefix pz \
     $@
 
-  set +e
-  cargo build
+  if [[ -z $NOBUILD ]]; then
+    set +e
+    cargo build
+  fi
   if [[ $? != 0 ]]; then
     mv $out.bck $out 
   else

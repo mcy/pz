@@ -6,8 +6,8 @@ use std::ptr::NonNull;
 
 use crate::arena::AVec;
 use crate::arena::RawArena;
-use crate::value::Type;
 use crate::Mut;
+use crate::Type;
 
 mod eq;
 mod index;
@@ -17,7 +17,8 @@ pub use index::RepIndex;
 pub use iter::Iter;
 pub use iter::IterMut;
 
-/// An immutable slice of a repeated field.
+/// An immutable slice of a [`Repeated`] field. This is roughly equivalent to
+/// a `&[T]`.
 pub struct Slice<'a, T: Type + ?Sized> {
   ptr: *mut T::__Storage,
   len: usize,
@@ -89,7 +90,8 @@ impl<T: Type + ?Sized> Default for Slice<'_, T> {
   }
 }
 
-/// An mutable slice of a repeated field.
+/// An mutable slice of a [`Repeated`] field. This is roughly equivalent to
+/// a `&mut [T]`.
 pub struct SliceMut<'a, T: Type + ?Sized> {
   ptr: *mut T::__Storage,
   len: usize,
@@ -205,35 +207,19 @@ impl<'a, T: Type + ?Sized> SliceMut<'a, T> {
   }
 }
 
+/// An mutable slice of a [`Repeated`] field. This is roughly equivalent to
+/// a `&mut Vec<T>`.
 pub struct Repeated<'a, T: Type + ?Sized> {
-  ptr: *mut u8,
+  raw: &'a mut AVec<T::__Storage>,
   arena: RawArena,
-  _ph: PhantomData<&'a mut T>,
 }
 
 impl<'a, T: Type + ?Sized> Repeated<'a, T> {
-  #[doc(hidden)]
-  pub unsafe fn __wrap(ptr: *mut u8, arena: RawArena) -> Self {
-    Self {
-      ptr,
-      arena,
-      _ph: PhantomData,
-    }
-  }
-
-  fn raw(&self) -> &AVec<T::__Storage> {
-    unsafe { &*self.ptr.cast::<AVec<T::__Storage>>() }
-  }
-
-  fn raw_mut(&mut self) -> &mut AVec<T::__Storage> {
-    unsafe { &mut *self.ptr.cast::<AVec<T::__Storage>>() }
-  }
-
   /// Reborrows this repeated field as a shared slice.
   pub fn as_view(&self) -> Slice<'_, T> {
     Slice {
-      ptr: self.raw().as_ptr(),
-      len: self.raw().len(),
+      ptr: self.raw.as_ptr(),
+      len: self.raw.len(),
       _ph: PhantomData,
     }
   }
@@ -241,8 +227,8 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   /// Reborrows this repeated field as a mutable slice.
   pub fn as_mut(&mut self) -> SliceMut<'_, T> {
     SliceMut {
-      ptr: self.raw().as_ptr(),
-      len: self.raw().len(),
+      ptr: self.raw.as_ptr(),
+      len: self.raw.len(),
       arena: self.arena,
       _ph: PhantomData,
     }
@@ -251,8 +237,8 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   /// Converts this repeated field as a shared slice.
   pub fn into_view(self) -> Slice<'a, T> {
     Slice {
-      ptr: self.raw().as_ptr(),
-      len: self.raw().len(),
+      ptr: self.raw.as_ptr(),
+      len: self.raw.len(),
       _ph: PhantomData,
     }
   }
@@ -260,8 +246,8 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   /// Converts this repeated field as a mutable slice.
   pub fn into_mut(self) -> SliceMut<'a, T> {
     SliceMut {
-      ptr: self.raw().as_ptr(),
-      len: self.raw().len(),
+      ptr: self.raw.as_ptr(),
+      len: self.raw.len(),
       arena: self.arena,
       _ph: PhantomData,
     }
@@ -270,9 +256,8 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   /// Reborrows this repeated field with a shorter lifetime.
   pub fn reborrow(&mut self) -> Repeated<T> {
     Repeated {
-      ptr: self.ptr,
+      raw: self.raw,
       arena: self.arena,
-      _ph: PhantomData,
     }
   }
 
@@ -291,8 +276,8 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   pub fn add(&mut self) -> Mut<'_, T> {
     let new_len = self.len() + 1;
     unsafe {
-      T::__resize(self.ptr, new_len, self.arena);
-      T::__make_mut(self.raw().as_ptr().add(new_len - 1).cast(), self.arena)
+      T::__resize(self.raw, new_len, self.arena);
+      T::__make_mut(self.raw.as_ptr().add(new_len - 1).cast(), self.arena)
     }
   }
 
@@ -307,7 +292,7 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   pub fn truncate(&mut self, len: usize) {
     let new_len = usize::min(self.len(), len);
     unsafe {
-      self.raw_mut().set_len(new_len);
+      self.raw.set_len(new_len);
     }
   }
 
@@ -354,6 +339,14 @@ impl<'a, T: Type + ?Sized> Repeated<'a, T> {
   /// Returns a mutable iterator over this slice.
   pub fn iter_mut(&mut self) -> IterMut<'_, T> {
     self.as_mut().into_iter()
+  }
+
+  #[doc(hidden)]
+  pub unsafe fn __wrap(
+    raw: &'a mut AVec<T::__Storage>,
+    arena: RawArena,
+  ) -> Self {
+    Self { raw, arena }
   }
 }
 
