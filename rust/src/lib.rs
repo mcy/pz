@@ -35,9 +35,12 @@ pub use crate::tdp::parse::Error;
 
 #[doc(hidden)]
 pub mod __z {
+  pub use std;
+
   pub mod tdp {
     pub use crate::tdp::*;
   }
+
   pub use crate::arena::*;
   pub use crate::debug::Debug;
   pub use crate::str::private::Storage as RawStr;

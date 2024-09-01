@@ -24,7 +24,7 @@ impl GenFieldImpl for Singular<'_> {
     w.emit(
       vars! { Submsg: names::type_name(self.submsg) },
       "
-        $Name($rt::ptr::Proxy<'proto, $Submsg, Which>),
+        $Name(__rt::ptr::Proxy<'proto, $Submsg, Which>),
       ",
     );
   }
@@ -46,15 +46,15 @@ impl GenFieldImpl for Singular<'_> {
       },
       r"
         $deprecated
-        pub fn $name($self) -> $rt::View<'$lt, $Submsg> {
+        pub fn $name($self) -> __rt::View<'$lt, $Submsg> {
           self.${name}_or().unwrap_or_default()
         }
         $deprecated
-        pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $Submsg>> {
+        pub fn ${name}_or($self) -> __s::option::Option<__rt::View<'$lt, $Submsg>> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
-            if field.has(self.ptr.as_ptr()) { return None }
-            Some(field.make_view::<$Submsg>(self.ptr.as_ptr()))
+            if field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
+            __s::option::Option::Some(field.make_view::<$Submsg>(self.ptr.as_ptr()))
           }
         }
       ",
@@ -70,13 +70,13 @@ impl GenFieldImpl for Singular<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $Submsg> {
+        pub fn ${name}_mut($self) -> __rt::Mut<'$lt, $Submsg> {
           self.${name}_mut_or().into_mut()
         }
         $deprecated
-        pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $Submsg> {
+        pub fn ${name}_mut_or($self) -> __rt::value::OptMut<'$lt, $Submsg> {
           unsafe {
-            $rt::value::OptMut::__wrap(
+            __rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
               $Type::__tdp_info().field($idx),
@@ -90,7 +90,7 @@ impl GenFieldImpl for Singular<'_> {
   fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       r#"
-        if let Some(value) = self.${name}_or() {
+        if let __s::option::Option::Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           value.__debug(debug)?;
@@ -109,7 +109,7 @@ impl GenFieldImpl for Repeated<'_> {
   fn in_storage(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        pub(in super) $name: $z::AVec<*mut u8>,
+        pub(in super) $name: __z::AVec<*mut u8>,
       ",
     );
   }
@@ -118,7 +118,7 @@ impl GenFieldImpl for Repeated<'_> {
     w.emit(
       vars! { Submsg: names::type_name(self.submsg) },
       "
-        $Name($rt::ptr::Proxy<'proto, $rt::ptr::Rep<$Submsg>, Which>),
+        $Name(__rt::ptr::Proxy<'proto, __rt::ptr::Rep<$Submsg>, Which>),
       ",
     );
   }
@@ -126,7 +126,7 @@ impl GenFieldImpl for Repeated<'_> {
   fn in_storage_init(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        $name: $z::AVec::new(),
+        $name: __z::AVec::new(),
       ",
     );
   }
@@ -140,15 +140,15 @@ impl GenFieldImpl for Repeated<'_> {
       },
       r"
         $deprecated
-        pub fn $name($self) -> $rt::Slice<'$lt, $Submsg> {
+        pub fn $name($self) -> __rt::Slice<'$lt, $Submsg> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
-            if field.has(self.ptr.as_ptr()) { return $rt::Slice::default() }
+            if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
             field.make_slice::<$Submsg>(self.ptr.as_ptr())
           }
         }
         $deprecated
-        pub fn ${name}_at($self, idx: usize) -> $rt::View<'$lt, $Submsg> {
+        pub fn ${name}_at($self, idx: usize) -> __rt::View<'$lt, $Submsg> {
           self.$name().at(idx)
         }
       ",
@@ -164,7 +164,7 @@ impl GenFieldImpl for Repeated<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $Submsg> {
+        pub fn ${name}_mut($self) -> __rt::Repeated<'$lt, $Submsg> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
             field.init(self.ptr.as_ptr(), self.arena);

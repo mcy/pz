@@ -26,8 +26,14 @@ pub fn rust_plugin() -> ! {
     },
     |ctx| {
       let mut w = emit::SourceWriter::new(emit::Options::default());
+      let rt = ctx.option("rt-crate").unwrap_or("pz");
       w.emit(
-        [],
+        vars! {
+          use_rt: |w| match rt {
+            "crate" => w.write("use crate"),
+            rt => w.emit(vars! { rt }, "extern crate $rt"),
+          },
+        },
         r"
         // ! ! ! GENERATED CODE, DO NOT EDIT ! ! !
         #![cfg_attr(rustfmt, rustfmt_skip)]
@@ -46,18 +52,14 @@ pub fn rust_plugin() -> ! {
         #![allow(clippy::unnecessary_cast)]
         #![allow(clippy::wrong_self_convention)]
         
+        #![no_implicit_prelude]
+
+        $use_rt as __rt;
+        use __rt::__z;
+        use __z::std as __s;
+        use __s::default::Default as _;
       ",
       );
-
-      let rt = ctx.option("rt-crate").unwrap_or("pz");
-      if rt != "crate" {
-        w.emit(
-          vars! { rt },
-          r"
-            extern crate $rt as __rt;
-          ",
-        );
-      }
       w.new_line();
 
       for ty in ctx.types_to_generate() {
@@ -65,12 +67,9 @@ pub fn rust_plugin() -> ! {
           vars! {
             deprecated: deprecated(
               ty.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
-            rt: if rt == "crate" { "crate" } else { "__rt" },
-            z: if rt == "crate" { "crate::__z" } else { "__rt::__z" },
-            transmute: "std::mem::transmute",
-            NonNull: "std::ptr::NonNull",
-            Layout: "std::alloc::Layout",
-            PhantomData: "std::marker::PhantomData",
+            NonNull: "__s::ptr::NonNull",
+            Layout: "__s::alloc::Layout",
+            PhantomData: "__s::marker::PhantomData",
           },
           |w| match ty.kind() {
             crate::proto::r#type::Kind::Message => message::emit(ty, w),

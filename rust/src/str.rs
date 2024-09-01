@@ -434,6 +434,14 @@ pub(crate) mod private {
   }
 
   impl Storage {
+    /// Return s a new empty raw string.
+    pub const fn new() -> Storage {
+      Storage {
+        ptr: 0 as *mut u8,
+        len: 0,
+      }
+    }
+
     /// Dereferences this storage, producing an unbound reference. If the
     /// pointer part is null, returns an empty slice.
     ///

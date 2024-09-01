@@ -62,7 +62,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         w.emit(
           vars! {Name: ident(heck::AsPascalCase(field.name())) },
           "
-            ${Type}Cases::$Name(val) => ${Type}Cases::$Name($rt::ptr::ViewFor::as_view(val)),
+            ${Type}Cases::$Name(val) => ${Type}Cases::$Name(__rt::ptr::ViewFor::as_view(val)),
           "
         )
       },
@@ -80,7 +80,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               (TypeEnum::F32, _) => w.write("f32"),
               (TypeEnum::F64, _) => w.write("f64"),
               (TypeEnum::Bool, _) => w.write("bool"),
-              (TypeEnum::String, _) => w.write("$rt::Str"),
+              (TypeEnum::String, _) => w.write("__rt::Str"),
               (TypeEnum::Type, Some(ty)) => w.write(&type_name(ty).to_string()),
               _ => unreachable!(),
             }},
@@ -111,7 +111,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               (TypeEnum::F32, _) => w.write("f32"),
               (TypeEnum::F64, _) => w.write("f64"),
               (TypeEnum::Bool, _) => w.write("bool"),
-              (TypeEnum::String, _) => w.write("$rt::Str"),
+              (TypeEnum::String, _) => w.write("__rt::Str"),
               (TypeEnum::Type, Some(ty)) => w.write(&type_name(ty).to_string()),
               _ => unreachable!(),
             }},
@@ -173,11 +173,11 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               repeated: field.is_repeated() as u32,
             },
             "
-              $z::tdp::FieldStorage {
+              __z::tdp::FieldStorage {
                 number: $number,
                 flags: 
-                  $z::tdp::Kind::$tdp_kind.raw() << $z::tdp::Field::KIND_SHIFT |
-                  $repeated << $z::tdp::Field::REP_SHIFT,
+                  __z::tdp::Kind::$tdp_kind.raw() << __z::tdp::Field::KIND_SHIFT |
+                  $repeated << __z::tdp::Field::REP_SHIFT,
                 offset: $priv::UNION_OFFSET as u32,
                 desc: $ty_idx,
                 hasbit: 0,
@@ -194,61 +194,61 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       /// choice `$package.$Name`
       $deprecated
       pub struct $Type {
-        ptr: $z::ABox<$priv::Storage>,
-        arena: $z::RawArena,
+        ptr: __z::ABox<$priv::Storage>,
+        arena: __z::RawArena,
       }
 
       const _: () = {
         assert!(
-          std::mem::size_of::<$priv::Storage>() < (u32::MAX as usize),
+          __s::mem::size_of::<$priv::Storage>() < (u32::MAX as usize),
           "storage size excees 4GB",
         );
       };
 
       impl $Type {
-        pub const DEFAULT: $rt::View<'static, Self> = unsafe {
+        pub const DEFAULT: __rt::View<'static, Self> = unsafe {
           const VALUE: $priv::Storage = $priv::Storage {
             which: 0,
             union: $priv::Union { __unset: () },
           };
-          $rt::View::<Self> {
-            ptr: $z::ABox::from_ptr(&VALUE as *const $priv::Storage as *mut $priv::Storage as *mut u8),
+          __rt::View::<Self> {
+            ptr: __z::ABox::from_ptr(&VALUE as *const $priv::Storage as *mut $priv::Storage as *mut u8),
             _ph: $PhantomData,
           }
         };
         
         pub fn new() -> Self {
-          let arena = $z::RawArena::new();
+          let arena = __z::RawArena::new();
           let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
           unsafe {
             ptr.write_bytes(0, Self::__LAYOUT.size());
-            Self { ptr: $z::ABox::from_ptr(ptr), arena }
+            Self { ptr: __z::ABox::from_ptr(ptr), arena }
           }
         }
 
-        pub fn from_pb(input: &mut dyn std::io::Read) -> Result<Self, $rt::Error> {
+        pub fn from_pb(input: &mut dyn __s::io::Read) -> __s::result::Result<Self, __rt::Error> {
           let mut new = Self::new();
           new.parse_pb(input)?;
-          Ok(new)
+          __s::result::Result::Ok(new)
         }
 
-        pub fn parse_pb(&mut self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
+        pub fn parse_pb(&mut self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
           self.as_mut().parse_pb(input)
         }
 
-        pub fn as_view(&self) -> $rt::View<Self> {
+        pub fn as_view(&self) -> __rt::View<Self> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
-        pub fn as_mut(&mut self) -> $rt::Mut<Self> {
+        pub fn as_mut(&mut self) -> __rt::Mut<Self> {
           $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
         }
 
-        pub fn cases(&self) -> ${Type}Cases<'_, $rt::ptr::select::View> {
+        pub fn cases(&self) -> ${Type}Cases<'_, __rt::ptr::select::View> {
           self.as_view().cases()
         }
 
-        pub fn cases_mut(&mut self) -> ${Type}Cases<'_, $rt::ptr::select::Mut> {
+        pub fn cases_mut(&mut self) -> ${Type}Cases<'_, __rt::ptr::select::Mut> {
           self.as_mut().cases_mut()
         }
 
@@ -269,43 +269,43 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           (&mut *raw.cast::<$priv::Storage>()).which = 0;
         }
         #[doc(hidden)]
-        pub fn __tdp_info() -> $z::tdp::Desc {
+        pub fn __tdp_info() -> __z::tdp::Desc {
           unsafe { $priv::TDP_INFO.get() }
         }
         #[doc(hidden)]
         pub unsafe fn __raw_data(&self) -> &[u8] {
-          std::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
+          __s::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
         }
       }
 
-      pub enum ${Type}Cases<'proto, Which: $rt::ptr::select::Select> {
+      pub enum ${Type}Cases<'proto, Which: __rt::ptr::select::Select> {
         Unset($PhantomData<&'proto Which>),
         ${Type::Variants}
       }
 
-      impl Default for $Type {
+      impl __s::default::Default for $Type {
         fn default() -> Self {
           Self::new()
         }
       }
 
-      impl $rt::ptr::Proxied for $Type {
+      impl __rt::ptr::Proxied for $Type {
         type View<'proto> = $priv::View<'proto>;
         type Mut<'proto> = $priv::Mut<'proto>;
       }
       
       impl<'proto> $priv::View<'proto> {
-        pub fn as_view(&self) -> $rt::View<$Type> {
+        pub fn as_view(&self) -> __rt::View<$Type> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
-        pub fn cases(self) -> ${Type}Cases<'proto, $rt::ptr::select::View> {
+        pub fn cases(self) -> ${Type}Cases<'proto, __rt::ptr::select::View> {
           unsafe {
             let number = self.ptr.as_ptr().cast::<u32>().read();
             match number {
               0 => ${Type}Cases::Unset($PhantomData),
               $make_view_arms
-              _ => unreachable!(),
+              _ => __s::unreachable!(),
             }
           }
         }
@@ -313,7 +313,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         ${View::access}
 
         #[doc(hidden)]
-        pub fn __debug(self, debug: &mut $z::Debug) -> std::fmt::Result {
+        pub fn __debug(self, debug: &mut __z::Debug) -> __s::fmt::Result {
           let mut count = 0;
           debug.start_block()?;
           ${Type::debug}
@@ -321,40 +321,40 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
             debug.comma(true)?;
           }
           debug.end_block()?;
-          Ok(())
+          __s::result::Result::Ok(())
         }
       }
 
-      impl Default for $priv::View<'_> {
+      impl __s::default::Default for $priv::View<'_> {
         fn default() -> Self {
           $Type::DEFAULT
         }
       }
 
       impl<'proto> $priv::Mut<'proto>  {
-        pub fn as_view(&self) -> $rt::View<$Type> {
+        pub fn as_view(&self) -> __rt::View<$Type> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
-        pub fn into_view(self) -> $rt::View<'proto, $Type> {
+        pub fn into_view(self) -> __rt::View<'proto, $Type> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
-        pub fn as_mut(&mut self) -> $rt::Mut<$Type> {
+        pub fn as_mut(&mut self) -> __rt::Mut<$Type> {
           $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
         }
 
-        pub fn cases(self) -> ${Type}Cases<'proto, $rt::ptr::select::View> {
+        pub fn cases(self) -> ${Type}Cases<'proto, __rt::ptr::select::View> {
           self.into_view().cases()
         }
 
-        pub fn cases_mut(self) -> ${Type}Cases<'proto, $rt::ptr::select::Mut> {
+        pub fn cases_mut(self) -> ${Type}Cases<'proto, __rt::ptr::select::Mut> {
           unsafe {
             let number = self.ptr.as_ptr().cast::<u32>().read();
             match number {
               0 => ${Type}Cases::Unset($PhantomData),
               $make_mut_arms
-              _ => unreachable!(),
+              _ => __s::unreachable!(),
             }
           }
         }
@@ -363,59 +363,59 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           unsafe { $Type::__raw_clear(self.ptr.as_ptr()) }
         }
 
-        pub fn parse_pb(self, input: &mut dyn std::io::Read) -> Result<(), $rt::Error> {
-          let mut ctx = $z::tdp::parse::Context::new(input, self.arena);
+        pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
+          let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
           ctx.parse(self.ptr.as_ptr() as *mut u8, $Type::__tdp_info())
         }
 
         ${Mut::access}
       }
 
-      impl Drop for $Type {
+      impl __s::ops::Drop for $Type {
         fn drop(&mut self) {
           unsafe { self.arena.destroy() }
         }
       }
 
-      impl std::fmt::Debug for $priv::View<'_> {
-        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+      impl __s::fmt::Debug for $priv::View<'_> {
+        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
           fmt.write_str("$package.$Name ")?;
-          let mut debug = $z::Debug::new(fmt);
+          let mut debug = __z::Debug::new(fmt);
           self.__debug(&mut debug)
         }
       }
 
-      impl std::fmt::Debug for $priv::Mut<'_> {
-        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-          use $rt::ptr::ViewFor;
-          std::fmt::Debug::fmt(&self.as_view(), fmt)
+      impl __s::fmt::Debug for $priv::Mut<'_> {
+        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
+          use __rt::ptr::ViewFor;
+          __s::fmt::Debug::fmt(&self.as_view(), fmt)
         }
       }
 
-      impl std::fmt::Debug for $Type {
-        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-          std::fmt::Debug::fmt(&self.as_view(), fmt)
+      impl __s::fmt::Debug for $Type {
+        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
+          __s::fmt::Debug::fmt(&self.as_view(), fmt)
         }
       }
 
-      impl $rt::value::Type for $Type {
+      impl __rt::value::Type for $Type {
         type __Storage = *mut u8;
 
-        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> $rt::View<'a, Self> {
+        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
           $priv::View {
-            ptr: $z::ABox::from_ptr(ptr.read()),
+            ptr: __z::ABox::from_ptr(ptr.read()),
             _ph: $PhantomData,
           }
         }
-        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: $z::RawArena) -> $rt::Mut<'a, Self> {
+        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __z::RawArena) -> __rt::Mut<'a, Self> {
           $priv::Mut {
-            ptr: $z::ABox::from_ptr(ptr.read()),
+            ptr: __z::ABox::from_ptr(ptr.read()),
             arena,
             _ph: $PhantomData,
           }
         }
 
-        unsafe fn __resize(vec: &mut $z::AVec<*mut u8>, new_len: usize, arena: $z::RawArena) {
+        unsafe fn __resize(vec: &mut __z::AVec<*mut u8>, new_len: usize, arena: __z::RawArena) {
           vec.resize_msg(new_len, arena, Self::__LAYOUT)
         }
       }
@@ -436,58 +436,58 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
 
         pub const UNION_OFFSET: usize = {
-          let align = std::mem::align_of::<$priv::Union>();
+          let align = __s::mem::align_of::<$priv::Union>();
           if align < 4 { 4 } else { align }
         };
 
-        pub static TDP_INFO: $z::tdp::DescStorage<{$NUM_FIELDS + 1}> =
-          $z::tdp::DescStorage::<{$NUM_FIELDS + 1}> {
-            header: $z::tdp::DescHeader {
+        pub static TDP_INFO: __z::tdp::DescStorage<{$NUM_FIELDS + 1}> =
+          __z::tdp::DescStorage::<{$NUM_FIELDS + 1}> {
+            header: __z::tdp::DescHeader {
               size: {
                 let size = $Type::__LAYOUT.size();
                 assert!(size <= (u32::MAX as usize));
                 size as u32
               },
               descs: {
-                const DESCS: &[fn() -> $z::tdp::Desc] = &[
+                const DESCS: &[fn() -> __z::tdp::Desc] = &[
                   $tdp_descs
                 ];
                 DESCS.as_ptr()
               },
               num_hasbit_words: 0,
-              kind: $z::tdp::DescKind::Choice,
+              kind: __z::tdp::DescKind::Choice,
             },
             fields: [
               $tdp_fields
-              $z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
+              __z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
             ],
           };
        
         #[derive(Copy, Clone)]
         pub struct View<'proto> {
-          pub(in super) ptr: $z::ABox<$priv::Storage>,
+          pub(in super) ptr: __z::ABox<$priv::Storage>,
           pub(in super) _ph: $PhantomData<&'proto $Type>,
         }
        
-        impl<'proto> $rt::ptr::ViewFor<'proto, super::$Type> for View<'proto> {
+        impl<'proto> __rt::ptr::ViewFor<'proto, super::$Type> for View<'proto> {
           fn as_view(&self) -> View {
             View { ptr: self.ptr, _ph: $PhantomData }
           }
         }
 
         pub struct Mut<'proto> {
-          pub(in super) ptr: $z::ABox<$priv::Storage>,
+          pub(in super) ptr: __z::ABox<$priv::Storage>,
           pub(in super) _ph: $PhantomData<&'proto mut $Type>,
-          pub(in super) arena: $z::RawArena,
+          pub(in super) arena: __z::RawArena,
         }
        
-        impl<'proto> $rt::ptr::ViewFor<'proto, super::$Type> for Mut<'proto> {
+        impl<'proto> __rt::ptr::ViewFor<'proto, super::$Type> for Mut<'proto> {
           fn as_view(&self) -> View {
             View { ptr: self.ptr, _ph: $PhantomData }
           }
         }
 
-        impl<'proto> $rt::ptr::MutFor<'proto, super::$Type> for Mut<'proto> {
+        impl<'proto> __rt::ptr::MutFor<'proto, super::$Type> for Mut<'proto> {
           fn into_view(self) -> View<'proto> {
             View { ptr: self.ptr, _ph: $PhantomData }
           }

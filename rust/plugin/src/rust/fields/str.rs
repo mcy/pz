@@ -10,7 +10,7 @@ impl GenFieldImpl for Singular {
   fn in_storage(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        pub(in super) $name: $z::RawStr,
+        pub(in super) $name: __z::RawStr,
       ",
     );
   }
@@ -18,7 +18,7 @@ impl GenFieldImpl for Singular {
   fn in_variants(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        $Name($rt::ptr::Proxy<'proto, $rt::Str, Which>),
+        $Name(__rt::ptr::Proxy<'proto, __rt::Str, Which>),
       ",
     );
   }
@@ -26,7 +26,7 @@ impl GenFieldImpl for Singular {
   fn in_storage_init(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        $name: (0 as *mut u8, 0),
+        $name: __z::RawStr::new(),
       ",
     );
   }
@@ -39,15 +39,15 @@ impl GenFieldImpl for Singular {
       },
       r"
         $deprecated
-        pub fn $name($self) -> $rt::View<'$lt, $rt::Str> {
+        pub fn $name($self) -> __rt::View<'$lt, __rt::Str> {
           self.${name}_or().unwrap_or_default()
         }
         $deprecated
-        pub fn ${name}_or($self) -> Option<$rt::View<'$lt, $rt::Str>> {
+        pub fn ${name}_or($self) -> __s::option::Option<__rt::View<'$lt, __rt::Str>> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
-            if field.has(self.ptr.as_ptr()) { return None }
-            Some(field.make_view::<$rt::Str>(self.ptr.as_ptr()))
+            if field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
+            __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
           }
         }
       ",
@@ -62,13 +62,13 @@ impl GenFieldImpl for Singular {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> $rt::Mut<'$lt, $rt::Str> {
+        pub fn ${name}_mut($self) -> __rt::Mut<'$lt, __rt::Str> {
           self.${name}_mut_or().into_mut()
         }
         $deprecated
-        pub fn ${name}_mut_or($self) -> $rt::value::OptMut<'$lt, $rt::Str> {
+        pub fn ${name}_mut_or($self) -> __rt::value::OptMut<'$lt, __rt::Str> {
           unsafe {
-            $rt::value::OptMut::__wrap(
+            __rt::value::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
               $Type::__tdp_info().field($idx),
@@ -76,7 +76,7 @@ impl GenFieldImpl for Singular {
           }
         }
         $deprecated
-        pub fn ${name}_set($self, value: &(impl std::convert::AsRef<[u8]> + ?Sized)) {
+        pub fn ${name}_set($self, value: &(impl __s::convert::AsRef<[u8]> + ?__s::marker::Sized)) {
           self.${name}_mut().set(value);
         }
       ",
@@ -87,7 +87,7 @@ impl GenFieldImpl for Singular {
     w.emit(
       vars! {},
       r#"
-        if let Some(value) = self.${name}_or() {
+        if let __s::option::Option::Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           debug.write_debug(value);
@@ -103,7 +103,7 @@ impl GenFieldImpl for Repeated {
   fn in_storage(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        pub(crate) $name: $z::AVec<(*mut u8, usize)>,
+        pub(crate) $name: __z::AVec<(*mut u8, usize)>,
       ",
     );
   }
@@ -111,7 +111,7 @@ impl GenFieldImpl for Repeated {
   fn in_variants(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        $Name($rt::ptr::Proxy<'proto, $rt::ptr::Rep<$rt::Str>, Which>),
+        $Name(__rt::ptr::Proxy<'proto, __rt::ptr::Rep<__rt::Str>, Which>),
       ",
     );
   }
@@ -119,7 +119,7 @@ impl GenFieldImpl for Repeated {
   fn in_storage_init(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       "
-        $name: $z::AVec::new(),
+        $name: __z::AVec::new(),
       ",
     );
   }
@@ -132,15 +132,15 @@ impl GenFieldImpl for Repeated {
       },
       r"
         $deprecated
-        pub fn $name($self) -> $rt::Slice<'$lt, $rt::Str> {
+        pub fn $name($self) -> __rt::Slice<'$lt, __rt::Str> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
-            if field.has(self.ptr.as_ptr()) { return $rt::Slice::default() }
-            field.make_slice::<$rt::Str>(self.ptr.as_ptr())
+            if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+            field.make_slice::<__rt::Str>(self.ptr.as_ptr())
           }
         }
         $deprecated
-        pub fn ${name}_at($self, idx: usize) -> $rt::View<'$lt, $rt::Str> {
+        pub fn ${name}_at($self, idx: usize) -> __rt::View<'$lt, __rt::Str> {
           self.$name().at(idx)
         }
       ",
@@ -155,11 +155,11 @@ impl GenFieldImpl for Repeated {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> $rt::Repeated<'$lt, $rt::Str> {
+        pub fn ${name}_mut($self) -> __rt::Repeated<'$lt, __rt::Str> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
             field.init(self.ptr.as_ptr(), self.arena);
-            field.make_rep::<$rt::Str>(self.ptr.as_ptr(), self.arena)
+            field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
           }
         }
       ",

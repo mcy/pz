@@ -32,7 +32,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
             Name: ident(&heck::AsPascalCase(field.name()).to_string()),
           },
           r#"
-            Self::$Name => std::write!(fmt, "$Name"),
+            Self::$Name => __s::write!(fmt, "$Name"),
           "#,
         );
       },
@@ -56,22 +56,22 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      impl Default for $Enum {
+      impl __s::default::Default for $Enum {
         fn default() -> Self {
           Self($DEFAULT)
         }
       }
 
-      impl $rt::ptr::Proxied for $Enum {
+      impl __rt::ptr::Proxied for $Enum {
         type View<'a> = Self;
-        type Mut<'a> = $rt::ptr::ScalarMut<'a, Self>;
+        type Mut<'a> = __rt::ptr::ScalarMut<'a, Self>;
       }
 
-      impl std::fmt::Debug for $Enum {
-        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+      impl __s::fmt::Debug for $Enum {
+        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
           match *self {
             $debug_arms
-            Self(n) => std::write!(fmt, "$package.$Name({n})"),
+            Self(n) => __s::write!(fmt, "$package.$Name({n})"),
           }
         }
       }
