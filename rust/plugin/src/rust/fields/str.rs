@@ -46,7 +46,7 @@ impl GenFieldImpl for Singular {
         pub fn ${name}_or($self) -> __s::option::Option<__rt::View<'$lt, __rt::Str>> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
-            if field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
+            if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
             __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
           }
         }
@@ -135,7 +135,7 @@ impl GenFieldImpl for Repeated {
         pub fn $name($self) -> __rt::Slice<'$lt, __rt::Str> {
           unsafe {
             let field = $Type::__tdp_info().field($idx);
-            if field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+            if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
             field.make_slice::<__rt::Str>(self.ptr.as_ptr())
           }
         }

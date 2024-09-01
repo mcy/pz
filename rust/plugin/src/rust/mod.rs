@@ -94,7 +94,7 @@ pub fn rust_plugin() -> ! {
           for prefix in prefixes.iter().rev() {
             if let Some(suf) = pkg.strip_prefix(prefix.as_slice()) {
               pkg = suf.to_vec();
-              break;              
+              break;
             }
           }
 
@@ -123,7 +123,7 @@ pub fn rust_plugin() -> ! {
             vars! { mod: m },
             "
               pub mod $mod {
-              use super::{__root, __rt, __z, __s};
+              use super::{__, __rt, __z, __s};
               use __s::default::Default as _;
             ",
           );
@@ -143,7 +143,7 @@ pub fn rust_plugin() -> ! {
             Ident: names::type_ident(ty),
             Type: names::type_name(ty),
             priv: format_args!("__priv_{}", names::type_ident(ty)),
-          
+
             NUM_FIELDS: ty.fields().count(),
           },
           |w| match ty.kind() {
@@ -167,13 +167,14 @@ pub fn rust_plugin() -> ! {
           ",
         );
       }
+      w.new_line();
 
-      // Alias each elided prefix to __self.
       w.write(
         "
-        // use self is not allowed, so we need to be a bit roundabout.
+        // The __ module exports the package universe needed for this module, to
+        // simplify cross-type references.
         mod __f { pub use super::*; }
-        mod __root {
+        mod __ {
         use super::__f;
         pub use __f::*;
         ",
@@ -213,7 +214,7 @@ pub fn rust_plugin() -> ! {
       }
       w.write(
         "
-        } // mod __root
+        } // mod __
         ",
       );
 

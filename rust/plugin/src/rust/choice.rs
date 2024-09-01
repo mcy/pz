@@ -32,7 +32,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
     vars! {
       hasbit_words,
       NUM_TYS: ty_ptrs.len(),
-      
+
       "Type::fields": |w| for field in &gen.fields {
         field.in_storage(w);
       },

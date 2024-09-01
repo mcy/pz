@@ -468,9 +468,9 @@ pub(crate) mod private {
     }
   }
 
-impl Default for Storage {
+  impl Default for Storage {
     fn default() -> Self {
-        Self::new()
+      Self::new()
     }
-}
+  }
 }

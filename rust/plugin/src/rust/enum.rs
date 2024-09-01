@@ -5,7 +5,6 @@ use crate::rust::names::deprecated;
 use crate::rust::names::ident;
 use crate::Type;
 
-
 pub fn emit(ty: Type, w: &mut SourceWriter) {
   w.emit(
     vars! {
