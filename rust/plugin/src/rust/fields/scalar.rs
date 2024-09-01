@@ -92,15 +92,15 @@ impl GenFieldImpl for Singular {
       },
       r"
         $deprecated
-        pub fn $name($self) -> __rt::View<'$lt, $Scalar> {
+        pub fn $name($self) -> $View<'$lt, $Scalar> {
           self.${name}_or().unwrap_or_default()
         }
         $deprecated
-        pub fn ${name}_or($self) -> __s::option::Option<__rt::View<'$lt, $Scalar>> {
+        pub fn ${name}_or($self) -> $Option<$View<'$lt, $Scalar>> {
           unsafe {
-            let field = $Type::__tdp_info().field($idx);
-            if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
-            __s::option::Option::Some(field.make_view::<$Scalar>(self.ptr.as_ptr()))
+            let field = $TDP.field($idx);
+            if !field.has(self.ptr.as_ptr()) { return $None }
+            $Some(field.make_view::<$Scalar>(self.ptr.as_ptr()))
           }
         }
       ",
@@ -116,16 +116,16 @@ impl GenFieldImpl for Singular {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> __rt::Mut<'$lt, $Scalar> {
+        pub fn ${name}_mut($self) -> $Mut<'$lt, $Scalar> {
           self.${name}_mut_or().into_mut()
         }
         $deprecated
-        pub fn ${name}_mut_or($self) -> __rt::value::OptMut<'$lt, $Scalar> {
+        pub fn ${name}_mut_or($self) -> __rt::OptMut<'$lt, $Scalar> {
           unsafe {
-            __rt::value::OptMut::__wrap(
+            __rt::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Type::__tdp_info().field($idx),
+              $TDP.field($idx),
             )
           }
         }
@@ -141,7 +141,7 @@ impl GenFieldImpl for Singular {
     w.emit(
       vars! {},
       r#"
-        if let __s::option::Option::Some(value) = self.${name}_or() {
+        if let $Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           debug.write_debug(value);
@@ -190,15 +190,15 @@ impl GenFieldImpl for Repeated {
       },
       r"
         $deprecated
-        pub fn $name($self) -> __rt::Slice<'$lt, $Scalar> {
+        pub fn $name($self) -> $Slice<'$lt, $Scalar> {
           unsafe {
-            let field = $Type::__tdp_info().field($idx);
-            if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+            let field = $TDP.field($idx);
+            if !field.has(self.ptr.as_ptr()) { return $Slice::default() }
             field.make_slice::<$Scalar>(self.ptr.as_ptr())
           }
         }
         $deprecated
-        pub fn ${name}_at($self, idx: usize) -> __rt::View<'$lt, $Scalar> {
+        pub fn ${name}_at($self, idx: usize) -> $View<'$lt, $Scalar> {
           self.$name().at(idx)
         }
       ",
@@ -214,9 +214,9 @@ impl GenFieldImpl for Repeated {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> __rt::Repeated<'$lt, $Scalar> {
+        pub fn ${name}_mut($self) -> $Repeated<'$lt, $Scalar> {
           unsafe {
-            let field = $Type::__tdp_info().field($idx);
+            let field = $TDP.field($idx);
             field.init(self.ptr.as_ptr(), self.arena);
             field.make_rep::<$Scalar>(self.ptr.as_ptr(), self.arena)
           }

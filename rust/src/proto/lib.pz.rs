@@ -87,7 +87,7 @@ impl __::pz::Bundle {
 
   pub fn types(&self) -> __rt::Slice<'_, __::pz::Type> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(0);
+      let field = Bundle::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Type>(self.ptr.as_ptr())
     }
@@ -97,7 +97,7 @@ impl __::pz::Bundle {
   }
   pub fn types_mut(&mut self) -> __rt::Repeated<'_, __::pz::Type> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(0);
+      let field = Bundle::__tdp_info().field(0);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::Type>(self.ptr.as_ptr(), self.arena)
     }
@@ -105,7 +105,7 @@ impl __::pz::Bundle {
 
   pub fn packages(&self) -> __rt::Slice<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(1);
+      let field = Bundle::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -115,7 +115,7 @@ impl __::pz::Bundle {
   }
   pub fn packages_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(1);
+      let field = Bundle::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -123,7 +123,7 @@ impl __::pz::Bundle {
 
   pub fn foreign_types(&self) -> __rt::Slice<'_, __::pz::Bundle_ForeignType> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(2);
+      let field = Bundle::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Bundle_ForeignType>(self.ptr.as_ptr())
     }
@@ -133,7 +133,7 @@ impl __::pz::Bundle {
   }
   pub fn foreign_types_mut(&mut self) -> __rt::Repeated<'_, __::pz::Bundle_ForeignType> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(2);
+      let field = Bundle::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::Bundle_ForeignType>(self.ptr.as_ptr(), self.arena)
     }
@@ -166,7 +166,7 @@ impl __rt::ptr::Proxied for __::pz::Bundle {
   type Mut<'proto> = __priv_Bundle::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::Bundle {
+impl __rt::Type for __::pz::Bundle {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -195,7 +195,7 @@ impl<'proto> __priv_Bundle::View<'proto> {
 
   pub fn types(self) -> __rt::Slice<'proto, __::pz::Type> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(0);
+      let field = Bundle::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Type>(self.ptr.as_ptr())
     }
@@ -206,7 +206,7 @@ impl<'proto> __priv_Bundle::View<'proto> {
 
   pub fn packages(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(1);
+      let field = Bundle::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -217,7 +217,7 @@ impl<'proto> __priv_Bundle::View<'proto> {
 
   pub fn foreign_types(self) -> __rt::Slice<'proto, __::pz::Bundle_ForeignType> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(2);
+      let field = Bundle::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Bundle_ForeignType>(self.ptr.as_ptr())
     }
@@ -281,12 +281,12 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::Bundle::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle::__tdp_info())
   }
 
   pub fn types(self) -> __rt::Slice<'proto, __::pz::Type> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(0);
+      let field = Bundle::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Type>(self.ptr.as_ptr())
     }
@@ -296,7 +296,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn types_mut(self) -> __rt::Repeated<'proto, __::pz::Type> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(0);
+      let field = Bundle::__tdp_info().field(0);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::Type>(self.ptr.as_ptr(), self.arena)
     }
@@ -304,7 +304,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
 
   pub fn packages(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(1);
+      let field = Bundle::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -314,7 +314,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn packages_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(1);
+      let field = Bundle::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -322,7 +322,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
 
   pub fn foreign_types(self) -> __rt::Slice<'proto, __::pz::Bundle_ForeignType> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(2);
+      let field = Bundle::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Bundle_ForeignType>(self.ptr.as_ptr())
     }
@@ -332,7 +332,7 @@ impl<'proto> __priv_Bundle::Mut<'proto>  {
   }
   pub fn foreign_types_mut(self) -> __rt::Repeated<'proto, __::pz::Bundle_ForeignType> {
     unsafe {
-      let field = __::pz::Bundle::__tdp_info().field(2);
+      let field = Bundle::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::Bundle_ForeignType>(self.ptr.as_ptr(), self.arena)
     }
@@ -544,7 +544,7 @@ impl __::pz::Bundle_ForeignType {
   }
   pub fn name_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::Bundle_ForeignType::__tdp_info().field(0);
+      let field = Bundle_ForeignType::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -552,12 +552,12 @@ impl __::pz::Bundle_ForeignType {
   pub fn name_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn name_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Bundle_ForeignType::__tdp_info().field(0),
+        Bundle_ForeignType::__tdp_info().field(0),
       )
     }
   }
@@ -570,7 +570,7 @@ impl __::pz::Bundle_ForeignType {
   }
   pub fn package_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::Bundle_ForeignType::__tdp_info().field(1);
+      let field = Bundle_ForeignType::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -578,12 +578,12 @@ impl __::pz::Bundle_ForeignType {
   pub fn package_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.package_mut_or().into_mut()
   }
-  pub fn package_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn package_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Bundle_ForeignType::__tdp_info().field(1),
+        Bundle_ForeignType::__tdp_info().field(1),
       )
     }
   }
@@ -618,7 +618,7 @@ impl __rt::ptr::Proxied for __::pz::Bundle_ForeignType {
   type Mut<'proto> = __priv_Bundle_ForeignType::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::Bundle_ForeignType {
+impl __rt::Type for __::pz::Bundle_ForeignType {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -650,7 +650,7 @@ impl<'proto> __priv_Bundle_ForeignType::View<'proto> {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Bundle_ForeignType::__tdp_info().field(0);
+      let field = Bundle_ForeignType::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -661,7 +661,7 @@ impl<'proto> __priv_Bundle_ForeignType::View<'proto> {
   }
   pub fn package_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Bundle_ForeignType::__tdp_info().field(1);
+      let field = Bundle_ForeignType::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -716,7 +716,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::Bundle_ForeignType::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Bundle_ForeignType::__tdp_info())
   }
 
   pub fn name(self) -> __rt::View<'proto, __rt::Str> {
@@ -724,7 +724,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Bundle_ForeignType::__tdp_info().field(0);
+      let field = Bundle_ForeignType::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -732,12 +732,12 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
   pub fn name_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn name_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Bundle_ForeignType::__tdp_info().field(0),
+        Bundle_ForeignType::__tdp_info().field(0),
       )
     }
   }
@@ -750,7 +750,7 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
   }
   pub fn package_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Bundle_ForeignType::__tdp_info().field(1);
+      let field = Bundle_ForeignType::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -758,12 +758,12 @@ impl<'proto> __priv_Bundle_ForeignType::Mut<'proto>  {
   pub fn package_mut(self) -> __rt::Mut<'proto, u32> {
     self.package_mut_or().into_mut()
   }
-  pub fn package_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn package_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Bundle_ForeignType::__tdp_info().field(1),
+        Bundle_ForeignType::__tdp_info().field(1),
       )
     }
   }
@@ -966,7 +966,7 @@ impl __::pz::Type {
   }
   pub fn name_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(0);
+      let field = Type::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -974,12 +974,12 @@ impl __::pz::Type {
   pub fn name_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn name_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(0),
+        Type::__tdp_info().field(0),
       )
     }
   }
@@ -992,7 +992,7 @@ impl __::pz::Type {
   }
   pub fn package_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(1);
+      let field = Type::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1000,12 +1000,12 @@ impl __::pz::Type {
   pub fn package_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.package_mut_or().into_mut()
   }
-  pub fn package_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn package_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(1),
+        Type::__tdp_info().field(1),
       )
     }
   }
@@ -1018,7 +1018,7 @@ impl __::pz::Type {
   }
   pub fn kind_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::Type_Kind>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(2);
+      let field = Type::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Type_Kind>(self.ptr.as_ptr()))
     }
@@ -1026,12 +1026,12 @@ impl __::pz::Type {
   pub fn kind_mut(&mut self) -> __rt::Mut<'_, __::pz::Type_Kind> {
     self.kind_mut_or().into_mut()
   }
-  pub fn kind_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::Type_Kind> {
+  pub fn kind_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::Type_Kind> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(2),
+        Type::__tdp_info().field(2),
       )
     }
   }
@@ -1044,7 +1044,7 @@ impl __::pz::Type {
   }
   pub fn declared_in_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(3);
+      let field = Type::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1052,12 +1052,12 @@ impl __::pz::Type {
   pub fn declared_in_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.declared_in_mut_or().into_mut()
   }
-  pub fn declared_in_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn declared_in_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(3),
+        Type::__tdp_info().field(3),
       )
     }
   }
@@ -1067,7 +1067,7 @@ impl __::pz::Type {
 
   pub fn fields(&self) -> __rt::Slice<'_, __::pz::Field> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(4);
+      let field = Type::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Field>(self.ptr.as_ptr())
     }
@@ -1077,7 +1077,7 @@ impl __::pz::Type {
   }
   pub fn fields_mut(&mut self) -> __rt::Repeated<'_, __::pz::Field> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(4);
+      let field = Type::__tdp_info().field(4);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::Field>(self.ptr.as_ptr(), self.arena)
     }
@@ -1085,7 +1085,7 @@ impl __::pz::Type {
 
   pub fn nesteds(&self) -> __rt::Slice<'_, u32> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(5);
+      let field = Type::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -1095,7 +1095,7 @@ impl __::pz::Type {
   }
   pub fn nesteds_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(5);
+      let field = Type::__tdp_info().field(5);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -1106,7 +1106,7 @@ impl __::pz::Type {
   }
   pub fn attrs_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::Type_Attrs>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(6);
+      let field = Type::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Type_Attrs>(self.ptr.as_ptr()))
     }
@@ -1114,12 +1114,12 @@ impl __::pz::Type {
   pub fn attrs_mut(&mut self) -> __rt::Mut<'_, __::pz::Type_Attrs> {
     self.attrs_mut_or().into_mut()
   }
-  pub fn attrs_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::Type_Attrs> {
+  pub fn attrs_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::Type_Attrs> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(6),
+        Type::__tdp_info().field(6),
       )
     }
   }
@@ -1129,7 +1129,7 @@ impl __::pz::Type {
   }
   pub fn span_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(7);
+      let field = Type::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1137,12 +1137,12 @@ impl __::pz::Type {
   pub fn span_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.span_mut_or().into_mut()
   }
-  pub fn span_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn span_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(7),
+        Type::__tdp_info().field(7),
       )
     }
   }
@@ -1177,7 +1177,7 @@ impl __rt::ptr::Proxied for __::pz::Type {
   type Mut<'proto> = __priv_Type::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::Type {
+impl __rt::Type for __::pz::Type {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -1209,7 +1209,7 @@ impl<'proto> __priv_Type::View<'proto> {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(0);
+      let field = Type::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -1220,7 +1220,7 @@ impl<'proto> __priv_Type::View<'proto> {
   }
   pub fn package_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(1);
+      let field = Type::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1231,7 +1231,7 @@ impl<'proto> __priv_Type::View<'proto> {
   }
   pub fn kind_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Type_Kind>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(2);
+      let field = Type::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Type_Kind>(self.ptr.as_ptr()))
     }
@@ -1242,7 +1242,7 @@ impl<'proto> __priv_Type::View<'proto> {
   }
   pub fn declared_in_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(3);
+      let field = Type::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1250,7 +1250,7 @@ impl<'proto> __priv_Type::View<'proto> {
 
   pub fn fields(self) -> __rt::Slice<'proto, __::pz::Field> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(4);
+      let field = Type::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Field>(self.ptr.as_ptr())
     }
@@ -1261,7 +1261,7 @@ impl<'proto> __priv_Type::View<'proto> {
 
   pub fn nesteds(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(5);
+      let field = Type::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -1275,7 +1275,7 @@ impl<'proto> __priv_Type::View<'proto> {
   }
   pub fn attrs_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Type_Attrs>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(6);
+      let field = Type::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Type_Attrs>(self.ptr.as_ptr()))
     }
@@ -1286,7 +1286,7 @@ impl<'proto> __priv_Type::View<'proto> {
   }
   pub fn span_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(7);
+      let field = Type::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1377,7 +1377,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::Type::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Type::__tdp_info())
   }
 
   pub fn name(self) -> __rt::View<'proto, __rt::Str> {
@@ -1385,7 +1385,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(0);
+      let field = Type::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -1393,12 +1393,12 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   pub fn name_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn name_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(0),
+        Type::__tdp_info().field(0),
       )
     }
   }
@@ -1411,7 +1411,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn package_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(1);
+      let field = Type::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1419,12 +1419,12 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   pub fn package_mut(self) -> __rt::Mut<'proto, u32> {
     self.package_mut_or().into_mut()
   }
-  pub fn package_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn package_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(1),
+        Type::__tdp_info().field(1),
       )
     }
   }
@@ -1437,7 +1437,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn kind_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Type_Kind>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(2);
+      let field = Type::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Type_Kind>(self.ptr.as_ptr()))
     }
@@ -1445,12 +1445,12 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   pub fn kind_mut(self) -> __rt::Mut<'proto, __::pz::Type_Kind> {
     self.kind_mut_or().into_mut()
   }
-  pub fn kind_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::Type_Kind> {
+  pub fn kind_mut_or(self) -> __rt::OptMut<'proto, __::pz::Type_Kind> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(2),
+        Type::__tdp_info().field(2),
       )
     }
   }
@@ -1463,7 +1463,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn declared_in_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(3);
+      let field = Type::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1471,12 +1471,12 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   pub fn declared_in_mut(self) -> __rt::Mut<'proto, u32> {
     self.declared_in_mut_or().into_mut()
   }
-  pub fn declared_in_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn declared_in_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(3),
+        Type::__tdp_info().field(3),
       )
     }
   }
@@ -1486,7 +1486,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
 
   pub fn fields(self) -> __rt::Slice<'proto, __::pz::Field> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(4);
+      let field = Type::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::Field>(self.ptr.as_ptr())
     }
@@ -1496,7 +1496,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn fields_mut(self) -> __rt::Repeated<'proto, __::pz::Field> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(4);
+      let field = Type::__tdp_info().field(4);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::Field>(self.ptr.as_ptr(), self.arena)
     }
@@ -1504,7 +1504,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
 
   pub fn nesteds(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(5);
+      let field = Type::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -1514,7 +1514,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn nesteds_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(5);
+      let field = Type::__tdp_info().field(5);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -1525,7 +1525,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn attrs_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Type_Attrs>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(6);
+      let field = Type::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Type_Attrs>(self.ptr.as_ptr()))
     }
@@ -1533,12 +1533,12 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   pub fn attrs_mut(self) -> __rt::Mut<'proto, __::pz::Type_Attrs> {
     self.attrs_mut_or().into_mut()
   }
-  pub fn attrs_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::Type_Attrs> {
+  pub fn attrs_mut_or(self) -> __rt::OptMut<'proto, __::pz::Type_Attrs> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(6),
+        Type::__tdp_info().field(6),
       )
     }
   }
@@ -1548,7 +1548,7 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   }
   pub fn span_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Type::__tdp_info().field(7);
+      let field = Type::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1556,12 +1556,12 @@ impl<'proto> __priv_Type::Mut<'proto>  {
   pub fn span_mut(self) -> __rt::Mut<'proto, u32> {
     self.span_mut_or().into_mut()
   }
-  pub fn span_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn span_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type::__tdp_info().field(7),
+        Type::__tdp_info().field(7),
       )
     }
   }
@@ -1889,7 +1889,7 @@ impl __::pz::Type_Attrs {
   }
   pub fn deprecated_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(0);
+      let field = Type_Attrs::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -1897,12 +1897,12 @@ impl __::pz::Type_Attrs {
   pub fn deprecated_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.deprecated_mut_or().into_mut()
   }
-  pub fn deprecated_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn deprecated_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type_Attrs::__tdp_info().field(0),
+        Type_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -1912,7 +1912,7 @@ impl __::pz::Type_Attrs {
 
   pub fn docs(&self) -> __rt::Slice<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(1);
+      let field = Type_Attrs::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -1922,7 +1922,7 @@ impl __::pz::Type_Attrs {
   }
   pub fn docs_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(1);
+      let field = Type_Attrs::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -1955,7 +1955,7 @@ impl __rt::ptr::Proxied for __::pz::Type_Attrs {
   type Mut<'proto> = __priv_Type_Attrs::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::Type_Attrs {
+impl __rt::Type for __::pz::Type_Attrs {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -1987,7 +1987,7 @@ impl<'proto> __priv_Type_Attrs::View<'proto> {
   }
   pub fn deprecated_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(0);
+      let field = Type_Attrs::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -1995,7 +1995,7 @@ impl<'proto> __priv_Type_Attrs::View<'proto> {
 
   pub fn docs(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(1);
+      let field = Type_Attrs::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -2053,7 +2053,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::Type_Attrs::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Type_Attrs::__tdp_info())
   }
 
   pub fn deprecated(self) -> __rt::View<'proto, __rt::Str> {
@@ -2061,7 +2061,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   }
   pub fn deprecated_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(0);
+      let field = Type_Attrs::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -2069,12 +2069,12 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   pub fn deprecated_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.deprecated_mut_or().into_mut()
   }
-  pub fn deprecated_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn deprecated_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Type_Attrs::__tdp_info().field(0),
+        Type_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -2084,7 +2084,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
 
   pub fn docs(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(1);
+      let field = Type_Attrs::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -2094,7 +2094,7 @@ impl<'proto> __priv_Type_Attrs::Mut<'proto>  {
   }
   pub fn docs_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Type_Attrs::__tdp_info().field(1);
+      let field = Type_Attrs::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -2294,7 +2294,7 @@ impl __::pz::Field {
   }
   pub fn name_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(0);
+      let field = Field::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -2302,12 +2302,12 @@ impl __::pz::Field {
   pub fn name_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn name_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(0),
+        Field::__tdp_info().field(0),
       )
     }
   }
@@ -2320,7 +2320,7 @@ impl __::pz::Field {
   }
   pub fn number_or(&self) -> __s::option::Option<__rt::View<'_, i32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(1);
+      let field = Field::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -2328,12 +2328,12 @@ impl __::pz::Field {
   pub fn number_mut(&mut self) -> __rt::Mut<'_, i32> {
     self.number_mut_or().into_mut()
   }
-  pub fn number_mut_or(&mut self) -> __rt::value::OptMut<'_, i32> {
+  pub fn number_mut_or(&mut self) -> __rt::OptMut<'_, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(1),
+        Field::__tdp_info().field(1),
       )
     }
   }
@@ -2346,7 +2346,7 @@ impl __::pz::Field {
   }
   pub fn is_repeated_or(&self) -> __s::option::Option<__rt::View<'_, bool>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(2);
+      let field = Field::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -2354,12 +2354,12 @@ impl __::pz::Field {
   pub fn is_repeated_mut(&mut self) -> __rt::Mut<'_, bool> {
     self.is_repeated_mut_or().into_mut()
   }
-  pub fn is_repeated_mut_or(&mut self) -> __rt::value::OptMut<'_, bool> {
+  pub fn is_repeated_mut_or(&mut self) -> __rt::OptMut<'_, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(2),
+        Field::__tdp_info().field(2),
       )
     }
   }
@@ -2372,7 +2372,7 @@ impl __::pz::Field {
   }
   pub fn r#type_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::Field_Type>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(3);
+      let field = Field::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Field_Type>(self.ptr.as_ptr()))
     }
@@ -2380,12 +2380,12 @@ impl __::pz::Field {
   pub fn r#type_mut(&mut self) -> __rt::Mut<'_, __::pz::Field_Type> {
     self.r#type_mut_or().into_mut()
   }
-  pub fn r#type_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::Field_Type> {
+  pub fn r#type_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::Field_Type> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(3),
+        Field::__tdp_info().field(3),
       )
     }
   }
@@ -2398,7 +2398,7 @@ impl __::pz::Field {
   }
   pub fn type_index_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(4);
+      let field = Field::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -2406,12 +2406,12 @@ impl __::pz::Field {
   pub fn type_index_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.type_index_mut_or().into_mut()
   }
-  pub fn type_index_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn type_index_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(4),
+        Field::__tdp_info().field(4),
       )
     }
   }
@@ -2424,7 +2424,7 @@ impl __::pz::Field {
   }
   pub fn attrs_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::Field_Attrs>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(5);
+      let field = Field::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Field_Attrs>(self.ptr.as_ptr()))
     }
@@ -2432,12 +2432,12 @@ impl __::pz::Field {
   pub fn attrs_mut(&mut self) -> __rt::Mut<'_, __::pz::Field_Attrs> {
     self.attrs_mut_or().into_mut()
   }
-  pub fn attrs_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::Field_Attrs> {
+  pub fn attrs_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::Field_Attrs> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(5),
+        Field::__tdp_info().field(5),
       )
     }
   }
@@ -2447,7 +2447,7 @@ impl __::pz::Field {
   }
   pub fn span_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(6);
+      let field = Field::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -2455,12 +2455,12 @@ impl __::pz::Field {
   pub fn span_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.span_mut_or().into_mut()
   }
-  pub fn span_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn span_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(6),
+        Field::__tdp_info().field(6),
       )
     }
   }
@@ -2495,7 +2495,7 @@ impl __rt::ptr::Proxied for __::pz::Field {
   type Mut<'proto> = __priv_Field::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::Field {
+impl __rt::Type for __::pz::Field {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -2527,7 +2527,7 @@ impl<'proto> __priv_Field::View<'proto> {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(0);
+      let field = Field::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -2538,7 +2538,7 @@ impl<'proto> __priv_Field::View<'proto> {
   }
   pub fn number_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(1);
+      let field = Field::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -2549,7 +2549,7 @@ impl<'proto> __priv_Field::View<'proto> {
   }
   pub fn is_repeated_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(2);
+      let field = Field::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -2560,7 +2560,7 @@ impl<'proto> __priv_Field::View<'proto> {
   }
   pub fn r#type_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Field_Type>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(3);
+      let field = Field::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Field_Type>(self.ptr.as_ptr()))
     }
@@ -2571,7 +2571,7 @@ impl<'proto> __priv_Field::View<'proto> {
   }
   pub fn type_index_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(4);
+      let field = Field::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -2582,7 +2582,7 @@ impl<'proto> __priv_Field::View<'proto> {
   }
   pub fn attrs_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Field_Attrs>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(5);
+      let field = Field::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Field_Attrs>(self.ptr.as_ptr()))
     }
@@ -2593,7 +2593,7 @@ impl<'proto> __priv_Field::View<'proto> {
   }
   pub fn span_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(6);
+      let field = Field::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -2678,7 +2678,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::Field::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Field::__tdp_info())
   }
 
   pub fn name(self) -> __rt::View<'proto, __rt::Str> {
@@ -2686,7 +2686,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(0);
+      let field = Field::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -2694,12 +2694,12 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   pub fn name_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn name_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(0),
+        Field::__tdp_info().field(0),
       )
     }
   }
@@ -2712,7 +2712,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
   pub fn number_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(1);
+      let field = Field::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -2720,12 +2720,12 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   pub fn number_mut(self) -> __rt::Mut<'proto, i32> {
     self.number_mut_or().into_mut()
   }
-  pub fn number_mut_or(self) -> __rt::value::OptMut<'proto, i32> {
+  pub fn number_mut_or(self) -> __rt::OptMut<'proto, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(1),
+        Field::__tdp_info().field(1),
       )
     }
   }
@@ -2738,7 +2738,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
   pub fn is_repeated_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(2);
+      let field = Field::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -2746,12 +2746,12 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   pub fn is_repeated_mut(self) -> __rt::Mut<'proto, bool> {
     self.is_repeated_mut_or().into_mut()
   }
-  pub fn is_repeated_mut_or(self) -> __rt::value::OptMut<'proto, bool> {
+  pub fn is_repeated_mut_or(self) -> __rt::OptMut<'proto, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(2),
+        Field::__tdp_info().field(2),
       )
     }
   }
@@ -2764,7 +2764,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
   pub fn r#type_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Field_Type>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(3);
+      let field = Field::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Field_Type>(self.ptr.as_ptr()))
     }
@@ -2772,12 +2772,12 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   pub fn r#type_mut(self) -> __rt::Mut<'proto, __::pz::Field_Type> {
     self.r#type_mut_or().into_mut()
   }
-  pub fn r#type_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::Field_Type> {
+  pub fn r#type_mut_or(self) -> __rt::OptMut<'proto, __::pz::Field_Type> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(3),
+        Field::__tdp_info().field(3),
       )
     }
   }
@@ -2790,7 +2790,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
   pub fn type_index_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(4);
+      let field = Field::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -2798,12 +2798,12 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   pub fn type_index_mut(self) -> __rt::Mut<'proto, u32> {
     self.type_index_mut_or().into_mut()
   }
-  pub fn type_index_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn type_index_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(4),
+        Field::__tdp_info().field(4),
       )
     }
   }
@@ -2816,7 +2816,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
   pub fn attrs_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Field_Attrs>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(5);
+      let field = Field::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Field_Attrs>(self.ptr.as_ptr()))
     }
@@ -2824,12 +2824,12 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   pub fn attrs_mut(self) -> __rt::Mut<'proto, __::pz::Field_Attrs> {
     self.attrs_mut_or().into_mut()
   }
-  pub fn attrs_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::Field_Attrs> {
+  pub fn attrs_mut_or(self) -> __rt::OptMut<'proto, __::pz::Field_Attrs> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(5),
+        Field::__tdp_info().field(5),
       )
     }
   }
@@ -2839,7 +2839,7 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   }
   pub fn span_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::Field::__tdp_info().field(6);
+      let field = Field::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -2847,12 +2847,12 @@ impl<'proto> __priv_Field::Mut<'proto>  {
   pub fn span_mut(self) -> __rt::Mut<'proto, u32> {
     self.span_mut_or().into_mut()
   }
-  pub fn span_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn span_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field::__tdp_info().field(6),
+        Field::__tdp_info().field(6),
       )
     }
   }
@@ -3178,7 +3178,7 @@ impl __::pz::Field_Attrs {
   }
   pub fn deprecated_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(0);
+      let field = Field_Attrs::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -3186,12 +3186,12 @@ impl __::pz::Field_Attrs {
   pub fn deprecated_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.deprecated_mut_or().into_mut()
   }
-  pub fn deprecated_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn deprecated_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field_Attrs::__tdp_info().field(0),
+        Field_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -3201,7 +3201,7 @@ impl __::pz::Field_Attrs {
 
   pub fn docs(&self) -> __rt::Slice<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(1);
+      let field = Field_Attrs::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -3211,7 +3211,7 @@ impl __::pz::Field_Attrs {
   }
   pub fn docs_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(1);
+      let field = Field_Attrs::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -3244,7 +3244,7 @@ impl __rt::ptr::Proxied for __::pz::Field_Attrs {
   type Mut<'proto> = __priv_Field_Attrs::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::Field_Attrs {
+impl __rt::Type for __::pz::Field_Attrs {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -3276,7 +3276,7 @@ impl<'proto> __priv_Field_Attrs::View<'proto> {
   }
   pub fn deprecated_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(0);
+      let field = Field_Attrs::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -3284,7 +3284,7 @@ impl<'proto> __priv_Field_Attrs::View<'proto> {
 
   pub fn docs(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(1);
+      let field = Field_Attrs::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -3342,7 +3342,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::Field_Attrs::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Field_Attrs::__tdp_info())
   }
 
   pub fn deprecated(self) -> __rt::View<'proto, __rt::Str> {
@@ -3350,7 +3350,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   }
   pub fn deprecated_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(0);
+      let field = Field_Attrs::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -3358,12 +3358,12 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   pub fn deprecated_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.deprecated_mut_or().into_mut()
   }
-  pub fn deprecated_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn deprecated_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::Field_Attrs::__tdp_info().field(0),
+        Field_Attrs::__tdp_info().field(0),
       )
     }
   }
@@ -3373,7 +3373,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
 
   pub fn docs(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(1);
+      let field = Field_Attrs::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -3383,7 +3383,7 @@ impl<'proto> __priv_Field_Attrs::Mut<'proto>  {
   }
   pub fn docs_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::Field_Attrs::__tdp_info().field(1);
+      let field = Field_Attrs::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -3588,7 +3588,7 @@ impl __::pz::plugin::Request {
   }
   pub fn about_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::plugin::AboutRequest>> {
     unsafe {
-      let field = __::pz::plugin::Request::__tdp_info().field(0);
+      let field = Request::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::AboutRequest>(self.ptr.as_ptr()))
     }
@@ -3596,12 +3596,12 @@ impl __::pz::plugin::Request {
   pub fn about_mut(&mut self) -> __rt::Mut<'_, __::pz::plugin::AboutRequest> {
     self.about_mut_or().into_mut()
   }
-  pub fn about_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::plugin::AboutRequest> {
+  pub fn about_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::plugin::AboutRequest> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Request::__tdp_info().field(0),
+        Request::__tdp_info().field(0),
       )
     }
   }
@@ -3611,7 +3611,7 @@ impl __::pz::plugin::Request {
   }
   pub fn codegen_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::plugin::CodegenRequest>> {
     unsafe {
-      let field = __::pz::plugin::Request::__tdp_info().field(1);
+      let field = Request::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::CodegenRequest>(self.ptr.as_ptr()))
     }
@@ -3619,12 +3619,12 @@ impl __::pz::plugin::Request {
   pub fn codegen_mut(&mut self) -> __rt::Mut<'_, __::pz::plugin::CodegenRequest> {
     self.codegen_mut_or().into_mut()
   }
-  pub fn codegen_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::plugin::CodegenRequest> {
+  pub fn codegen_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::plugin::CodegenRequest> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Request::__tdp_info().field(1),
+        Request::__tdp_info().field(1),
       )
     }
   }
@@ -3672,8 +3672,8 @@ impl<'proto> __priv_Request::View<'proto> {
       let number = self.ptr.as_ptr().cast::<u32>().read();
       match number {
         0 => __::pz::plugin::RequestCases::Unset(__s::marker::PhantomData),
-        1 => __::pz::plugin::RequestCases::About(__::pz::plugin::Request::__tdp_info().field(0).make_view::<__::pz::plugin::AboutRequest>(self.ptr.as_ptr())),
-        2 => __::pz::plugin::RequestCases::Codegen(__::pz::plugin::Request::__tdp_info().field(1).make_view::<__::pz::plugin::CodegenRequest>(self.ptr.as_ptr())),
+        1 => __::pz::plugin::RequestCases::About(Request::__tdp_info().field(0).make_view::<__::pz::plugin::AboutRequest>(self.ptr.as_ptr())),
+        2 => __::pz::plugin::RequestCases::Codegen(Request::__tdp_info().field(1).make_view::<__::pz::plugin::CodegenRequest>(self.ptr.as_ptr())),
         _ => __s::unreachable!(),
       }
     }
@@ -3684,7 +3684,7 @@ impl<'proto> __priv_Request::View<'proto> {
   }
   pub fn about_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::AboutRequest>> {
     unsafe {
-      let field = __::pz::plugin::Request::__tdp_info().field(0);
+      let field = Request::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::AboutRequest>(self.ptr.as_ptr()))
     }
@@ -3695,7 +3695,7 @@ impl<'proto> __priv_Request::View<'proto> {
   }
   pub fn codegen_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::CodegenRequest>> {
     unsafe {
-      let field = __::pz::plugin::Request::__tdp_info().field(1);
+      let field = Request::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::CodegenRequest>(self.ptr.as_ptr()))
     }
@@ -3753,8 +3753,8 @@ impl<'proto> __priv_Request::Mut<'proto>  {
       let number = self.ptr.as_ptr().cast::<u32>().read();
       match number {
         0 => __::pz::plugin::RequestCases::Unset(__s::marker::PhantomData),
-        1 => __::pz::plugin::RequestCases::About(__::pz::plugin::Request::__tdp_info().field(0).make_mut::<__::pz::plugin::AboutRequest>(self.ptr.as_ptr(), self.arena)),
-        2 => __::pz::plugin::RequestCases::Codegen(__::pz::plugin::Request::__tdp_info().field(1).make_mut::<__::pz::plugin::CodegenRequest>(self.ptr.as_ptr(), self.arena)),
+        1 => __::pz::plugin::RequestCases::About(Request::__tdp_info().field(0).make_mut::<__::pz::plugin::AboutRequest>(self.ptr.as_ptr(), self.arena)),
+        2 => __::pz::plugin::RequestCases::Codegen(Request::__tdp_info().field(1).make_mut::<__::pz::plugin::CodegenRequest>(self.ptr.as_ptr(), self.arena)),
         _ => __s::unreachable!(),
       }
     }
@@ -3766,7 +3766,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::Request::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Request::__tdp_info())
   }
 
   pub fn about(self) -> __rt::View<'proto, __::pz::plugin::AboutRequest> {
@@ -3774,7 +3774,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
   }
   pub fn about_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::AboutRequest>> {
     unsafe {
-      let field = __::pz::plugin::Request::__tdp_info().field(0);
+      let field = Request::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::AboutRequest>(self.ptr.as_ptr()))
     }
@@ -3782,12 +3782,12 @@ impl<'proto> __priv_Request::Mut<'proto>  {
   pub fn about_mut(self) -> __rt::Mut<'proto, __::pz::plugin::AboutRequest> {
     self.about_mut_or().into_mut()
   }
-  pub fn about_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::plugin::AboutRequest> {
+  pub fn about_mut_or(self) -> __rt::OptMut<'proto, __::pz::plugin::AboutRequest> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Request::__tdp_info().field(0),
+        Request::__tdp_info().field(0),
       )
     }
   }
@@ -3797,7 +3797,7 @@ impl<'proto> __priv_Request::Mut<'proto>  {
   }
   pub fn codegen_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::CodegenRequest>> {
     unsafe {
-      let field = __::pz::plugin::Request::__tdp_info().field(1);
+      let field = Request::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::CodegenRequest>(self.ptr.as_ptr()))
     }
@@ -3805,12 +3805,12 @@ impl<'proto> __priv_Request::Mut<'proto>  {
   pub fn codegen_mut(self) -> __rt::Mut<'proto, __::pz::plugin::CodegenRequest> {
     self.codegen_mut_or().into_mut()
   }
-  pub fn codegen_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::plugin::CodegenRequest> {
+  pub fn codegen_mut_or(self) -> __rt::OptMut<'proto, __::pz::plugin::CodegenRequest> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Request::__tdp_info().field(1),
+        Request::__tdp_info().field(1),
       )
     }
   }
@@ -3844,7 +3844,7 @@ impl __s::fmt::Debug for __::pz::plugin::Request {
   }
 }
 
-impl __rt::value::Type for __::pz::plugin::Request {
+impl __rt::Type for __::pz::plugin::Request {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -4036,7 +4036,7 @@ impl __::pz::plugin::Response {
   }
   pub fn about_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::plugin::AboutResponse>> {
     unsafe {
-      let field = __::pz::plugin::Response::__tdp_info().field(0);
+      let field = Response::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::AboutResponse>(self.ptr.as_ptr()))
     }
@@ -4044,12 +4044,12 @@ impl __::pz::plugin::Response {
   pub fn about_mut(&mut self) -> __rt::Mut<'_, __::pz::plugin::AboutResponse> {
     self.about_mut_or().into_mut()
   }
-  pub fn about_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::plugin::AboutResponse> {
+  pub fn about_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::plugin::AboutResponse> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Response::__tdp_info().field(0),
+        Response::__tdp_info().field(0),
       )
     }
   }
@@ -4059,7 +4059,7 @@ impl __::pz::plugin::Response {
   }
   pub fn codegen_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::plugin::CodegenResponse>> {
     unsafe {
-      let field = __::pz::plugin::Response::__tdp_info().field(1);
+      let field = Response::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::CodegenResponse>(self.ptr.as_ptr()))
     }
@@ -4067,12 +4067,12 @@ impl __::pz::plugin::Response {
   pub fn codegen_mut(&mut self) -> __rt::Mut<'_, __::pz::plugin::CodegenResponse> {
     self.codegen_mut_or().into_mut()
   }
-  pub fn codegen_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::plugin::CodegenResponse> {
+  pub fn codegen_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::plugin::CodegenResponse> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Response::__tdp_info().field(1),
+        Response::__tdp_info().field(1),
       )
     }
   }
@@ -4120,8 +4120,8 @@ impl<'proto> __priv_Response::View<'proto> {
       let number = self.ptr.as_ptr().cast::<u32>().read();
       match number {
         0 => __::pz::plugin::ResponseCases::Unset(__s::marker::PhantomData),
-        1 => __::pz::plugin::ResponseCases::About(__::pz::plugin::Response::__tdp_info().field(0).make_view::<__::pz::plugin::AboutResponse>(self.ptr.as_ptr())),
-        2 => __::pz::plugin::ResponseCases::Codegen(__::pz::plugin::Response::__tdp_info().field(1).make_view::<__::pz::plugin::CodegenResponse>(self.ptr.as_ptr())),
+        1 => __::pz::plugin::ResponseCases::About(Response::__tdp_info().field(0).make_view::<__::pz::plugin::AboutResponse>(self.ptr.as_ptr())),
+        2 => __::pz::plugin::ResponseCases::Codegen(Response::__tdp_info().field(1).make_view::<__::pz::plugin::CodegenResponse>(self.ptr.as_ptr())),
         _ => __s::unreachable!(),
       }
     }
@@ -4132,7 +4132,7 @@ impl<'proto> __priv_Response::View<'proto> {
   }
   pub fn about_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::AboutResponse>> {
     unsafe {
-      let field = __::pz::plugin::Response::__tdp_info().field(0);
+      let field = Response::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::AboutResponse>(self.ptr.as_ptr()))
     }
@@ -4143,7 +4143,7 @@ impl<'proto> __priv_Response::View<'proto> {
   }
   pub fn codegen_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::CodegenResponse>> {
     unsafe {
-      let field = __::pz::plugin::Response::__tdp_info().field(1);
+      let field = Response::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::CodegenResponse>(self.ptr.as_ptr()))
     }
@@ -4201,8 +4201,8 @@ impl<'proto> __priv_Response::Mut<'proto>  {
       let number = self.ptr.as_ptr().cast::<u32>().read();
       match number {
         0 => __::pz::plugin::ResponseCases::Unset(__s::marker::PhantomData),
-        1 => __::pz::plugin::ResponseCases::About(__::pz::plugin::Response::__tdp_info().field(0).make_mut::<__::pz::plugin::AboutResponse>(self.ptr.as_ptr(), self.arena)),
-        2 => __::pz::plugin::ResponseCases::Codegen(__::pz::plugin::Response::__tdp_info().field(1).make_mut::<__::pz::plugin::CodegenResponse>(self.ptr.as_ptr(), self.arena)),
+        1 => __::pz::plugin::ResponseCases::About(Response::__tdp_info().field(0).make_mut::<__::pz::plugin::AboutResponse>(self.ptr.as_ptr(), self.arena)),
+        2 => __::pz::plugin::ResponseCases::Codegen(Response::__tdp_info().field(1).make_mut::<__::pz::plugin::CodegenResponse>(self.ptr.as_ptr(), self.arena)),
         _ => __s::unreachable!(),
       }
     }
@@ -4214,7 +4214,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::Response::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Response::__tdp_info())
   }
 
   pub fn about(self) -> __rt::View<'proto, __::pz::plugin::AboutResponse> {
@@ -4222,7 +4222,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
   }
   pub fn about_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::AboutResponse>> {
     unsafe {
-      let field = __::pz::plugin::Response::__tdp_info().field(0);
+      let field = Response::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::AboutResponse>(self.ptr.as_ptr()))
     }
@@ -4230,12 +4230,12 @@ impl<'proto> __priv_Response::Mut<'proto>  {
   pub fn about_mut(self) -> __rt::Mut<'proto, __::pz::plugin::AboutResponse> {
     self.about_mut_or().into_mut()
   }
-  pub fn about_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::plugin::AboutResponse> {
+  pub fn about_mut_or(self) -> __rt::OptMut<'proto, __::pz::plugin::AboutResponse> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Response::__tdp_info().field(0),
+        Response::__tdp_info().field(0),
       )
     }
   }
@@ -4245,7 +4245,7 @@ impl<'proto> __priv_Response::Mut<'proto>  {
   }
   pub fn codegen_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::CodegenResponse>> {
     unsafe {
-      let field = __::pz::plugin::Response::__tdp_info().field(1);
+      let field = Response::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::CodegenResponse>(self.ptr.as_ptr()))
     }
@@ -4253,12 +4253,12 @@ impl<'proto> __priv_Response::Mut<'proto>  {
   pub fn codegen_mut(self) -> __rt::Mut<'proto, __::pz::plugin::CodegenResponse> {
     self.codegen_mut_or().into_mut()
   }
-  pub fn codegen_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::plugin::CodegenResponse> {
+  pub fn codegen_mut_or(self) -> __rt::OptMut<'proto, __::pz::plugin::CodegenResponse> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Response::__tdp_info().field(1),
+        Response::__tdp_info().field(1),
       )
     }
   }
@@ -4292,7 +4292,7 @@ impl __s::fmt::Debug for __::pz::plugin::Response {
   }
 }
 
-impl __rt::value::Type for __::pz::plugin::Response {
+impl __rt::Type for __::pz::plugin::Response {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -4497,7 +4497,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::AboutRequest {
   type Mut<'proto> = __priv_AboutRequest::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::AboutRequest {
+impl __rt::Type for __::pz::plugin::AboutRequest {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -4561,7 +4561,7 @@ impl<'proto> __priv_AboutRequest::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::AboutRequest::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, AboutRequest::__tdp_info())
   }
 
 }
@@ -4724,7 +4724,7 @@ impl __::pz::plugin::AboutResponse {
   }
   pub fn name_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(0);
+      let field = AboutResponse::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -4732,12 +4732,12 @@ impl __::pz::plugin::AboutResponse {
   pub fn name_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn name_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse::__tdp_info().field(0),
+        AboutResponse::__tdp_info().field(0),
       )
     }
   }
@@ -4750,7 +4750,7 @@ impl __::pz::plugin::AboutResponse {
   }
   pub fn version_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(1);
+      let field = AboutResponse::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -4758,12 +4758,12 @@ impl __::pz::plugin::AboutResponse {
   pub fn version_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.version_mut_or().into_mut()
   }
-  pub fn version_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn version_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse::__tdp_info().field(1),
+        AboutResponse::__tdp_info().field(1),
       )
     }
   }
@@ -4773,7 +4773,7 @@ impl __::pz::plugin::AboutResponse {
 
   pub fn options(&self) -> __rt::Slice<'_, __::pz::plugin::AboutResponse_Option> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(2);
+      let field = AboutResponse::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::AboutResponse_Option>(self.ptr.as_ptr())
     }
@@ -4783,7 +4783,7 @@ impl __::pz::plugin::AboutResponse {
   }
   pub fn options_mut(&mut self) -> __rt::Repeated<'_, __::pz::plugin::AboutResponse_Option> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(2);
+      let field = AboutResponse::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::AboutResponse_Option>(self.ptr.as_ptr(), self.arena)
     }
@@ -4816,7 +4816,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::AboutResponse {
   type Mut<'proto> = __priv_AboutResponse::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::AboutResponse {
+impl __rt::Type for __::pz::plugin::AboutResponse {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -4848,7 +4848,7 @@ impl<'proto> __priv_AboutResponse::View<'proto> {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(0);
+      let field = AboutResponse::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -4859,7 +4859,7 @@ impl<'proto> __priv_AboutResponse::View<'proto> {
   }
   pub fn version_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(1);
+      let field = AboutResponse::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -4867,7 +4867,7 @@ impl<'proto> __priv_AboutResponse::View<'proto> {
 
   pub fn options(self) -> __rt::Slice<'proto, __::pz::plugin::AboutResponse_Option> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(2);
+      let field = AboutResponse::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::AboutResponse_Option>(self.ptr.as_ptr())
     }
@@ -4931,7 +4931,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::AboutResponse::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, AboutResponse::__tdp_info())
   }
 
   pub fn name(self) -> __rt::View<'proto, __rt::Str> {
@@ -4939,7 +4939,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(0);
+      let field = AboutResponse::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -4947,12 +4947,12 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   pub fn name_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn name_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse::__tdp_info().field(0),
+        AboutResponse::__tdp_info().field(0),
       )
     }
   }
@@ -4965,7 +4965,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
   pub fn version_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(1);
+      let field = AboutResponse::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -4973,12 +4973,12 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   pub fn version_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.version_mut_or().into_mut()
   }
-  pub fn version_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn version_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse::__tdp_info().field(1),
+        AboutResponse::__tdp_info().field(1),
       )
     }
   }
@@ -4988,7 +4988,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
 
   pub fn options(self) -> __rt::Slice<'proto, __::pz::plugin::AboutResponse_Option> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(2);
+      let field = AboutResponse::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::AboutResponse_Option>(self.ptr.as_ptr())
     }
@@ -4998,7 +4998,7 @@ impl<'proto> __priv_AboutResponse::Mut<'proto>  {
   }
   pub fn options_mut(self) -> __rt::Repeated<'proto, __::pz::plugin::AboutResponse_Option> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse::__tdp_info().field(2);
+      let field = AboutResponse::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::AboutResponse_Option>(self.ptr.as_ptr(), self.arena)
     }
@@ -5209,7 +5209,7 @@ impl __::pz::plugin::AboutResponse_Option {
   }
   pub fn name_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse_Option::__tdp_info().field(0);
+      let field = AboutResponse_Option::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -5217,12 +5217,12 @@ impl __::pz::plugin::AboutResponse_Option {
   pub fn name_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn name_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse_Option::__tdp_info().field(0),
+        AboutResponse_Option::__tdp_info().field(0),
       )
     }
   }
@@ -5235,7 +5235,7 @@ impl __::pz::plugin::AboutResponse_Option {
   }
   pub fn help_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse_Option::__tdp_info().field(1);
+      let field = AboutResponse_Option::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -5243,12 +5243,12 @@ impl __::pz::plugin::AboutResponse_Option {
   pub fn help_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.help_mut_or().into_mut()
   }
-  pub fn help_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn help_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse_Option::__tdp_info().field(1),
+        AboutResponse_Option::__tdp_info().field(1),
       )
     }
   }
@@ -5283,7 +5283,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::AboutResponse_Option {
   type Mut<'proto> = __priv_AboutResponse_Option::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::AboutResponse_Option {
+impl __rt::Type for __::pz::plugin::AboutResponse_Option {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -5315,7 +5315,7 @@ impl<'proto> __priv_AboutResponse_Option::View<'proto> {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse_Option::__tdp_info().field(0);
+      let field = AboutResponse_Option::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -5326,7 +5326,7 @@ impl<'proto> __priv_AboutResponse_Option::View<'proto> {
   }
   pub fn help_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse_Option::__tdp_info().field(1);
+      let field = AboutResponse_Option::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -5381,7 +5381,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::AboutResponse_Option::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, AboutResponse_Option::__tdp_info())
   }
 
   pub fn name(self) -> __rt::View<'proto, __rt::Str> {
@@ -5389,7 +5389,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse_Option::__tdp_info().field(0);
+      let field = AboutResponse_Option::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -5397,12 +5397,12 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
   pub fn name_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn name_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse_Option::__tdp_info().field(0),
+        AboutResponse_Option::__tdp_info().field(0),
       )
     }
   }
@@ -5415,7 +5415,7 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
   }
   pub fn help_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::AboutResponse_Option::__tdp_info().field(1);
+      let field = AboutResponse_Option::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -5423,12 +5423,12 @@ impl<'proto> __priv_AboutResponse_Option::Mut<'proto>  {
   pub fn help_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.help_mut_or().into_mut()
   }
-  pub fn help_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn help_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::AboutResponse_Option::__tdp_info().field(1),
+        AboutResponse_Option::__tdp_info().field(1),
       )
     }
   }
@@ -5627,7 +5627,7 @@ impl __::pz::plugin::CodegenRequest {
   }
   pub fn bundle_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::Bundle>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(0);
+      let field = CodegenRequest::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Bundle>(self.ptr.as_ptr()))
     }
@@ -5635,19 +5635,19 @@ impl __::pz::plugin::CodegenRequest {
   pub fn bundle_mut(&mut self) -> __rt::Mut<'_, __::pz::Bundle> {
     self.bundle_mut_or().into_mut()
   }
-  pub fn bundle_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::Bundle> {
+  pub fn bundle_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::Bundle> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest::__tdp_info().field(0),
+        CodegenRequest::__tdp_info().field(0),
       )
     }
   }
 
   pub fn requested_indices(&self) -> __rt::Slice<'_, u32> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(1);
+      let field = CodegenRequest::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -5657,7 +5657,7 @@ impl __::pz::plugin::CodegenRequest {
   }
   pub fn requested_indices_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(1);
+      let field = CodegenRequest::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -5665,7 +5665,7 @@ impl __::pz::plugin::CodegenRequest {
 
   pub fn options(&self) -> __rt::Slice<'_, __::pz::plugin::CodegenRequest_Option> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(2);
+      let field = CodegenRequest::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::CodegenRequest_Option>(self.ptr.as_ptr())
     }
@@ -5675,7 +5675,7 @@ impl __::pz::plugin::CodegenRequest {
   }
   pub fn options_mut(&mut self) -> __rt::Repeated<'_, __::pz::plugin::CodegenRequest_Option> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(2);
+      let field = CodegenRequest::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::CodegenRequest_Option>(self.ptr.as_ptr(), self.arena)
     }
@@ -5686,7 +5686,7 @@ impl __::pz::plugin::CodegenRequest {
   }
   pub fn debug_or(&self) -> __s::option::Option<__rt::View<'_, bool>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(3);
+      let field = CodegenRequest::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -5694,12 +5694,12 @@ impl __::pz::plugin::CodegenRequest {
   pub fn debug_mut(&mut self) -> __rt::Mut<'_, bool> {
     self.debug_mut_or().into_mut()
   }
-  pub fn debug_mut_or(&mut self) -> __rt::value::OptMut<'_, bool> {
+  pub fn debug_mut_or(&mut self) -> __rt::OptMut<'_, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest::__tdp_info().field(3),
+        CodegenRequest::__tdp_info().field(3),
       )
     }
   }
@@ -5734,7 +5734,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::CodegenRequest {
   type Mut<'proto> = __priv_CodegenRequest::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::CodegenRequest {
+impl __rt::Type for __::pz::plugin::CodegenRequest {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -5766,7 +5766,7 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
   }
   pub fn bundle_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Bundle>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(0);
+      let field = CodegenRequest::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Bundle>(self.ptr.as_ptr()))
     }
@@ -5774,7 +5774,7 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
 
   pub fn requested_indices(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(1);
+      let field = CodegenRequest::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -5785,7 +5785,7 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
 
   pub fn options(self) -> __rt::Slice<'proto, __::pz::plugin::CodegenRequest_Option> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(2);
+      let field = CodegenRequest::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::CodegenRequest_Option>(self.ptr.as_ptr())
     }
@@ -5799,7 +5799,7 @@ impl<'proto> __priv_CodegenRequest::View<'proto> {
   }
   pub fn debug_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(3);
+      let field = CodegenRequest::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -5866,7 +5866,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::CodegenRequest::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenRequest::__tdp_info())
   }
 
   pub fn bundle(self) -> __rt::View<'proto, __::pz::Bundle> {
@@ -5874,7 +5874,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn bundle_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::Bundle>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(0);
+      let field = CodegenRequest::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::Bundle>(self.ptr.as_ptr()))
     }
@@ -5882,19 +5882,19 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   pub fn bundle_mut(self) -> __rt::Mut<'proto, __::pz::Bundle> {
     self.bundle_mut_or().into_mut()
   }
-  pub fn bundle_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::Bundle> {
+  pub fn bundle_mut_or(self) -> __rt::OptMut<'proto, __::pz::Bundle> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest::__tdp_info().field(0),
+        CodegenRequest::__tdp_info().field(0),
       )
     }
   }
 
   pub fn requested_indices(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(1);
+      let field = CodegenRequest::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -5904,7 +5904,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn requested_indices_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(1);
+      let field = CodegenRequest::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -5912,7 +5912,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
 
   pub fn options(self) -> __rt::Slice<'proto, __::pz::plugin::CodegenRequest_Option> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(2);
+      let field = CodegenRequest::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::CodegenRequest_Option>(self.ptr.as_ptr())
     }
@@ -5922,7 +5922,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn options_mut(self) -> __rt::Repeated<'proto, __::pz::plugin::CodegenRequest_Option> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(2);
+      let field = CodegenRequest::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::CodegenRequest_Option>(self.ptr.as_ptr(), self.arena)
     }
@@ -5933,7 +5933,7 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   }
   pub fn debug_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest::__tdp_info().field(3);
+      let field = CodegenRequest::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -5941,12 +5941,12 @@ impl<'proto> __priv_CodegenRequest::Mut<'proto>  {
   pub fn debug_mut(self) -> __rt::Mut<'proto, bool> {
     self.debug_mut_or().into_mut()
   }
-  pub fn debug_mut_or(self) -> __rt::value::OptMut<'proto, bool> {
+  pub fn debug_mut_or(self) -> __rt::OptMut<'proto, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest::__tdp_info().field(3),
+        CodegenRequest::__tdp_info().field(3),
       )
     }
   }
@@ -6175,7 +6175,7 @@ impl __::pz::plugin::CodegenRequest_Option {
   }
   pub fn name_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest_Option::__tdp_info().field(0);
+      let field = CodegenRequest_Option::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -6183,12 +6183,12 @@ impl __::pz::plugin::CodegenRequest_Option {
   pub fn name_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn name_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest_Option::__tdp_info().field(0),
+        CodegenRequest_Option::__tdp_info().field(0),
       )
     }
   }
@@ -6201,7 +6201,7 @@ impl __::pz::plugin::CodegenRequest_Option {
   }
   pub fn value_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest_Option::__tdp_info().field(1);
+      let field = CodegenRequest_Option::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -6209,12 +6209,12 @@ impl __::pz::plugin::CodegenRequest_Option {
   pub fn value_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.value_mut_or().into_mut()
   }
-  pub fn value_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn value_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest_Option::__tdp_info().field(1),
+        CodegenRequest_Option::__tdp_info().field(1),
       )
     }
   }
@@ -6249,7 +6249,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::CodegenRequest_Option {
   type Mut<'proto> = __priv_CodegenRequest_Option::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::CodegenRequest_Option {
+impl __rt::Type for __::pz::plugin::CodegenRequest_Option {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -6281,7 +6281,7 @@ impl<'proto> __priv_CodegenRequest_Option::View<'proto> {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest_Option::__tdp_info().field(0);
+      let field = CodegenRequest_Option::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -6292,7 +6292,7 @@ impl<'proto> __priv_CodegenRequest_Option::View<'proto> {
   }
   pub fn value_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest_Option::__tdp_info().field(1);
+      let field = CodegenRequest_Option::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -6347,7 +6347,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::CodegenRequest_Option::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenRequest_Option::__tdp_info())
   }
 
   pub fn name(self) -> __rt::View<'proto, __rt::Str> {
@@ -6355,7 +6355,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
   }
   pub fn name_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest_Option::__tdp_info().field(0);
+      let field = CodegenRequest_Option::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -6363,12 +6363,12 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
   pub fn name_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.name_mut_or().into_mut()
   }
-  pub fn name_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn name_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest_Option::__tdp_info().field(0),
+        CodegenRequest_Option::__tdp_info().field(0),
       )
     }
   }
@@ -6381,7 +6381,7 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
   }
   pub fn value_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenRequest_Option::__tdp_info().field(1);
+      let field = CodegenRequest_Option::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -6389,12 +6389,12 @@ impl<'proto> __priv_CodegenRequest_Option::Mut<'proto>  {
   pub fn value_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.value_mut_or().into_mut()
   }
-  pub fn value_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn value_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenRequest_Option::__tdp_info().field(1),
+        CodegenRequest_Option::__tdp_info().field(1),
       )
     }
   }
@@ -6588,7 +6588,7 @@ impl __::pz::plugin::CodegenResponse {
 
   pub fn files(&self) -> __rt::Slice<'_, __::pz::plugin::CodegenResponse_File> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(0);
+      let field = CodegenResponse::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::CodegenResponse_File>(self.ptr.as_ptr())
     }
@@ -6598,7 +6598,7 @@ impl __::pz::plugin::CodegenResponse {
   }
   pub fn files_mut(&mut self) -> __rt::Repeated<'_, __::pz::plugin::CodegenResponse_File> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(0);
+      let field = CodegenResponse::__tdp_info().field(0);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::CodegenResponse_File>(self.ptr.as_ptr(), self.arena)
     }
@@ -6606,7 +6606,7 @@ impl __::pz::plugin::CodegenResponse {
 
   pub fn report(&self) -> __rt::Slice<'_, __::pz::plugin::Diagnostic> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(1);
+      let field = CodegenResponse::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::Diagnostic>(self.ptr.as_ptr())
     }
@@ -6616,7 +6616,7 @@ impl __::pz::plugin::CodegenResponse {
   }
   pub fn report_mut(&mut self) -> __rt::Repeated<'_, __::pz::plugin::Diagnostic> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(1);
+      let field = CodegenResponse::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::Diagnostic>(self.ptr.as_ptr(), self.arena)
     }
@@ -6649,7 +6649,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::CodegenResponse {
   type Mut<'proto> = __priv_CodegenResponse::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::CodegenResponse {
+impl __rt::Type for __::pz::plugin::CodegenResponse {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -6678,7 +6678,7 @@ impl<'proto> __priv_CodegenResponse::View<'proto> {
 
   pub fn files(self) -> __rt::Slice<'proto, __::pz::plugin::CodegenResponse_File> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(0);
+      let field = CodegenResponse::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::CodegenResponse_File>(self.ptr.as_ptr())
     }
@@ -6689,7 +6689,7 @@ impl<'proto> __priv_CodegenResponse::View<'proto> {
 
   pub fn report(self) -> __rt::Slice<'proto, __::pz::plugin::Diagnostic> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(1);
+      let field = CodegenResponse::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::Diagnostic>(self.ptr.as_ptr())
     }
@@ -6747,12 +6747,12 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::CodegenResponse::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenResponse::__tdp_info())
   }
 
   pub fn files(self) -> __rt::Slice<'proto, __::pz::plugin::CodegenResponse_File> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(0);
+      let field = CodegenResponse::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::CodegenResponse_File>(self.ptr.as_ptr())
     }
@@ -6762,7 +6762,7 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
   pub fn files_mut(self) -> __rt::Repeated<'proto, __::pz::plugin::CodegenResponse_File> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(0);
+      let field = CodegenResponse::__tdp_info().field(0);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::CodegenResponse_File>(self.ptr.as_ptr(), self.arena)
     }
@@ -6770,7 +6770,7 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
 
   pub fn report(self) -> __rt::Slice<'proto, __::pz::plugin::Diagnostic> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(1);
+      let field = CodegenResponse::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::Diagnostic>(self.ptr.as_ptr())
     }
@@ -6780,7 +6780,7 @@ impl<'proto> __priv_CodegenResponse::Mut<'proto>  {
   }
   pub fn report_mut(self) -> __rt::Repeated<'proto, __::pz::plugin::Diagnostic> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse::__tdp_info().field(1);
+      let field = CodegenResponse::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::Diagnostic>(self.ptr.as_ptr(), self.arena)
     }
@@ -6977,7 +6977,7 @@ impl __::pz::plugin::CodegenResponse_File {
   }
   pub fn path_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse_File::__tdp_info().field(0);
+      let field = CodegenResponse_File::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -6985,12 +6985,12 @@ impl __::pz::plugin::CodegenResponse_File {
   pub fn path_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.path_mut_or().into_mut()
   }
-  pub fn path_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn path_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenResponse_File::__tdp_info().field(0),
+        CodegenResponse_File::__tdp_info().field(0),
       )
     }
   }
@@ -7003,7 +7003,7 @@ impl __::pz::plugin::CodegenResponse_File {
   }
   pub fn content_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse_File::__tdp_info().field(1);
+      let field = CodegenResponse_File::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7011,12 +7011,12 @@ impl __::pz::plugin::CodegenResponse_File {
   pub fn content_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.content_mut_or().into_mut()
   }
-  pub fn content_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn content_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenResponse_File::__tdp_info().field(1),
+        CodegenResponse_File::__tdp_info().field(1),
       )
     }
   }
@@ -7051,7 +7051,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::CodegenResponse_File {
   type Mut<'proto> = __priv_CodegenResponse_File::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::CodegenResponse_File {
+impl __rt::Type for __::pz::plugin::CodegenResponse_File {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -7083,7 +7083,7 @@ impl<'proto> __priv_CodegenResponse_File::View<'proto> {
   }
   pub fn path_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse_File::__tdp_info().field(0);
+      let field = CodegenResponse_File::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7094,7 +7094,7 @@ impl<'proto> __priv_CodegenResponse_File::View<'proto> {
   }
   pub fn content_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse_File::__tdp_info().field(1);
+      let field = CodegenResponse_File::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7149,7 +7149,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::CodegenResponse_File::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, CodegenResponse_File::__tdp_info())
   }
 
   pub fn path(self) -> __rt::View<'proto, __rt::Str> {
@@ -7157,7 +7157,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
   }
   pub fn path_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse_File::__tdp_info().field(0);
+      let field = CodegenResponse_File::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7165,12 +7165,12 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
   pub fn path_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.path_mut_or().into_mut()
   }
-  pub fn path_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn path_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenResponse_File::__tdp_info().field(0),
+        CodegenResponse_File::__tdp_info().field(0),
       )
     }
   }
@@ -7183,7 +7183,7 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
   }
   pub fn content_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::CodegenResponse_File::__tdp_info().field(1);
+      let field = CodegenResponse_File::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7191,12 +7191,12 @@ impl<'proto> __priv_CodegenResponse_File::Mut<'proto>  {
   pub fn content_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.content_mut_or().into_mut()
   }
-  pub fn content_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn content_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::CodegenResponse_File::__tdp_info().field(1),
+        CodegenResponse_File::__tdp_info().field(1),
       )
     }
   }
@@ -7395,7 +7395,7 @@ impl __::pz::plugin::Diagnostic {
   }
   pub fn kind_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::plugin::Diagnostic_Kind>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(0);
+      let field = Diagnostic::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::Diagnostic_Kind>(self.ptr.as_ptr()))
     }
@@ -7403,12 +7403,12 @@ impl __::pz::plugin::Diagnostic {
   pub fn kind_mut(&mut self) -> __rt::Mut<'_, __::pz::plugin::Diagnostic_Kind> {
     self.kind_mut_or().into_mut()
   }
-  pub fn kind_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::plugin::Diagnostic_Kind> {
+  pub fn kind_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::plugin::Diagnostic_Kind> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic::__tdp_info().field(0),
+        Diagnostic::__tdp_info().field(0),
       )
     }
   }
@@ -7421,7 +7421,7 @@ impl __::pz::plugin::Diagnostic {
   }
   pub fn msg_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(1);
+      let field = Diagnostic::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7429,12 +7429,12 @@ impl __::pz::plugin::Diagnostic {
   pub fn msg_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.msg_mut_or().into_mut()
   }
-  pub fn msg_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn msg_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic::__tdp_info().field(1),
+        Diagnostic::__tdp_info().field(1),
       )
     }
   }
@@ -7444,7 +7444,7 @@ impl __::pz::plugin::Diagnostic {
 
   pub fn snippets(&self) -> __rt::Slice<'_, __::pz::plugin::Diagnostic_Snippet> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(2);
+      let field = Diagnostic::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::Diagnostic_Snippet>(self.ptr.as_ptr())
     }
@@ -7454,7 +7454,7 @@ impl __::pz::plugin::Diagnostic {
   }
   pub fn snippets_mut(&mut self) -> __rt::Repeated<'_, __::pz::plugin::Diagnostic_Snippet> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(2);
+      let field = Diagnostic::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::Diagnostic_Snippet>(self.ptr.as_ptr(), self.arena)
     }
@@ -7462,7 +7462,7 @@ impl __::pz::plugin::Diagnostic {
 
   pub fn notes(&self) -> __rt::Slice<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(3);
+      let field = Diagnostic::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -7472,7 +7472,7 @@ impl __::pz::plugin::Diagnostic {
   }
   pub fn notes_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(3);
+      let field = Diagnostic::__tdp_info().field(3);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -7505,7 +7505,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::Diagnostic {
   type Mut<'proto> = __priv_Diagnostic::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::Diagnostic {
+impl __rt::Type for __::pz::plugin::Diagnostic {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -7537,7 +7537,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
   }
   pub fn kind_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::Diagnostic_Kind>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(0);
+      let field = Diagnostic::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::Diagnostic_Kind>(self.ptr.as_ptr()))
     }
@@ -7548,7 +7548,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
   }
   pub fn msg_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(1);
+      let field = Diagnostic::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7556,7 +7556,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
 
   pub fn snippets(self) -> __rt::Slice<'proto, __::pz::plugin::Diagnostic_Snippet> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(2);
+      let field = Diagnostic::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::Diagnostic_Snippet>(self.ptr.as_ptr())
     }
@@ -7567,7 +7567,7 @@ impl<'proto> __priv_Diagnostic::View<'proto> {
 
   pub fn notes(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(3);
+      let field = Diagnostic::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -7637,7 +7637,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::Diagnostic::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Diagnostic::__tdp_info())
   }
 
   pub fn kind(self) -> __rt::View<'proto, __::pz::plugin::Diagnostic_Kind> {
@@ -7645,7 +7645,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn kind_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::plugin::Diagnostic_Kind>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(0);
+      let field = Diagnostic::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::plugin::Diagnostic_Kind>(self.ptr.as_ptr()))
     }
@@ -7653,12 +7653,12 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   pub fn kind_mut(self) -> __rt::Mut<'proto, __::pz::plugin::Diagnostic_Kind> {
     self.kind_mut_or().into_mut()
   }
-  pub fn kind_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::plugin::Diagnostic_Kind> {
+  pub fn kind_mut_or(self) -> __rt::OptMut<'proto, __::pz::plugin::Diagnostic_Kind> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic::__tdp_info().field(0),
+        Diagnostic::__tdp_info().field(0),
       )
     }
   }
@@ -7671,7 +7671,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn msg_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(1);
+      let field = Diagnostic::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -7679,12 +7679,12 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   pub fn msg_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.msg_mut_or().into_mut()
   }
-  pub fn msg_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn msg_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic::__tdp_info().field(1),
+        Diagnostic::__tdp_info().field(1),
       )
     }
   }
@@ -7694,7 +7694,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
 
   pub fn snippets(self) -> __rt::Slice<'proto, __::pz::plugin::Diagnostic_Snippet> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(2);
+      let field = Diagnostic::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::plugin::Diagnostic_Snippet>(self.ptr.as_ptr())
     }
@@ -7704,7 +7704,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn snippets_mut(self) -> __rt::Repeated<'proto, __::pz::plugin::Diagnostic_Snippet> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(2);
+      let field = Diagnostic::__tdp_info().field(2);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::plugin::Diagnostic_Snippet>(self.ptr.as_ptr(), self.arena)
     }
@@ -7712,7 +7712,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
 
   pub fn notes(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(3);
+      let field = Diagnostic::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -7722,7 +7722,7 @@ impl<'proto> __priv_Diagnostic::Mut<'proto>  {
   }
   pub fn notes_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic::__tdp_info().field(3);
+      let field = Diagnostic::__tdp_info().field(3);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -7984,7 +7984,7 @@ impl __::pz::plugin::Diagnostic_Snippet {
   }
   pub fn span_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(0);
+      let field = Diagnostic_Snippet::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -7992,12 +7992,12 @@ impl __::pz::plugin::Diagnostic_Snippet {
   pub fn span_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.span_mut_or().into_mut()
   }
-  pub fn span_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn span_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(0),
+        Diagnostic_Snippet::__tdp_info().field(0),
       )
     }
   }
@@ -8010,7 +8010,7 @@ impl __::pz::plugin::Diagnostic_Snippet {
   }
   pub fn message_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(1);
+      let field = Diagnostic_Snippet::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -8018,12 +8018,12 @@ impl __::pz::plugin::Diagnostic_Snippet {
   pub fn message_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.message_mut_or().into_mut()
   }
-  pub fn message_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn message_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(1),
+        Diagnostic_Snippet::__tdp_info().field(1),
       )
     }
   }
@@ -8036,7 +8036,7 @@ impl __::pz::plugin::Diagnostic_Snippet {
   }
   pub fn is_remark_or(&self) -> __s::option::Option<__rt::View<'_, bool>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(2);
+      let field = Diagnostic_Snippet::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -8044,12 +8044,12 @@ impl __::pz::plugin::Diagnostic_Snippet {
   pub fn is_remark_mut(&mut self) -> __rt::Mut<'_, bool> {
     self.is_remark_mut_or().into_mut()
   }
-  pub fn is_remark_mut_or(&mut self) -> __rt::value::OptMut<'_, bool> {
+  pub fn is_remark_mut_or(&mut self) -> __rt::OptMut<'_, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(2),
+        Diagnostic_Snippet::__tdp_info().field(2),
       )
     }
   }
@@ -8084,7 +8084,7 @@ impl __rt::ptr::Proxied for __::pz::plugin::Diagnostic_Snippet {
   type Mut<'proto> = __priv_Diagnostic_Snippet::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::plugin::Diagnostic_Snippet {
+impl __rt::Type for __::pz::plugin::Diagnostic_Snippet {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -8116,7 +8116,7 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
   }
   pub fn span_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(0);
+      let field = Diagnostic_Snippet::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -8127,7 +8127,7 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
   }
   pub fn message_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(1);
+      let field = Diagnostic_Snippet::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -8138,7 +8138,7 @@ impl<'proto> __priv_Diagnostic_Snippet::View<'proto> {
   }
   pub fn is_remark_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(2);
+      let field = Diagnostic_Snippet::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -8199,7 +8199,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::plugin::Diagnostic_Snippet::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, Diagnostic_Snippet::__tdp_info())
   }
 
   pub fn span(self) -> __rt::View<'proto, u32> {
@@ -8207,7 +8207,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
   }
   pub fn span_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(0);
+      let field = Diagnostic_Snippet::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -8215,12 +8215,12 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
   pub fn span_mut(self) -> __rt::Mut<'proto, u32> {
     self.span_mut_or().into_mut()
   }
-  pub fn span_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn span_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(0),
+        Diagnostic_Snippet::__tdp_info().field(0),
       )
     }
   }
@@ -8233,7 +8233,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
   }
   pub fn message_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(1);
+      let field = Diagnostic_Snippet::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -8241,12 +8241,12 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
   pub fn message_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.message_mut_or().into_mut()
   }
-  pub fn message_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn message_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(1),
+        Diagnostic_Snippet::__tdp_info().field(1),
       )
     }
   }
@@ -8259,7 +8259,7 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
   }
   pub fn is_remark_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(2);
+      let field = Diagnostic_Snippet::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -8267,12 +8267,12 @@ impl<'proto> __priv_Diagnostic_Snippet::Mut<'proto>  {
   pub fn is_remark_mut(self) -> __rt::Mut<'proto, bool> {
     self.is_remark_mut_or().into_mut()
   }
-  pub fn is_remark_mut_or(self) -> __rt::value::OptMut<'proto, bool> {
+  pub fn is_remark_mut_or(self) -> __rt::OptMut<'proto, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::plugin::Diagnostic_Snippet::__tdp_info().field(2),
+        Diagnostic_Snippet::__tdp_info().field(2),
       )
     }
   }

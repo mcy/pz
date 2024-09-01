@@ -52,7 +52,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      impl __s::default::Default for $Type {
+      impl $Default for $Type {
         fn default() -> Self {
           Self($DEFAULT)
         }
@@ -63,8 +63,8 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         type Mut<'a> = __rt::ptr::ScalarMut<'a, Self>;
       }
 
-      impl __s::fmt::Debug for $Type {
-        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
+      impl $fmt::Debug for $Type {
+        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
           match *self {
             $debug_arms
             Self(n) => __s::write!(fmt, "$package.$Name({n})"),

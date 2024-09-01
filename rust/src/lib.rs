@@ -8,12 +8,9 @@ mod debug;
 mod tdp;
 
 pub mod ptr;
-#[doc(hidden)]
-pub mod rep;
-#[doc(hidden)]
-pub mod str;
-#[doc(hidden)]
-pub mod value;
+mod rep;
+mod str;
+mod value;
 
 pub mod proto;
 

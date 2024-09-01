@@ -84,9 +84,9 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
             }},
             make_view: |w| {
               if !field.is_repeated() {
-                w.write("$Type::__tdp_info().field($index).make_view::<$Field>(self.ptr.as_ptr())");
+                w.write("$TDP.field($index).make_view::<$Field>(self.ptr.as_ptr())");
               } else {
-                w.write("$Type::__tdp_info().field($index).make_slice::<$Field>(self.ptr.as_ptr())");
+                w.write("$TDP.field($index).make_slice::<$Field>(self.ptr.as_ptr())");
               }
             },
           },
@@ -115,9 +115,9 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
             }},
             make_view: |w| {
               if !field.is_repeated() {
-                w.write("$Type::__tdp_info().field($index).make_mut::<$Field>(self.ptr.as_ptr(), self.arena)");
+                w.write("$TDP.field($index).make_mut::<$Field>(self.ptr.as_ptr(), self.arena)");
               } else {
-                w.write("$Type::__tdp_info().field($index).make_rep::<$Field>(self.ptr.as_ptr(), self.arena)");
+                w.write("$TDP.field($index).make_rep::<$Field>(self.ptr.as_ptr(), self.arena)");
               }
             },
           },
@@ -198,18 +198,18 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
 
       const _: () = {
         assert!(
-          __s::mem::size_of::<$priv::Storage>() < (u32::MAX as usize),
+          $size_of::<$priv::Storage>() < (u32::MAX as usize),
           "storage size excees 4GB",
         );
       };
 
       impl $Type {
-        pub const DEFAULT: __rt::View<'static, Self> = unsafe {
+        pub const DEFAULT: $View<'static, Self> = unsafe {
           const VALUE: $priv::Storage = $priv::Storage {
             which: 0,
             union: $priv::Union { __unset: () },
           };
-          __rt::View::<Self> {
+          $View::<Self> {
             ptr: __z::ABox::from_ptr(&VALUE as *const $priv::Storage as *mut $priv::Storage as *mut u8),
             _ph: $PhantomData,
           }
@@ -224,21 +224,21 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           }
         }
 
-        pub fn from_pb(input: &mut dyn __s::io::Read) -> __s::result::Result<Self, __rt::Error> {
+        pub fn from_pb(input: &mut dyn $Read) -> $Result<Self, __rt::Error> {
           let mut new = Self::new();
           new.parse_pb(input)?;
-          __s::result::Result::Ok(new)
+          $Ok(new)
         }
 
-        pub fn parse_pb(&mut self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
+        pub fn parse_pb(&mut self, input: &mut dyn $Read) -> $Result<(), __rt::Error> {
           self.as_mut().parse_pb(input)
         }
 
-        pub fn as_view(&self) -> __rt::View<Self> {
+        pub fn as_view(&self) -> $View<Self> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
-        pub fn as_mut(&mut self) -> __rt::Mut<Self> {
+        pub fn as_mut(&mut self) -> $Mut<Self> {
           $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
         }
 
@@ -281,7 +281,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         ${Type::Variants}
       }
 
-      impl __s::default::Default for $Type {
+      impl $Default for $Type {
         fn default() -> Self {
           Self::new()
         }
@@ -293,7 +293,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       }
       
       impl<'proto> $priv::View<'proto> {
-        pub fn as_view(&self) -> __rt::View<$Type> {
+        pub fn as_view(&self) -> $View<$Type> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
@@ -311,7 +311,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         ${View::access}
 
         #[doc(hidden)]
-        pub fn __debug(self, debug: &mut __z::Debug) -> __s::fmt::Result {
+        pub fn __debug(self, debug: &mut __z::Debug) -> $fmt::Result {
           let mut count = 0;
           debug.start_block()?;
           ${Type::debug}
@@ -319,26 +319,26 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
             debug.comma(true)?;
           }
           debug.end_block()?;
-          __s::result::Result::Ok(())
+          $Ok(())
         }
       }
 
-      impl __s::default::Default for $priv::View<'_> {
+      impl $Default for $priv::View<'_> {
         fn default() -> Self {
           $Type::DEFAULT
         }
       }
 
       impl<'proto> $priv::Mut<'proto>  {
-        pub fn as_view(&self) -> __rt::View<$Type> {
+        pub fn as_view(&self) -> $View<$Type> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
-        pub fn into_view(self) -> __rt::View<'proto, $Type> {
+        pub fn into_view(self) -> $View<'proto, $Type> {
           $priv::View { ptr: self.ptr, _ph: $PhantomData }
         }
 
-        pub fn as_mut(&mut self) -> __rt::Mut<$Type> {
+        pub fn as_mut(&mut self) -> $Mut<$Type> {
           $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
         }
 
@@ -361,9 +361,9 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           unsafe { $Type::__raw_clear(self.ptr.as_ptr()) }
         }
 
-        pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
+        pub fn parse_pb(self, input: &mut dyn $Read) -> $Result<(), __rt::Error> {
           let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-          ctx.parse(self.ptr.as_ptr() as *mut u8, $Type::__tdp_info())
+          ctx.parse(self.ptr.as_ptr() as *mut u8, $TDP)
         }
 
         ${Mut::access}
@@ -375,37 +375,37 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      impl __s::fmt::Debug for $priv::View<'_> {
-        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
+      impl $fmt::Debug for $priv::View<'_> {
+        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
           fmt.write_str("$package.$Name ")?;
           let mut debug = __z::Debug::new(fmt);
           self.__debug(&mut debug)
         }
       }
 
-      impl __s::fmt::Debug for $priv::Mut<'_> {
-        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
+      impl $fmt::Debug for $priv::Mut<'_> {
+        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
           use __rt::ptr::ViewFor;
-          __s::fmt::Debug::fmt(&self.as_view(), fmt)
+          $fmt::Debug::fmt(&self.as_view(), fmt)
         }
       }
 
-      impl __s::fmt::Debug for $Type {
-        fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
-          __s::fmt::Debug::fmt(&self.as_view(), fmt)
+      impl $fmt::Debug for $Type {
+        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
+          $fmt::Debug::fmt(&self.as_view(), fmt)
         }
       }
 
-      impl __rt::value::Type for $Type {
+      impl __rt::Type for $Type {
         type __Storage = *mut u8;
 
-        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
+        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> $View<'a, Self> {
           $priv::View {
             ptr: __z::ABox::from_ptr(ptr.read()),
             _ph: $PhantomData,
           }
         }
-        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __z::RawArena) -> __rt::Mut<'a, Self> {
+        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __z::RawArena) -> $Mut<'a, Self> {
           $priv::Mut {
             ptr: __z::ABox::from_ptr(ptr.read()),
             arena,

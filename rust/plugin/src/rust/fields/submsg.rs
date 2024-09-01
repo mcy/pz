@@ -46,15 +46,15 @@ impl GenFieldImpl for Singular<'_> {
       },
       r"
         $deprecated
-        pub fn $name($self) -> __rt::View<'$lt, $Submsg> {
+        pub fn $name($self) -> $View<'$lt, $Submsg> {
           self.${name}_or().unwrap_or_default()
         }
         $deprecated
-        pub fn ${name}_or($self) -> __s::option::Option<__rt::View<'$lt, $Submsg>> {
+        pub fn ${name}_or($self) -> $Option<$View<'$lt, $Submsg>> {
           unsafe {
-            let field = $Type::__tdp_info().field($idx);
-            if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
-            __s::option::Option::Some(field.make_view::<$Submsg>(self.ptr.as_ptr()))
+            let field = $TDP.field($idx);
+            if !field.has(self.ptr.as_ptr()) { return $None }
+            $Some(field.make_view::<$Submsg>(self.ptr.as_ptr()))
           }
         }
       ",
@@ -70,16 +70,16 @@ impl GenFieldImpl for Singular<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> __rt::Mut<'$lt, $Submsg> {
+        pub fn ${name}_mut($self) -> $Mut<'$lt, $Submsg> {
           self.${name}_mut_or().into_mut()
         }
         $deprecated
-        pub fn ${name}_mut_or($self) -> __rt::value::OptMut<'$lt, $Submsg> {
+        pub fn ${name}_mut_or($self) -> __rt::OptMut<'$lt, $Submsg> {
           unsafe {
-            __rt::value::OptMut::__wrap(
+            __rt::OptMut::__wrap(
               self.ptr.as_ptr(),
               self.arena,
-              $Type::__tdp_info().field($idx),
+              $TDP.field($idx),
             )
           }
         }
@@ -90,7 +90,7 @@ impl GenFieldImpl for Singular<'_> {
   fn in_debug(&self, _: Field, w: &mut SourceWriter) {
     w.write(
       r#"
-        if let __s::option::Option::Some(value) = self.${name}_or() {
+        if let $Some(value) = self.${name}_or() {
           if count != 0 { debug.comma(false)?; }
           debug.field("$raw_name")?;
           value.__debug(debug)?;
@@ -140,15 +140,15 @@ impl GenFieldImpl for Repeated<'_> {
       },
       r"
         $deprecated
-        pub fn $name($self) -> __rt::Slice<'$lt, $Submsg> {
+        pub fn $name($self) -> $Slice<'$lt, $Submsg> {
           unsafe {
-            let field = $Type::__tdp_info().field($idx);
-            if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
+            let field = $TDP.field($idx);
+            if !field.has(self.ptr.as_ptr()) { return $Slice::default() }
             field.make_slice::<$Submsg>(self.ptr.as_ptr())
           }
         }
         $deprecated
-        pub fn ${name}_at($self, idx: usize) -> __rt::View<'$lt, $Submsg> {
+        pub fn ${name}_at($self, idx: usize) -> $View<'$lt, $Submsg> {
           self.$name().at(idx)
         }
       ",
@@ -164,9 +164,9 @@ impl GenFieldImpl for Repeated<'_> {
       },
       r"
         $deprecated
-        pub fn ${name}_mut($self) -> __rt::Repeated<'$lt, $Submsg> {
+        pub fn ${name}_mut($self) -> $Repeated<'$lt, $Submsg> {
           unsafe {
-            let field = $Type::__tdp_info().field($idx);
+            let field = $TDP.field($idx);
             field.init(self.ptr.as_ptr(), self.arena);
             field.make_rep::<$Submsg>(self.ptr.as_ptr(), self.arena)
           }

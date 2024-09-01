@@ -134,14 +134,40 @@ pub fn rust_plugin() -> ! {
           vars! {
             deprecated: deprecated(
               ty.proto().attrs.as_ref().and_then(|a| a.deprecated.as_deref())),
+
+            // Common standard library types and names.
+            fmt: "__s::fmt",
+            size_of: "__s::mem::size_of",
+            AsRef: "__s::convert::AsRef",
+            Default: "__s::default::Default",
+            Into: "__s::convert::Into",
             NonNull: "__s::ptr::NonNull",
             Layout: "__s::alloc::Layout",
             PhantomData: "__s::marker::PhantomData",
+            Sized: "__s::marker::Sized",
+
+            Read: "__s::io::Read",
+            Write: "__s::io::Write",
+
+            Option: "__s::option::Option",
+            Some: "__s::option::Option::Some",
+            None: "__s::option::Option::None",
+
+            Result: "__s::result::Result",
+            Ok: "__s::result::Result::Ok",
+            Err: "__s::result::Result::Err",
+
+            // Common runtime types and names.
+            View: "__rt::View",
+            Mut: "__rt::Mut",
+            Slice: "__rt::Slice",
+            Repeated: "__rt::Repeated",
 
             package: names::ident(ty.package()),
             Name: names::ident(ty.name()),
             Ident: names::type_ident(ty),
             Type: names::type_name(ty),
+            TDP: format_args!("{}::__tdp_info()", names::type_ident(ty)),
             priv: format_args!("__priv_{}", names::type_ident(ty)),
 
             NUM_FIELDS: ty.fields().count(),

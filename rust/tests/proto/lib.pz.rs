@@ -112,7 +112,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_i32_or(&self) -> __s::option::Option<__rt::View<'_, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(0);
+      let field = TestAll::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -120,12 +120,12 @@ impl __::pz::test::TestAll {
   pub fn opt_i32_mut(&mut self) -> __rt::Mut<'_, i32> {
     self.opt_i32_mut_or().into_mut()
   }
-  pub fn opt_i32_mut_or(&mut self) -> __rt::value::OptMut<'_, i32> {
+  pub fn opt_i32_mut_or(&mut self) -> __rt::OptMut<'_, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(0),
+        TestAll::__tdp_info().field(0),
       )
     }
   }
@@ -138,7 +138,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_i64_or(&self) -> __s::option::Option<__rt::View<'_, i64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(1);
+      let field = TestAll::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i64>(self.ptr.as_ptr()))
     }
@@ -146,12 +146,12 @@ impl __::pz::test::TestAll {
   pub fn opt_i64_mut(&mut self) -> __rt::Mut<'_, i64> {
     self.opt_i64_mut_or().into_mut()
   }
-  pub fn opt_i64_mut_or(&mut self) -> __rt::value::OptMut<'_, i64> {
+  pub fn opt_i64_mut_or(&mut self) -> __rt::OptMut<'_, i64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(1),
+        TestAll::__tdp_info().field(1),
       )
     }
   }
@@ -164,7 +164,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_u32_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(2);
+      let field = TestAll::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -172,12 +172,12 @@ impl __::pz::test::TestAll {
   pub fn opt_u32_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.opt_u32_mut_or().into_mut()
   }
-  pub fn opt_u32_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn opt_u32_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(2),
+        TestAll::__tdp_info().field(2),
       )
     }
   }
@@ -190,7 +190,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_u64_or(&self) -> __s::option::Option<__rt::View<'_, u64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(3);
+      let field = TestAll::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u64>(self.ptr.as_ptr()))
     }
@@ -198,12 +198,12 @@ impl __::pz::test::TestAll {
   pub fn opt_u64_mut(&mut self) -> __rt::Mut<'_, u64> {
     self.opt_u64_mut_or().into_mut()
   }
-  pub fn opt_u64_mut_or(&mut self) -> __rt::value::OptMut<'_, u64> {
+  pub fn opt_u64_mut_or(&mut self) -> __rt::OptMut<'_, u64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(3),
+        TestAll::__tdp_info().field(3),
       )
     }
   }
@@ -216,7 +216,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_f32_or(&self) -> __s::option::Option<__rt::View<'_, f32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(4);
+      let field = TestAll::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f32>(self.ptr.as_ptr()))
     }
@@ -224,12 +224,12 @@ impl __::pz::test::TestAll {
   pub fn opt_f32_mut(&mut self) -> __rt::Mut<'_, f32> {
     self.opt_f32_mut_or().into_mut()
   }
-  pub fn opt_f32_mut_or(&mut self) -> __rt::value::OptMut<'_, f32> {
+  pub fn opt_f32_mut_or(&mut self) -> __rt::OptMut<'_, f32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(4),
+        TestAll::__tdp_info().field(4),
       )
     }
   }
@@ -242,7 +242,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_f64_or(&self) -> __s::option::Option<__rt::View<'_, f64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(5);
+      let field = TestAll::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f64>(self.ptr.as_ptr()))
     }
@@ -250,12 +250,12 @@ impl __::pz::test::TestAll {
   pub fn opt_f64_mut(&mut self) -> __rt::Mut<'_, f64> {
     self.opt_f64_mut_or().into_mut()
   }
-  pub fn opt_f64_mut_or(&mut self) -> __rt::value::OptMut<'_, f64> {
+  pub fn opt_f64_mut_or(&mut self) -> __rt::OptMut<'_, f64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(5),
+        TestAll::__tdp_info().field(5),
       )
     }
   }
@@ -268,7 +268,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_str_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(6);
+      let field = TestAll::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -276,12 +276,12 @@ impl __::pz::test::TestAll {
   pub fn opt_str_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.opt_str_mut_or().into_mut()
   }
-  pub fn opt_str_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn opt_str_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(6),
+        TestAll::__tdp_info().field(6),
       )
     }
   }
@@ -294,7 +294,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_bool_or(&self) -> __s::option::Option<__rt::View<'_, bool>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(7);
+      let field = TestAll::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -302,12 +302,12 @@ impl __::pz::test::TestAll {
   pub fn opt_bool_mut(&mut self) -> __rt::Mut<'_, bool> {
     self.opt_bool_mut_or().into_mut()
   }
-  pub fn opt_bool_mut_or(&mut self) -> __rt::value::OptMut<'_, bool> {
+  pub fn opt_bool_mut_or(&mut self) -> __rt::OptMut<'_, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(7),
+        TestAll::__tdp_info().field(7),
       )
     }
   }
@@ -320,7 +320,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_recursive_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::test::TestAll>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(8);
+      let field = TestAll::__tdp_info().field(8);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll>(self.ptr.as_ptr()))
     }
@@ -328,12 +328,12 @@ impl __::pz::test::TestAll {
   pub fn opt_recursive_mut(&mut self) -> __rt::Mut<'_, __::pz::test::TestAll> {
     self.opt_recursive_mut_or().into_mut()
   }
-  pub fn opt_recursive_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::test::TestAll> {
+  pub fn opt_recursive_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::test::TestAll> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(8),
+        TestAll::__tdp_info().field(8),
       )
     }
   }
@@ -343,7 +343,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_nested_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::test::TestAll_Nested>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(9);
+      let field = TestAll::__tdp_info().field(9);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr()))
     }
@@ -351,12 +351,12 @@ impl __::pz::test::TestAll {
   pub fn opt_nested_mut(&mut self) -> __rt::Mut<'_, __::pz::test::TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
   }
-  pub fn opt_nested_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::test::TestAll_Nested> {
+  pub fn opt_nested_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::test::TestAll_Nested> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(9),
+        TestAll::__tdp_info().field(9),
       )
     }
   }
@@ -366,7 +366,7 @@ impl __::pz::test::TestAll {
   }
   pub fn opt_choice_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::test::TestAll2>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(10);
+      let field = TestAll::__tdp_info().field(10);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr()))
     }
@@ -374,19 +374,19 @@ impl __::pz::test::TestAll {
   pub fn opt_choice_mut(&mut self) -> __rt::Mut<'_, __::pz::test::TestAll2> {
     self.opt_choice_mut_or().into_mut()
   }
-  pub fn opt_choice_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::test::TestAll2> {
+  pub fn opt_choice_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::test::TestAll2> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(10),
+        TestAll::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(&self) -> __rt::Slice<'_, i32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(11);
+      let field = TestAll::__tdp_info().field(11);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i32>(self.ptr.as_ptr())
     }
@@ -396,7 +396,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_i32_mut(&mut self) -> __rt::Repeated<'_, i32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(11);
+      let field = TestAll::__tdp_info().field(11);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
@@ -404,7 +404,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_i64(&self) -> __rt::Slice<'_, i64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(12);
+      let field = TestAll::__tdp_info().field(12);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i64>(self.ptr.as_ptr())
     }
@@ -414,7 +414,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_i64_mut(&mut self) -> __rt::Repeated<'_, i64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(12);
+      let field = TestAll::__tdp_info().field(12);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
@@ -422,7 +422,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_u32(&self) -> __rt::Slice<'_, u32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(13);
+      let field = TestAll::__tdp_info().field(13);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -432,7 +432,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_u32_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(13);
+      let field = TestAll::__tdp_info().field(13);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -440,7 +440,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_u64(&self) -> __rt::Slice<'_, u64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(14);
+      let field = TestAll::__tdp_info().field(14);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u64>(self.ptr.as_ptr())
     }
@@ -450,7 +450,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_u64_mut(&mut self) -> __rt::Repeated<'_, u64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(14);
+      let field = TestAll::__tdp_info().field(14);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
@@ -458,7 +458,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_f32(&self) -> __rt::Slice<'_, f32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(15);
+      let field = TestAll::__tdp_info().field(15);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f32>(self.ptr.as_ptr())
     }
@@ -468,7 +468,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_f32_mut(&mut self) -> __rt::Repeated<'_, f32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(15);
+      let field = TestAll::__tdp_info().field(15);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
@@ -476,7 +476,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_f64(&self) -> __rt::Slice<'_, f64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(16);
+      let field = TestAll::__tdp_info().field(16);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f64>(self.ptr.as_ptr())
     }
@@ -486,7 +486,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_f64_mut(&mut self) -> __rt::Repeated<'_, f64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(16);
+      let field = TestAll::__tdp_info().field(16);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
@@ -494,7 +494,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_str(&self) -> __rt::Slice<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(17);
+      let field = TestAll::__tdp_info().field(17);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -504,7 +504,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_str_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(17);
+      let field = TestAll::__tdp_info().field(17);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -512,7 +512,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_bool(&self) -> __rt::Slice<'_, bool> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(18);
+      let field = TestAll::__tdp_info().field(18);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<bool>(self.ptr.as_ptr())
     }
@@ -522,7 +522,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_bool_mut(&mut self) -> __rt::Repeated<'_, bool> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(18);
+      let field = TestAll::__tdp_info().field(18);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
@@ -530,7 +530,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_recursive(&self) -> __rt::Slice<'_, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(19);
+      let field = TestAll::__tdp_info().field(19);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())
     }
@@ -540,7 +540,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_recursive_mut(&mut self) -> __rt::Repeated<'_, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(19);
+      let field = TestAll::__tdp_info().field(19);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)
     }
@@ -548,7 +548,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_nested(&self) -> __rt::Slice<'_, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(20);
+      let field = TestAll::__tdp_info().field(20);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())
     }
@@ -558,7 +558,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_nested_mut(&mut self) -> __rt::Repeated<'_, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(20);
+      let field = TestAll::__tdp_info().field(20);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
@@ -566,7 +566,7 @@ impl __::pz::test::TestAll {
 
   pub fn rep_choice(&self) -> __rt::Slice<'_, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(21);
+      let field = TestAll::__tdp_info().field(21);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())
     }
@@ -576,7 +576,7 @@ impl __::pz::test::TestAll {
   }
   pub fn rep_choice_mut(&mut self) -> __rt::Repeated<'_, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(21);
+      let field = TestAll::__tdp_info().field(21);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)
     }
@@ -609,7 +609,7 @@ impl __rt::ptr::Proxied for __::pz::test::TestAll {
   type Mut<'proto> = __priv_TestAll::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::test::TestAll {
+impl __rt::Type for __::pz::test::TestAll {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -641,7 +641,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_i32_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(0);
+      let field = TestAll::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -652,7 +652,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_i64_or(self) -> __s::option::Option<__rt::View<'proto, i64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(1);
+      let field = TestAll::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i64>(self.ptr.as_ptr()))
     }
@@ -663,7 +663,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_u32_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(2);
+      let field = TestAll::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -674,7 +674,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_u64_or(self) -> __s::option::Option<__rt::View<'proto, u64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(3);
+      let field = TestAll::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u64>(self.ptr.as_ptr()))
     }
@@ -685,7 +685,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_f32_or(self) -> __s::option::Option<__rt::View<'proto, f32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(4);
+      let field = TestAll::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f32>(self.ptr.as_ptr()))
     }
@@ -696,7 +696,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_f64_or(self) -> __s::option::Option<__rt::View<'proto, f64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(5);
+      let field = TestAll::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f64>(self.ptr.as_ptr()))
     }
@@ -707,7 +707,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_str_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(6);
+      let field = TestAll::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -718,7 +718,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_bool_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(7);
+      let field = TestAll::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -729,7 +729,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_recursive_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(8);
+      let field = TestAll::__tdp_info().field(8);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll>(self.ptr.as_ptr()))
     }
@@ -740,7 +740,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_nested_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll_Nested>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(9);
+      let field = TestAll::__tdp_info().field(9);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr()))
     }
@@ -751,7 +751,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
   }
   pub fn opt_choice_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll2>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(10);
+      let field = TestAll::__tdp_info().field(10);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr()))
     }
@@ -759,7 +759,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(11);
+      let field = TestAll::__tdp_info().field(11);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i32>(self.ptr.as_ptr())
     }
@@ -770,7 +770,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(12);
+      let field = TestAll::__tdp_info().field(12);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i64>(self.ptr.as_ptr())
     }
@@ -781,7 +781,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(13);
+      let field = TestAll::__tdp_info().field(13);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -792,7 +792,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(14);
+      let field = TestAll::__tdp_info().field(14);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u64>(self.ptr.as_ptr())
     }
@@ -803,7 +803,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(15);
+      let field = TestAll::__tdp_info().field(15);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f32>(self.ptr.as_ptr())
     }
@@ -814,7 +814,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(16);
+      let field = TestAll::__tdp_info().field(16);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f64>(self.ptr.as_ptr())
     }
@@ -825,7 +825,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(17);
+      let field = TestAll::__tdp_info().field(17);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -836,7 +836,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(18);
+      let field = TestAll::__tdp_info().field(18);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<bool>(self.ptr.as_ptr())
     }
@@ -847,7 +847,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(19);
+      let field = TestAll::__tdp_info().field(19);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())
     }
@@ -858,7 +858,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(20);
+      let field = TestAll::__tdp_info().field(20);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())
     }
@@ -869,7 +869,7 @@ impl<'proto> __priv_TestAll::View<'proto> {
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(21);
+      let field = TestAll::__tdp_info().field(21);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())
     }
@@ -1047,7 +1047,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::test::TestAll::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll::__tdp_info())
   }
 
   pub fn opt_i32(self) -> __rt::View<'proto, i32> {
@@ -1055,7 +1055,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_i32_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(0);
+      let field = TestAll::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -1063,12 +1063,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_i32_mut(self) -> __rt::Mut<'proto, i32> {
     self.opt_i32_mut_or().into_mut()
   }
-  pub fn opt_i32_mut_or(self) -> __rt::value::OptMut<'proto, i32> {
+  pub fn opt_i32_mut_or(self) -> __rt::OptMut<'proto, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(0),
+        TestAll::__tdp_info().field(0),
       )
     }
   }
@@ -1081,7 +1081,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_i64_or(self) -> __s::option::Option<__rt::View<'proto, i64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(1);
+      let field = TestAll::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i64>(self.ptr.as_ptr()))
     }
@@ -1089,12 +1089,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_i64_mut(self) -> __rt::Mut<'proto, i64> {
     self.opt_i64_mut_or().into_mut()
   }
-  pub fn opt_i64_mut_or(self) -> __rt::value::OptMut<'proto, i64> {
+  pub fn opt_i64_mut_or(self) -> __rt::OptMut<'proto, i64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(1),
+        TestAll::__tdp_info().field(1),
       )
     }
   }
@@ -1107,7 +1107,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_u32_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(2);
+      let field = TestAll::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -1115,12 +1115,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_u32_mut(self) -> __rt::Mut<'proto, u32> {
     self.opt_u32_mut_or().into_mut()
   }
-  pub fn opt_u32_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn opt_u32_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(2),
+        TestAll::__tdp_info().field(2),
       )
     }
   }
@@ -1133,7 +1133,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_u64_or(self) -> __s::option::Option<__rt::View<'proto, u64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(3);
+      let field = TestAll::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u64>(self.ptr.as_ptr()))
     }
@@ -1141,12 +1141,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_u64_mut(self) -> __rt::Mut<'proto, u64> {
     self.opt_u64_mut_or().into_mut()
   }
-  pub fn opt_u64_mut_or(self) -> __rt::value::OptMut<'proto, u64> {
+  pub fn opt_u64_mut_or(self) -> __rt::OptMut<'proto, u64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(3),
+        TestAll::__tdp_info().field(3),
       )
     }
   }
@@ -1159,7 +1159,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_f32_or(self) -> __s::option::Option<__rt::View<'proto, f32>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(4);
+      let field = TestAll::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f32>(self.ptr.as_ptr()))
     }
@@ -1167,12 +1167,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_f32_mut(self) -> __rt::Mut<'proto, f32> {
     self.opt_f32_mut_or().into_mut()
   }
-  pub fn opt_f32_mut_or(self) -> __rt::value::OptMut<'proto, f32> {
+  pub fn opt_f32_mut_or(self) -> __rt::OptMut<'proto, f32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(4),
+        TestAll::__tdp_info().field(4),
       )
     }
   }
@@ -1185,7 +1185,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_f64_or(self) -> __s::option::Option<__rt::View<'proto, f64>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(5);
+      let field = TestAll::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f64>(self.ptr.as_ptr()))
     }
@@ -1193,12 +1193,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_f64_mut(self) -> __rt::Mut<'proto, f64> {
     self.opt_f64_mut_or().into_mut()
   }
-  pub fn opt_f64_mut_or(self) -> __rt::value::OptMut<'proto, f64> {
+  pub fn opt_f64_mut_or(self) -> __rt::OptMut<'proto, f64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(5),
+        TestAll::__tdp_info().field(5),
       )
     }
   }
@@ -1211,7 +1211,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_str_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(6);
+      let field = TestAll::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -1219,12 +1219,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_str_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.opt_str_mut_or().into_mut()
   }
-  pub fn opt_str_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn opt_str_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(6),
+        TestAll::__tdp_info().field(6),
       )
     }
   }
@@ -1237,7 +1237,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_bool_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(7);
+      let field = TestAll::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -1245,12 +1245,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_bool_mut(self) -> __rt::Mut<'proto, bool> {
     self.opt_bool_mut_or().into_mut()
   }
-  pub fn opt_bool_mut_or(self) -> __rt::value::OptMut<'proto, bool> {
+  pub fn opt_bool_mut_or(self) -> __rt::OptMut<'proto, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(7),
+        TestAll::__tdp_info().field(7),
       )
     }
   }
@@ -1263,7 +1263,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_recursive_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(8);
+      let field = TestAll::__tdp_info().field(8);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll>(self.ptr.as_ptr()))
     }
@@ -1271,12 +1271,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_recursive_mut(self) -> __rt::Mut<'proto, __::pz::test::TestAll> {
     self.opt_recursive_mut_or().into_mut()
   }
-  pub fn opt_recursive_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::test::TestAll> {
+  pub fn opt_recursive_mut_or(self) -> __rt::OptMut<'proto, __::pz::test::TestAll> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(8),
+        TestAll::__tdp_info().field(8),
       )
     }
   }
@@ -1286,7 +1286,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_nested_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll_Nested>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(9);
+      let field = TestAll::__tdp_info().field(9);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr()))
     }
@@ -1294,12 +1294,12 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_nested_mut(self) -> __rt::Mut<'proto, __::pz::test::TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
   }
-  pub fn opt_nested_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::test::TestAll_Nested> {
+  pub fn opt_nested_mut_or(self) -> __rt::OptMut<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(9),
+        TestAll::__tdp_info().field(9),
       )
     }
   }
@@ -1309,7 +1309,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn opt_choice_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll2>> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(10);
+      let field = TestAll::__tdp_info().field(10);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr()))
     }
@@ -1317,19 +1317,19 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   pub fn opt_choice_mut(self) -> __rt::Mut<'proto, __::pz::test::TestAll2> {
     self.opt_choice_mut_or().into_mut()
   }
-  pub fn opt_choice_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::test::TestAll2> {
+  pub fn opt_choice_mut_or(self) -> __rt::OptMut<'proto, __::pz::test::TestAll2> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll::__tdp_info().field(10),
+        TestAll::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(11);
+      let field = TestAll::__tdp_info().field(11);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i32>(self.ptr.as_ptr())
     }
@@ -1339,7 +1339,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_i32_mut(self) -> __rt::Repeated<'proto, i32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(11);
+      let field = TestAll::__tdp_info().field(11);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
@@ -1347,7 +1347,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(12);
+      let field = TestAll::__tdp_info().field(12);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i64>(self.ptr.as_ptr())
     }
@@ -1357,7 +1357,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_i64_mut(self) -> __rt::Repeated<'proto, i64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(12);
+      let field = TestAll::__tdp_info().field(12);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
@@ -1365,7 +1365,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(13);
+      let field = TestAll::__tdp_info().field(13);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -1375,7 +1375,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_u32_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(13);
+      let field = TestAll::__tdp_info().field(13);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -1383,7 +1383,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(14);
+      let field = TestAll::__tdp_info().field(14);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u64>(self.ptr.as_ptr())
     }
@@ -1393,7 +1393,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_u64_mut(self) -> __rt::Repeated<'proto, u64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(14);
+      let field = TestAll::__tdp_info().field(14);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
@@ -1401,7 +1401,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(15);
+      let field = TestAll::__tdp_info().field(15);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f32>(self.ptr.as_ptr())
     }
@@ -1411,7 +1411,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_f32_mut(self) -> __rt::Repeated<'proto, f32> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(15);
+      let field = TestAll::__tdp_info().field(15);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
@@ -1419,7 +1419,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(16);
+      let field = TestAll::__tdp_info().field(16);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f64>(self.ptr.as_ptr())
     }
@@ -1429,7 +1429,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_f64_mut(self) -> __rt::Repeated<'proto, f64> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(16);
+      let field = TestAll::__tdp_info().field(16);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
@@ -1437,7 +1437,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(17);
+      let field = TestAll::__tdp_info().field(17);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -1447,7 +1447,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_str_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(17);
+      let field = TestAll::__tdp_info().field(17);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -1455,7 +1455,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(18);
+      let field = TestAll::__tdp_info().field(18);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<bool>(self.ptr.as_ptr())
     }
@@ -1465,7 +1465,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_bool_mut(self) -> __rt::Repeated<'proto, bool> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(18);
+      let field = TestAll::__tdp_info().field(18);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
@@ -1473,7 +1473,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(19);
+      let field = TestAll::__tdp_info().field(19);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())
     }
@@ -1483,7 +1483,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_recursive_mut(self) -> __rt::Repeated<'proto, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(19);
+      let field = TestAll::__tdp_info().field(19);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)
     }
@@ -1491,7 +1491,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(20);
+      let field = TestAll::__tdp_info().field(20);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())
     }
@@ -1501,7 +1501,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_nested_mut(self) -> __rt::Repeated<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(20);
+      let field = TestAll::__tdp_info().field(20);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
@@ -1509,7 +1509,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(21);
+      let field = TestAll::__tdp_info().field(21);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())
     }
@@ -1519,7 +1519,7 @@ impl<'proto> __priv_TestAll::Mut<'proto>  {
   }
   pub fn rep_choice_mut(self) -> __rt::Repeated<'proto, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll::__tdp_info().field(21);
+      let field = TestAll::__tdp_info().field(21);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)
     }
@@ -2017,7 +2017,7 @@ impl __::pz::test::TestAll_Nested {
   }
   pub fn a_or(&self) -> __s::option::Option<__rt::View<'_, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(0);
+      let field = TestAll_Nested::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -2025,12 +2025,12 @@ impl __::pz::test::TestAll_Nested {
   pub fn a_mut(&mut self) -> __rt::Mut<'_, i32> {
     self.a_mut_or().into_mut()
   }
-  pub fn a_mut_or(&mut self) -> __rt::value::OptMut<'_, i32> {
+  pub fn a_mut_or(&mut self) -> __rt::OptMut<'_, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll_Nested::__tdp_info().field(0),
+        TestAll_Nested::__tdp_info().field(0),
       )
     }
   }
@@ -2040,7 +2040,7 @@ impl __::pz::test::TestAll_Nested {
 
   pub fn b(&self) -> __rt::Slice<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(1);
+      let field = TestAll_Nested::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -2050,7 +2050,7 @@ impl __::pz::test::TestAll_Nested {
   }
   pub fn b_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(1);
+      let field = TestAll_Nested::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -2083,7 +2083,7 @@ impl __rt::ptr::Proxied for __::pz::test::TestAll_Nested {
   type Mut<'proto> = __priv_TestAll_Nested::Mut<'proto>;
 }
 
-impl __rt::value::Type for __::pz::test::TestAll_Nested {
+impl __rt::Type for __::pz::test::TestAll_Nested {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {
@@ -2115,7 +2115,7 @@ impl<'proto> __priv_TestAll_Nested::View<'proto> {
   }
   pub fn a_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(0);
+      let field = TestAll_Nested::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -2123,7 +2123,7 @@ impl<'proto> __priv_TestAll_Nested::View<'proto> {
 
   pub fn b(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(1);
+      let field = TestAll_Nested::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -2181,7 +2181,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::test::TestAll_Nested::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll_Nested::__tdp_info())
   }
 
   pub fn a(self) -> __rt::View<'proto, i32> {
@@ -2189,7 +2189,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   }
   pub fn a_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(0);
+      let field = TestAll_Nested::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -2197,12 +2197,12 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   pub fn a_mut(self) -> __rt::Mut<'proto, i32> {
     self.a_mut_or().into_mut()
   }
-  pub fn a_mut_or(self) -> __rt::value::OptMut<'proto, i32> {
+  pub fn a_mut_or(self) -> __rt::OptMut<'proto, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll_Nested::__tdp_info().field(0),
+        TestAll_Nested::__tdp_info().field(0),
       )
     }
   }
@@ -2212,7 +2212,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
 
   pub fn b(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(1);
+      let field = TestAll_Nested::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -2222,7 +2222,7 @@ impl<'proto> __priv_TestAll_Nested::Mut<'proto>  {
   }
   pub fn b_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll_Nested::__tdp_info().field(1);
+      let field = TestAll_Nested::__tdp_info().field(1);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -2424,7 +2424,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_i32_or(&self) -> __s::option::Option<__rt::View<'_, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(0);
+      let field = TestAll2::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -2432,12 +2432,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_i32_mut(&mut self) -> __rt::Mut<'_, i32> {
     self.opt_i32_mut_or().into_mut()
   }
-  pub fn opt_i32_mut_or(&mut self) -> __rt::value::OptMut<'_, i32> {
+  pub fn opt_i32_mut_or(&mut self) -> __rt::OptMut<'_, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(0),
+        TestAll2::__tdp_info().field(0),
       )
     }
   }
@@ -2450,7 +2450,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_i64_or(&self) -> __s::option::Option<__rt::View<'_, i64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(1);
+      let field = TestAll2::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i64>(self.ptr.as_ptr()))
     }
@@ -2458,12 +2458,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_i64_mut(&mut self) -> __rt::Mut<'_, i64> {
     self.opt_i64_mut_or().into_mut()
   }
-  pub fn opt_i64_mut_or(&mut self) -> __rt::value::OptMut<'_, i64> {
+  pub fn opt_i64_mut_or(&mut self) -> __rt::OptMut<'_, i64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(1),
+        TestAll2::__tdp_info().field(1),
       )
     }
   }
@@ -2476,7 +2476,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_u32_or(&self) -> __s::option::Option<__rt::View<'_, u32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(2);
+      let field = TestAll2::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -2484,12 +2484,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_u32_mut(&mut self) -> __rt::Mut<'_, u32> {
     self.opt_u32_mut_or().into_mut()
   }
-  pub fn opt_u32_mut_or(&mut self) -> __rt::value::OptMut<'_, u32> {
+  pub fn opt_u32_mut_or(&mut self) -> __rt::OptMut<'_, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(2),
+        TestAll2::__tdp_info().field(2),
       )
     }
   }
@@ -2502,7 +2502,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_u64_or(&self) -> __s::option::Option<__rt::View<'_, u64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(3);
+      let field = TestAll2::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u64>(self.ptr.as_ptr()))
     }
@@ -2510,12 +2510,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_u64_mut(&mut self) -> __rt::Mut<'_, u64> {
     self.opt_u64_mut_or().into_mut()
   }
-  pub fn opt_u64_mut_or(&mut self) -> __rt::value::OptMut<'_, u64> {
+  pub fn opt_u64_mut_or(&mut self) -> __rt::OptMut<'_, u64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(3),
+        TestAll2::__tdp_info().field(3),
       )
     }
   }
@@ -2528,7 +2528,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_f32_or(&self) -> __s::option::Option<__rt::View<'_, f32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(4);
+      let field = TestAll2::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f32>(self.ptr.as_ptr()))
     }
@@ -2536,12 +2536,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_f32_mut(&mut self) -> __rt::Mut<'_, f32> {
     self.opt_f32_mut_or().into_mut()
   }
-  pub fn opt_f32_mut_or(&mut self) -> __rt::value::OptMut<'_, f32> {
+  pub fn opt_f32_mut_or(&mut self) -> __rt::OptMut<'_, f32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(4),
+        TestAll2::__tdp_info().field(4),
       )
     }
   }
@@ -2554,7 +2554,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_f64_or(&self) -> __s::option::Option<__rt::View<'_, f64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(5);
+      let field = TestAll2::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f64>(self.ptr.as_ptr()))
     }
@@ -2562,12 +2562,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_f64_mut(&mut self) -> __rt::Mut<'_, f64> {
     self.opt_f64_mut_or().into_mut()
   }
-  pub fn opt_f64_mut_or(&mut self) -> __rt::value::OptMut<'_, f64> {
+  pub fn opt_f64_mut_or(&mut self) -> __rt::OptMut<'_, f64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(5),
+        TestAll2::__tdp_info().field(5),
       )
     }
   }
@@ -2580,7 +2580,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_str_or(&self) -> __s::option::Option<__rt::View<'_, __rt::Str>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(6);
+      let field = TestAll2::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -2588,12 +2588,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_str_mut(&mut self) -> __rt::Mut<'_, __rt::Str> {
     self.opt_str_mut_or().into_mut()
   }
-  pub fn opt_str_mut_or(&mut self) -> __rt::value::OptMut<'_, __rt::Str> {
+  pub fn opt_str_mut_or(&mut self) -> __rt::OptMut<'_, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(6),
+        TestAll2::__tdp_info().field(6),
       )
     }
   }
@@ -2606,7 +2606,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_bool_or(&self) -> __s::option::Option<__rt::View<'_, bool>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(7);
+      let field = TestAll2::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -2614,12 +2614,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_bool_mut(&mut self) -> __rt::Mut<'_, bool> {
     self.opt_bool_mut_or().into_mut()
   }
-  pub fn opt_bool_mut_or(&mut self) -> __rt::value::OptMut<'_, bool> {
+  pub fn opt_bool_mut_or(&mut self) -> __rt::OptMut<'_, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(7),
+        TestAll2::__tdp_info().field(7),
       )
     }
   }
@@ -2632,7 +2632,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_recursive_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::test::TestAll>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(8);
+      let field = TestAll2::__tdp_info().field(8);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll>(self.ptr.as_ptr()))
     }
@@ -2640,12 +2640,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_recursive_mut(&mut self) -> __rt::Mut<'_, __::pz::test::TestAll> {
     self.opt_recursive_mut_or().into_mut()
   }
-  pub fn opt_recursive_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::test::TestAll> {
+  pub fn opt_recursive_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::test::TestAll> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(8),
+        TestAll2::__tdp_info().field(8),
       )
     }
   }
@@ -2655,7 +2655,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_nested_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::test::TestAll_Nested>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(9);
+      let field = TestAll2::__tdp_info().field(9);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr()))
     }
@@ -2663,12 +2663,12 @@ impl __::pz::test::TestAll2 {
   pub fn opt_nested_mut(&mut self) -> __rt::Mut<'_, __::pz::test::TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
   }
-  pub fn opt_nested_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::test::TestAll_Nested> {
+  pub fn opt_nested_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::test::TestAll_Nested> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(9),
+        TestAll2::__tdp_info().field(9),
       )
     }
   }
@@ -2678,7 +2678,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn opt_choice_or(&self) -> __s::option::Option<__rt::View<'_, __::pz::test::TestAll2>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(10);
+      let field = TestAll2::__tdp_info().field(10);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr()))
     }
@@ -2686,19 +2686,19 @@ impl __::pz::test::TestAll2 {
   pub fn opt_choice_mut(&mut self) -> __rt::Mut<'_, __::pz::test::TestAll2> {
     self.opt_choice_mut_or().into_mut()
   }
-  pub fn opt_choice_mut_or(&mut self) -> __rt::value::OptMut<'_, __::pz::test::TestAll2> {
+  pub fn opt_choice_mut_or(&mut self) -> __rt::OptMut<'_, __::pz::test::TestAll2> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(10),
+        TestAll2::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(&self) -> __rt::Slice<'_, i32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(11);
+      let field = TestAll2::__tdp_info().field(11);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i32>(self.ptr.as_ptr())
     }
@@ -2708,7 +2708,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_i32_mut(&mut self) -> __rt::Repeated<'_, i32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(11);
+      let field = TestAll2::__tdp_info().field(11);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
@@ -2716,7 +2716,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_i64(&self) -> __rt::Slice<'_, i64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(12);
+      let field = TestAll2::__tdp_info().field(12);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i64>(self.ptr.as_ptr())
     }
@@ -2726,7 +2726,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_i64_mut(&mut self) -> __rt::Repeated<'_, i64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(12);
+      let field = TestAll2::__tdp_info().field(12);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
@@ -2734,7 +2734,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_u32(&self) -> __rt::Slice<'_, u32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(13);
+      let field = TestAll2::__tdp_info().field(13);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -2744,7 +2744,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_u32_mut(&mut self) -> __rt::Repeated<'_, u32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(13);
+      let field = TestAll2::__tdp_info().field(13);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -2752,7 +2752,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_u64(&self) -> __rt::Slice<'_, u64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(14);
+      let field = TestAll2::__tdp_info().field(14);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u64>(self.ptr.as_ptr())
     }
@@ -2762,7 +2762,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_u64_mut(&mut self) -> __rt::Repeated<'_, u64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(14);
+      let field = TestAll2::__tdp_info().field(14);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
@@ -2770,7 +2770,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_f32(&self) -> __rt::Slice<'_, f32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(15);
+      let field = TestAll2::__tdp_info().field(15);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f32>(self.ptr.as_ptr())
     }
@@ -2780,7 +2780,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_f32_mut(&mut self) -> __rt::Repeated<'_, f32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(15);
+      let field = TestAll2::__tdp_info().field(15);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
@@ -2788,7 +2788,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_f64(&self) -> __rt::Slice<'_, f64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(16);
+      let field = TestAll2::__tdp_info().field(16);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f64>(self.ptr.as_ptr())
     }
@@ -2798,7 +2798,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_f64_mut(&mut self) -> __rt::Repeated<'_, f64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(16);
+      let field = TestAll2::__tdp_info().field(16);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
@@ -2806,7 +2806,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_str(&self) -> __rt::Slice<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(17);
+      let field = TestAll2::__tdp_info().field(17);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -2816,7 +2816,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_str_mut(&mut self) -> __rt::Repeated<'_, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(17);
+      let field = TestAll2::__tdp_info().field(17);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -2824,7 +2824,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_bool(&self) -> __rt::Slice<'_, bool> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(18);
+      let field = TestAll2::__tdp_info().field(18);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<bool>(self.ptr.as_ptr())
     }
@@ -2834,7 +2834,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_bool_mut(&mut self) -> __rt::Repeated<'_, bool> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(18);
+      let field = TestAll2::__tdp_info().field(18);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
@@ -2842,7 +2842,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_recursive(&self) -> __rt::Slice<'_, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(19);
+      let field = TestAll2::__tdp_info().field(19);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())
     }
@@ -2852,7 +2852,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_recursive_mut(&mut self) -> __rt::Repeated<'_, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(19);
+      let field = TestAll2::__tdp_info().field(19);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)
     }
@@ -2860,7 +2860,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_nested(&self) -> __rt::Slice<'_, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(20);
+      let field = TestAll2::__tdp_info().field(20);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())
     }
@@ -2870,7 +2870,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_nested_mut(&mut self) -> __rt::Repeated<'_, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(20);
+      let field = TestAll2::__tdp_info().field(20);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
@@ -2878,7 +2878,7 @@ impl __::pz::test::TestAll2 {
 
   pub fn rep_choice(&self) -> __rt::Slice<'_, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(21);
+      let field = TestAll2::__tdp_info().field(21);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())
     }
@@ -2888,7 +2888,7 @@ impl __::pz::test::TestAll2 {
   }
   pub fn rep_choice_mut(&mut self) -> __rt::Repeated<'_, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(21);
+      let field = TestAll2::__tdp_info().field(21);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)
     }
@@ -2957,28 +2957,28 @@ impl<'proto> __priv_TestAll2::View<'proto> {
       let number = self.ptr.as_ptr().cast::<u32>().read();
       match number {
         0 => __::pz::test::TestAll2Cases::Unset(__s::marker::PhantomData),
-        1 => __::pz::test::TestAll2Cases::OptI32(__::pz::test::TestAll2::__tdp_info().field(0).make_view::<i32>(self.ptr.as_ptr())),
-        2 => __::pz::test::TestAll2Cases::OptI64(__::pz::test::TestAll2::__tdp_info().field(1).make_view::<i64>(self.ptr.as_ptr())),
-        3 => __::pz::test::TestAll2Cases::OptU32(__::pz::test::TestAll2::__tdp_info().field(2).make_view::<u32>(self.ptr.as_ptr())),
-        4 => __::pz::test::TestAll2Cases::OptU64(__::pz::test::TestAll2::__tdp_info().field(3).make_view::<u64>(self.ptr.as_ptr())),
-        5 => __::pz::test::TestAll2Cases::OptF32(__::pz::test::TestAll2::__tdp_info().field(4).make_view::<f32>(self.ptr.as_ptr())),
-        6 => __::pz::test::TestAll2Cases::OptF64(__::pz::test::TestAll2::__tdp_info().field(5).make_view::<f64>(self.ptr.as_ptr())),
-        7 => __::pz::test::TestAll2Cases::OptStr(__::pz::test::TestAll2::__tdp_info().field(6).make_view::<__rt::Str>(self.ptr.as_ptr())),
-        8 => __::pz::test::TestAll2Cases::OptBool(__::pz::test::TestAll2::__tdp_info().field(7).make_view::<bool>(self.ptr.as_ptr())),
-        10 => __::pz::test::TestAll2Cases::OptRecursive(__::pz::test::TestAll2::__tdp_info().field(8).make_view::<__::pz::test::TestAll>(self.ptr.as_ptr())),
-        11 => __::pz::test::TestAll2Cases::OptNested(__::pz::test::TestAll2::__tdp_info().field(9).make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())),
-        12 => __::pz::test::TestAll2Cases::OptChoice(__::pz::test::TestAll2::__tdp_info().field(10).make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr())),
-        21 => __::pz::test::TestAll2Cases::RepI32(__::pz::test::TestAll2::__tdp_info().field(11).make_slice::<i32>(self.ptr.as_ptr())),
-        22 => __::pz::test::TestAll2Cases::RepI64(__::pz::test::TestAll2::__tdp_info().field(12).make_slice::<i64>(self.ptr.as_ptr())),
-        23 => __::pz::test::TestAll2Cases::RepU32(__::pz::test::TestAll2::__tdp_info().field(13).make_slice::<u32>(self.ptr.as_ptr())),
-        24 => __::pz::test::TestAll2Cases::RepU64(__::pz::test::TestAll2::__tdp_info().field(14).make_slice::<u64>(self.ptr.as_ptr())),
-        25 => __::pz::test::TestAll2Cases::RepF32(__::pz::test::TestAll2::__tdp_info().field(15).make_slice::<f32>(self.ptr.as_ptr())),
-        26 => __::pz::test::TestAll2Cases::RepF64(__::pz::test::TestAll2::__tdp_info().field(16).make_slice::<f64>(self.ptr.as_ptr())),
-        27 => __::pz::test::TestAll2Cases::RepStr(__::pz::test::TestAll2::__tdp_info().field(17).make_slice::<__rt::Str>(self.ptr.as_ptr())),
-        28 => __::pz::test::TestAll2Cases::RepBool(__::pz::test::TestAll2::__tdp_info().field(18).make_slice::<bool>(self.ptr.as_ptr())),
-        30 => __::pz::test::TestAll2Cases::RepRecursive(__::pz::test::TestAll2::__tdp_info().field(19).make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())),
-        31 => __::pz::test::TestAll2Cases::RepNested(__::pz::test::TestAll2::__tdp_info().field(20).make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())),
-        32 => __::pz::test::TestAll2Cases::RepChoice(__::pz::test::TestAll2::__tdp_info().field(21).make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())),
+        1 => __::pz::test::TestAll2Cases::OptI32(TestAll2::__tdp_info().field(0).make_view::<i32>(self.ptr.as_ptr())),
+        2 => __::pz::test::TestAll2Cases::OptI64(TestAll2::__tdp_info().field(1).make_view::<i64>(self.ptr.as_ptr())),
+        3 => __::pz::test::TestAll2Cases::OptU32(TestAll2::__tdp_info().field(2).make_view::<u32>(self.ptr.as_ptr())),
+        4 => __::pz::test::TestAll2Cases::OptU64(TestAll2::__tdp_info().field(3).make_view::<u64>(self.ptr.as_ptr())),
+        5 => __::pz::test::TestAll2Cases::OptF32(TestAll2::__tdp_info().field(4).make_view::<f32>(self.ptr.as_ptr())),
+        6 => __::pz::test::TestAll2Cases::OptF64(TestAll2::__tdp_info().field(5).make_view::<f64>(self.ptr.as_ptr())),
+        7 => __::pz::test::TestAll2Cases::OptStr(TestAll2::__tdp_info().field(6).make_view::<__rt::Str>(self.ptr.as_ptr())),
+        8 => __::pz::test::TestAll2Cases::OptBool(TestAll2::__tdp_info().field(7).make_view::<bool>(self.ptr.as_ptr())),
+        10 => __::pz::test::TestAll2Cases::OptRecursive(TestAll2::__tdp_info().field(8).make_view::<__::pz::test::TestAll>(self.ptr.as_ptr())),
+        11 => __::pz::test::TestAll2Cases::OptNested(TestAll2::__tdp_info().field(9).make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())),
+        12 => __::pz::test::TestAll2Cases::OptChoice(TestAll2::__tdp_info().field(10).make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr())),
+        21 => __::pz::test::TestAll2Cases::RepI32(TestAll2::__tdp_info().field(11).make_slice::<i32>(self.ptr.as_ptr())),
+        22 => __::pz::test::TestAll2Cases::RepI64(TestAll2::__tdp_info().field(12).make_slice::<i64>(self.ptr.as_ptr())),
+        23 => __::pz::test::TestAll2Cases::RepU32(TestAll2::__tdp_info().field(13).make_slice::<u32>(self.ptr.as_ptr())),
+        24 => __::pz::test::TestAll2Cases::RepU64(TestAll2::__tdp_info().field(14).make_slice::<u64>(self.ptr.as_ptr())),
+        25 => __::pz::test::TestAll2Cases::RepF32(TestAll2::__tdp_info().field(15).make_slice::<f32>(self.ptr.as_ptr())),
+        26 => __::pz::test::TestAll2Cases::RepF64(TestAll2::__tdp_info().field(16).make_slice::<f64>(self.ptr.as_ptr())),
+        27 => __::pz::test::TestAll2Cases::RepStr(TestAll2::__tdp_info().field(17).make_slice::<__rt::Str>(self.ptr.as_ptr())),
+        28 => __::pz::test::TestAll2Cases::RepBool(TestAll2::__tdp_info().field(18).make_slice::<bool>(self.ptr.as_ptr())),
+        30 => __::pz::test::TestAll2Cases::RepRecursive(TestAll2::__tdp_info().field(19).make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())),
+        31 => __::pz::test::TestAll2Cases::RepNested(TestAll2::__tdp_info().field(20).make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())),
+        32 => __::pz::test::TestAll2Cases::RepChoice(TestAll2::__tdp_info().field(21).make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())),
         _ => __s::unreachable!(),
       }
     }
@@ -2989,7 +2989,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_i32_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(0);
+      let field = TestAll2::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -3000,7 +3000,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_i64_or(self) -> __s::option::Option<__rt::View<'proto, i64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(1);
+      let field = TestAll2::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i64>(self.ptr.as_ptr()))
     }
@@ -3011,7 +3011,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_u32_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(2);
+      let field = TestAll2::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -3022,7 +3022,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_u64_or(self) -> __s::option::Option<__rt::View<'proto, u64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(3);
+      let field = TestAll2::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u64>(self.ptr.as_ptr()))
     }
@@ -3033,7 +3033,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_f32_or(self) -> __s::option::Option<__rt::View<'proto, f32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(4);
+      let field = TestAll2::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f32>(self.ptr.as_ptr()))
     }
@@ -3044,7 +3044,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_f64_or(self) -> __s::option::Option<__rt::View<'proto, f64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(5);
+      let field = TestAll2::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f64>(self.ptr.as_ptr()))
     }
@@ -3055,7 +3055,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_str_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(6);
+      let field = TestAll2::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -3066,7 +3066,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_bool_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(7);
+      let field = TestAll2::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -3077,7 +3077,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_recursive_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(8);
+      let field = TestAll2::__tdp_info().field(8);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll>(self.ptr.as_ptr()))
     }
@@ -3088,7 +3088,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_nested_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll_Nested>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(9);
+      let field = TestAll2::__tdp_info().field(9);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr()))
     }
@@ -3099,7 +3099,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
   }
   pub fn opt_choice_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll2>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(10);
+      let field = TestAll2::__tdp_info().field(10);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr()))
     }
@@ -3107,7 +3107,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(11);
+      let field = TestAll2::__tdp_info().field(11);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i32>(self.ptr.as_ptr())
     }
@@ -3118,7 +3118,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(12);
+      let field = TestAll2::__tdp_info().field(12);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i64>(self.ptr.as_ptr())
     }
@@ -3129,7 +3129,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(13);
+      let field = TestAll2::__tdp_info().field(13);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -3140,7 +3140,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(14);
+      let field = TestAll2::__tdp_info().field(14);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u64>(self.ptr.as_ptr())
     }
@@ -3151,7 +3151,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(15);
+      let field = TestAll2::__tdp_info().field(15);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f32>(self.ptr.as_ptr())
     }
@@ -3162,7 +3162,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(16);
+      let field = TestAll2::__tdp_info().field(16);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f64>(self.ptr.as_ptr())
     }
@@ -3173,7 +3173,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(17);
+      let field = TestAll2::__tdp_info().field(17);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -3184,7 +3184,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(18);
+      let field = TestAll2::__tdp_info().field(18);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<bool>(self.ptr.as_ptr())
     }
@@ -3195,7 +3195,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(19);
+      let field = TestAll2::__tdp_info().field(19);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())
     }
@@ -3206,7 +3206,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(20);
+      let field = TestAll2::__tdp_info().field(20);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())
     }
@@ -3217,7 +3217,7 @@ impl<'proto> __priv_TestAll2::View<'proto> {
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(21);
+      let field = TestAll2::__tdp_info().field(21);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())
     }
@@ -3398,28 +3398,28 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
       let number = self.ptr.as_ptr().cast::<u32>().read();
       match number {
         0 => __::pz::test::TestAll2Cases::Unset(__s::marker::PhantomData),
-        1 => __::pz::test::TestAll2Cases::OptI32(__::pz::test::TestAll2::__tdp_info().field(0).make_mut::<i32>(self.ptr.as_ptr(), self.arena)),
-        2 => __::pz::test::TestAll2Cases::OptI64(__::pz::test::TestAll2::__tdp_info().field(1).make_mut::<i64>(self.ptr.as_ptr(), self.arena)),
-        3 => __::pz::test::TestAll2Cases::OptU32(__::pz::test::TestAll2::__tdp_info().field(2).make_mut::<u32>(self.ptr.as_ptr(), self.arena)),
-        4 => __::pz::test::TestAll2Cases::OptU64(__::pz::test::TestAll2::__tdp_info().field(3).make_mut::<u64>(self.ptr.as_ptr(), self.arena)),
-        5 => __::pz::test::TestAll2Cases::OptF32(__::pz::test::TestAll2::__tdp_info().field(4).make_mut::<f32>(self.ptr.as_ptr(), self.arena)),
-        6 => __::pz::test::TestAll2Cases::OptF64(__::pz::test::TestAll2::__tdp_info().field(5).make_mut::<f64>(self.ptr.as_ptr(), self.arena)),
-        7 => __::pz::test::TestAll2Cases::OptStr(__::pz::test::TestAll2::__tdp_info().field(6).make_mut::<__rt::Str>(self.ptr.as_ptr(), self.arena)),
-        8 => __::pz::test::TestAll2Cases::OptBool(__::pz::test::TestAll2::__tdp_info().field(7).make_mut::<bool>(self.ptr.as_ptr(), self.arena)),
-        10 => __::pz::test::TestAll2Cases::OptRecursive(__::pz::test::TestAll2::__tdp_info().field(8).make_mut::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)),
-        11 => __::pz::test::TestAll2Cases::OptNested(__::pz::test::TestAll2::__tdp_info().field(9).make_mut::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)),
-        12 => __::pz::test::TestAll2Cases::OptChoice(__::pz::test::TestAll2::__tdp_info().field(10).make_mut::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)),
-        21 => __::pz::test::TestAll2Cases::RepI32(__::pz::test::TestAll2::__tdp_info().field(11).make_rep::<i32>(self.ptr.as_ptr(), self.arena)),
-        22 => __::pz::test::TestAll2Cases::RepI64(__::pz::test::TestAll2::__tdp_info().field(12).make_rep::<i64>(self.ptr.as_ptr(), self.arena)),
-        23 => __::pz::test::TestAll2Cases::RepU32(__::pz::test::TestAll2::__tdp_info().field(13).make_rep::<u32>(self.ptr.as_ptr(), self.arena)),
-        24 => __::pz::test::TestAll2Cases::RepU64(__::pz::test::TestAll2::__tdp_info().field(14).make_rep::<u64>(self.ptr.as_ptr(), self.arena)),
-        25 => __::pz::test::TestAll2Cases::RepF32(__::pz::test::TestAll2::__tdp_info().field(15).make_rep::<f32>(self.ptr.as_ptr(), self.arena)),
-        26 => __::pz::test::TestAll2Cases::RepF64(__::pz::test::TestAll2::__tdp_info().field(16).make_rep::<f64>(self.ptr.as_ptr(), self.arena)),
-        27 => __::pz::test::TestAll2Cases::RepStr(__::pz::test::TestAll2::__tdp_info().field(17).make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)),
-        28 => __::pz::test::TestAll2Cases::RepBool(__::pz::test::TestAll2::__tdp_info().field(18).make_rep::<bool>(self.ptr.as_ptr(), self.arena)),
-        30 => __::pz::test::TestAll2Cases::RepRecursive(__::pz::test::TestAll2::__tdp_info().field(19).make_rep::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)),
-        31 => __::pz::test::TestAll2Cases::RepNested(__::pz::test::TestAll2::__tdp_info().field(20).make_rep::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)),
-        32 => __::pz::test::TestAll2Cases::RepChoice(__::pz::test::TestAll2::__tdp_info().field(21).make_rep::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)),
+        1 => __::pz::test::TestAll2Cases::OptI32(TestAll2::__tdp_info().field(0).make_mut::<i32>(self.ptr.as_ptr(), self.arena)),
+        2 => __::pz::test::TestAll2Cases::OptI64(TestAll2::__tdp_info().field(1).make_mut::<i64>(self.ptr.as_ptr(), self.arena)),
+        3 => __::pz::test::TestAll2Cases::OptU32(TestAll2::__tdp_info().field(2).make_mut::<u32>(self.ptr.as_ptr(), self.arena)),
+        4 => __::pz::test::TestAll2Cases::OptU64(TestAll2::__tdp_info().field(3).make_mut::<u64>(self.ptr.as_ptr(), self.arena)),
+        5 => __::pz::test::TestAll2Cases::OptF32(TestAll2::__tdp_info().field(4).make_mut::<f32>(self.ptr.as_ptr(), self.arena)),
+        6 => __::pz::test::TestAll2Cases::OptF64(TestAll2::__tdp_info().field(5).make_mut::<f64>(self.ptr.as_ptr(), self.arena)),
+        7 => __::pz::test::TestAll2Cases::OptStr(TestAll2::__tdp_info().field(6).make_mut::<__rt::Str>(self.ptr.as_ptr(), self.arena)),
+        8 => __::pz::test::TestAll2Cases::OptBool(TestAll2::__tdp_info().field(7).make_mut::<bool>(self.ptr.as_ptr(), self.arena)),
+        10 => __::pz::test::TestAll2Cases::OptRecursive(TestAll2::__tdp_info().field(8).make_mut::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)),
+        11 => __::pz::test::TestAll2Cases::OptNested(TestAll2::__tdp_info().field(9).make_mut::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)),
+        12 => __::pz::test::TestAll2Cases::OptChoice(TestAll2::__tdp_info().field(10).make_mut::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)),
+        21 => __::pz::test::TestAll2Cases::RepI32(TestAll2::__tdp_info().field(11).make_rep::<i32>(self.ptr.as_ptr(), self.arena)),
+        22 => __::pz::test::TestAll2Cases::RepI64(TestAll2::__tdp_info().field(12).make_rep::<i64>(self.ptr.as_ptr(), self.arena)),
+        23 => __::pz::test::TestAll2Cases::RepU32(TestAll2::__tdp_info().field(13).make_rep::<u32>(self.ptr.as_ptr(), self.arena)),
+        24 => __::pz::test::TestAll2Cases::RepU64(TestAll2::__tdp_info().field(14).make_rep::<u64>(self.ptr.as_ptr(), self.arena)),
+        25 => __::pz::test::TestAll2Cases::RepF32(TestAll2::__tdp_info().field(15).make_rep::<f32>(self.ptr.as_ptr(), self.arena)),
+        26 => __::pz::test::TestAll2Cases::RepF64(TestAll2::__tdp_info().field(16).make_rep::<f64>(self.ptr.as_ptr(), self.arena)),
+        27 => __::pz::test::TestAll2Cases::RepStr(TestAll2::__tdp_info().field(17).make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)),
+        28 => __::pz::test::TestAll2Cases::RepBool(TestAll2::__tdp_info().field(18).make_rep::<bool>(self.ptr.as_ptr(), self.arena)),
+        30 => __::pz::test::TestAll2Cases::RepRecursive(TestAll2::__tdp_info().field(19).make_rep::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)),
+        31 => __::pz::test::TestAll2Cases::RepNested(TestAll2::__tdp_info().field(20).make_rep::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)),
+        32 => __::pz::test::TestAll2Cases::RepChoice(TestAll2::__tdp_info().field(21).make_rep::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)),
         _ => __s::unreachable!(),
       }
     }
@@ -3431,7 +3431,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn parse_pb(self, input: &mut dyn __s::io::Read) -> __s::result::Result<(), __rt::Error> {
     let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-    ctx.parse(self.ptr.as_ptr() as *mut u8, __::pz::test::TestAll2::__tdp_info())
+    ctx.parse(self.ptr.as_ptr() as *mut u8, TestAll2::__tdp_info())
   }
 
   pub fn opt_i32(self) -> __rt::View<'proto, i32> {
@@ -3439,7 +3439,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_i32_or(self) -> __s::option::Option<__rt::View<'proto, i32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(0);
+      let field = TestAll2::__tdp_info().field(0);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i32>(self.ptr.as_ptr()))
     }
@@ -3447,12 +3447,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_i32_mut(self) -> __rt::Mut<'proto, i32> {
     self.opt_i32_mut_or().into_mut()
   }
-  pub fn opt_i32_mut_or(self) -> __rt::value::OptMut<'proto, i32> {
+  pub fn opt_i32_mut_or(self) -> __rt::OptMut<'proto, i32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(0),
+        TestAll2::__tdp_info().field(0),
       )
     }
   }
@@ -3465,7 +3465,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_i64_or(self) -> __s::option::Option<__rt::View<'proto, i64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(1);
+      let field = TestAll2::__tdp_info().field(1);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<i64>(self.ptr.as_ptr()))
     }
@@ -3473,12 +3473,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_i64_mut(self) -> __rt::Mut<'proto, i64> {
     self.opt_i64_mut_or().into_mut()
   }
-  pub fn opt_i64_mut_or(self) -> __rt::value::OptMut<'proto, i64> {
+  pub fn opt_i64_mut_or(self) -> __rt::OptMut<'proto, i64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(1),
+        TestAll2::__tdp_info().field(1),
       )
     }
   }
@@ -3491,7 +3491,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_u32_or(self) -> __s::option::Option<__rt::View<'proto, u32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(2);
+      let field = TestAll2::__tdp_info().field(2);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u32>(self.ptr.as_ptr()))
     }
@@ -3499,12 +3499,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_u32_mut(self) -> __rt::Mut<'proto, u32> {
     self.opt_u32_mut_or().into_mut()
   }
-  pub fn opt_u32_mut_or(self) -> __rt::value::OptMut<'proto, u32> {
+  pub fn opt_u32_mut_or(self) -> __rt::OptMut<'proto, u32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(2),
+        TestAll2::__tdp_info().field(2),
       )
     }
   }
@@ -3517,7 +3517,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_u64_or(self) -> __s::option::Option<__rt::View<'proto, u64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(3);
+      let field = TestAll2::__tdp_info().field(3);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<u64>(self.ptr.as_ptr()))
     }
@@ -3525,12 +3525,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_u64_mut(self) -> __rt::Mut<'proto, u64> {
     self.opt_u64_mut_or().into_mut()
   }
-  pub fn opt_u64_mut_or(self) -> __rt::value::OptMut<'proto, u64> {
+  pub fn opt_u64_mut_or(self) -> __rt::OptMut<'proto, u64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(3),
+        TestAll2::__tdp_info().field(3),
       )
     }
   }
@@ -3543,7 +3543,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_f32_or(self) -> __s::option::Option<__rt::View<'proto, f32>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(4);
+      let field = TestAll2::__tdp_info().field(4);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f32>(self.ptr.as_ptr()))
     }
@@ -3551,12 +3551,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_f32_mut(self) -> __rt::Mut<'proto, f32> {
     self.opt_f32_mut_or().into_mut()
   }
-  pub fn opt_f32_mut_or(self) -> __rt::value::OptMut<'proto, f32> {
+  pub fn opt_f32_mut_or(self) -> __rt::OptMut<'proto, f32> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(4),
+        TestAll2::__tdp_info().field(4),
       )
     }
   }
@@ -3569,7 +3569,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_f64_or(self) -> __s::option::Option<__rt::View<'proto, f64>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(5);
+      let field = TestAll2::__tdp_info().field(5);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<f64>(self.ptr.as_ptr()))
     }
@@ -3577,12 +3577,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_f64_mut(self) -> __rt::Mut<'proto, f64> {
     self.opt_f64_mut_or().into_mut()
   }
-  pub fn opt_f64_mut_or(self) -> __rt::value::OptMut<'proto, f64> {
+  pub fn opt_f64_mut_or(self) -> __rt::OptMut<'proto, f64> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(5),
+        TestAll2::__tdp_info().field(5),
       )
     }
   }
@@ -3595,7 +3595,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_str_or(self) -> __s::option::Option<__rt::View<'proto, __rt::Str>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(6);
+      let field = TestAll2::__tdp_info().field(6);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__rt::Str>(self.ptr.as_ptr()))
     }
@@ -3603,12 +3603,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_str_mut(self) -> __rt::Mut<'proto, __rt::Str> {
     self.opt_str_mut_or().into_mut()
   }
-  pub fn opt_str_mut_or(self) -> __rt::value::OptMut<'proto, __rt::Str> {
+  pub fn opt_str_mut_or(self) -> __rt::OptMut<'proto, __rt::Str> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(6),
+        TestAll2::__tdp_info().field(6),
       )
     }
   }
@@ -3621,7 +3621,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_bool_or(self) -> __s::option::Option<__rt::View<'proto, bool>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(7);
+      let field = TestAll2::__tdp_info().field(7);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<bool>(self.ptr.as_ptr()))
     }
@@ -3629,12 +3629,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_bool_mut(self) -> __rt::Mut<'proto, bool> {
     self.opt_bool_mut_or().into_mut()
   }
-  pub fn opt_bool_mut_or(self) -> __rt::value::OptMut<'proto, bool> {
+  pub fn opt_bool_mut_or(self) -> __rt::OptMut<'proto, bool> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(7),
+        TestAll2::__tdp_info().field(7),
       )
     }
   }
@@ -3647,7 +3647,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_recursive_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(8);
+      let field = TestAll2::__tdp_info().field(8);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll>(self.ptr.as_ptr()))
     }
@@ -3655,12 +3655,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_recursive_mut(self) -> __rt::Mut<'proto, __::pz::test::TestAll> {
     self.opt_recursive_mut_or().into_mut()
   }
-  pub fn opt_recursive_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::test::TestAll> {
+  pub fn opt_recursive_mut_or(self) -> __rt::OptMut<'proto, __::pz::test::TestAll> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(8),
+        TestAll2::__tdp_info().field(8),
       )
     }
   }
@@ -3670,7 +3670,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_nested_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll_Nested>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(9);
+      let field = TestAll2::__tdp_info().field(9);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr()))
     }
@@ -3678,12 +3678,12 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_nested_mut(self) -> __rt::Mut<'proto, __::pz::test::TestAll_Nested> {
     self.opt_nested_mut_or().into_mut()
   }
-  pub fn opt_nested_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::test::TestAll_Nested> {
+  pub fn opt_nested_mut_or(self) -> __rt::OptMut<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(9),
+        TestAll2::__tdp_info().field(9),
       )
     }
   }
@@ -3693,7 +3693,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn opt_choice_or(self) -> __s::option::Option<__rt::View<'proto, __::pz::test::TestAll2>> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(10);
+      let field = TestAll2::__tdp_info().field(10);
       if !field.has(self.ptr.as_ptr()) { return __s::option::Option::None }
       __s::option::Option::Some(field.make_view::<__::pz::test::TestAll2>(self.ptr.as_ptr()))
     }
@@ -3701,19 +3701,19 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   pub fn opt_choice_mut(self) -> __rt::Mut<'proto, __::pz::test::TestAll2> {
     self.opt_choice_mut_or().into_mut()
   }
-  pub fn opt_choice_mut_or(self) -> __rt::value::OptMut<'proto, __::pz::test::TestAll2> {
+  pub fn opt_choice_mut_or(self) -> __rt::OptMut<'proto, __::pz::test::TestAll2> {
     unsafe {
-      __rt::value::OptMut::__wrap(
+      __rt::OptMut::__wrap(
         self.ptr.as_ptr(),
         self.arena,
-        __::pz::test::TestAll2::__tdp_info().field(10),
+        TestAll2::__tdp_info().field(10),
       )
     }
   }
 
   pub fn rep_i32(self) -> __rt::Slice<'proto, i32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(11);
+      let field = TestAll2::__tdp_info().field(11);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i32>(self.ptr.as_ptr())
     }
@@ -3723,7 +3723,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_i32_mut(self) -> __rt::Repeated<'proto, i32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(11);
+      let field = TestAll2::__tdp_info().field(11);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i32>(self.ptr.as_ptr(), self.arena)
     }
@@ -3731,7 +3731,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_i64(self) -> __rt::Slice<'proto, i64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(12);
+      let field = TestAll2::__tdp_info().field(12);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<i64>(self.ptr.as_ptr())
     }
@@ -3741,7 +3741,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_i64_mut(self) -> __rt::Repeated<'proto, i64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(12);
+      let field = TestAll2::__tdp_info().field(12);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<i64>(self.ptr.as_ptr(), self.arena)
     }
@@ -3749,7 +3749,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_u32(self) -> __rt::Slice<'proto, u32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(13);
+      let field = TestAll2::__tdp_info().field(13);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u32>(self.ptr.as_ptr())
     }
@@ -3759,7 +3759,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_u32_mut(self) -> __rt::Repeated<'proto, u32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(13);
+      let field = TestAll2::__tdp_info().field(13);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u32>(self.ptr.as_ptr(), self.arena)
     }
@@ -3767,7 +3767,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_u64(self) -> __rt::Slice<'proto, u64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(14);
+      let field = TestAll2::__tdp_info().field(14);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<u64>(self.ptr.as_ptr())
     }
@@ -3777,7 +3777,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_u64_mut(self) -> __rt::Repeated<'proto, u64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(14);
+      let field = TestAll2::__tdp_info().field(14);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<u64>(self.ptr.as_ptr(), self.arena)
     }
@@ -3785,7 +3785,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_f32(self) -> __rt::Slice<'proto, f32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(15);
+      let field = TestAll2::__tdp_info().field(15);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f32>(self.ptr.as_ptr())
     }
@@ -3795,7 +3795,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_f32_mut(self) -> __rt::Repeated<'proto, f32> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(15);
+      let field = TestAll2::__tdp_info().field(15);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f32>(self.ptr.as_ptr(), self.arena)
     }
@@ -3803,7 +3803,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_f64(self) -> __rt::Slice<'proto, f64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(16);
+      let field = TestAll2::__tdp_info().field(16);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<f64>(self.ptr.as_ptr())
     }
@@ -3813,7 +3813,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_f64_mut(self) -> __rt::Repeated<'proto, f64> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(16);
+      let field = TestAll2::__tdp_info().field(16);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<f64>(self.ptr.as_ptr(), self.arena)
     }
@@ -3821,7 +3821,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_str(self) -> __rt::Slice<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(17);
+      let field = TestAll2::__tdp_info().field(17);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__rt::Str>(self.ptr.as_ptr())
     }
@@ -3831,7 +3831,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_str_mut(self) -> __rt::Repeated<'proto, __rt::Str> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(17);
+      let field = TestAll2::__tdp_info().field(17);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__rt::Str>(self.ptr.as_ptr(), self.arena)
     }
@@ -3839,7 +3839,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_bool(self) -> __rt::Slice<'proto, bool> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(18);
+      let field = TestAll2::__tdp_info().field(18);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<bool>(self.ptr.as_ptr())
     }
@@ -3849,7 +3849,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_bool_mut(self) -> __rt::Repeated<'proto, bool> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(18);
+      let field = TestAll2::__tdp_info().field(18);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<bool>(self.ptr.as_ptr(), self.arena)
     }
@@ -3857,7 +3857,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_recursive(self) -> __rt::Slice<'proto, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(19);
+      let field = TestAll2::__tdp_info().field(19);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll>(self.ptr.as_ptr())
     }
@@ -3867,7 +3867,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_recursive_mut(self) -> __rt::Repeated<'proto, __::pz::test::TestAll> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(19);
+      let field = TestAll2::__tdp_info().field(19);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll>(self.ptr.as_ptr(), self.arena)
     }
@@ -3875,7 +3875,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_nested(self) -> __rt::Slice<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(20);
+      let field = TestAll2::__tdp_info().field(20);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr())
     }
@@ -3885,7 +3885,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_nested_mut(self) -> __rt::Repeated<'proto, __::pz::test::TestAll_Nested> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(20);
+      let field = TestAll2::__tdp_info().field(20);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll_Nested>(self.ptr.as_ptr(), self.arena)
     }
@@ -3893,7 +3893,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
 
   pub fn rep_choice(self) -> __rt::Slice<'proto, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(21);
+      let field = TestAll2::__tdp_info().field(21);
       if !field.has(self.ptr.as_ptr()) { return __rt::Slice::default() }
       field.make_slice::<__::pz::test::TestAll2>(self.ptr.as_ptr())
     }
@@ -3903,7 +3903,7 @@ impl<'proto> __priv_TestAll2::Mut<'proto>  {
   }
   pub fn rep_choice_mut(self) -> __rt::Repeated<'proto, __::pz::test::TestAll2> {
     unsafe {
-      let field = __::pz::test::TestAll2::__tdp_info().field(21);
+      let field = TestAll2::__tdp_info().field(21);
       field.init(self.ptr.as_ptr(), self.arena);
       field.make_rep::<__::pz::test::TestAll2>(self.ptr.as_ptr(), self.arena)
     }
@@ -3938,7 +3938,7 @@ impl __s::fmt::Debug for __::pz::test::TestAll2 {
   }
 }
 
-impl __rt::value::Type for __::pz::test::TestAll2 {
+impl __rt::Type for __::pz::test::TestAll2 {
   type __Storage = *mut u8;
 
   unsafe fn __make_view<'a>(ptr: *const *mut u8) -> __rt::View<'a, Self> {

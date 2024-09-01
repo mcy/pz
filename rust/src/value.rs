@@ -218,12 +218,12 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   }
 
   #[inline(always)]
-  pub unsafe fn make_view<'b>(&self) -> View<'b, T> {
+  unsafe fn make_view<'b>(&self) -> View<'b, T> {
     unsafe { T::__make_view(self.field.cast(self.ptr)) }
   }
 
   #[inline(always)]
-  pub unsafe fn make_mut<'b>(&mut self) -> Mut<'b, T> {
+  unsafe fn make_mut<'b>(&mut self) -> Mut<'b, T> {
     unsafe { T::__make_mut(self.field.cast(self.ptr), self.arena) }
   }
 }
