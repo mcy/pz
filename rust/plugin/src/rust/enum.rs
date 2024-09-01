@@ -3,15 +3,12 @@
 use crate::emit::SourceWriter;
 use crate::rust::names::deprecated;
 use crate::rust::names::ident;
-use crate::rust::names::type_name;
 use crate::Type;
+
 
 pub fn emit(ty: Type, w: &mut SourceWriter) {
   w.emit(
     vars! {
-      package: ident(ty.package()),
-      Name: ident(ty.name()),
-      Enum: type_name(ty),
       "Enum::Variants": |w| for field in ty.fields() {
         w.emit(
           vars! {
@@ -46,9 +43,9 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       $deprecated
       #[derive(Copy, Clone, PartialEq, Eq, Hash)]
       #[repr(transparent)]
-      pub struct $Enum(pub i32);
+      pub struct $Ident(pub i32);
 
-      impl $Enum {
+      impl $Type {
         ${Enum::Variants}
 
         pub const fn new() -> Self {
@@ -56,18 +53,18 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      impl __s::default::Default for $Enum {
+      impl __s::default::Default for $Type {
         fn default() -> Self {
           Self($DEFAULT)
         }
       }
 
-      impl __rt::ptr::Proxied for $Enum {
+      impl __rt::ptr::Proxied for $Type {
         type View<'a> = Self;
         type Mut<'a> = __rt::ptr::ScalarMut<'a, Self>;
       }
 
-      impl __s::fmt::Debug for $Enum {
+      impl __s::fmt::Debug for $Type {
         fn fmt(&self, fmt: &mut __s::fmt::Formatter) -> __s::fmt::Result {
           match *self {
             $debug_arms

@@ -14,6 +14,7 @@ build() {
     --plugin=rust \
     --output-dir=$(dirname $out) \
     --rust.rt-crate $rt \
+    --rust.package-prefix pz \
     $@
 
   if [[ -z $NOBUILD ]]; then

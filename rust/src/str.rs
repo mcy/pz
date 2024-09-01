@@ -467,4 +467,10 @@ pub(crate) mod private {
       return slice::from_raw_parts_mut(self.ptr, self.len);
     }
   }
+
+impl Default for Storage {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 }

@@ -15,6 +15,8 @@ use crate::rust::names::ident;
 use crate::rust::names::type_name;
 use crate::Type;
 
+use super::names::type_ident;
+
 pub fn emit(ty: Type, w: &mut SourceWriter) {
   let gen = FieldGenerators::build(ty.fields());
   let hasbit_words = gen.num_hasbits / 32 + (gen.num_hasbits % 32 != 0) as u32;
@@ -29,12 +31,8 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
   w.emit(
     vars! {
       hasbit_words,
-      package: ident(ty.package()),
-      Name: ident(ty.name()),
-      Type: type_name(ty),
-      NUM_FIELDS: ty.fields().count(),
       NUM_TYS: ty_ptrs.len(),
-      priv: format!("__priv_{}", type_name(ty)),
+      
       "Type::fields": |w| for field in &gen.fields {
         field.in_storage(w);
       },
@@ -193,7 +191,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
     r#"
       /// choice `$package.$Name`
       $deprecated
-      pub struct $Type {
+      pub struct $Ident {
         ptr: __z::ABox<$priv::Storage>,
         arena: __z::RawArena,
       }
@@ -278,7 +276,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      pub enum ${Type}Cases<'proto, Which: __rt::ptr::select::Select> {
+      pub enum ${Ident}Cases<'proto, Which: __rt::ptr::select::Select> {
         Unset($PhantomData<&'proto Which>),
         ${Type::Variants}
       }
@@ -420,7 +418,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      mod __priv_$Type {
+      mod $priv {
         pub use super::*;
 
         #[repr(C)]

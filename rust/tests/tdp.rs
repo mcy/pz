@@ -82,7 +82,7 @@ fn smoke() {
     0x09, 0x68, 0x65, 0x6c, 0x6c, 0x72, 0x6f, 0x70, 0x65, 0x73,
   ];
 
-  let proto = dbg!(proto::TestAll::from_pb(&mut &data[..]).unwrap());
+  let proto = dbg!(proto::test::TestAll::from_pb(&mut &data[..]).unwrap());
 
   assert_eq!(proto.opt_i32(), 42);
   assert_eq!(proto.opt_i64(), 42);
