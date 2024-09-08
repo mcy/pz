@@ -1,17 +1,17 @@
 //! Table-driven codec support.
 
 use std::alloc::Layout;
+use std::iter;
 use std::mem;
 use std::ptr::NonNull;
 
 use crate::arena::RawArena;
-use crate::Mut;
-use crate::Repeated;
-use crate::Slice;
-use crate::Type;
-use crate::View;
+use crate::str;
 
 pub mod parse;
+
+/// An opaque pointer to a message that can be manipulated with TDP.
+pub type Opaque = NonNull<u8>;
 
 /// A descriptor for a parseable type.
 ///
@@ -35,7 +35,7 @@ impl Desc {
 
   /// The number of bytes in this type's hasbits block, if it has one.
   pub fn hasbit_bytes(self) -> usize {
-    self.header().num_hasbit_words as usize * 4
+    self.header().num_hasbit_words as usize * mem::size_of::<u32>()
   }
 
   /// Gets the `n`th type associated with this `DescPtr`.
@@ -64,6 +64,34 @@ impl Desc {
     self.kind() == DescKind::Choice
   }
 
+  /// If this type is a choice, returns which of the choice variants is
+  /// selected.
+  ///
+  /// Returns `None` if this is not a choice. Returns `Some(0)` if it is but no
+  /// variant is selected.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must point to a valid, allocated value of this type.
+  pub unsafe fn which(self, raw: Opaque) -> Option<u32> {
+    if !self.is_choice() {
+      return None;
+    }
+    Some(raw.cast::<u32>().read())
+  }
+
+  /// If this type is a choice, replaces the currently selected variant.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must point to a valid, allocated value of this type, which must be
+  /// a choice. Note that this is a raw union tag set operation, which may cause
+  /// type-confusion bugs.
+  pub unsafe fn set_which(self, raw: Opaque, number: u32) -> u32 {
+    debug_assert!(self.is_choice());
+    mem::replace(unsafe { raw.cast::<u32>().as_mut() }, number)
+  }
+
   /// Returns the first field in this `Desc`.
   ///
   /// Returns `None` if this `Desc` has no fields.
@@ -85,6 +113,39 @@ impl Desc {
         self.raw().add(1).cast::<FieldStorage>().add(n as usize),
       ),
     )
+  }
+
+  /// Returns an iterator over this `Desc`'s fields.
+  pub fn fields(self) -> impl Iterator<Item = Field> {
+    let mut field = self.first_field();
+    iter::from_fn(move || {
+      let ret = field?;
+      field = Some(ret.next()).filter(|f| f.number() != 0);
+      Some(ret)
+    })
+  }
+
+  /// Clears all of the fields in `raw`.
+  ///
+  /// # Safety
+  ///
+  /// `raw` must point to a valid, allocated value of this type.
+  pub unsafe fn clear(self, raw: Opaque) {
+    if self.is_choice() {
+      // For choices, we just need to reset the which word. When we switch away
+      // in init(), it will clear the incoming field value for us.
+      self.set_which(raw, 0);
+      return;
+    }
+
+    // Clear every field directly. The only thing we need to do is obliterate
+    // the lengths of the repeated fields, and all of the hasbit words.
+    raw.write_bytes(0, self.hasbit_bytes());
+    for field in self.fields() {
+      if field.is_repeated() {
+        field.cast::<usize>(raw).write(0);
+      }
+    }
   }
 }
 
@@ -174,9 +235,9 @@ impl Field {
   /// # Safety
   ///
   /// `raw` must point to a valid, allocated value of this type.
-  pub unsafe fn has(&self, raw: *mut u8) -> bool {
-    if self.parent().is_choice() {
-      return raw.cast::<u32>().read() == self.number();
+  pub unsafe fn has(&self, raw: Opaque) -> bool {
+    if let Some(which) = self.parent().which(raw) {
+      return which == self.number();
     }
 
     if self.is_repeated() {
@@ -186,17 +247,17 @@ impl Field {
     raw.cast::<u32>().add(self.hasbit_word()).read() & self.hasbit_mask() != 0
   }
 
-  /// Initializes this field in a raw allocated value.
+  /// Initializes this field in a raw allocated value, if isn't already
+  /// initialized.
   ///
   /// # Safety
   ///
   /// `raw` must point to a valid, allocated value of this type.
   #[inline(always)]
-  pub unsafe fn init(&self, raw: *mut u8, arena: RawArena) {
+  pub unsafe fn init(&self, raw: Opaque, arena: RawArena) {
     let value = raw.add(self.offset());
     if self.parent().is_choice() {
-      let which = unsafe { &mut *raw.cast::<u32>() };
-      if mem::replace(which, self.number()) == self.number() {
+      if self.parent().set_which(raw, self.number()) == self.number() {
         return;
       }
 
@@ -208,7 +269,7 @@ impl Field {
     } else if !self.is_repeated() {
       // NOTE: The hasbits are always the first thing in the message
       // right now.
-      let word = raw.cast::<u32>().add(self.hasbit_word());
+      let word = raw.cast::<u32>().add(self.hasbit_word()).as_mut();
       if *word & self.hasbit_mask() != 0 {
         return;
       }
@@ -216,7 +277,7 @@ impl Field {
       *word |= self.hasbit_mask();
     }
 
-    // No need to do anything for repeated fields!
+    // Nothing to do to repeated fields here.
     if self.is_repeated() {
       return;
     }
@@ -228,18 +289,19 @@ impl Field {
       Kind::I32 | Kind::F32 => 4,
       Kind::I64 | Kind::F64 => 8,
       Kind::Bool => 1,
-      Kind::Str => mem::size_of::<(*mut u8, usize)>(),
+      Kind::Str => mem::size_of::<str::private::Storage>(),
       Kind::Type => {
         // Types are a little special because we need to allocate stuff.
         let desc = self.desc();
-        let ptr = &mut *value.cast::<*mut u8>();
-        match desc.kind() {
-          DescKind::Message if !ptr.is_null() => {
-            ptr.write_bytes(0, desc.hasbit_bytes())
+        let ptr = value.cast::<Option<Opaque>>().as_mut();
+        match ptr {
+          Some(ptr) => {
+            desc.clear(*ptr);
           }
-          _ => {
-            *ptr = arena.alloc(desc.layout()).as_ptr();
-            ptr.write_bytes(0, desc.layout().size());
+          None => {
+            let fresh = arena.alloc(desc.layout());
+            fresh.write_bytes(0, desc.layout().size());
+            *ptr = Some(fresh);
           }
         }
 
@@ -255,14 +317,21 @@ impl Field {
   /// # Safety
   ///
   /// `raw` must point to a valid, allocated value of this type.
-  pub unsafe fn clear(&self, raw: *mut u8) {
+  pub unsafe fn clear(&self, raw: Opaque) {
     if self.parent().is_choice() {
       raw.cast::<u32>().write(0);
       return;
     }
 
     if !self.is_repeated() {
-      *raw.cast::<u32>().add(self.hasbit_word()) &= !self.hasbit_mask();
+      *raw.cast::<u32>().add(self.hasbit_word()).as_mut() &=
+        !self.hasbit_mask();
+    } else {
+      // Zap the first eight bytes of the repeated field, which truncates to
+      // zero.
+      raw
+        .add(self.offset())
+        .write_bytes(0, mem::size_of::<usize>());
     }
   }
 
@@ -273,66 +342,8 @@ impl Field {
   /// `raw` must be a valid pointer to this field's message type, and `T` must
   /// be the right type for that field.
   #[inline(always)]
-  pub unsafe fn cast<T>(&self, raw: *mut u8) -> *mut T {
+  pub unsafe fn cast<T>(&self, raw: Opaque) -> NonNull<T> {
     raw.add(self.offset()).cast()
-  }
-
-  /// Offsets `raw` to a `T`'s storage and dereferences it into a view.
-  ///
-  /// # Safety
-  ///
-  /// `raw` must be a valid pointer to this field's message type, and `T` must
-  /// be the right type for that field.
-  #[inline(always)]
-  pub unsafe fn make_view<'a, T: Type + ?Sized>(
-    &self,
-    raw: *mut u8,
-  ) -> View<'a, T> {
-    T::__make_view(self.cast(raw))
-  }
-
-  /// Offsets `raw` to a `T`'s storage and dereferences it into a mutator.
-  ///
-  /// # Safety
-  ///
-  /// `raw` must be a valid pointer to this field's message type, and `T` must
-  /// be the right type for that field.
-  #[inline(always)]
-  pub unsafe fn make_mut<'a, T: Type + ?Sized>(
-    &self,
-    raw: *mut u8,
-    arena: RawArena,
-  ) -> Mut<'a, T> {
-    T::__make_mut(self.cast(raw), arena)
-  }
-
-  /// Offsets `raw` to a `T` vector and dereferences it into a repeated field slice.
-  ///
-  /// # Safety
-  ///
-  /// `raw` must be a valid pointer to this field's message type, and `T` must
-  /// be the right type for that field.
-  #[inline(always)]
-  pub unsafe fn make_slice<'a, T: Type + ?Sized>(
-    &self,
-    raw: *mut u8,
-  ) -> Slice<'a, T> {
-    Repeated::__wrap(&mut *self.cast(raw), RawArena::null()).into_view()
-  }
-
-  /// Offsets `raw` to a `T` vector and dereferences it into a repeated field.
-  ///
-  /// # Safety
-  ///
-  /// `raw` must be a valid pointer to this field's message type, and `T` must
-  /// be the right type for that field.
-  #[inline(always)]
-  pub unsafe fn make_rep<'a, T: Type + ?Sized>(
-    &self,
-    raw: *mut u8,
-    arena: RawArena,
-  ) -> Repeated<'a, T> {
-    Repeated::__wrap(&mut *self.cast(raw), arena)
   }
 }
 
@@ -366,8 +377,8 @@ impl<const FIELDS: usize> DescStorage<FIELDS> {
   /// This function assumes that all the relevant invariants of a `Desc` are
   /// observed (in other words, that this was constructed by the code
   /// generator or the runtime).
-  pub unsafe fn get(&'static self) -> Desc {
-    Desc(NonNull::from(self).cast())
+  pub const unsafe fn get(&'static self) -> Desc {
+    Desc(NonNull::new_unchecked(self as *const _ as *mut _))
   }
 }
 

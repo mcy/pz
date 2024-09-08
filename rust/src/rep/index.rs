@@ -2,16 +2,19 @@
 
 use std::fmt;
 use std::ops;
+use std::ptr::NonNull;
 
 use crate::arena::RawArena;
+use crate::rep::Elem;
+use crate::rep::Slice;
+use crate::rep::SliceMut;
+use crate::seal::Seal;
 use crate::Mut;
-use crate::Slice;
-use crate::SliceMut;
+use crate::Ref;
 use crate::Type;
-use crate::View;
 
 pub trait RepIndex: Clone + fmt::Debug {
-  type View<'a, T: Type + ?Sized>
+  type Ref<'a, T: Type + ?Sized>
   where
     T: 'a;
   type Mut<'a, T: Type + ?Sized>
@@ -21,38 +24,38 @@ pub trait RepIndex: Clone + fmt::Debug {
   #[doc(hidden)]
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>>;
+  ) -> Option<Self::Ref<'a, T>>;
 
   #[doc(hidden)]
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>>;
 }
 
 impl RepIndex for usize {
-  type View<'a, T: Type + ?Sized> = View<'a, T> where T: 'a;
+  type Ref<'a, T: Type + ?Sized> = Ref<'a, T> where T: 'a;
   type Mut<'a, T: Type + ?Sized> = Mut<'a, T> where T: 'a;
 
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>> {
+  ) -> Option<Self::Ref<'a, T>> {
     if self >= len {
       return None;
     }
 
-    Some(T::__make_view(ptr.add(self).cast()))
+    Some(T::__ref(Seal, ptr.add(self).cast()))
   }
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>> {
@@ -60,29 +63,29 @@ impl RepIndex for usize {
       return None;
     }
 
-    Some(T::__make_mut(ptr.add(self).cast(), arena))
+    Some(T::__mut(Seal, ptr.add(self).cast(), arena))
   }
 }
 
 impl RepIndex for ops::Range<usize> {
-  type View<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
+  type Ref<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
   type Mut<'a, T: Type + ?Sized> = SliceMut<'a, T> where T: 'a;
 
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>> {
+  ) -> Option<Self::Ref<'a, T>> {
     if self.start > self.end || self.end > len {
       return None;
     }
 
-    Some(Slice::__wrap(ptr.add(self.start), self.end - self.start))
+    Some(Slice::from_raw_parts(ptr.add(self.start), self.end - self.start))
   }
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>> {
@@ -90,7 +93,7 @@ impl RepIndex for ops::Range<usize> {
       return None;
     }
 
-    Some(SliceMut::__wrap(
+    Some(SliceMut::from_raw_parts(
       ptr.add(self.start),
       self.end - self.start,
       arena,
@@ -99,20 +102,20 @@ impl RepIndex for ops::Range<usize> {
 }
 
 impl RepIndex for ops::RangeTo<usize> {
-  type View<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
+  type Ref<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
   type Mut<'a, T: Type + ?Sized> = SliceMut<'a, T> where T: 'a;
 
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>> {
+  ) -> Option<Self::Ref<'a, T>> {
     RepIndex::__get(0..self.end, ptr, len)
   }
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>> {
@@ -121,20 +124,20 @@ impl RepIndex for ops::RangeTo<usize> {
 }
 
 impl RepIndex for ops::RangeFrom<usize> {
-  type View<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
+  type Ref<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
   type Mut<'a, T: Type + ?Sized> = SliceMut<'a, T> where T: 'a;
 
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>> {
+  ) -> Option<Self::Ref<'a, T>> {
     RepIndex::__get(self.start..len, ptr, len)
   }
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>> {
@@ -143,36 +146,36 @@ impl RepIndex for ops::RangeFrom<usize> {
 }
 
 impl RepIndex for ops::RangeFull {
-  type View<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
+  type Ref<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
   type Mut<'a, T: Type + ?Sized> = SliceMut<'a, T> where T: 'a;
 
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>> {
-    Some(Slice::__wrap(ptr, len))
+  ) -> Option<Self::Ref<'a, T>> {
+    Some(Slice::from_raw_parts(ptr, len))
   }
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>> {
-    Some(SliceMut::__wrap(ptr, len, arena))
+    Some(SliceMut::from_raw_parts(ptr, len, arena))
   }
 }
 
 impl RepIndex for ops::RangeInclusive<usize> {
-  type View<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
+  type Ref<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
   type Mut<'a, T: Type + ?Sized> = SliceMut<'a, T> where T: 'a;
 
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>> {
+  ) -> Option<Self::Ref<'a, T>> {
     if *self.end() == usize::MAX {
       return None;
     }
@@ -181,7 +184,7 @@ impl RepIndex for ops::RangeInclusive<usize> {
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>> {
@@ -193,20 +196,20 @@ impl RepIndex for ops::RangeInclusive<usize> {
 }
 
 impl RepIndex for ops::RangeToInclusive<usize> {
-  type View<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
+  type Ref<'a, T: Type + ?Sized> = Slice<'a, T> where T: 'a;
   type Mut<'a, T: Type + ?Sized> = SliceMut<'a, T> where T: 'a;
 
   unsafe fn __get<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
-  ) -> Option<Self::View<'a, T>> {
+  ) -> Option<Self::Ref<'a, T>> {
     RepIndex::__get(0..=self.end, ptr, len)
   }
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(
     self,
-    ptr: *mut T::__Storage,
+    ptr: NonNull<Elem<T>>,
     len: usize,
     arena: RawArena,
   ) -> Option<Self::Mut<'a, T>> {

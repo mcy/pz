@@ -3,65 +3,35 @@
 #![allow(clippy::missing_safety_doc)]
 
 use std::alloc::Layout;
-use std::mem;
 use std::ptr;
 use std::ptr::NonNull;
 use std::slice;
 
+use crate::tdp::Opaque;
+
 #[derive(Copy, Clone)]
 pub struct RawArena {
-  bump: *mut bumpalo::Bump,
+  bump: NonNull<bumpalo::Bump>,
 }
 
 impl RawArena {
   #[allow(clippy::new_without_default)]
   pub fn new() -> Self {
-    Self {
-      bump: Box::leak(Box::new(bumpalo::Bump::new())),
-    }
-  }
-
-  pub fn null() -> Self {
-    Self {
-      bump: ptr::null_mut(),
+    unsafe {
+      Self {
+        bump: NonNull::new_unchecked(Box::leak(Box::new(bumpalo::Bump::new()))),
+      }
     }
   }
 
   pub fn alloc(&self, layout: Layout) -> NonNull<u8> {
-    unsafe { &*self.bump }.alloc_layout(layout)
+    unsafe { self.bump.as_ref() }.alloc_layout(layout)
   }
 
   pub unsafe fn destroy(&self) {
-    let _ = Box::from_raw(self.bump);
+    let _ = Box::from_raw(self.bump.as_ptr());
   }
 }
-
-pub struct ABox<T>(NonNull<T>);
-impl<T> ABox<T> {
-  pub const unsafe fn from_ptr(ptr: *mut u8) -> Self {
-    Self(NonNull::new_unchecked(ptr.cast()))
-  }
-
-  pub const fn as_ptr(self) -> *mut u8 {
-    self.0.as_ptr().cast()
-  }
-
-  pub const unsafe fn as_ref<'a>(self) -> &'a T {
-    &*(self.0.as_ptr() as *const _)
-  }
-
-  pub unsafe fn as_mut<'a>(self) -> &'a mut T {
-    &mut *self.0.as_ptr()
-  }
-}
-
-impl<T> Clone for ABox<T> {
-  fn clone(&self) -> Self {
-    *self
-  }
-}
-
-impl<T> Copy for ABox<T> {}
 
 #[repr(C)]
 pub struct AVec<T> {
@@ -70,9 +40,8 @@ pub struct AVec<T> {
   // its internal pointer.
   len: usize,
 
-  // This is a raw pointer, NOT a NonNull, because it is intended to be
-  // initializeable by zeroing.
-  ptr: *mut T,
+  // Option so that all-zeros is a valid representation.
+  ptr: Option<NonNull<T>>,
   cap: usize,
 }
 
@@ -93,18 +62,18 @@ impl<T> Default for AVec<T> {
 impl<T> AVec<T> {
   pub const fn new() -> AVec<T> {
     Self {
-      ptr: 0 as *mut T,
+      ptr: None,
       cap: 0,
       len: 0,
     }
   }
 
-  pub fn as_ptr(&self) -> *mut T {
-    if self.ptr.is_null() {
-      return mem::align_of::<T>() as *mut T;
-    }
-
+  pub fn as_ptr(&self) -> Option<NonNull<T>> {
     self.ptr
+  }
+
+  pub fn as_raw_ptr(&self) -> *mut T {
+    self.ptr.map(NonNull::as_ptr).unwrap_or(ptr::null_mut())
   }
 
   #[allow(clippy::len_without_is_empty)]
@@ -112,16 +81,37 @@ impl<T> AVec<T> {
     self.len
   }
 
+  pub fn cap(&self) -> usize {
+    self.cap
+  }
+
   pub unsafe fn set_len(&mut self, len: usize) {
     self.len = len
   }
 
   pub unsafe fn as_slice(&self) -> &[T] {
-    slice::from_raw_parts(self.as_ptr(), self.len)
+    slice::from_raw_parts(
+      self.as_ptr().unwrap_or(NonNull::dangling()).as_ptr(),
+      self.len,
+    )
   }
 
   pub unsafe fn as_mut_slice(&mut self) -> &mut [T] {
-    slice::from_raw_parts_mut(self.as_ptr(), self.len)
+    slice::from_raw_parts_mut(
+      self.as_ptr().unwrap_or(NonNull::dangling()).as_ptr(),
+      self.len,
+    )
+  }
+
+  pub fn add(&mut self, arena: RawArena) -> &mut T {
+    unsafe {
+      self.resize(self.len() + 1, arena);
+      self.ptr.unwrap_unchecked().add(self.len() - 1).as_mut()
+    }
+  }
+
+  pub fn push(&mut self, value: T, arena: RawArena) {
+    *self.add(arena) = value;
   }
 
   pub fn resize(&mut self, new_len: usize, arena: RawArena) {
@@ -137,27 +127,34 @@ impl<T> AVec<T> {
     self.len = new_len;
   }
 
-  fn grow(&mut self, new_cap: Option<usize>, arena: RawArena) {
+  pub fn grow(&mut self, new_cap: Option<usize>, arena: RawArena) {
     let old_cap = self.cap;
     self.cap = new_cap.unwrap_or(self.cap * 2);
     if self.cap < 16 {
       self.cap = 16;
     }
 
-    let old_ptr = self.as_ptr();
-    self.ptr = arena
+    let new_ptr = arena
       .alloc(Layout::array::<T>(self.cap).unwrap())
-      .as_ptr()
       .cast::<T>();
 
     unsafe {
-      self.ptr.copy_from_nonoverlapping(old_ptr, old_cap);
-      self.ptr.add(old_cap).write_bytes(0, self.cap - old_cap);
+      if let Some(old_ptr) = self.as_ptr() {
+        new_ptr
+          .as_ptr()
+          .copy_from_nonoverlapping(old_ptr.as_ptr(), old_cap);
+        new_ptr
+          .as_ptr()
+          .add(old_cap)
+          .write_bytes(0, self.cap - old_cap);
+      }
     }
+
+    self.ptr = Some(new_ptr)
   }
 }
 
-impl AVec<*mut u8> {
+impl AVec<Option<Opaque>> {
   pub fn resize_msg(
     &mut self,
     new_len: usize,
@@ -176,11 +173,11 @@ impl AVec<*mut u8> {
 
     while self.len < new_len {
       unsafe {
-        let ptr = &mut *self.ptr.add(self.len);
-        if ptr.is_null() {
-          *ptr = arena.alloc(layout).as_ptr();
+        let ptr = &mut *self.as_raw_ptr().add(self.len);
+        if ptr.is_none() {
+          *ptr = Some(arena.alloc(layout));
         }
-        ptr.write_bytes(0, layout.size());
+        ptr.unwrap_unchecked().write_bytes(0, layout.size());
       }
 
       self.len += 1;

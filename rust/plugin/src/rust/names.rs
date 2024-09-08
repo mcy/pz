@@ -3,6 +3,7 @@
 use std::fmt;
 
 use crate::emit;
+use crate::Field;
 use crate::Type;
 
 const INESCAPABLE_KWS: &[&str] = &["crate", "self", "super", "Self"];
@@ -43,6 +44,17 @@ pub fn type_name(ty: Type) -> impl fmt::Display + '_ {
 pub fn type_ident(ty: Type) -> impl fmt::Display + '_ {
   emit::display(move |f| {
     f.write_fmt(format_args!("{}", ident(&ty.name().replace('.', "_"))))
+  })
+}
+
+pub fn field_name_type_name(field: Field) -> impl fmt::Display + '_ {
+  emit::display(move |f| {
+    write!(
+      f,
+      "__field_{}__{}",
+      type_ident(field.parent()),
+      field.name()
+    )
   })
 }
 

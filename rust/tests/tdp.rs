@@ -9,7 +9,7 @@ mod proto;
 // For now, inputs need to be pasted into `protoscope -s | xxd -i`.
 
 #[test]
-fn smoke() {
+fn smoke_message() {
   let _protoscope = r#"
     1: 42
     2: 42i32
@@ -82,7 +82,7 @@ fn smoke() {
     0x09, 0x68, 0x65, 0x6c, 0x6c, 0x72, 0x6f, 0x70, 0x65, 0x73,
   ];
 
-  let proto = dbg!(proto::test::TestAll::from_pb(&mut &data[..]).unwrap());
+  let proto = dbg!(proto::test::TestAll::parse(pz::Codec::Protobuf, &mut &data[..]).unwrap());
 
   assert_eq!(proto.opt_i32(), 42);
   assert_eq!(proto.opt_i64(), 42);
@@ -117,7 +117,7 @@ fn smoke_choice() {
 
   let data = [0x08, 0x2a];
 
-  let proto = dbg!(proto::test::TestAll2::from_pb(&mut &data[..]).unwrap());
+  let proto = proto::test::TestAll2::parse(pz::Codec::Protobuf, &mut &data[..]).unwrap();
 
   assert_eq!(proto.opt_i32_or(), Some(42));
   assert!(matches!(
@@ -141,7 +141,7 @@ fn smoke_choice() {
     0x74, 0x72, 0x69, 0x6e, 0x67, 0x73, 0x3f,
   ];
 
-  let proto = dbg!(proto::test::TestAll2::from_pb(&mut &data[..]).unwrap());
+  let proto = dbg!(proto::test::TestAll2::parse(pz::Codec::Protobuf, &mut &data[..]).unwrap());
 
   assert!(proto.opt_str_or().is_none());
   assert!(proto.opt_i32_or().is_none());

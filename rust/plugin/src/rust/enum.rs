@@ -42,7 +42,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       $deprecated
       #[derive(Copy, Clone, PartialEq, Eq, Hash)]
       #[repr(transparent)]
-      pub struct $Ident(pub i32);
+      pub struct $Ident(pub __s::primitive::i32);
 
       impl $Type {
         ${Enum::Variants}
@@ -58,9 +58,45 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      impl __rt::ptr::Proxied for $Type {
-        type View<'a> = Self;
-        type Mut<'a> = __rt::ptr::ScalarMut<'a, Self>;
+      impl __z::Type for $Type {
+        type __Storage<S: __z::Sealed> = Self;
+  
+        unsafe fn __ref<'a, S: __z::Sealed>(_: S, ptr: $NonNull<Self>) -> __rt::Ref<'a, Self> {
+          ptr.read()
+        }
+  
+        unsafe fn __mut<'a, S: __z::Sealed>(
+          _: S,
+          mut ptr: $NonNull<Self>,
+          _: __z::RawArena,
+        ) -> __rt::Mut<'a, Self> {
+          __rt::ScalarMut::__wrap(ptr.as_mut())
+        }
+      }
+  
+      impl __r::Views for $Type {
+        type Ref<'a> = Self;
+        type Mut<'a> = __rt::ScalarMut<'a, Self>;
+      }
+  
+      impl __r::RefView<'_> for $Type {
+        type Target = Self;
+  
+        fn as_ref(&self) -> Self {
+          *self
+        }
+      }
+
+      impl __r::Set<$Type> for $Type {
+        fn apply_to(self, mut m: __r::Mut<$Type>) {
+          m.set(self)
+        }
+      }
+
+      impl __r::Set<__r::Opt<$Type>> for $Type {
+        fn apply_to(self, m: __r::Mut<__r::Opt<$Type>>) {
+          m.into_inner().set(self)
+        }
       }
 
       impl $fmt::Debug for $Type {

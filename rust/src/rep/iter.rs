@@ -1,23 +1,26 @@
 //! Iterator implementations.
 
 use std::marker::PhantomData;
+use std::ptr::NonNull;
 
 use crate::arena::RawArena;
+use crate::rep::Elem;
+use crate::rep::Repeated;
+use crate::rep::Slice;
+use crate::rep::SliceMut;
+use crate::seal::Seal;
 use crate::Mut;
-use crate::Repeated;
-use crate::Slice;
-use crate::SliceMut;
+use crate::Ref;
 use crate::Type;
-use crate::View;
 
 pub struct Iter<'a, T: Type + ?Sized> {
-  start: *mut T::__Storage,
-  end: *mut T::__Storage,
+  start: NonNull<Elem<T>>,
+  end: NonNull<Elem<T>>,
   _ph: PhantomData<&'a T>,
 }
 
 impl<'a, T: Type + ?Sized> Iterator for Iter<'a, T> {
-  type Item = View<'a, T>;
+  type Item = Ref<'a, T>;
 
   fn next(&mut self) -> Option<Self::Item> {
     if self.start == self.end {
@@ -26,7 +29,7 @@ impl<'a, T: Type + ?Sized> Iterator for Iter<'a, T> {
     let ptr = self.start;
     unsafe {
       self.start = ptr.add(1);
-      Some(T::__make_view(ptr))
+      Some(T::__ref(Seal, ptr))
     }
   }
 
@@ -37,8 +40,8 @@ impl<'a, T: Type + ?Sized> Iterator for Iter<'a, T> {
 }
 
 pub struct IterMut<'a, T: Type + ?Sized> {
-  start: *mut T::__Storage,
-  end: *mut T::__Storage,
+  start: NonNull<Elem<T>>,
+  end: NonNull<Elem<T>>,
   arena: RawArena,
   _ph: PhantomData<&'a mut T>,
 }
@@ -53,7 +56,7 @@ impl<'a, T: Type + ?Sized> Iterator for IterMut<'a, T> {
     let ptr = self.start;
     unsafe {
       self.start = ptr.add(1);
-      Some(T::__make_mut(ptr, self.arena))
+      Some(T::__mut(Seal, ptr, self.arena))
     }
   }
 
@@ -64,7 +67,7 @@ impl<'a, T: Type + ?Sized> Iterator for IterMut<'a, T> {
 }
 
 impl<'a, T: Type + ?Sized> IntoIterator for &'a Slice<'_, T> {
-  type Item = View<'a, T>;
+  type Item = Ref<'a, T>;
   type IntoIter = Iter<'a, T>;
 
   fn into_iter(self) -> Self::IntoIter {
@@ -73,7 +76,7 @@ impl<'a, T: Type + ?Sized> IntoIterator for &'a Slice<'_, T> {
 }
 
 impl<'a, T: Type + ?Sized> IntoIterator for Slice<'a, T> {
-  type Item = View<'a, T>;
+  type Item = Ref<'a, T>;
   type IntoIter = Iter<'a, T>;
 
   fn into_iter(self) -> Self::IntoIter {
@@ -86,7 +89,7 @@ impl<'a, T: Type + ?Sized> IntoIterator for Slice<'a, T> {
 }
 
 impl<'a, T: Type + ?Sized> IntoIterator for &'a SliceMut<'_, T> {
-  type Item = View<'a, T>;
+  type Item = Ref<'a, T>;
   type IntoIter = Iter<'a, T>;
 
   fn into_iter(self) -> Self::IntoIter {
@@ -109,8 +112,8 @@ impl<'a, T: Type + ?Sized> IntoIterator for SliceMut<'a, T> {
 
   fn into_iter(self) -> Self::IntoIter {
     IterMut {
-      start: self.ptr,
-      end: unsafe { self.ptr.add(self.len) },
+      start: self.slice.ptr,
+      end: unsafe { self.slice.ptr.add(self.slice.len) },
       arena: self.arena,
       _ph: PhantomData,
     }
@@ -118,7 +121,7 @@ impl<'a, T: Type + ?Sized> IntoIterator for SliceMut<'a, T> {
 }
 
 impl<'a, T: Type + ?Sized> IntoIterator for &'a Repeated<'_, T> {
-  type Item = View<'a, T>;
+  type Item = Ref<'a, T>;
   type IntoIter = Iter<'a, T>;
 
   fn into_iter(self) -> Self::IntoIter {

@@ -51,6 +51,8 @@ pub fn rust_plugin() -> ! {
         #![allow(non_snake_case)]
         #![allow(unused)]
 
+        #![allow(clippy::borrow_interior_mutable_const)]
+        #![allow(clippy::declare_interior_mutable_const)]
         #![allow(clippy::derivable_impls)]
         #![allow(clippy::identity_op)]
         #![allow(clippy::needless_borrow)]
@@ -64,6 +66,7 @@ pub fn rust_plugin() -> ! {
 
         $use_rt as __rt;
         use __rt::__z;
+        use __rt::reflect as __r;
         use __z::std as __s;
         
         use __s::default::Default as _;
@@ -123,7 +126,7 @@ pub fn rust_plugin() -> ! {
             vars! { mod: m },
             "
               pub mod $mod {
-              use super::{__, __rt, __z, __s};
+              use super::{__, __rt, __z, __s, __r};
               use __s::default::Default as _;
             ",
           );
@@ -148,6 +151,7 @@ pub fn rust_plugin() -> ! {
 
             Read: "__s::io::Read",
             Write: "__s::io::Write",
+            Vec: "__s::vec::Vec",
 
             Option: "__s::option::Option",
             Some: "__s::option::Option::Some",
@@ -158,11 +162,20 @@ pub fn rust_plugin() -> ! {
             Err: "__s::result::Result::Err",
 
             // Common runtime types and names.
-            View: "__rt::View",
-            Mut: "__rt::Mut",
+            Ref: "__rt::reflect::Ref",
+            Mut: "__rt::reflect::Mut",
+            View: "__rt::reflect::View",
+            Type: "__rt::reflect::Type",
+
             Slice: "__rt::Slice",
             Repeated: "__rt::Repeated",
 
+            keyword: match ty.kind() {
+              crate::proto::r#type::Kind::Message => "message",
+              crate::proto::r#type::Kind::Struct => "struct",
+              crate::proto::r#type::Kind::Choice => "choice",
+              crate::proto::r#type::Kind::Enum => "enum",
+            },
             package: names::ident(ty.package()),
             Name: names::ident(ty.name()),
             Ident: names::type_ident(ty),

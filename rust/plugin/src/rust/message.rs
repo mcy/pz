@@ -11,7 +11,436 @@ use crate::rust::fields::FieldGenerators;
 use crate::rust::fields::Where;
 use crate::rust::names::ident;
 use crate::rust::names::type_name;
+use crate::rust::names::field_name_type_name;
 use crate::Type;
+
+pub fn emit_main_struct(w: &mut SourceWriter) {
+  w.write(
+    r#"
+      /// $keyword `$package.$Name`
+      pub struct $Ident {
+        ptr: $NonNull<$priv::Storage>,
+        arena: $Option<__z::RawArena>,
+      }
+
+      const _: () = {
+        assert!(
+          $size_of::<$priv::Storage>() < (u32::MAX as usize),
+          "storage size exceeds 4GB",
+        );
+      };
+    "#,
+  )
+}
+
+pub fn emit_common_methods(w: &mut SourceWriter) {
+  w.write(
+    r#"
+      /// Constructs a new, empty [`$Type`].
+      pub const fn new() -> Self {
+        Self { 
+          ptr: $NonNull::dangling(),
+          arena: $None, 
+        }
+      }
+
+      fn __init(&mut self) {
+        if self.arena.is_none() {
+          self.arena = $Some(__z::RawArena::new());
+        }
+      }
+
+      /// Deserializes a new [`$Type`] from the given stream.
+      /// 
+      /// See [`Message::parse()`][__r::Message::parse].
+      pub fn parse(codec: __rt::Codec, input: &mut dyn $Read) -> $Result<Self, __rt::Error> {
+        <Self as __r::Message>::parse(codec, input)
+      }
+      
+      /// Deserializes onto this [`$Type`] in place from the given stream.
+      /// 
+      /// See [`Message::parse_in_place()`][__r::Message::parse_in_place].
+      pub fn parse_in_place(
+        &mut self,
+        codec: __rt::Codec,
+        input: &mut dyn $Read,
+      ) -> $Result<(), __rt::Error> {
+        <Self as __r::Message>::parse_in_place(self, codec, input)
+      }
+
+      /// Serializes this [`$Type`] to the given stream.
+      /// 
+      /// See [`Message::emit()`][__r::Message::emit].
+      fn emit(&self, codec: __rt::Codec, output: &mut dyn $Write) -> $Result<(), __rt::Error> {
+        <Self as __r::Message>::emit(self, codec, output)
+      }
+
+      /// Serializes this [`$Type`] to an in-memory byte array.
+      /// 
+      /// See [`Message::to_bytes()`][__r::Message::to_bytes].
+      fn to_bytes(&self, codec: __rt::Codec) -> $Vec<__s::primitive::u8> {
+        <Self as __r::Message>::to_bytes(self, codec)
+      }
+
+      /// Converts an ordinary Rust reference into a message reference.
+      /// 
+      /// See [`Message::as_ref()`][__r::Message::as_ref].
+      pub fn as_ref(&self) -> $Ref<Self> {
+        use __s::convert::From;
+        unsafe { <Self as __z::Type>::__ref(
+          __z::Seal,
+          $NonNull::from(&self.ptr).cast::<$Option<__z::tdp::Opaque>>(),
+        )}
+      }
+    
+      /// Converts an ordinary Rust reference into a mutable message reference.
+      /// 
+      /// See [`Message::as_mut()`][__r::Message::as_mut].
+      pub fn as_mut(&mut self) -> $Mut<Self> {
+        use __s::convert::From;
+        self.__init();
+        unsafe { <Self as __z::Type>::__mut(
+          __z::Seal,
+          $NonNull::from(&mut self.ptr).cast::<$Option<__z::tdp::Opaque>>(),
+          self.arena.unwrap(),
+        )}
+      }
+
+      /// Selects the fields given by `selector` out of this message by reference.
+      /// 
+      /// See [`Message::get()`][__r::Message::get].
+      pub fn get<S>(&self, selector: S) -> __r::Ref<S::Type>
+      where
+        S: __r::Selector<$Type>,
+      {
+        <Self as __r::Message>::get(self, selector)
+      }
+
+      /// Selects the fields given by `selector` out of this message by mutable
+      /// reference.
+      ///
+      /// If this would result in aliasing, it generates a post-monomorphization
+      /// error.
+      /// 
+      /// See [`Message::get_mut()`][__r::Message::get_mut].
+      pub fn get_mut<S>(&mut self, selector: S) -> __r::Mut<S::Type>
+      where
+        S: __r::Selector<$Type>,
+      {
+        <Self as __r::Message>::get_mut(self, selector)
+      }
+
+      /// Resets this [`$Type`] to its default state.
+      /// 
+      /// See [`Message::clear()`][__r::Message::clear].
+      pub fn clear(&mut self) {
+        <Self as __r::Message>::clear(self)
+      }
+    "#,
+  )
+}
+
+pub fn emit_common_ref_methods(w: &mut SourceWriter) {
+  w.write(
+    r#"
+      /// Shortens this view's lifetime, analogous to reborrowing.
+      ///
+      /// See [`RefView::as_ref()`][__r::RefView::as_ref].
+      pub fn as_ref(&self) -> $priv::Ref { *self }
+
+      /// Serializes this [`$Type`] to the given stream.
+      /// 
+      /// See [`MessageRef::emit()`][__r::MessageRef::emit].
+      fn emit(&self, codec: __rt::Codec, output: &mut dyn $Write) -> $Result<(), __rt::Error> {
+        <Self as __r::MessageRef>::emit(self, codec, output)
+      }
+
+      /// Serializes this [`$Type`] to an in-memory byte array.
+      /// 
+      /// See [`MessageRef::to_bytes()`][__r::MessageRef::to_bytes].
+      fn to_bytes(&self, codec: __rt::Codec) -> $Vec<__s::primitive::u8> {
+        <Self as __r::MessageRef>::to_bytes(self, codec)
+      }
+
+      /// Selects the fields given by `selector` out of this message by reference.
+      /// 
+      /// See [`MessageRef::get()`][__r::MessageRef::get].
+      pub fn get<S>(self, selector: S) -> __r::Ref<'proto, S::Type>
+      where
+        S: __r::Selector<$Type>,
+      {
+        <Self as __r::MessageRef>::get(self, selector)
+      }
+    "#,
+  )
+}
+
+pub fn emit_common_mut_methods(w: &mut SourceWriter) {
+  w.write(
+    r#"
+      /// Shortens this view's lifetime, analogous to reborrowing.
+      ///
+      /// See [`MutView::as_ref()`][__r::MutView::as_ref].
+      pub fn as_ref(&self) -> $priv::Ref { self.r }
+
+      /// Consumes this mutator, converting it into an immutable view.
+      ///
+      /// See [`MutView::into_ref()`][__r::MutView::into_ref].
+      pub fn into_ref(self) -> $priv::Ref<'proto> { self.r }
+
+      /// Shortens this view's lifetime, analogous to reborrowing.
+      ///
+      /// See [`MutView::as_mut()`][__r::MutView::as_mut].
+      pub fn as_mut(&mut self) -> $priv::Mut {
+        $priv::Mut { r: self.r, arena: self.arena, _ph: $PhantomData, }
+      }
+
+      /// Parses onto this [`$Type`] in place from the given stream.
+      /// 
+      /// See [`MessageMut::parse_in_place()`][__r::MessageMut::parse_in_place()].
+      pub fn parse_in_place(
+        &mut self,
+        codec: __rt::Codec,
+        input: &mut dyn $Read,
+      ) -> $Result<(), __rt::Error> {
+        <Self as __r::MessageMut>::parse_in_place(self, codec, input)
+      }
+
+      /// Serializes this [`$Type`] to the given stream.
+      /// 
+      /// See [`MessageMut::emit()`][__r::MessageMut::emit].
+      fn emit(&self, codec: __rt::Codec, output: &mut dyn $Write) -> $Result<(), __rt::Error> {
+        <Self as __r::MessageMut>::emit(self, codec, output)
+      }
+
+      /// Serializes this [`$Type`] to an in-memory byte array.
+      /// 
+      /// See [`MessageMut::to_bytes()`][__r::MessageMut::to_bytes].
+      fn to_bytes(&self, codec: __rt::Codec) -> $Vec<__s::primitive::u8> {
+        <Self as __r::MessageMut>::to_bytes(self, codec)
+      }
+
+      /// Selects the fields given by `selector` out of this message by reference.
+      /// 
+      /// See [`MessageMut::get()`][__r::MessageMut::get].
+      pub fn get<S>(self, selector: S) -> __r::Ref<'proto, S::Type>
+      where
+        S: __r::Selector<$Type>,
+      {
+        <Self as __r::MessageMut>::get(self, selector)
+      }
+
+      /// Selects the fields given by `selector` out of this message by mutable
+      /// reference.
+      ///
+      /// If this would result in aliasing, it generates a post-monomorphization
+      /// error.
+      /// 
+      /// See [`MessageMut::get_mut()`][__r::MessageMut::get_mut].
+      pub fn get_mut<S>(self, selector: S) -> __r::Mut<'proto, S::Type>
+      where
+        S: __r::Selector<$Type>,
+      {
+        <Self as __r::MessageMut>::get_mut(self, selector)
+      }
+
+      /// Resets this [`$Type`] to its default state.
+      /// 
+      /// See [`MessageMut::clear()`][__r::MessageMut::clear].
+      pub fn clear(&mut self) {
+        <Self as __r::MessageMut>::clear(self)
+      }
+    "#
+  )
+}
+
+pub fn emit_impls(w: &mut SourceWriter) {
+  w.write(
+    r#"
+      impl __z::Type for $Type {
+        type __Storage<S: __z::Sealed> = $Option<__z::tdp::Opaque>;
+
+        unsafe fn __ref<'a, S: __z::Sealed>(
+          _: S,
+          ptr: $NonNull<$Option<__z::tdp::Opaque>>,
+        ) -> __r::Ref<'a, Self> {
+          match ptr.read() {
+            $None => $Type::DEFAULT.as_ref(),
+            $Some(ptr) if ptr == $NonNull::dangling() => $Type::DEFAULT.as_ref(),
+            $Some(ptr) => $priv::Ref { ptr: ptr.cast(), _ph: $PhantomData }
+          }
+        }
+
+        unsafe fn __mut<'a, S: __z::Sealed>(
+          s: S,
+          mut outer: $NonNull<$Option<__z::tdp::Opaque>>,
+          arena: __z::RawArena,
+        ) -> __r::Mut<'a, Self> {
+          let ptr = outer.as_mut();
+          if ptr.is_none() || *ptr == $Some($NonNull::<$priv::Storage>::dangling().cast::<u8>()) {
+            let new = arena.alloc(Self::__LAYOUT);
+            new.write_bytes(0, Self::__LAYOUT.size());
+            *ptr = $Some(new);
+          }
+
+          $priv::Mut {
+            r: Self::__ref(s, outer),
+            arena,
+            _ph: $PhantomData,
+          }
+        }
+
+        unsafe fn __resize<S: __z::Sealed>(
+          _: S,
+          vec: &mut __z::AVec<$Option<__z::tdp::Opaque>>,
+          new_len: usize,
+          arena: __z::RawArena,
+        ) {
+          vec.resize(new_len, arena)
+        }
+      }
+
+      impl __r::Views for $Type {
+        type Ref<'a> = $priv::Ref<'a>;
+        type Mut<'a> = $priv::Mut<'a>;
+      }
+
+      impl<'a> __r::RefView<'a> for $priv::Ref<'a> {
+        type Target = $Type;
+        fn as_ref(&self) -> $priv::Ref { *self }
+      }
+
+      impl<'a> __r::MutView<'a> for $priv::Mut<'a> {
+        type Target = $Type;
+        fn as_ref(&self) -> $priv::Ref { self.r }
+        fn into_ref(self) -> $priv::Ref<'a> { self.r }
+        fn as_mut(&mut self) -> $priv::Mut {
+          $priv::Mut { r: self.r, arena: self.arena, _ph: $PhantomData, }
+        }
+      }
+
+      impl __r::Message for $Type {
+        const DEFAULT: &'static Self = $Type::DEFAULT;
+
+        fn as_ref(&self) -> __r::Ref<Self> {
+          Self::as_ref(self)
+        }
+        fn as_mut(&mut self) -> __r::Mut<Self> {
+          Self::as_mut(self)
+        }
+      }
+
+      impl<'a> __r::MessageRef<'a> for $priv::Ref<'a> {
+        type Message = $Type;
+      }
+      impl<'a> __r::MessageMut<'a> for $priv::Mut<'a> {
+        type Message = $Type;
+      }
+
+      impl $Default for $Type {
+        fn default() -> Self {
+          Self::new()
+        }
+      }
+
+      impl<T: __r::Set<$Type>> __s::convert::From<T> for $Type {
+        fn from(value: T) -> $Type {
+          let mut msg = Self::default();
+          value.apply_to(msg.as_mut());
+          msg
+        }
+      }
+
+      impl __r::Set<$Type> for &$Type {
+        fn apply_to(self, mut m: __r::Mut<$Type>) {
+          $Type::__memcpy(m, self.as_ref())
+        }
+      }
+
+      impl __r::Set<__r::Opt<$Type>> for &$Type {
+        fn apply_to(self, m: __r::Mut<__r::Opt<$Type>>) {
+          $Type::__memcpy(m.into_inner(), self.as_ref())
+        }
+      }
+
+      impl __r::Set<$Type> for $Ref<'_, $Type> {
+        fn apply_to(self, mut m: __r::Mut<$Type>) {
+          $Type::__memcpy(m, self)
+        }
+      }
+
+      impl __r::Set<__r::Opt<$Type>> for $Ref<'_, $Type> {
+        fn apply_to(self, m: __r::Mut<__r::Opt<$Type>>) {
+          $Type::__memcpy(m.into_inner(), self)
+        }
+      }
+
+      impl __r::Set<$Type> for &$Mut<'_, $Type> {
+        fn apply_to(self, mut m: __r::Mut<$Type>) {
+          $Type::__memcpy(m, self.as_ref())
+        }
+      }
+
+      impl __r::Set<__r::Opt<$Type>> for &$Mut<'_, $Type> {
+        fn apply_to(self, m: __r::Mut<__r::Opt<$Type>>) {
+          $Type::__memcpy(m.into_inner(), self.as_ref())
+        }
+      }
+
+      impl $Default for $priv::Ref<'_> {
+        fn default() -> Self {
+          $Type::DEFAULT.as_ref()
+        }
+      }
+
+      impl __s::ops::Drop for $Type {
+        fn drop(&mut self) {
+          if let $Some(arena) = self.arena {
+            unsafe { arena.destroy() }
+          }
+        }
+      }
+
+      impl $fmt::Debug for $priv::Ref<'_> {
+        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
+          fmt.write_str("$package.$Name ")?;
+          let mut debug = __z::Debug::new(fmt);
+          self.__debug(&mut debug)
+        }
+      }
+
+      impl $fmt::Debug for $priv::Mut<'_> {
+        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
+          $fmt::Debug::fmt(&self.as_ref(), fmt)
+        }
+      }
+
+      impl $fmt::Debug for $Type {
+        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
+          $fmt::Debug::fmt(&self.as_ref(), fmt)
+        }
+      }
+    "#,
+  )
+}
+
+pub fn emit_view_types(w: &mut SourceWriter) {
+  w.write(
+    r#"
+      #[derive(Copy, Clone)]
+      pub struct Ref<'proto> {
+        pub(in super) ptr: $NonNull<$priv::Storage>,
+        pub(in super) _ph: $PhantomData<&'proto $Type>,
+      }
+      
+      pub struct Mut<'proto> {
+        pub(in super) r: Ref<'proto>,
+        pub(in super) arena: __z::RawArena,
+        pub(in super) _ph: $PhantomData<&'proto mut $Type>,
+      }
+    "#,
+  )
+}
 
 pub fn emit(ty: Type, w: &mut SourceWriter) {
   let gen = FieldGenerators::build(ty.fields());
@@ -28,7 +457,10 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
     vars! {
       hasbit_words,
       NUM_TYS: ty_ptrs.len(),
-
+      "Type::struct": |w| emit_main_struct(w),
+      "Type::common": |w| emit_common_methods(w),
+      "Type::impls": |w| emit_impls(w),
+      "Type::views": |w| emit_view_types(w),
       "Type::fields": |w| for field in &gen.fields {
         field.in_storage(w);
       },
@@ -40,13 +472,29 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         field.in_mut_methods(Where::TypeImpl, w);
         w.new_line();
       },
+      "Type::memcpys": |w| for field in &gen.fields {
+        w.emit(
+          vars! {
+            __name: field_name_type_name(field.field),
+          },
+          r#"
+            __r::Set::<<$Type as __r::Field<$__name>>::Type>::apply_to(src.get($__name{}), dst.as_mut().get_mut($__name{}));
+          "#
+        );
+      },
+      "Type::field_impls": |w| for field in &gen.fields {
+        field.in_impls(w);
+        w.new_line();
+      },
       "Type::debug": |w| for field in &gen.fields {
         field.in_debug(w);
       },
-      "View::access": |w| for field in &gen.fields {
+      "Ref::common": |w| emit_common_ref_methods(w),
+      "Ref::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::ViewImpl, w);
         w.new_line();
       },
+      "Mut::common": |w| emit_common_mut_methods(w),
       "Mut::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::MutImpl, w);
         field.in_mut_methods(Where::MutImpl, w);
@@ -120,124 +568,99 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       },
     },
     r#"
-      /// message `$package.$Name`
-      $deprecated
-      pub struct $Ident {
-        ptr: __z::ABox<$priv::Storage>,
-        arena: __z::RawArena,
+      ${Type::struct}
+
+      mod $priv {
+        pub use super::*;
+
+        ${Type::views}
+
+        #[repr(C)]
+        pub struct Storage {
+          pub(crate) __hasbits: [u32; $hasbit_words],
+          ${Type::fields}    
+        }
       }
 
-      const _: () = {
-        assert!(
-          $size_of::<$priv::Storage>() < (u32::MAX as usize),
-          "storage size excees 4GB",
-        );
-      };
-
       impl $Type {
-        pub const DEFAULT: $View<'static, Self> = unsafe {
-          const VALUE: $priv::Storage = $priv::Storage {
+        /// The default value for [`Type`], provided as a static constant.
+        ///
+        /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
+        pub const DEFAULT: &'static Self = unsafe { &Self {
+          ptr: $NonNull::new_unchecked(&const { $priv::Storage {
             __hasbits: [0; $hasbit_words],
             ${Type::field_init}
-          };
-          $View::<Self> {
-            ptr: __z::ABox::from_ptr(&VALUE as *const $priv::Storage as *mut $priv::Storage as *mut u8),
-            _ph: $PhantomData,
-          }
-        };
+          }} as *const $priv::Storage as *mut $priv::Storage),
+          arena: $None,
+        }};
         
-        pub fn new() -> Self {
-          let arena = __z::RawArena::new();
-          let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
-          unsafe {
-            ptr.write_bytes(0, Self::__LAYOUT.size());
-            Self { ptr: __z::ABox::from_ptr(ptr), arena }
-          }
-        }
-
-        pub fn from_pb(input: &mut dyn $Read) -> $Result<Self, __rt::Error> {
-          let mut new = Self::new();
-          new.parse_pb(input)?;
-          $Ok(new)
-        }
-
-        pub fn parse_pb(&mut self, input: &mut dyn $Read) -> $Result<(), __rt::Error> {
-          self.as_mut().parse_pb(input)
-        }
-
-        pub fn as_view(&self) -> $View<Self> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-
-        pub fn as_mut(&mut self) -> $Mut<Self> {
-          $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
-        }
-
-        pub fn clear(&mut self) {
-          unsafe { $Type::__raw_clear(self.ptr.as_ptr()) }
-        }
-
-        pub fn into_raw(self) -> *mut u8 {
-          self.ptr.as_ptr()
-        }
+        ${Type::common}
 
         ${Type::access}
 
         #[doc(hidden)]
         pub const __LAYOUT: $Layout = $Layout::new::<$priv::Storage>();
         #[doc(hidden)]
-        pub unsafe fn __raw_clear(raw: *mut u8) {
-          (&mut *raw.cast::<$priv::Storage>()).__hasbits = [0; $hasbit_words];
+        pub unsafe fn __raw_clear(raw: __z::tdp::Opaque) {
+          raw.cast::<$priv::Storage>().as_mut().__hasbits = [0; $hasbit_words];
         }
         #[doc(hidden)]
         pub fn __tdp_info() -> __z::tdp::Desc {
-          unsafe { $priv::TDP_INFO.get() }
+          <Self as __z::Message>::__TDP
         }
+
         #[doc(hidden)]
-        pub unsafe fn __raw_data(&self) -> &[u8] {
-          __s::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
+        fn __memcpy(mut dst: $Mut<$Type>, src: $Ref<$Type>) {
+          ${Type::memcpys}
         }
       }
 
-      impl $Default for $Type {
-        fn default() -> Self {
-          Self::new()
+      impl __z::Message for $Type {
+        const __TDP: __z::tdp::Desc = {
+          type Tdp = __z::tdp::DescStorage<{$NUM_FIELDS + 1}>;
+          const STATIC: Tdp = Tdp {
+            header: __z::tdp::DescHeader {
+              size: {
+                let size = $Type::__LAYOUT.size();
+                assert!(size <= (u32::MAX as usize));
+                size as u32
+              },
+
+              descs: {
+                const DESCS: &[fn() -> __z::tdp::Desc] = &[
+                  $tdp_descs
+                ];
+                DESCS.as_ptr()
+              },
+              
+              num_hasbit_words: $hasbit_words,
+              kind: __z::tdp::DescKind::Message,
+            },
+
+            fields: [
+              $tdp_fields
+              __z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
+            ],
+          };
+
+          unsafe { STATIC.get() }
+        };
+
+        fn __is_null(&self, _: impl __z::Sealed) -> bool {
+          self.ptr == $NonNull::dangling()
         }
+        fn __raw(_: impl __z::Sealed, ptr: __r::Ref<Self>) -> __z::tdp::Opaque { ptr.ptr.cast() }
+        fn __arena(_: impl __z::Sealed, ptr: &mut __r::Mut<Self>) -> __z::RawArena { ptr.arena }
       }
 
-      impl __rt::ptr::Proxied for $Type {
-        type View<'proto> = $priv::View<'proto>;
-        type Mut<'proto> = $priv::Mut<'proto>;
-      }
+      ${Type::impls}
 
-      impl __rt::Type for $Type {
-        type __Storage = *mut u8;
+      ${Type::field_impls}
 
-        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> $View<'a, Self> {
-          $priv::View {
-            ptr: __z::ABox::from_ptr(ptr.read()),
-            _ph: $PhantomData,
-          }
-        }
-        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __z::RawArena) -> $Mut<'a, Self> {
-          $priv::Mut {
-            ptr: __z::ABox::from_ptr(ptr.read()),
-            arena,
-            _ph: $PhantomData,
-          }
-        }
+      impl<'proto> $priv::Ref<'proto> {
+        ${Ref::common}
 
-        unsafe fn __resize(vec: &mut __z::AVec<*mut u8>, new_len: usize, arena: __z::RawArena) {
-          vec.resize_msg(new_len, arena, Self::__LAYOUT)
-        }
-      }
-
-      impl<'proto> $priv::View<'proto> {
-        pub fn as_view(&self) -> $View<$Type> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-        
-        ${View::access}
+        ${Ref::access}
 
         #[doc(hidden)]
         pub fn __debug(self, debug: &mut __z::Debug) -> $fmt::Result {
@@ -252,129 +675,10 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         }
       }
 
-      impl $Default for $priv::View<'_> {
-        fn default() -> Self {
-          $Type::DEFAULT
-        }
-      }
-
       impl<'proto> $priv::Mut<'proto>  {
-        pub fn as_view(&self) -> $View<$Type> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-
-        pub fn into_view(self) -> $View<'proto, $Type> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-
-        pub fn as_mut(&mut self) -> $Mut<$Type> {
-          $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
-        }
-
-        pub fn clear(self) {
-          unsafe { $Type::__raw_clear(self.ptr.as_ptr()) }
-        }
-
-        pub fn parse_pb(self, input: &mut dyn $Read) -> $Result<(), __rt::Error> {
-          let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-          ctx.parse(self.ptr.as_ptr() as *mut u8, $TDP)
-        }
+        ${Mut::common}
 
         ${Mut::access}
-      }
-
-      impl __s::ops::Drop for $Type {
-        fn drop(&mut self) {
-          unsafe { self.arena.destroy() }
-        }
-      }
-
-      impl $fmt::Debug for $priv::View<'_> {
-        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
-          fmt.write_str("$package.$Name ")?;
-          let mut debug = __z::Debug::new(fmt);
-          self.__debug(&mut debug)
-        }
-      }
-
-      impl $fmt::Debug for $priv::Mut<'_> {
-        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
-          use __rt::ptr::ViewFor;
-          $fmt::Debug::fmt(&self.as_view(), fmt)
-        }
-      }
-
-      impl $fmt::Debug for $Type {
-        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
-          $fmt::Debug::fmt(&self.as_view(), fmt)
-        }
-      }
-
-      mod $priv {
-        pub use super::*;
-
-        #[repr(C)]
-        pub struct Storage {
-          pub(crate) __hasbits: [u32; $hasbit_words],
-          ${Type::fields}    
-        }
-       
-        pub static TDP_INFO: __z::tdp::DescStorage<{$NUM_FIELDS + 1}> =
-          __z::tdp::DescStorage::<{$NUM_FIELDS + 1}> {
-            header: __z::tdp::DescHeader {
-              size: {
-                let size = $Type::__LAYOUT.size();
-                assert!(size <= (u32::MAX as usize));
-                size as u32
-              },
-              descs: {
-                const DESCS: &[fn() -> __z::tdp::Desc] = &[
-                  $tdp_descs
-                ];
-                DESCS.as_ptr()
-              },
-              num_hasbit_words: $hasbit_words,
-              kind: __z::tdp::DescKind::Message,
-            },
-            fields: [
-              $tdp_fields
-              __z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
-            ],
-          };
-
-        #[derive(Copy, Clone)]
-        pub struct View<'proto> {
-          pub(in super) ptr: __z::ABox<$priv::Storage>,
-          pub(in super) _ph: $PhantomData<&'proto $Type>,
-        }
-       
-        impl<'proto> __rt::ptr::ViewFor<'proto, super::$Type> for View<'proto> {
-          fn as_view(&self) -> View {
-            View { ptr: self.ptr, _ph: $PhantomData }
-          }
-        }
-
-        pub struct Mut<'proto> {
-          pub(in super) ptr: __z::ABox<$priv::Storage>,
-          pub(in super) _ph: $PhantomData<&'proto mut $Type>,
-          pub(in super) arena: __z::RawArena,
-        }
-       
-        impl<'proto> __rt::ptr::ViewFor<'proto, super::$Type> for Mut<'proto> {
-          fn as_view(&self) -> View {
-            View { ptr: self.ptr, _ph: $PhantomData }
-          }
-        }
-
-        impl<'proto> __rt::ptr::MutFor<'proto, super::$Type> for Mut<'proto> {
-          fn into_view(self) -> View<'proto> {
-            View { ptr: self.ptr, _ph: $PhantomData }
-          }
-
-          fn as_mut(&mut self) -> Mut {
-            Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
-          }
-        }
       }
     "#,
   );
