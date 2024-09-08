@@ -64,7 +64,7 @@ mod __priv_Bundle {
 }
 
 impl __::pz::Bundle {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::Bundle`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -746,7 +746,7 @@ mod __priv_Bundle_ForeignType {
 }
 
 impl __::pz::Bundle_ForeignType {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::Bundle_ForeignType`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -1378,7 +1378,7 @@ mod __priv_Type {
 }
 
 impl __::pz::Type {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::Type`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -2501,7 +2501,7 @@ mod __priv_Type_Attrs {
 }
 
 impl __::pz::Type_Attrs {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::Type_Attrs`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -3126,7 +3126,7 @@ mod __priv_Field {
 }
 
 impl __::pz::Field {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::Field`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -4202,7 +4202,7 @@ mod __priv_Field_Attrs {
 }
 
 impl __::pz::Field_Attrs {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::Field_Attrs`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -4836,7 +4836,7 @@ mod __priv_Request {
 }
 
 impl __::pz::plugin::Request {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::Request`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -5524,7 +5524,7 @@ mod __priv_Response {
 }
 
 impl __::pz::plugin::Response {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::Response`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -6199,7 +6199,7 @@ mod __priv_AboutRequest {
 }
 
 impl __::pz::plugin::AboutRequest {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::AboutRequest`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -6682,7 +6682,7 @@ mod __priv_AboutResponse {
 }
 
 impl __::pz::plugin::AboutResponse {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::AboutResponse`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -7375,7 +7375,7 @@ mod __priv_AboutResponse_Option {
 }
 
 impl __::pz::plugin::AboutResponse_Option {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::AboutResponse_Option`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -8003,7 +8003,7 @@ mod __priv_CodegenRequest {
 }
 
 impl __::pz::plugin::CodegenRequest {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::CodegenRequest`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -8763,7 +8763,7 @@ mod __priv_CodegenRequest_Option {
 }
 
 impl __::pz::plugin::CodegenRequest_Option {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::CodegenRequest_Option`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -9389,7 +9389,7 @@ mod __priv_CodegenResponse {
 }
 
 impl __::pz::plugin::CodegenResponse {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::CodegenResponse`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -10005,7 +10005,7 @@ mod __priv_CodegenResponse_File {
 }
 
 impl __::pz::plugin::CodegenResponse_File {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::CodegenResponse_File`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -10633,7 +10633,7 @@ mod __priv_Diagnostic {
 }
 
 impl __::pz::plugin::Diagnostic {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::Diagnostic`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -11464,7 +11464,7 @@ mod __priv_Diagnostic_Snippet {
 }
 
 impl __::pz::plugin::Diagnostic_Snippet {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::plugin::Diagnostic_Snippet`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {

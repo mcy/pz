@@ -28,7 +28,7 @@ pub use view::*;
 /// A pz type.
 ///
 /// This type is implemented by all `pz` generated types, as well as [`bool`],
-/// [`i32`], [`i64`], [`u32`], [`u64`], [`f32`], [`f64`], and [`Str`].
+/// [`i32`], [`i64`], [`u32`], [`u64`], [`f32`], [`f64`], and [`String`].
 ///
 /// It is also implemented by tuples of size up to 12 and the [`Opt`] and
 /// [`Rep`] markers.

@@ -223,7 +223,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       }
 
       impl $Type {
-        /// The default value for [`Type`], provided as a static constant.
+        /// The default value for [`$Type`], provided as a static constant.
         ///
         /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
         pub const DEFAULT: &'static Self = unsafe { &Self {

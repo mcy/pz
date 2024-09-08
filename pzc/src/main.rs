@@ -15,7 +15,7 @@ use clap::ArgAction;
 use clap::CommandFactory;
 use clap::FromArgMatches;
 use ilex::report::Report;
-use prost::Message;
+use pz::prost::Message;
 
 use pz::proto::plugin;
 

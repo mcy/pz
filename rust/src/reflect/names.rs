@@ -14,7 +14,7 @@ use crate::seal::Sealed;
 ///
 /// The field name may be either an identifier or a string literal.
 ///
-/// [`Field`]: fields::Field
+/// [`Field`]: crate::reflect::Field
 #[macro_export]
 macro_rules! field {
   ($name:literal) => {

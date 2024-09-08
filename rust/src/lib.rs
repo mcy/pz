@@ -35,6 +35,8 @@ mod macros;
 
 pub mod proto;
 
+pub extern crate prost;
+
 /// A serialization format for a [`Message`].
 pub enum Codec {
   /// The Protobuf wire format, with pz's own twists.

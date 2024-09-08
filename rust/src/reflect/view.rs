@@ -21,8 +21,8 @@ pub trait Views: 'static + Sized {
 
 /// Selects [`Ref<T>`] or [`Mut<T>`] based on a type parameter.
 ///
-/// The `Which` parameter must implement the [`select::Select`] trait, which is only
-/// implemented by [`select::Ref`] and [`select::Mut`].
+/// The `Which` parameter must implement the [`Select`] trait, which is only
+/// implemented by [`SelectRef`] and [`SelectMut`].
 pub type View<'a, T, Which> = <Which as Select>::View<'a, T, Seal>;
 
 /// Shorthand for [`Views::Ref`].

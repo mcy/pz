@@ -86,7 +86,7 @@ mod __priv_TestAll {
 }
 
 impl __::pz::test::TestAll {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::test::TestAll`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -2089,7 +2089,7 @@ mod __priv_TestAll_Nested {
 }
 
 impl __::pz::test::TestAll_Nested {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::test::TestAll_Nested`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {
@@ -2740,7 +2740,7 @@ mod __priv_TestAll2 {
 }
 
 impl __::pz::test::TestAll2 {
-  /// The default value for [`Type`], provided as a static constant.
+  /// The default value for [`__::pz::test::TestAll2`], provided as a static constant.
   ///
   /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
   pub const DEFAULT: &'static Self = unsafe { &Self {

@@ -24,6 +24,9 @@ use crate::Mut;
 
 use super::arena::RawArena;
 
+#[cfg(doc)]
+use crate::Type;
+
 /// The string type marker.
 ///
 /// Because [`Str`] is unsized, it can't be used in the [`Type`] machinery
