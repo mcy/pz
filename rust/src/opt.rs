@@ -158,7 +158,7 @@ impl<T: Type, U: Set<T>> Set<Opt<T>> for Option<U> {
   fn apply_to(self, mut m: Mut<Opt<T>>) {
     let Some(value) = self else {
       m.clear();
-      return
+      return;
     };
 
     value.apply_to(m.into_inner())

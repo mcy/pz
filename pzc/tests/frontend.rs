@@ -27,7 +27,10 @@ fn empty_file() {
   );
 
   assert_eq!(output.exit_code, 0);
-  let bundle = dbg!(Bundle::parse(Codec::Protobuf, &mut output.bundle.as_slice()).unwrap());
+  let bundle =
+    dbg!(
+      Bundle::parse(Codec::Protobuf, &mut output.bundle.as_slice()).unwrap()
+    );
   assert!(bundle.types().is_empty());
 }
 
@@ -67,7 +70,10 @@ fn intra_dependency() {
   );
 
   assert_eq!(output.exit_code, 0);
-  let bundle = dbg!(Bundle::parse(Codec::Protobuf, &mut output.bundle.as_slice()).unwrap());
+  let bundle =
+    dbg!(
+      Bundle::parse(Codec::Protobuf, &mut output.bundle.as_slice()).unwrap()
+    );
   assert_eq!(bundle.types_at(0).name(), "Bar");
   assert_eq!(bundle.types_at(1).name(), "Foo");
 }
@@ -114,7 +120,10 @@ fn extra_dependency() {
   );
 
   assert_eq!(output.exit_code, 0);
-  let bundle = dbg!(Bundle::parse(Codec::Protobuf, &mut output.bundle.as_slice()).unwrap());
+  let bundle =
+    dbg!(
+      Bundle::parse(Codec::Protobuf, &mut output.bundle.as_slice()).unwrap()
+    );
   assert_eq!(bundle.types_at(0).name(), "Bar");
 }
 

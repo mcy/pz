@@ -38,7 +38,7 @@ impl Mask {
   /// Merges two masks.
   pub(crate) const fn merge(masks: &[&Mask]) -> Mask {
     if masks.is_empty() {
-      return Mask::empty()
+      return Mask::empty();
     }
 
     let mut new = *masks[0];
@@ -125,7 +125,7 @@ macro_rules! tuples {
 
       impl<M: Message, $($T: Selector<M>,)*> Selector<M> for ($($T,)*) {
         type Type = ($($T::Type,)*);
-        
+
         const DISJOINT: bool = Self::__M.disjoint;
         const __M: Mask = Mask::merge(&[$(&$T::__M,)*]);
 

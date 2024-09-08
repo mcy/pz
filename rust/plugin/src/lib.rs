@@ -8,8 +8,8 @@ use std::io;
 use std::io::Read;
 use std::io::Write;
 
-pub use pz::prost;
 use prost::Message;
+pub use pz::prost;
 
 use pz::proto;
 use pz::proto::plugin;

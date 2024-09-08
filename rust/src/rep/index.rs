@@ -80,7 +80,10 @@ impl RepIndex for ops::Range<usize> {
       return None;
     }
 
-    Some(Slice::from_raw_parts(ptr.add(self.start), self.end - self.start))
+    Some(Slice::from_raw_parts(
+      ptr.add(self.start),
+      self.end - self.start,
+    ))
   }
 
   unsafe fn __get_mut<'a, T: Type + ?Sized + 'a>(

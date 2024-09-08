@@ -8,10 +8,10 @@ use pz::proto;
 use pz::proto::field::Type as TypeEnum;
 use pz::proto::r#type::Kind;
 
-use crate::rust::message;
 use crate::emit::SourceWriter;
 use crate::rust::fields::FieldGenerators;
 use crate::rust::fields::Where;
+use crate::rust::message;
 use crate::rust::names;
 use crate::Type;
 

@@ -10,10 +10,10 @@ mod tdp;
 pub use crate::tdp::parse::Error;
 
 pub mod reflect;
+pub use crate::reflect::Message;
 pub use crate::reflect::Mut;
 pub use crate::reflect::Ref;
 pub use crate::reflect::Type;
-pub use crate::reflect::Message;
 
 mod rep;
 pub use crate::rep::Repeated;
@@ -21,9 +21,9 @@ pub use crate::rep::Slice;
 pub use crate::rep::SliceMut;
 
 mod str;
-pub use crate::str::String;
 pub use crate::str::Str;
 pub use crate::str::StrBuf;
+pub use crate::str::String;
 
 mod opt;
 pub use crate::opt::OptMut;
@@ -61,9 +61,9 @@ pub mod __z {
   pub use crate::arena::*;
   pub use crate::debug::Debug;
   pub use crate::str::private::Storage as RawStr;
-  
-  pub use crate::reflect::private::*;
+
   pub use crate::reflect::names::*;
+  pub use crate::reflect::private::*;
 
   pub use crate::seal::*;
 }

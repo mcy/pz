@@ -9,9 +9,9 @@ use pz::proto::r#type::Kind;
 use crate::emit::SourceWriter;
 use crate::rust::fields::FieldGenerators;
 use crate::rust::fields::Where;
+use crate::rust::names::field_name_type_name;
 use crate::rust::names::ident;
 use crate::rust::names::type_name;
-use crate::rust::names::field_name_type_name;
 use crate::Type;
 
 pub fn emit_main_struct(w: &mut SourceWriter) {
