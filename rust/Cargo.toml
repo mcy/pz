@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-prost = "0.11.9"
+prost = "0.13.2"
 
 [dependencies.bumpalo]
 version = "3.12.1"
@@ -15,4 +15,4 @@ googletest = "0.5.0"
 unindent = "0.2.1"
 
 [build-dependencies]
-prost-build = "0.11.9"
+prost-build = "0.13.2"

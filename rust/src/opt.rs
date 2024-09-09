@@ -3,23 +3,39 @@
 use std::marker::PhantomData;
 
 use crate::arena::RawArena;
+use crate::reflect::Mut;
+use crate::reflect::MutView;
+use crate::reflect::Opt;
+use crate::reflect::Ref;
+use crate::reflect::Set;
+use crate::reflect::Type;
+use crate::seal::Seal;
 use crate::tdp;
-use crate::Mut;
-use crate::Type;
-use crate::View;
+use crate::tdp::Opaque;
 
 /// A mutator for optional (singular) fields.
-pub struct OptMut<'a, T: Type + ?Sized> {
-  ptr: *mut u8,
+///
+/// An `OptMut<T>` is essentially an `&mut Option<Mut<T>>`, but with a more
+/// flexible layout. For example, the "has bits" of all of the fields in a
+/// `message` are stacked into single bits at the top of the message; the
+/// "which word" for a `choice` determines which variant is engaged. In both
+/// cases, the layout of the difference between `Some` and `None` is
+/// specialized, so instead of an `&mut Option`, we must provide a wrapper.
+pub struct OptMut<'a, T: Type> {
+  ptr: Opaque,
   arena: RawArena,
   field: tdp::Field,
   _ph: PhantomData<&'a mut T>,
 }
 
-impl<'a, T: Type + ?Sized> OptMut<'a, T> {
+impl<'a, T: Type> OptMut<'a, T> {
+  /// Returns whether this value is unset.
+  pub fn is_none(&self) -> bool {
+    !self.is_some()
+  }
+
   /// Returns whether this value is present.
-  #[inline(always)]
-  pub fn has(&self) -> bool {
+  pub fn is_some(&self) -> bool {
     unsafe { self.field.has(self.ptr) }
   }
 
@@ -31,13 +47,10 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
 
   /// Converts this mutator into a view, returning a view of the default value
   /// if the view it isn't present.
-  #[inline(always)]
-  pub fn as_view(&self) -> View<T> {
-    if !self.has() {
-      todo!()
-    }
-
-    unsafe { self.make_view() }
+  #[track_caller]
+  pub fn unwrap(&self) -> Ref<T> {
+    // TODO: default?
+    self.as_ref().unwrap()
   }
 
   /// Converts this mutator into a view, returning a view of the default value
@@ -45,20 +58,15 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   ///
   /// This version consumes the mutator to make the returned view's lifetime as
   /// long as possible.
-  #[inline(always)]
-  pub fn into_view(self) -> View<'a, T> {
-    if !self.has() {
-      todo!()
-    }
-
-    unsafe { self.make_view() }
+  #[track_caller]
+  pub fn into_unwrap(self) -> Ref<'a, T> {
+    self.into_ref().unwrap()
   }
 
   /// Converts this mutator into a mutator of the underlying type, initializing
-  /// the field if it isn't already.
-  #[inline(always)]
-  pub fn as_mut(&mut self) -> Mut<T> {
-    self.reborrow().into_mut()
+  /// the field if it isn't already
+  pub fn as_inner(&mut self) -> Mut<T> {
+    self.as_mut().into_inner()
   }
 
   /// Converts this mutator into a mutator of the underlying type, initializing
@@ -66,22 +74,17 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   ///
   /// This version consumes the mutator to make the returned mutator's lifetime
   /// as long as possible.
-  #[inline(always)]
-  pub fn into_mut(mut self) -> Mut<'a, T> {
+  pub fn into_inner(mut self) -> Mut<'a, T> {
     unsafe {
       self.field.init(self.ptr, self.arena);
-      self.make_mut()
+      self.__mut()
     }
   }
 
   /// Converts this mutator into a mutator of the underlying type, or returns
   /// `None` if it isn't present.
-  #[inline(always)]
-  pub fn as_mut_or(&mut self) -> Option<Mut<T>> {
-    if !self.has() {
-      return None;
-    }
-    unsafe { Some(self.make_mut()) }
+  pub fn as_option(&mut self) -> Option<Mut<T>> {
+    self.as_mut().into_option()
   }
 
   /// Converts this mutator into a mutator of the underlying type, or returns
@@ -89,17 +92,32 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   ///
   /// This version consumes the mutator to make the returned mutator's lifetime
   /// as long as possible.
-  #[inline(always)]
-  pub fn into_mut_or(mut self) -> Option<Mut<'a, T>> {
-    if !self.has() {
+  pub fn into_option(mut self) -> Option<Mut<'a, T>> {
+    if !self.is_some() {
       return None;
     }
-    unsafe { Some(self.make_mut()) }
+    unsafe { Some(self.__mut()) }
+  }
+}
+
+impl<'a, T: Type> MutView<'a> for OptMut<'a, T> {
+  type Target = Opt<T>;
+
+  fn as_ref(&self) -> Ref<Self::Target> {
+    if self.is_none() {
+      return None;
+    }
+    Some(unsafe { self.__ref() })
   }
 
-  /// Reborrows this mutator with a shorter lifetime.
-  #[inline(always)]
-  pub fn reborrow(&mut self) -> OptMut<T> {
+  fn into_ref(self) -> Ref<'a, Self::Target> {
+    if self.is_none() {
+      return None;
+    }
+    Some(unsafe { self.__ref() })
+  }
+
+  fn as_mut(&mut self) -> Mut<Self::Target> {
     OptMut {
       ptr: self.ptr,
       arena: self.arena,
@@ -107,12 +125,13 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
       _ph: PhantomData,
     }
   }
+}
 
+impl<T: Type> OptMut<'_, T> {
   /// Wraps a pointer to a message type, its arena, and a field to make an
   /// `OptMut`.
-  #[doc(hidden)]
-  pub unsafe fn __wrap(
-    ptr: *mut u8,
+  pub(crate) unsafe fn new(
+    ptr: Opaque,
     arena: RawArena,
     field: tdp::Field,
   ) -> Self {
@@ -125,12 +144,23 @@ impl<'a, T: Type + ?Sized> OptMut<'a, T> {
   }
 
   #[inline(always)]
-  unsafe fn make_view<'b>(&self) -> View<'b, T> {
-    unsafe { T::__make_view(self.field.cast(self.ptr)) }
+  unsafe fn __ref<'b>(&self) -> Ref<'b, T> {
+    unsafe { T::__ref(Seal, self.field.cast(self.ptr)) }
   }
 
   #[inline(always)]
-  unsafe fn make_mut<'b>(&mut self) -> Mut<'b, T> {
-    unsafe { T::__make_mut(self.field.cast(self.ptr), self.arena) }
+  unsafe fn __mut<'b>(&mut self) -> Mut<'b, T> {
+    unsafe { T::__mut(Seal, self.field.cast(self.ptr), self.arena) }
+  }
+}
+
+impl<T: Type, U: Set<T>> Set<Opt<T>> for Option<U> {
+  fn apply_to(self, mut m: Mut<Opt<T>>) {
+    let Some(value) = self else {
+      m.clear();
+      return;
+    };
+
+    value.apply_to(m.into_inner())
   }
 }

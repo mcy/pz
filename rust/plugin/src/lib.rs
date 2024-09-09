@@ -9,6 +9,7 @@ use std::io::Read;
 use std::io::Write;
 
 use prost::Message;
+pub use pz::prost;
 
 use pz::proto;
 use pz::proto::plugin;

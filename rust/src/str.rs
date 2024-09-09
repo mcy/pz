@@ -8,11 +8,31 @@ use std::iter;
 use std::mem;
 use std::ops::Deref;
 use std::ops::DerefMut;
+use std::ptr::NonNull;
 use std::slice;
 use std::slice::SliceIndex;
 use std::str;
 
+use crate::reflect;
+use crate::reflect::MutView;
+use crate::reflect::Opt;
+use crate::reflect::RefView;
+use crate::reflect::Set;
+use crate::reflect::Views;
+use crate::seal::Sealed;
+use crate::Mut;
+
 use super::arena::RawArena;
+
+#[cfg(doc)]
+use crate::Type;
+
+/// The string type marker.
+///
+/// Because [`Str`] is unsized, it can't be used in the [`Type`] machinery
+/// (specifically, we cannot form the `(Str, T)` type). To work around this
+/// defect, this marker type is used as the mooring-place instead.
+pub struct String(());
 
 /// A string field.
 ///
@@ -186,11 +206,6 @@ pub struct StrBuf<'a> {
 }
 
 impl<'a> StrBuf<'a> {
-  #[doc(hidden)]
-  pub fn __wrap(data: &'a mut Storage, arena: RawArena) -> Self {
-    Self { data, arena }
-  }
-
   pub(crate) fn reborrow(&mut self) -> StrBuf<'_> {
     StrBuf {
       data: self.data,
@@ -263,6 +278,18 @@ impl AsMut<[u8]> for Str {
   }
 }
 
+impl AsRef<[u8]> for StrBuf<'_> {
+  fn as_ref(&self) -> &[u8] {
+    self.as_bytes()
+  }
+}
+
+impl AsMut<[u8]> for StrBuf<'_> {
+  fn as_mut(&mut self) -> &mut [u8] {
+    self.as_mut_bytes()
+  }
+}
+
 impl<'a> From<&'a [u8]> for &'a Str {
   fn from(value: &'a [u8]) -> Self {
     Str::new(value)
@@ -281,8 +308,8 @@ impl<'a> From<&'a Vec<u8>> for &'a Str {
   }
 }
 
-impl<'a> From<&'a String> for &'a Str {
-  fn from(value: &'a String) -> Self {
+impl<'a> From<&'a std::string::String> for &'a Str {
+  fn from(value: &'a std::string::String) -> Self {
     Str::new(value)
   }
 }
@@ -347,8 +374,8 @@ impl<const N: usize> PartialEq<[u8; N]> for Str {
   }
 }
 
-impl PartialEq<String> for Str {
-  fn eq(&self, other: &String) -> bool {
+impl PartialEq<std::string::String> for Str {
+  fn eq(&self, other: &std::string::String) -> bool {
     self.as_bytes() == other.as_bytes()
   }
 }
@@ -389,8 +416,11 @@ impl PartialOrd<[u8]> for Str {
   }
 }
 
-impl PartialOrd<String> for Str {
-  fn partial_cmp(&self, other: &String) -> Option<std::cmp::Ordering> {
+impl PartialOrd<std::string::String> for Str {
+  fn partial_cmp(
+    &self,
+    other: &std::string::String,
+  ) -> Option<std::cmp::Ordering> {
     self.as_bytes().partial_cmp(other.as_bytes())
   }
 }
@@ -473,5 +503,140 @@ pub(crate) mod private {
     fn default() -> Self {
       Self::new()
     }
+  }
+}
+
+impl reflect::private::Type for String {
+  type __Storage<S: Sealed> = private::Storage;
+
+  unsafe fn __ref<'a, S: Sealed>(
+    _: S,
+    ptr: NonNull<private::Storage>,
+  ) -> &'a Str {
+    Str::new(ptr.as_ref().as_slice())
+  }
+
+  unsafe fn __mut<'a, S: Sealed>(
+    _: S,
+    mut ptr: NonNull<private::Storage>,
+    arena: RawArena,
+  ) -> StrBuf<'a> {
+    StrBuf {
+      data: ptr.as_mut(),
+      arena,
+    }
+  }
+}
+
+impl Views for String {
+  type Ref<'a> = &'a Str;
+  type Mut<'a> = StrBuf<'a>;
+}
+
+impl<'a> RefView<'a> for &'a Str {
+  type Target = String;
+
+  fn as_ref(&self) -> &Str {
+    self
+  }
+}
+
+impl<'a> MutView<'a> for StrBuf<'a> {
+  type Target = String;
+
+  fn as_ref(&self) -> &Str {
+    self
+  }
+
+  fn into_ref(self) -> &'a Str {
+    self.into()
+  }
+
+  fn as_mut(&mut self) -> StrBuf {
+    self.reborrow()
+  }
+}
+
+impl<const N: usize> Set<String> for &[u8; N] {
+  fn apply_to(self, mut m: Mut<String>) {
+    m.set(self)
+  }
+}
+
+impl Set<String> for &[u8] {
+  fn apply_to(self, mut m: Mut<String>) {
+    m.set(self)
+  }
+}
+
+impl Set<String> for &Vec<u8> {
+  fn apply_to(self, mut m: Mut<String>) {
+    m.set(self)
+  }
+}
+
+impl Set<String> for &str {
+  fn apply_to(self, mut m: Mut<String>) {
+    m.set(self)
+  }
+}
+
+impl Set<String> for &std::string::String {
+  fn apply_to(self, mut m: Mut<String>) {
+    m.set(self)
+  }
+}
+
+impl Set<String> for &Str {
+  fn apply_to(self, mut m: Mut<String>) {
+    m.set(self)
+  }
+}
+
+impl Set<String> for &StrBuf<'_> {
+  fn apply_to(self, mut m: Mut<String>) {
+    m.set(self)
+  }
+}
+
+impl<const N: usize> Set<Opt<String>> for &[u8; N] {
+  fn apply_to(self, m: Mut<Opt<String>>) {
+    m.into_inner().set(self)
+  }
+}
+
+impl Set<Opt<String>> for &[u8] {
+  fn apply_to(self, m: Mut<Opt<String>>) {
+    m.into_inner().set(self)
+  }
+}
+
+impl Set<Opt<String>> for &Vec<u8> {
+  fn apply_to(self, m: Mut<Opt<String>>) {
+    m.into_inner().set(self)
+  }
+}
+
+impl Set<Opt<String>> for &str {
+  fn apply_to(self, m: Mut<Opt<String>>) {
+    m.into_inner().set(self)
+  }
+}
+
+impl Set<Opt<String>> for &std::string::String {
+  fn apply_to(self, m: Mut<Opt<String>>) {
+    m.into_inner().set(self)
+  }
+}
+
+impl Set<Opt<String>> for &Str {
+  fn apply_to(self, m: Mut<Opt<String>>) {
+    m.into_inner().set(self)
+  }
+}
+
+impl Set<Opt<String>> for &StrBuf<'_> {
+  fn apply_to(self, m: Mut<Opt<String>>) {
+    m.into_inner().set(self)
   }
 }

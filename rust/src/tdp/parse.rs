@@ -5,11 +5,15 @@ use std::alloc::Layout;
 use std::io;
 use std::ops::BitOr;
 use std::ops::Shl;
+use std::ptr::NonNull;
 
 use crate::arena::AVec;
 use crate::arena::RawArena;
+use crate::str;
 use crate::tdp::Desc;
 use crate::tdp::Kind;
+
+use super::Opaque;
 
 pub type Result<T = ()> = std::result::Result<T, Error>;
 
@@ -275,7 +279,7 @@ impl<'r> Context<'r> {
     self.group_stack.last().copied().unwrap_or(0) != 0
   }
 
-  pub fn parse(&mut self, raw: *mut u8, desc: Desc) -> Result {
+  pub fn parse(&mut self, raw: NonNull<u8>, desc: Desc) -> Result {
     let mut ty_stack = vec![(raw, desc.first_field())];
     'parse: while let Some((raw, field)) = ty_stack.last_mut() {
       if !self.in_group() && self.input.pop_limit() {
@@ -359,40 +363,34 @@ impl<'r> Context<'r> {
           match (k, field.is_repeated()) {
             (Kind::I32 | Kind::F32, false) => unsafe {
               // Singular i32.
-              let ptr = raw.add(field.offset());
-              ptr.cast::<u32>().write(v as u32);
+              field.cast::<u32>(*raw).write(v as u32);
             },
             (Kind::I64 | Kind::F64, false) => unsafe {
               // Singular i64.
-              let ptr = raw.add(field.offset());
-              ptr.cast::<u64>().write(v);
+              field.cast::<u64>(*raw).write(v);
             },
             (Kind::Bool, false) => unsafe {
               // Singular bool.
-              let ptr = raw.add(field.offset());
-              ptr.cast::<bool>().write(v != 0);
+              field.cast::<bool>(*raw).write(v != 0);
             },
 
             (Kind::I32 | Kind::F32, true) => unsafe {
               // Repeated i32.
-              let ptr = raw.add(field.offset());
-              let vec = &mut *ptr.cast::<AVec<u32>>();
-              vec.resize(vec.len() + 1, self.arena);
-              *vec.as_mut_slice().last_mut().unwrap_unchecked() = v as u32;
+              field
+                .cast::<AVec<u32>>(*raw)
+                .as_mut()
+                .push(v as u32, self.arena);
             },
             (Kind::I64 | Kind::F64, true) => unsafe {
               // Repeated i64.
-              let ptr = raw.add(field.offset());
-              let vec = &mut *ptr.cast::<AVec<u64>>();
-              vec.resize(vec.len() + 1, self.arena);
-              *vec.as_mut_slice().last_mut().unwrap_unchecked() = v;
+              field.cast::<AVec<u64>>(*raw).as_mut().push(v, self.arena);
             },
             (Kind::Bool, true) => unsafe {
               // Repeated bool.
-              let ptr = raw.add(field.offset());
-              let vec = &mut *ptr.cast::<AVec<bool>>();
-              vec.resize(vec.len() + 1, self.arena);
-              *vec.as_mut_slice().last_mut().unwrap_unchecked() = v != 0;
+              field
+                .cast::<AVec<bool>>(*raw)
+                .as_mut()
+                .push(v != 0, self.arena);
             },
             _ => unreachable!(),
           }
@@ -404,38 +402,30 @@ impl<'r> Context<'r> {
           }
 
           let len = self.input.varint32()? as usize;
-          let (slice_ptr, slice_len): &mut (*mut u8, usize) =
-            if !field.is_repeated() {
-              // Singular str.
-              unsafe {
-                let ptr = raw.add(field.offset());
-                &mut *ptr.cast::<(*mut u8, usize)>()
-              }
-            } else {
-              // Repeated str.
-              unsafe {
-                let ptr = raw.add(field.offset());
-                let vec = &mut *ptr.cast::<AVec<(*mut u8, usize)>>();
-                vec.resize(vec.len() + 1, self.arena);
-                vec.as_mut_slice().last_mut().unwrap_unchecked()
-              }
-            };
+          let slice = if !field.is_repeated() {
+            // Singular str.
+            unsafe { field.cast::<str::private::Storage>(*raw).as_mut() }
+          } else {
+            // Repeated str.
+            unsafe { field.cast::<AVec<str::private::Storage>>(*raw).as_mut() }
+              .add(self.arena)
+          };
 
           if len == 0 {
-            *slice_len = 0;
+            slice.len = 0;
           } else {
             unsafe {
-              if *slice_len < len {
-                *slice_ptr = self
+              if slice.len < len {
+                slice.ptr = self
                   .arena
                   .alloc(Layout::from_size_align_unchecked(len, 1))
                   .as_ptr();
-                slice_ptr.write_bytes(0, len);
+                slice.ptr.write_bytes(0, len);
               }
-              self
-                .input
-                .read(slice::from_raw_parts_mut(*slice_ptr, len))?;
-              *slice_len = len;
+
+              debug_assert!(!slice.ptr.is_null());
+              self.input.read(slice::from_raw_parts_mut(slice.ptr, len))?;
+              slice.len = len;
             }
           }
         }
@@ -457,30 +447,28 @@ impl<'r> Context<'r> {
 
           let desc = unsafe { field.desc() };
           let layout = desc.layout();
-          let raw_ptr: *mut u8 = if !field.is_repeated() {
+          let opaque = if !field.is_repeated() {
             // Singular msg.
             unsafe {
-              let ptr = raw.add(field.offset()).cast::<*mut u8>();
-              let mut sub = ptr.read();
-              if sub.is_null() {
-                sub = self.arena.alloc(layout).as_ptr();
-                sub.write_bytes(0, layout.size());
-                ptr.write(sub);
+              let sub = field.cast::<Option<Opaque>>(*raw).as_mut();
+              if sub.is_none() {
+                let new = self.arena.alloc(layout);
+                new.write_bytes(0, layout.size());
+                *sub = Some(new);
               }
-              sub
+              *sub
             }
           } else {
             // Repeated msg.
             unsafe {
-              let ptr = raw.add(field.offset());
-              let vec = &mut *ptr.cast::<AVec<*mut u8>>();
-
+              // Don't use add here! It will resize incorrectly.
+              let vec = field.cast::<AVec<Option<Opaque>>>(*raw).as_mut();
               vec.resize_msg(vec.len() + 1, self.arena, layout);
               *vec.as_mut_slice().last_mut().unwrap_unchecked()
             }
           };
 
-          ty_stack.push((raw_ptr, desc.first_field()));
+          ty_stack.push((opaque.unwrap(), desc.first_field()));
         }
       }
     }

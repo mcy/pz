@@ -11,11 +11,9 @@ use pz::proto::r#type::Kind;
 use crate::emit::SourceWriter;
 use crate::rust::fields::FieldGenerators;
 use crate::rust::fields::Where;
-use crate::rust::names::ident;
-use crate::rust::names::type_name;
+use crate::rust::message;
+use crate::rust::names;
 use crate::Type;
-
-use super::names::type_ident;
 
 pub fn emit(ty: Type, w: &mut SourceWriter) {
   let gen = FieldGenerators::build(ty.fields());
@@ -32,7 +30,10 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
     vars! {
       hasbit_words,
       NUM_TYS: ty_ptrs.len(),
-
+      "Type::struct": |w| message::emit_main_struct(w),
+      "Type::common": |w| message::emit_common_methods(w),
+      "Type::impls": |w| message::emit_impls(w),
+      "Type::views": |w| message::emit_view_types(w),
       "Type::fields": |w| for field in &gen.fields {
         field.in_storage(w);
       },
@@ -44,13 +45,30 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
         field.in_mut_methods(Where::TypeImpl, w);
         w.new_line();
       },
+      "Type::memcpys": |w| for field in &gen.fields {
+        w.emit(
+          vars! {
+            n: field.field.number().unwrap(),
+            __name: names::field_name_type_name(field.field),
+          },
+          r#"
+            $n => __r::Set::<<$Type as __r::Field<$__name>>::Type>::apply_to(src.get($__name{}), dst.get_mut($__name{})),
+          "#
+        );
+      },
+      "Type::field_impls": |w| for field in &gen.fields {
+        field.in_impls(w);
+        w.new_line();
+      },
       "Type::debug": |w| for field in &gen.fields {
         field.in_debug(w);
       },
-      "View::access": |w| for field in &gen.fields {
+      "Ref::common": |w| message::emit_common_ref_methods(w),
+      "Ref::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::ViewImpl, w);
         w.new_line();
       },
+      "Mut::common": |w| message::emit_common_mut_methods(w),
       "Mut::access": |w| for field in &gen.fields {
         field.in_ref_methods(Where::MutImpl, w);
         field.in_mut_methods(Where::MutImpl, w);
@@ -58,7 +76,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       },
       self_to_output_arms: |w| for field in ty.fields() {
         w.emit(
-          vars! {Name: ident(heck::AsPascalCase(field.name())) },
+          vars! {Name: names::ident(heck::AsPascalCase(field.name())) },
           "
             ${Type}Cases::$Name(val) => ${Type}Cases::$Name(__rt::ptr::ViewFor::as_view(val)),
           "
@@ -69,7 +87,8 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           vars! {
             number: field.number().unwrap(),
             index: field.index,
-            Name: ident(heck::AsPascalCase(field.name())),
+            Name: names::ident(heck::AsPascalCase(field.name())),
+            __name: names::field_name_type_name(field),
             Field: |w| {match field.ty() {
               (TypeEnum::I32, _) => w.write("i32"),
               (TypeEnum::I64, _) => w.write("i64"),
@@ -79,19 +98,13 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               (TypeEnum::F64, _) => w.write("f64"),
               (TypeEnum::Bool, _) => w.write("bool"),
               (TypeEnum::String, _) => w.write("__rt::Str"),
-              (TypeEnum::Type, Some(ty)) => w.write(&type_name(ty).to_string()),
+              (TypeEnum::Type, Some(ty)) => w.write(&names::type_name(ty).to_string()),
               _ => unreachable!(),
             }},
-            make_view: |w| {
-              if !field.is_repeated() {
-                w.write("$TDP.field($index).make_view::<$Field>(self.ptr.as_ptr())");
-              } else {
-                w.write("$TDP.field($index).make_slice::<$Field>(self.ptr.as_ptr())");
-              }
-            },
+            suffix: if field.is_repeated() { "" } else {".unwrap_unchecked()"},
           },
           "
-            $number => ${Type}Cases::$Name($make_view),
+            $number => ${Type}Cases::$Name(self.get($__name{})$suffix),
           "
         )
       },
@@ -100,7 +113,8 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           vars! {
             number: field.number().unwrap(),
             index: field.index,
-            Name: ident(heck::AsPascalCase(field.name())),
+            Name: names::ident(heck::AsPascalCase(field.name())),
+            __name: names::field_name_type_name(field),
             Field: |w| {match field.ty() {
               (TypeEnum::I32, _) => w.write("i32"),
               (TypeEnum::I64, _) => w.write("i64"),
@@ -110,25 +124,19 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               (TypeEnum::F64, _) => w.write("f64"),
               (TypeEnum::Bool, _) => w.write("bool"),
               (TypeEnum::String, _) => w.write("__rt::Str"),
-              (TypeEnum::Type, Some(ty)) => w.write(&type_name(ty).to_string()),
+              (TypeEnum::Type, Some(ty)) => w.write(&names::type_name(ty).to_string()),
               _ => unreachable!(),
             }},
-            make_view: |w| {
-              if !field.is_repeated() {
-                w.write("$TDP.field($index).make_mut::<$Field>(self.ptr.as_ptr(), self.arena)");
-              } else {
-                w.write("$TDP.field($index).make_rep::<$Field>(self.ptr.as_ptr(), self.arena)");
-              }
-            },
+            suffix: if field.is_repeated() { "" } else {".into_option().unwrap_unchecked()"},
           },
           "
-            $number => ${Type}Cases::$Name($make_view),
+            $number => ${Type}Cases::$Name(self.get_mut($__name{})$suffix),
           "
         )
       },
       tdp_descs: |w| for &ty in &ty_ptrs {
         w.emit(
-          vars!{ Submsg: type_name(ty) },
+          vars!{ Submsg: names::type_name(ty) },
           "
             $Submsg::__tdp_info,
           "
@@ -165,7 +173,7 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
               hasbit_index,
               tdp_kind,
               ty_idx,
-              name: ident(field.name()),
+              name: names::ident(field.name()),
               number: field.number().unwrap(),
               raw_name: field.name(),
               repeated: field.is_repeated() as u32,
@@ -189,237 +197,12 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
       },
     },
     r#"
-      /// choice `$package.$Name`
-      $deprecated
-      pub struct $Ident {
-        ptr: __z::ABox<$priv::Storage>,
-        arena: __z::RawArena,
-      }
-
-      const _: () = {
-        assert!(
-          $size_of::<$priv::Storage>() < (u32::MAX as usize),
-          "storage size excees 4GB",
-        );
-      };
-
-      impl $Type {
-        pub const DEFAULT: $View<'static, Self> = unsafe {
-          const VALUE: $priv::Storage = $priv::Storage {
-            which: 0,
-            union: $priv::Union { __unset: () },
-          };
-          $View::<Self> {
-            ptr: __z::ABox::from_ptr(&VALUE as *const $priv::Storage as *mut $priv::Storage as *mut u8),
-            _ph: $PhantomData,
-          }
-        };
-        
-        pub fn new() -> Self {
-          let arena = __z::RawArena::new();
-          let ptr = arena.alloc(Self::__LAYOUT).as_ptr();
-          unsafe {
-            ptr.write_bytes(0, Self::__LAYOUT.size());
-            Self { ptr: __z::ABox::from_ptr(ptr), arena }
-          }
-        }
-
-        pub fn from_pb(input: &mut dyn $Read) -> $Result<Self, __rt::Error> {
-          let mut new = Self::new();
-          new.parse_pb(input)?;
-          $Ok(new)
-        }
-
-        pub fn parse_pb(&mut self, input: &mut dyn $Read) -> $Result<(), __rt::Error> {
-          self.as_mut().parse_pb(input)
-        }
-
-        pub fn as_view(&self) -> $View<Self> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-
-        pub fn as_mut(&mut self) -> $Mut<Self> {
-          $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
-        }
-
-        pub fn cases(&self) -> ${Type}Cases<'_, __rt::ptr::select::View> {
-          self.as_view().cases()
-        }
-
-        pub fn cases_mut(&mut self) -> ${Type}Cases<'_, __rt::ptr::select::Mut> {
-          self.as_mut().cases_mut()
-        }
-
-        pub fn clear(&mut self) {
-          unsafe { $Type::__raw_clear(self.ptr.as_ptr()) }
-        }
-
-        pub fn into_raw(self) -> *mut u8 {
-          self.ptr.as_ptr()
-        }
-
-        ${Type::access}
-
-        #[doc(hidden)]
-        pub const __LAYOUT: $Layout = $Layout::new::<$priv::Storage>();
-        #[doc(hidden)]
-        pub unsafe fn __raw_clear(raw: *mut u8) {
-          (&mut *raw.cast::<$priv::Storage>()).which = 0;
-        }
-        #[doc(hidden)]
-        pub fn __tdp_info() -> __z::tdp::Desc {
-          unsafe { $priv::TDP_INFO.get() }
-        }
-        #[doc(hidden)]
-        pub unsafe fn __raw_data(&self) -> &[u8] {
-          __s::slice::from_raw_parts(self.ptr.as_ptr(), Self::__LAYOUT.size())
-        }
-      }
-
-      pub enum ${Ident}Cases<'proto, Which: __rt::ptr::select::Select> {
-        Unset($PhantomData<&'proto Which>),
-        ${Type::Variants}
-      }
-
-      impl $Default for $Type {
-        fn default() -> Self {
-          Self::new()
-        }
-      }
-
-      impl __rt::ptr::Proxied for $Type {
-        type View<'proto> = $priv::View<'proto>;
-        type Mut<'proto> = $priv::Mut<'proto>;
-      }
-      
-      impl<'proto> $priv::View<'proto> {
-        pub fn as_view(&self) -> $View<$Type> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-
-        pub fn cases(self) -> ${Type}Cases<'proto, __rt::ptr::select::View> {
-          unsafe {
-            let number = self.ptr.as_ptr().cast::<u32>().read();
-            match number {
-              0 => ${Type}Cases::Unset($PhantomData),
-              $make_view_arms
-              _ => __s::unreachable!(),
-            }
-          }
-        }
-
-        ${View::access}
-
-        #[doc(hidden)]
-        pub fn __debug(self, debug: &mut __z::Debug) -> $fmt::Result {
-          let mut count = 0;
-          debug.start_block()?;
-          ${Type::debug}
-          if count != 0 {
-            debug.comma(true)?;
-          }
-          debug.end_block()?;
-          $Ok(())
-        }
-      }
-
-      impl $Default for $priv::View<'_> {
-        fn default() -> Self {
-          $Type::DEFAULT
-        }
-      }
-
-      impl<'proto> $priv::Mut<'proto>  {
-        pub fn as_view(&self) -> $View<$Type> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-
-        pub fn into_view(self) -> $View<'proto, $Type> {
-          $priv::View { ptr: self.ptr, _ph: $PhantomData }
-        }
-
-        pub fn as_mut(&mut self) -> $Mut<$Type> {
-          $priv::Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
-        }
-
-        pub fn cases(self) -> ${Type}Cases<'proto, __rt::ptr::select::View> {
-          self.into_view().cases()
-        }
-
-        pub fn cases_mut(self) -> ${Type}Cases<'proto, __rt::ptr::select::Mut> {
-          unsafe {
-            let number = self.ptr.as_ptr().cast::<u32>().read();
-            match number {
-              0 => ${Type}Cases::Unset($PhantomData),
-              $make_mut_arms
-              _ => __s::unreachable!(),
-            }
-          }
-        }
-
-        pub fn clear(self) {
-          unsafe { $Type::__raw_clear(self.ptr.as_ptr()) }
-        }
-
-        pub fn parse_pb(self, input: &mut dyn $Read) -> $Result<(), __rt::Error> {
-          let mut ctx = __z::tdp::parse::Context::new(input, self.arena);
-          ctx.parse(self.ptr.as_ptr() as *mut u8, $TDP)
-        }
-
-        ${Mut::access}
-      }
-
-      impl __s::ops::Drop for $Type {
-        fn drop(&mut self) {
-          unsafe { self.arena.destroy() }
-        }
-      }
-
-      impl $fmt::Debug for $priv::View<'_> {
-        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
-          fmt.write_str("$package.$Name ")?;
-          let mut debug = __z::Debug::new(fmt);
-          self.__debug(&mut debug)
-        }
-      }
-
-      impl $fmt::Debug for $priv::Mut<'_> {
-        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
-          use __rt::ptr::ViewFor;
-          $fmt::Debug::fmt(&self.as_view(), fmt)
-        }
-      }
-
-      impl $fmt::Debug for $Type {
-        fn fmt(&self, fmt: &mut $fmt::Formatter) -> $fmt::Result {
-          $fmt::Debug::fmt(&self.as_view(), fmt)
-        }
-      }
-
-      impl __rt::Type for $Type {
-        type __Storage = *mut u8;
-
-        unsafe fn __make_view<'a>(ptr: *const *mut u8) -> $View<'a, Self> {
-          $priv::View {
-            ptr: __z::ABox::from_ptr(ptr.read()),
-            _ph: $PhantomData,
-          }
-        }
-        unsafe fn __make_mut<'a>(ptr: *mut *mut u8, arena: __z::RawArena) -> $Mut<'a, Self> {
-          $priv::Mut {
-            ptr: __z::ABox::from_ptr(ptr.read()),
-            arena,
-            _ph: $PhantomData,
-          }
-        }
-
-        unsafe fn __resize(vec: &mut __z::AVec<*mut u8>, new_len: usize, arena: __z::RawArena) {
-          vec.resize_msg(new_len, arena, Self::__LAYOUT)
-        }
-      }
+      ${Type::struct}
 
       mod $priv {
         pub use super::*;
+
+        ${Type::views}
 
         #[repr(C)]
         pub struct Storage {
@@ -437,63 +220,162 @@ pub fn emit(ty: Type, w: &mut SourceWriter) {
           let align = __s::mem::align_of::<$priv::Union>();
           if align < 4 { 4 } else { align }
         };
+      }
 
-        pub static TDP_INFO: __z::tdp::DescStorage<{$NUM_FIELDS + 1}> =
-          __z::tdp::DescStorage::<{$NUM_FIELDS + 1}> {
+      impl $Type {
+        /// The default value for [`$Type`], provided as a static constant.
+        ///
+        /// See [`Message::DEFAULT`][__r::Message::DEFAULT].
+        pub const DEFAULT: &'static Self = unsafe { &Self {
+          ptr: $NonNull::new_unchecked(&const { $priv::Storage {
+            which: 0,
+            union: $priv::Union { __unset: () },
+          }} as *const $priv::Storage as *mut $priv::Storage),
+          arena: $None,
+        }};
+        
+        ${Type::common}
+
+        pub fn which(&self) -> i32 {
+          self.as_ref().which()
+        }
+
+        pub fn cases(&self) -> ${Type}Cases<__r::SelectRef> {
+          self.as_ref().cases()
+        }
+
+        pub fn cases_mut(&mut self) -> ${Type}Cases<__r::SelectMut> {
+          self.as_mut().cases_mut()
+        }
+
+        ${Type::access}
+
+        #[doc(hidden)]
+        pub const __LAYOUT: $Layout = $Layout::new::<$priv::Storage>();
+        #[doc(hidden)]
+        pub unsafe fn __raw_clear(raw: __z::tdp::Opaque) {
+          raw.cast::<$priv::Storage>().as_mut().which = 0;
+        }
+        #[doc(hidden)]
+        pub fn __tdp_info() -> __z::tdp::Desc {
+          <Self as __z::Message>::__TDP
+        }
+
+        #[doc(hidden)]
+        fn __memcpy(mut dst: $Mut<$Type>, src: $Ref<$Type>) {
+          match src.which() {
+            0 => dst.clear(),
+            ${Type::memcpys}
+            _ => __s::unreachable!(),
+          }
+        }
+      }
+      
+      #[non_exhaustive]
+      pub enum ${Ident}Cases<'proto, Which: __r::Select = __r::SelectRef> {
+        Unset,
+        ${Type::Variants}
+
+        #[doc(hidden)]
+        __PhantomData($PhantomData<&'proto Which>, __z::Void),
+      }
+
+      impl __z::Message for $Type {
+        const __TDP: __z::tdp::Desc = {
+          type Tdp = __z::tdp::DescStorage<{$NUM_FIELDS + 1}>;
+          const STATIC: Tdp = Tdp {
             header: __z::tdp::DescHeader {
               size: {
                 let size = $Type::__LAYOUT.size();
                 assert!(size <= (u32::MAX as usize));
                 size as u32
               },
+
               descs: {
                 const DESCS: &[fn() -> __z::tdp::Desc] = &[
                   $tdp_descs
                 ];
                 DESCS.as_ptr()
               },
+              
               num_hasbit_words: 0,
               kind: __z::tdp::DescKind::Choice,
             },
+
             fields: [
               $tdp_fields
               __z::tdp::FieldStorage { number: 0, flags: 0, offset: 0, desc: 0, hasbit: 0 },
             ],
           };
-       
-        #[derive(Copy, Clone)]
-        pub struct View<'proto> {
-          pub(in super) ptr: __z::ABox<$priv::Storage>,
-          pub(in super) _ph: $PhantomData<&'proto $Type>,
+
+          unsafe { STATIC.get() }
+        };
+
+        fn __is_null(&self, _: impl __z::Sealed) -> bool {
+          self.ptr == $NonNull::dangling()
         }
-       
-        impl<'proto> __rt::ptr::ViewFor<'proto, super::$Type> for View<'proto> {
-          fn as_view(&self) -> View {
-            View { ptr: self.ptr, _ph: $PhantomData }
+        fn __raw(_: impl __z::Sealed, ptr: __r::Ref<Self>) -> __z::tdp::Opaque { ptr.ptr.cast() }
+        fn __arena(_: impl __z::Sealed, ptr: &mut __r::Mut<Self>) -> __z::RawArena { ptr.arena }
+      }
+
+      ${Type::impls}
+
+      ${Type::field_impls}
+
+      impl<'proto> $priv::Ref<'proto> {
+        pub fn which(self) -> i32 {
+          unsafe { self.ptr.as_ref() }.which as i32
+        }
+
+        pub fn cases(self) -> ${Type}Cases<'proto> {
+          unsafe {
+            match self.which() {
+              0 => ${Type}Cases::Unset,
+              $make_view_arms
+              _ => __s::unreachable!(),
+            }
           }
         }
 
-        pub struct Mut<'proto> {
-          pub(in super) ptr: __z::ABox<$priv::Storage>,
-          pub(in super) _ph: $PhantomData<&'proto mut $Type>,
-          pub(in super) arena: __z::RawArena,
+        ${Ref::common}
+
+        ${Ref::access}
+
+        #[doc(hidden)]
+        pub fn __debug(self, debug: &mut __z::Debug) -> $fmt::Result {
+          let mut count = 0;
+          debug.start_block()?;
+          ${Type::debug}
+          if count != 0 {
+            debug.comma(true)?;
+          }
+          debug.end_block()?;
+          $Ok(())
         }
-       
-        impl<'proto> __rt::ptr::ViewFor<'proto, super::$Type> for Mut<'proto> {
-          fn as_view(&self) -> View {
-            View { ptr: self.ptr, _ph: $PhantomData }
+      }
+
+      impl<'proto> $priv::Mut<'proto>  {
+        pub fn which(&self) -> i32 {
+          self.as_ref().which()
+        }
+
+        pub fn cases(self) -> ${Type}Cases<'proto> {
+          self.into_ref().cases()
+        }
+
+        pub fn cases_mut(self) -> ${Type}Cases<'proto, __r::SelectMut> {
+          unsafe {
+            match self.which() {
+              0 => ${Type}Cases::Unset,
+              $make_mut_arms
+              _ => __s::unreachable!(),
+            }
           }
         }
 
-        impl<'proto> __rt::ptr::MutFor<'proto, super::$Type> for Mut<'proto> {
-          fn into_view(self) -> View<'proto> {
-            View { ptr: self.ptr, _ph: $PhantomData }
-          }
+        ${Mut::common}
 
-          fn as_mut(&mut self) -> Mut {
-            Mut { ptr: self.ptr, _ph: $PhantomData, arena: self.arena }
-          }
-        }
+        ${Mut::access}
       }
     "#,
   );

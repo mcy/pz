@@ -4,15 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# pz = { path = "../rust" }
+pz = { path = "../rust" }
 pz_plugins = { path = "../rust/plugin" }
 
 # Use this to break dependency loops.
-pz = { git = "https://github.com/mcy/pz.git" }
+# pz = { git = "https://github.com/mcy/pz.git" }
 
 ilex = "0.6.0"
 heck = "0.4.1"
-prost = "0.11.9"
 
 [dependencies.bumpalo]
 version = "3.12.1"
@@ -29,6 +28,3 @@ features = ["color"]
 [dev-dependencies]
 googletest = "0.5.0"
 unindent = "0.2.1"
-
-[build-dependencies]
-prost-build = "0.11.9"

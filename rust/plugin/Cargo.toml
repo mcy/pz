@@ -4,10 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# pz = { path = ".." }
+pz = { path = ".." }
 
 # Use this to break dependency loops.
-pz = { git = "https://github.com/mcy/pz.git" }
+# pz = { git = "https://github.com/mcy/pz.git" }
 
 heck = "0.4.1"
-prost = "0.11.9"
