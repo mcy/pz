@@ -407,12 +407,8 @@ impl<'r> Context<'r> {
             unsafe { field.cast::<str::private::Storage>(*raw).as_mut() }
           } else {
             // Repeated str.
-            unsafe {
-              field
-                .cast::<AVec<str::private::Storage>>(*raw)
-                .as_mut()
-                .add(self.arena)
-            }
+            unsafe { field.cast::<AVec<str::private::Storage>>(*raw).as_mut() }
+              .add(self.arena)
           };
 
           if len == 0 {

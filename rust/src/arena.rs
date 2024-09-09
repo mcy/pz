@@ -86,6 +86,7 @@ impl<T> AVec<T> {
   }
 
   pub unsafe fn set_len(&mut self, len: usize) {
+    debug_assert!(self.cap >= len);
     self.len = len
   }
 
@@ -104,9 +105,9 @@ impl<T> AVec<T> {
   }
 
   pub fn add(&mut self, arena: RawArena) -> &mut T {
+    self.resize(self.len() + 1, arena);
     unsafe {
-      self.resize(self.len() + 1, arena);
-      self.ptr.unwrap_unchecked().add(self.len() - 1).as_mut()
+      self.as_mut_slice().last_mut().unwrap_unchecked()
     }
   }
 
@@ -124,12 +125,14 @@ impl<T> AVec<T> {
 
       self.grow(Some(cap), arena);
     }
-    self.len = new_len;
+    unsafe {
+      self.set_len(new_len);
+    }
   }
 
   pub fn grow(&mut self, new_cap: Option<usize>, arena: RawArena) {
     let old_cap = self.cap;
-    self.cap = new_cap.unwrap_or(self.cap * 2);
+    self.cap = new_cap.unwrap_or(self.cap * 2).max(self.cap * 2);
     if self.cap < 16 {
       self.cap = 16;
     }
@@ -140,17 +143,12 @@ impl<T> AVec<T> {
 
     unsafe {
       if let Some(old_ptr) = self.as_ptr() {
-        new_ptr
-          .as_ptr()
-          .copy_from_nonoverlapping(old_ptr.as_ptr(), old_cap);
-        new_ptr
-          .as_ptr()
-          .add(old_cap)
-          .write_bytes(0, self.cap - old_cap);
+        new_ptr.copy_from_nonoverlapping(old_ptr, old_cap);
       }
+      new_ptr.add(old_cap).write_bytes(0, self.cap - old_cap);
     }
 
-    self.ptr = Some(new_ptr)
+    self.ptr = Some(new_ptr);
   }
 }
 
@@ -173,11 +171,11 @@ impl AVec<Option<Opaque>> {
 
     while self.len < new_len {
       unsafe {
-        let ptr = &mut *self.as_raw_ptr().add(self.len);
+        let ptr = self.as_ptr().unwrap().add(self.len).as_mut();
         if ptr.is_none() {
           *ptr = Some(arena.alloc(layout));
         }
-        ptr.unwrap_unchecked().write_bytes(0, layout.size());
+        dbg!(ptr.unwrap_unchecked()).write_bytes(0, layout.size());
       }
 
       self.len += 1;
