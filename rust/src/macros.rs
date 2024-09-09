@@ -85,9 +85,9 @@ where
 */
 
 /// Constructs a message type using JSON-like syntax.
-/// 
+///
 /// This macro is intended to be used like this:
-/// 
+///
 /// ```rust
 /// pz::proto! {
 ///   foo: 42,
@@ -97,7 +97,7 @@ where
 /// }
 /// # ;
 /// ```
-/// 
+///
 /// This expands into an expression that is not actually a message, but rather
 /// a description of the setters to call on an unknown message type. This value
 /// can be passed into `MyMessage::from()`, pushed onto a repeated field, etc,
@@ -106,9 +106,9 @@ where
 #[cfg(doc)]
 #[macro_export]
 macro_rules! proto {
-    ($($key:ident: $value:expr),*) => {
-      compile_error!("for exposition only")
-    };
+  ($($key:ident: $value:expr),*) => {
+    compile_error!("for exposition only")
+  };
 }
 
 #[cfg(not(doc))]

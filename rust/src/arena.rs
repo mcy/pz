@@ -106,9 +106,7 @@ impl<T> AVec<T> {
 
   pub fn add(&mut self, arena: RawArena) -> &mut T {
     self.resize(self.len() + 1, arena);
-    unsafe {
-      self.as_mut_slice().last_mut().unwrap_unchecked()
-    }
+    unsafe { self.as_mut_slice().last_mut().unwrap_unchecked() }
   }
 
   pub fn push(&mut self, value: T, arena: RawArena) {
